@@ -1,5 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit
 from PyQt6 import uic
+from PyQt6.QtWidgets import QGraphicsDropShadowEffect
+from PyQt6.QtGui import QColor
 from PyQt6.QtCore import Qt
 import resources_rc
 from PyQt6.QtGui import QFontDatabase, QFont, QPixmap, QIcon, QAction
@@ -35,10 +37,13 @@ class MainUI(QMainWindow):
 
         self.confirmButton.clicked.connect(self.submit_data)
 
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(15)
+        shadow.setXOffset(5)
+        shadow.setYOffset(5)
+        shadow.setColor(QColor(0, 0, 0, 160))  # semi-transparent black
 
-
-
-
+        self.dropShadow.setGraphicsEffect(shadow)
 
     def submit_data(self):
         required_fields = {
@@ -121,3 +126,5 @@ if __name__ == "__main__":
     ui = MainUI()
     ui.show()
     app.exec()
+
+
