@@ -47,6 +47,8 @@ class MainUI(QMainWindow):
         # Make buttons checkable
         self.walkInBtn.setCheckable(True)
         self.websiteBtn.setCheckable(True)
+        self.walkInBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(True))
+        self.websiteBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(False))
 
         # Create a QButtonGroup to keep only one active
         self.sourceBtnGroup = QButtonGroup(self)

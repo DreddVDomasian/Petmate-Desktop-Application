@@ -588,7 +588,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1930,8 +1930,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>72</width>
-                <height>16</height>
+                <width>874</width>
+                <height>504</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2336,8 +2336,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>65</width>
-                    <height>31</height>
+                    <width>874</width>
+                    <height>397</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
