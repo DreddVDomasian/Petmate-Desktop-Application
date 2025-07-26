@@ -58,6 +58,7 @@ class MainUI(QMainWindow):
         self.walkInBtn.setChecked(True)
 
         #changing page walkIn/website appointment
+        self.walkInOrWeb.setCurrentIndex(0)
         self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
         self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
         self.websiteBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(False))
