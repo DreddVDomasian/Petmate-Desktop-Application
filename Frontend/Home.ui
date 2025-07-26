@@ -1936,8 +1936,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>874</width>
-                <height>504</height>
+                <width>162</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2371,8 +2371,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>368</width>
-                    <height>525</height>
+                    <width>403</width>
+                    <height>618</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3177,8 +3177,8 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>857</width>
-                    <height>540</height>
+                    <width>845</width>
+                    <height>551</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4427,8 +4427,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>812</width>
-                    <height>421</height>
+                    <width>401</width>
+                    <height>111</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
