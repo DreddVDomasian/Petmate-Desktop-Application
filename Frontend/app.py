@@ -43,7 +43,11 @@ class MainUI(QMainWindow):
         # send pet data to db
         self.petConfirmButton.clicked.connect(self.submit_pet_data)
 
-        #Appointment Buttons
+        #add Appointment Button
+        self.toolButton_2.clicked.connect(lambda: self.navigate_to_page(6))
+        self.toolButton_3.clicked.connect(lambda: self.navigate_to_page(6))
+        self.addWalkinButton.mousePressEvent = lambda event: self.navigate_to_page(6)
+
         # Make buttons checkable
         self.walkInBtn.setCheckable(True)
         self.websiteBtn.setCheckable(True)
