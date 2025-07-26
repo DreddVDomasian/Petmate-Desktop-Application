@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
-    <file>Icons/otherSpecies.png</file>
+    <file>Icons/other species.png</file>
     <file>Icons/catIcon.png</file>
     <file>Icons/dog.png</file>
     <file>Icons/Profileback.png</file>
