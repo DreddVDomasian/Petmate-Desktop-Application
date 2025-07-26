@@ -588,7 +588,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1936,7 +1936,7 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>162</width>
+                <width>150</width>
                 <height>33</height>
                </rect>
               </property>
@@ -2371,8 +2371,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>403</width>
-                    <height>618</height>
+                    <width>413</width>
+                    <height>606</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3177,8 +3177,8 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>845</width>
-                    <height>551</height>
+                    <width>857</width>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4427,8 +4427,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>401</width>
-                    <height>111</height>
+                    <width>812</width>
+                    <height>421</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -5308,7 +5308,6 @@ QPushButton:hover{
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="petProfile"/>
         </widget>
        </item>
       </layout>
