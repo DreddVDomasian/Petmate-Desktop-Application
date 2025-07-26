@@ -2327,7 +2327,7 @@ border-bottom-right-radius:10px;
            <item>
             <widget class="QStackedWidget" name="walkInOrWeb">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="walkIn">
               <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -2360,7 +2360,7 @@ border-bottom-right-radius:10px;
                     <x>0</x>
                     <y>0</y>
                     <width>857</width>
-                    <height>590</height>
+                    <height>606</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2373,12 +2373,12 @@ border-bottom-right-radius:10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_20{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_20:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -2458,12 +2458,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_16{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_16:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -2543,12 +2543,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_18{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_18:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -2628,12 +2628,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_17{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_17:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -2713,12 +2713,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_15{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_15:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -2883,12 +2883,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_14{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_14:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -2968,12 +2968,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_21{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_21:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -3053,12 +3053,12 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_12{
+                      <string notr="true">#frame_13{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
 }
-#frame_12:hover{
+#frame_13:hover{
 background-color:rgb(230, 230, 230);
 }</string>
                      </property>
@@ -3166,7 +3166,7 @@ font: 20px Montserrat;</string>
                     <x>0</x>
                     <y>0</y>
                     <width>857</width>
-                    <height>524</height>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -3182,7 +3182,7 @@ font: 20px Montserrat;</string>
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_25{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3285,7 +3285,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_24{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3388,7 +3388,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_29{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3491,7 +3491,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_23{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3594,7 +3594,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_27{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3697,7 +3697,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_26{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3800,7 +3800,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_22{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
@@ -3903,7 +3903,7 @@ border-radius: 10px;
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">#frame_20{
+                      <string notr="true">#frame_28{
 	border-right: 2px solid #f0f0f0;
     border-bottom: 2px solid #f0f0f0;
     border-radius: 10px;
