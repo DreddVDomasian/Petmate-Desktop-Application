@@ -588,7 +588,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1892,7 +1892,7 @@ border-bottom-right-radius:10px;
 
 }
 #patientScrollArea QScrollBar:vertical {
-    background: transparent; /* or any background */
+    background: transparent;
     width: 10px;
     margin: 0px;
 }
@@ -1930,8 +1930,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>72</width>
-                <height>16</height>
+                <width>874</width>
+                <height>504</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -1956,6 +1956,17 @@ border-bottom-right-radius:10px;
                <property name="bottomMargin">
                 <number>0</number>
                </property>
+               <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+                <widget class="QLabel" name="label_30">
+                 <property name="styleSheet">
+                  <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(141, 141, 141);</string>
+                 </property>
+                 <property name="text">
+                  <string>NO RECORDS</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </widget>
@@ -2387,8 +2398,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>83</width>
-                    <height>31</height>
+                    <width>874</width>
+                    <height>397</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
