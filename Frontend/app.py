@@ -60,6 +60,7 @@ class MainUI(QMainWindow):
         #changing page walkIn/website appointment
         self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
         self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
+        self.websiteBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(False))
 
         #backbutton in profile page
         self.profileBackbutton.clicked.connect(lambda: self.navigate_to_page(2))

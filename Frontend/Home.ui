@@ -1930,8 +1930,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>874</width>
-                <height>504</height>
+                <width>72</width>
+                <height>16</height>
                </rect>
               </property>
               <property name="styleSheet">
