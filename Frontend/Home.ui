@@ -6617,6 +6617,11 @@ QPushButton:hover{
           <layout class="QVBoxLayout" name="verticalLayout_41">
            <item>
             <widget class="QFrame" name="frame_50">
+             <property name="styleSheet">
+              <string notr="true">QFrame{
+background-color: transparent;
+}</string>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -6626,6 +6631,11 @@ QPushButton:hover{
              <layout class="QVBoxLayout" name="verticalLayout_42">
               <item>
                <widget class="QFrame" name="frame_51">
+                <property name="styleSheet">
+                 <string notr="true">QFrame{
+background-color: transparent;
+}</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -6669,12 +6679,103 @@ color:rgb(39, 39, 39);
               </item>
               <item>
                <widget class="QFrame" name="frame_54">
+                <property name="styleSheet">
+                 <string notr="true">QFrame{
+background-color: transparent;
+}</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_50">
+                 <item>
+                  <widget class="QFrame" name="frame_58">
+                   <property name="styleSheet">
+                    <string notr="true">QFrame{
+background-color: transparent;
+}</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_52">
+                    <item>
+                     <widget class="QLabel" name="label_130">
+                      <property name="styleSheet">
+                       <string notr="true">font:bold 15pt &quot;Rubik Mono One&quot;;
+color:rgb(39, 39, 39);
+margin-right: 10px;</string>
+                      </property>
+                      <property name="text">
+                       <string>PET DETAILS</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item alignment="Qt::AlignRight|Qt::AlignVCenter">
+                  <widget class="QFrame" name="frame_59">
+                   <property name="styleSheet">
+                    <string notr="true">#frame_59{
+background-color: #FCFCFC;
+border-radius: 5px;
+border-right: 2px solid #cccccc;
+border-bottom: 2px solid #cccccc;
+padding: 2px;
+}
+#frame_59:hover{
+background-color: #78B3CE
+}</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_51">
+                    <item>
+                     <widget class="QLabel" name="label_128">
+                      <property name="styleSheet">
+                       <string notr="true">font: Bold 10pt &quot;Montserrat&quot;;
+color:rgb(39, 39, 39);
+margin-right: 5px;</string>
+                      </property>
+                      <property name="text">
+                       <string>ADD PET/S</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="label_129">
+                      <property name="maximumSize">
+                       <size>
+                        <width>20</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="pixmap">
+                       <pixmap resource="resource.qrc">:/Icons/Icons/AddIconAppointment.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -6685,6 +6786,74 @@ color:rgb(39, 39, 39);
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_53">
+                 <item>
+                  <widget class="QFrame" name="frame_60">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_43">
+                    <item>
+                     <widget class="QLabel" name="label_131">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                      </property>
+                      <property name="text">
+                       <string>Pet name</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_9">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_61">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_44">
+                    <item>
+                     <widget class="QLabel" name="label_132">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                      </property>
+                      <property name="text">
+                       <string>Color</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_10">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -6695,6 +6864,74 @@ color:rgb(39, 39, 39);
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_54">
+                 <item>
+                  <widget class="QFrame" name="frame_62">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_45">
+                    <item>
+                     <widget class="QLabel" name="label_133">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                      </property>
+                      <property name="text">
+                       <string>Breed</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_11">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_63">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_46">
+                    <item>
+                     <widget class="QLabel" name="label_134">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                      </property>
+                      <property name="text">
+                       <string>Birthday</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_12">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -6705,6 +6942,74 @@ color:rgb(39, 39, 39);
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_55">
+                 <item>
+                  <widget class="QFrame" name="frame_64">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_47">
+                    <item>
+                     <widget class="QLabel" name="label_135">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                      </property>
+                      <property name="text">
+                       <string>Species</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="comboBox">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_65">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_48">
+                    <item>
+                     <widget class="QLabel" name="label_136">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                      </property>
+                      <property name="text">
+                       <string>Sex</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="comboBox_2">
+                      <property name="maximumSize">
+                       <size>
+                        <width>300</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
