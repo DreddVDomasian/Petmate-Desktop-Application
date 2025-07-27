@@ -578,6 +578,9 @@ QToolButton:hover{
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">QStackedWidget{
 	background:transparent;
@@ -588,7 +591,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>6</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -5469,8 +5472,8 @@ margin-right: 10px;</string>
                  <string notr="true">#frame_53{
 background-color: #FCFCFC;
 border-radius: 5px;
-border-right: 1px solid #cccccc;
-border-bottom: 1px solid #cccccc;
+border-right: 2px solid #cccccc;
+border-bottom: 2px solid #cccccc;
 padding: 10px;
 }
 #frame_53:hover{
@@ -5597,8 +5600,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
@@ -5655,8 +5658,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
@@ -5713,8 +5716,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
@@ -5838,8 +5841,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QComboBox {
-    border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+    border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
@@ -5974,8 +5977,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QComboBox {
-    border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+    border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
@@ -6110,8 +6113,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QComboBox {
-    border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+    border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
@@ -6272,8 +6275,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
@@ -6330,15 +6333,14 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-}
-</string>
+}</string>
                    </property>
                   </widget>
                  </item>
@@ -6389,15 +6391,14 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-}
-</string>
+}</string>
                    </property>
                   </widget>
                  </item>
@@ -6474,8 +6475,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
@@ -6532,8 +6533,8 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QLineEdit{
-	border-right: 1px solid #cccccc;
-    border-bottom: 1px solid #cccccc;
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	background-color: white;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
@@ -6592,8 +6593,8 @@ background-color: transparent;
 	color:rgb(39, 39, 39);
 	background-color:rgb(129, 191, 218);
 	border-radius: 5px;
-	border-right:1px solid rgb(200, 200, 200);
-	border-bottom:1px solid rgb(200, 200, 200);
+	border-right:2px solid rgb(200, 200, 200);
+	border-bottom:2px solid rgb(200, 200, 200);
 }
 
 QPushButton:hover{
@@ -6616,11 +6617,6 @@ QPushButton:hover{
           <layout class="QVBoxLayout" name="verticalLayout_41">
            <item>
             <widget class="QFrame" name="frame_50">
-             <property name="styleSheet">
-              <string notr="true">QFrame{
-background-color: transparent;
-}</string>
-             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -6630,11 +6626,6 @@ background-color: transparent;
              <layout class="QVBoxLayout" name="verticalLayout_42">
               <item>
                <widget class="QFrame" name="frame_51">
-                <property name="styleSheet">
-                 <string notr="true">QFrame{
-background-color: transparent;
-}</string>
-                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -6644,8 +6635,13 @@ background-color: transparent;
                 <layout class="QHBoxLayout" name="horizontalLayout_48">
                  <item>
                   <widget class="QLabel" name="label_125">
+                   <property name="styleSheet">
+                    <string notr="true">font:Bold 25pt &quot;Rubik Mono One&quot;;
+color:rgb(39, 39, 39);
+</string>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>PETMATE ANIMAL CLINIC</string>
                    </property>
                   </widget>
                  </item>
@@ -6672,12 +6668,47 @@ background-color: transparent;
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_52">
-                <property name="styleSheet">
-                 <string notr="true">QFrame{
-background-color: transparent;
-}</string>
+               <widget class="QFrame" name="frame_54">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_52">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_55">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_57">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_56">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
