@@ -1939,8 +1939,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>874</width>
+                <height>505</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2374,8 +2374,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>413</width>
-                    <height>534</height>
+                    <width>368</width>
+                    <height>525</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3180,8 +3180,8 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>508</width>
-                    <height>468</height>
+                    <width>857</width>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4430,8 +4430,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>401</width>
-                    <height>109</height>
+                    <width>812</width>
+                    <height>422</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -7856,23 +7856,160 @@ color:rgb(0, 0, 0);</string>
                </widget>
               </item>
               <item>
-               <widget class="QScrollArea" name="scrollArea_4">
-                <property name="styleSheet">
-                 <string notr="true">background:transparent;
-border:none;</string>
+               <widget class="QFrame" name="frame_60">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
-                <property name="widgetResizable">
-                 <bool>true</bool>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
                 </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents_5">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>810</width>
-                   <height>435</height>
-                  </rect>
+                <layout class="QHBoxLayout" name="horizontalLayout_60">
+                 <property name="spacing">
+                  <number>5</number>
                  </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="serviceHistoryBtn">
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(80, 80, 80);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                           /* Active text color */
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Service History</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="addNewServiceBtn">
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(80, 80, 80);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                           /* Active text color */
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Add New Service</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
+                <property name="currentIndex">
+                 <number>1</number>
+                </property>
+                <widget class="QWidget" name="serviceHistoryPage">
+                 <layout class="QVBoxLayout" name="verticalLayout_50">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QScrollArea" name="scrollArea_4">
+                    <property name="styleSheet">
+                     <string notr="true">background:transparent;
+border:none</string>
+                    </property>
+                    <property name="widgetResizable">
+                     <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="scrollAreaWidgetContents_5">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>810</width>
+                       <height>382</height>
+                      </rect>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_53">
+                      <item>
+                       <widget class="QLabel" name="label_138">
+                        <property name="styleSheet">
+                         <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+color:black;</string>
+                        </property>
+                        <property name="text">
+                         <string>Service History page</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="addNewServicePage">
+                 <layout class="QVBoxLayout" name="verticalLayout_52">
+                  <item>
+                   <widget class="QLabel" name="label_137">
+                    <property name="styleSheet">
+                     <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+color:black;</string>
+                    </property>
+                    <property name="text">
+                     <string>ADD NEW SERVICE PAGE</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </widget>
               </item>

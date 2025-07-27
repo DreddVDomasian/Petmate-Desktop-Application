@@ -65,7 +65,7 @@ class MainUI(QMainWindow):
         self.walkInOrWeb.setCurrentIndex(0)
         self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
         self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
-        self.websiteBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(False))
+
 
         #backbutton in profile page
         self.profileBackbutton.clicked.connect(lambda: self.navigate_to_page(2))
@@ -75,6 +75,16 @@ class MainUI(QMainWindow):
         #backbutton in pet profile page
         self.petProfileBackBtn.clicked.connect(lambda: self.load_pets_for_owner(self.selected_patient_id))
         self.petProfileBackBtn.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(5))
+
+        #service history/add new history tab
+        self.addNewServiceBtn.setCheckable(True)
+        self.serviceHistoryBtn.setCheckable(True)
+        self.serviceHistoryStackedWidget.setCurrentIndex(0)
+        self.sourceBtnGroup.addButton(self.addNewServiceBtn)
+        self.sourceBtnGroup.addButton(self.serviceHistoryBtn)
+        self.serviceHistoryBtn.setChecked(True)
+        self.serviceHistoryBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(0))
+        self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
 
         #for delete button in profile page
         self.profileDeleteBtn.clicked.connect(self.delete_selected_patient)
