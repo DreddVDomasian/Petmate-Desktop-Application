@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>720</height>
+    <height>725</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -591,7 +591,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>7</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1939,8 +1939,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>874</width>
-                <height>500</height>
+                <width>150</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2375,7 +2375,7 @@ border-bottom-right-radius:10px;
                     <x>0</x>
                     <y>0</y>
                     <width>413</width>
-                    <height>606</height>
+                    <height>534</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3180,8 +3180,8 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>857</width>
-                    <height>540</height>
+                    <width>508</width>
+                    <height>468</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4365,7 +4365,7 @@ color:rgb(58, 58, 58);</string>
            <item>
             <widget class="QStackedWidget" name="profileStackedWidget">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="petCardsPage">
               <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4430,8 +4430,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>812</width>
-                    <height>417</height>
+                    <width>401</width>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -5313,8 +5313,8 @@ QPushButton:hover{
          </widget>
          <widget class="QWidget" name="addAppointmentOwner">
           <layout class="QVBoxLayout" name="verticalLayout_23">
-           <item alignment="Qt::AlignLeft">
-            <widget class="QFrame" name="frame_49">
+           <item alignment="Qt::AlignLeft|Qt::AlignBottom">
+            <widget class="QFrame" name="appointmentBackFrame">
              <property name="styleSheet">
               <string notr="true">QFrame{
 background-color: transparent;
@@ -5334,7 +5334,7 @@ background-color: transparent;
                <number>0</number>
               </property>
               <item>
-               <widget class="QToolButton" name="toolButton_4">
+               <widget class="QToolButton" name="appointmentBackbtn">
                 <property name="styleSheet">
                  <string notr="true">background-color: transparent;</string>
                 </property>
@@ -7506,7 +7506,381 @@ QPushButton:hover{
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="petProfile"/>
+         <widget class="QWidget" name="petProfile">
+          <layout class="QVBoxLayout" name="verticalLayout_49">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QFrame" name="frame_49">
+             <property name="styleSheet">
+              <string notr="true">background:transparent;</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_51">
+              <property name="leftMargin">
+               <number>40</number>
+              </property>
+              <property name="topMargin">
+               <number>30</number>
+              </property>
+              <property name="rightMargin">
+               <number>40</number>
+              </property>
+              <item>
+               <widget class="QFrame" name="petProfileCard">
+                <property name="styleSheet">
+                 <string notr="true">#petProfileCard{
+	border-radius:10px;
+	background-color:rgb(244, 244, 244);
+	border-bottom:1.5px solid rgb(184, 184, 184);
+	border-right:1.5px solid rgb(184, 184, 184);
+	border-left:1px solid rgb(198, 198, 198);
+
+}</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_7">
+                 <property name="leftMargin">
+                  <number>20</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>20</number>
+                 </property>
+                 <item row="1" column="2" alignment="Qt::AlignTop">
+                  <widget class="QFrame" name="frame_52">
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_8">
+                    <property name="leftMargin">
+                     <number>10</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item row="4" column="1">
+                     <widget class="QLabel" name="speciesLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>SPECIES</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QLabel" name="petColorLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>COLOR</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="breedLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>BREED</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="petProfileNameLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>PET NAME</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="0">
+                     <widget class="QLabel" name="petSexLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>SEX</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="QLabel" name="petAgeLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>AGE</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QFrame" name="frame_55">
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_57">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item alignment="Qt::AlignRight">
+                     <widget class="QFrame" name="frame_57">
+                      <property name="styleSheet">
+                       <string notr="true">background:transparent;</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_58">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QToolButton" name="petProfileEditBtn">
+                         <property name="styleSheet">
+                          <string notr="true">background:transparent;</string>
+                         </property>
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="resource.qrc">
+                           <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>25</width>
+                           <height>25</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QToolButton" name="petProfileDeleteBtn">
+                         <property name="styleSheet">
+                          <string notr="true">background:transparent;</string>
+                         </property>
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="resource.qrc">
+                           <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>25</width>
+                           <height>25</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="petProfileIcon">
+                   <property name="maximumSize">
+                    <size>
+                     <width>120</width>
+                     <height>120</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="margin">
+                    <number>0</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0" alignment="Qt::AlignLeft">
+                  <widget class="QFrame" name="petProfileBackFrame">
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_59">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item alignment="Qt::AlignLeft">
+                     <widget class="QToolButton" name="petProfileBackBtn">
+                      <property name="cursor">
+                       <cursorShape>PointingHandCursor</cursorShape>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background:transparent;</string>
+                      </property>
+                      <property name="text">
+                       <string>...</string>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource.qrc">
+                        <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QScrollArea" name="scrollArea_4">
+                <property name="styleSheet">
+                 <string notr="true">background:transparent;
+border:none;</string>
+                </property>
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents_5">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>810</width>
+                   <height>435</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>

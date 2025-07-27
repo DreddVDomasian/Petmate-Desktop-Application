@@ -72,6 +72,10 @@ class MainUI(QMainWindow):
         self.profileBackbutton.clicked.connect(lambda: self.cancelBtn())
         self.selected_patient_id = None
 
+        #backbutton in pet profile page
+        self.petProfileBackBtn.clicked.connect(lambda: self.load_pets_for_owner(self.selected_patient_id))
+        self.petProfileBackBtn.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(5))
+
         #for delete button in profile page
         self.profileDeleteBtn.clicked.connect(self.delete_selected_patient)
 
@@ -94,6 +98,7 @@ class MainUI(QMainWindow):
         self.addpetQtoolBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(1))
         self.plusSignBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(1))
         self.addPetButton.mousePressEvent = lambda event: self.profileStackedWidget.setCurrentIndex(1)
+
 
         # cancelBtn
         self.backBtn.clicked.connect(lambda: self.cancelBtn())
@@ -289,6 +294,7 @@ class MainUI(QMainWindow):
 
             # Connect delete button
             card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.confirm_and_delete(p_id))
+
             # Connect the card click to open profile
             card.mousePressEvent = lambda event, p=patient: self.show_patient_profile(p)
 
@@ -328,16 +334,14 @@ class MainUI(QMainWindow):
             pet_card.petCardIcon.setPixmap(QPixmap(icon_path))
             pet_card.petCardIcon.setScaledContents(True)
 
+            pet_card.mousePressEvent = lambda event, p=pet: self.show_pet_profile(p)
+
             self.gridLayout_6.addWidget(pet_card, row, col)
             col += 1
             if col >= max_cols:
                 col = 0
                 row += 1
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        if self.selected_patient_id:
-            self.load_pets_for_owner(self.selected_patient_id)
 
     def delete_patient(self, patient_id):
         response = requests.delete(f"http://127.0.0.1:8000/api/patients/{patient_id}/")
@@ -390,7 +394,33 @@ class MainUI(QMainWindow):
         # Navigate to the profile page
         self.stackedWidget.setCurrentIndex(5)
 
+    def show_pet_profile(self, pet):
+        # Fill labels with pet data
+        self.petProfileNameLabel.setText(pet["petName"].upper())
+        self.petColorLabel.setText(pet["petColor"].upper())
+        self.breedLabel.setText(pet["breed"].upper())
+        self.speciesLabel.setText(pet["species"].upper())
+        self.petSexLabel.setText(pet["sex"].upper())
 
+        age = f"AGE: {pet['age']} "
+        self.petAgeLabel.setText(age)
+
+        species = pet.get("species", "").lower()
+        if species == "dog":
+            icon_path = "Icons/dog.png"
+        elif species == "cat":
+            icon_path = "Icons/catIcon.png"
+        else:
+            icon_path = "Icons/otherSpecies.png"
+
+        self.petProfileIcon.setPixmap(QPixmap(icon_path))
+
+
+        # Keep track of which pet is selected
+        self.selected_pet_id = pet["id"]
+
+        # Navigate to pet profile page (adjust index if needed)
+        self.stackedWidget.setCurrentIndex(8)
 
 
 if __name__ == "__main__":
