@@ -21,6 +21,7 @@
     <file>Icons/searchIcon.png</file>
     <file>Icons/UpdateIcon.png</file>
     <file>Icons/UserIcon.png</file>
+    <file>Icons/view.png</file>
     <file>Icons/warning.png</file>
   </qresource>
   <qresource prefix="/images">
