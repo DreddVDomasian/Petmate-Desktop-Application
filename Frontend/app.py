@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit
 from PyQt6 import uic
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt,QDate
 import resources_rc
 from PyQt6.QtGui import QFontDatabase, QFont, QPixmap, QIcon, QAction,QColor
 from uiLogic import UIHandler
@@ -85,6 +85,8 @@ class MainUI(QMainWindow):
         self.serviceHistoryBtn.setChecked(True)
         self.serviceHistoryBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(0))
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
+        # Set to current date
+        self.dateEdit.setDate(QDate.currentDate())
 
         #for delete button in profile page
         self.profileDeleteBtn.clicked.connect(self.delete_selected_patient)

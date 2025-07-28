@@ -8382,28 +8382,73 @@ color:rgb(39, 39, 39);</string>
                               </size>
                              </property>
                              <property name="styleSheet">
-                              <string notr="true">QDateEdit{
-	border-right: 2px solid #cccccc;
+                              <string notr="true">QDateEdit {
+    border-right: 2px solid #cccccc;
     border-bottom: 2px solid #cccccc;
     border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	padding-left: 10px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
 }
 
 QDateEdit::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    width: 40px;  /* adjust as needed */
-	border: none; /* remove frame around drop-down */
+    width: 40px;
+    border: none;
     background: transparent;
 }
 
 QDateEdit::down-arrow {
-    image:url(:/Icons/Icons/calendar.png) ; 
-    width: 30px;   
+    image: url(:/Icons/Icons/calendar.png);
+    width: 30px;
     height: 30px;
-}</string>
+}
+
+
+QCalendarWidget {
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 8px;
+}
+
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+    background-color: rgb(129, 191, 218);
+    border: none;
+}
+
+QCalendarWidget QToolButton {
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    icon-size: 24px;
+    background-color: transparent;
+}
+
+QCalendarWidget QMenu {
+    background-color: white;
+}
+
+QCalendarWidget QSpinBox {
+    width: 70px;
+}
+
+QCalendarWidget QAbstractItemView:enabled {
+    font: 57 14pt &quot;Montserrat Medium&quot;;
+    color: black;
+    background-color: white;
+    selection-background-color: #86C5FF;
+    selection-color: black;
+}
+
+
+QCalendarWidget QToolButton#qt_calendar_prevmonth {
+    qproperty-icon: url(:/Icons/Icons/left-arrow.png);
+}
+
+QCalendarWidget QToolButton#qt_calendar_nextmonth {
+    qproperty-icon: url(:/Icons/Icons/right-arrow.png);
+}
+</string>
                              </property>
                              <property name="calendarPopup">
                               <bool>true</bool>
@@ -8562,28 +8607,73 @@ color:rgb(39, 39, 39);</string>
                                  </size>
                                 </property>
                                 <property name="styleSheet">
-                                 <string notr="true">QDateEdit{
-	border-right: 2px solid #cccccc;
+                                 <string notr="true">QDateEdit {
+    border-right: 2px solid #cccccc;
     border-bottom: 2px solid #cccccc;
     border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	padding-left: 10px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
 }
 
 QDateEdit::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    width: 40px;  /* adjust as needed */
-	border: none; /* remove frame around drop-down */
+    width: 40px;
+    border: none;
     background: transparent;
 }
 
 QDateEdit::down-arrow {
-    image:url(:/Icons/Icons/calendar.png) ; 
-    width: 30px;   
+    image: url(:/Icons/Icons/calendar.png);
+    width: 30px;
     height: 30px;
-}</string>
+}
+
+
+QCalendarWidget {
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 8px;
+}
+
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+    background-color: rgb(129, 191, 218);
+    border: none;
+}
+
+QCalendarWidget QToolButton {
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    icon-size: 24px;
+    background-color: transparent;
+}
+
+QCalendarWidget QMenu {
+    background-color: white;
+}
+
+QCalendarWidget QSpinBox {
+    width: 70px;
+}
+
+QCalendarWidget QAbstractItemView:enabled {
+    font: 57 14pt &quot;Montserrat Medium&quot;;
+    color: black;
+    background-color: white;
+    selection-background-color: #86C5FF;
+    selection-color: black;
+}
+
+
+QCalendarWidget QToolButton#qt_calendar_prevmonth {
+    qproperty-icon: url(:/Icons/Icons/left-arrow.png);
+}
+
+QCalendarWidget QToolButton#qt_calendar_nextmonth {
+    qproperty-icon: url(:/Icons/Icons/right-arrow.png);
+}
+</string>
                                 </property>
                                 <property name="calendarPopup">
                                  <bool>true</bool>
