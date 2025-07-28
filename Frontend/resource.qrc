@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/calendar.png</file>
     <file>Icons/catIcon.png</file>
     <file>Icons/otherSpecies.png</file>
     <file>Icons/dog.png</file>
