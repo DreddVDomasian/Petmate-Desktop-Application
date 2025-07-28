@@ -87,6 +87,17 @@ class MainUI(QMainWindow):
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
         # Set to current date
         self.dateEdit.setDate(QDate.currentDate())
+        #return date optional
+        # initially disabled (user must check to enable)
+        self.returnDateEdit.setEnabled(False)
+
+        # optional: visually empty if date == minimum
+        self.returnDateEdit.setMinimumDate(QDate(2000, 1, 1))
+        self.returnDateEdit.setSpecialValueText("")  # empty text when min date
+        self.returnDateEdit.setDate(self.returnDateEdit.minimumDate())
+
+        # connect checkbox
+        self.returnCheckBox.toggled.connect(self.toggle_return_date)
 
         #for delete button in profile page
         self.profileDeleteBtn.clicked.connect(self.delete_selected_patient)
@@ -122,10 +133,11 @@ class MainUI(QMainWindow):
         # add the addPetButton as first item, fixed place
         self.gridLayout_6.addWidget(self.addPetButton, 0, 0)
 
-
-
-
-
+    def toggle_return_date(self, checked):
+        self.returnDateEdit.setEnabled(checked)
+        if not checked:
+            # reset to look empty
+            self.returnDateEdit.setDate(self.returnDateEdit.minimumDate())
 
     def navigate_to_page(self, index):
         self.stackedWidget.setCurrentIndex(index)
