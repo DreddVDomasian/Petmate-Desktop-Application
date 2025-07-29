@@ -88,14 +88,8 @@ class MainUI(QMainWindow):
         # Set to current date
         self.dateEdit.setDate(QDate.currentDate())
         #return date optional
-        # initially disabled (user must check to enable)
-        self.returnDateEdit.setEnabled(False)
-
-        # optional: visually empty if date == minimum
-        self.returnDateEdit.setMinimumDate(QDate(2000, 1, 1))
-        self.returnDateEdit.setSpecialValueText("")  # empty text when min date
-        self.returnDateEdit.setDate(self.returnDateEdit.minimumDate())
-
+        self.returnDatePlaceholder.setReadOnly(True)
+        self.returnDateEdit.hide()
         # connect checkbox
         self.returnCheckBox.toggled.connect(self.toggle_return_date)
 
@@ -133,11 +127,16 @@ class MainUI(QMainWindow):
         # add the addPetButton as first item, fixed place
         self.gridLayout_6.addWidget(self.addPetButton, 0, 0)
 
+
+
     def toggle_return_date(self, checked):
-        self.returnDateEdit.setEnabled(checked)
-        if not checked:
-            # reset to look empty
-            self.returnDateEdit.setDate(self.returnDateEdit.minimumDate())
+        if checked:
+            self.returnDateEdit.show()
+            self.returnDateEdit.setDate(QDate.currentDate())
+            self.returnDatePlaceholder.hide()
+        else:
+            self.returnDateEdit.hide()
+            self.returnDatePlaceholder.show()
 
     def navigate_to_page(self, index):
         self.stackedWidget.setCurrentIndex(index)
@@ -344,7 +343,7 @@ class MainUI(QMainWindow):
 
         for pet in pets:
             pet_card = uic.loadUi("petRecordCard.ui")
-            pet_card.petNameCard.setText(pet["petName"])
+            pet_card.petNameCard.setText(pet["petName"].upper())
 
             #Dynamic icon by species
             species = pet.get("species", "").lower()
@@ -420,12 +419,16 @@ class MainUI(QMainWindow):
 
     def show_pet_profile(self, pet):
         # Fill labels with pet data
-        self.petProfileNameLabel.setText(pet["petName"].upper())
-        self.petColorLabel.setText(pet["petColor"].upper())
-        self.breedLabel.setText(pet["breed"].upper())
-        self.speciesLabel.setText(pet["species"].upper())
-        self.petSexLabel.setText(pet["sex"].upper())
-
+        setPetName = f"NAME: {pet['petName']} "
+        self.petProfileNameLabel.setText(setPetName.upper())
+        setPetColor = f"COLOR: {pet['petColor']} "
+        self.petColorLabel.setText(setPetColor.upper())
+        setPetBreed = f"BREED: {pet['breed']} "
+        self.breedLabel.setText(setPetBreed.upper())
+        setPetSpecies = f"SPECIES: {pet['species']} "
+        self.speciesLabel.setText(setPetSpecies.upper())
+        setPetSex = f"SEX: {pet['sex']} "
+        self.petSexLabel.setText(setPetSex.upper())
         age = f"AGE: {pet['age']} "
         self.petAgeLabel.setText(age)
 

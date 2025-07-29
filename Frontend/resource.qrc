@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/checkBox.png</file>
     <file>Icons/left-arrow.png</file>
     <file>Icons/upArrow.png</file>
     <file>Icons/calendar.png</file>

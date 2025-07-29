@@ -45,3 +45,4 @@ class UIHandler:
         self.barangayComboBox.addItem("Select Barangay")
         for brgy in filtered:
             self.barangayComboBox.addItem(brgy["name"])
+

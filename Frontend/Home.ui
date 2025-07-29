@@ -1225,7 +1225,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -1347,7 +1347,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -1475,7 +1475,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -1939,8 +1939,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>874</width>
+                <height>505</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -3180,7 +3180,7 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>543</width>
+                    <width>857</width>
                     <height>540</height>
                    </rect>
                   </property>
@@ -4888,7 +4888,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -5134,7 +5134,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -5847,7 +5847,7 @@ color:rgb(39, 39, 39);</string>
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color: white;
+
 }
 
 QComboBox::drop-down {
@@ -5869,7 +5869,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -5924,7 +5924,7 @@ QComboBox QAbstractItemView QScrollBar::groove {
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     color: rgb(39, 39, 39);
-    border: none; 
+    border: none; /* optional para di mag mukhang double border */
     background: transparent;
 }</string>
                    </property>
@@ -5983,7 +5983,7 @@ color:rgb(39, 39, 39);</string>
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color: white;
+
 }
 
 QComboBox::drop-down {
@@ -6005,7 +6005,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -6060,7 +6060,7 @@ QComboBox QAbstractItemView QScrollBar::groove {
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     color: rgb(39, 39, 39);
-    border: none; 
+    border: none; /* optional para di mag mukhang double border */
     background: transparent;
 }</string>
                    </property>
@@ -6119,7 +6119,7 @@ color:rgb(39, 39, 39);</string>
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color: white;
+
 }
 
 QComboBox::drop-down {
@@ -6141,7 +6141,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -6196,7 +6196,7 @@ QComboBox QAbstractItemView QScrollBar::groove {
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     color: rgb(39, 39, 39);
-    border: none; 
+    border: none; /* optional para di mag mukhang double border */
     background: transparent;
 }</string>
                    </property>
@@ -7124,7 +7124,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -7370,7 +7370,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -7569,6 +7569,31 @@ QPushButton:hover{
                  <property name="bottomMargin">
                   <number>20</number>
                  </property>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="petProfileIcon">
+                   <property name="maximumSize">
+                    <size>
+                     <width>120</width>
+                     <height>120</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="margin">
+                    <number>0</number>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="1" column="2" alignment="Qt::AlignTop">
                   <widget class="QFrame" name="frame_52">
                    <property name="styleSheet">
@@ -7582,7 +7607,7 @@ QPushButton:hover{
                    </property>
                    <layout class="QGridLayout" name="gridLayout_8">
                     <property name="leftMargin">
-                     <number>10</number>
+                     <number>100</number>
                     </property>
                     <property name="topMargin">
                      <number>0</number>
@@ -7593,87 +7618,134 @@ QPushButton:hover{
                     <property name="bottomMargin">
                      <number>0</number>
                     </property>
-                    <item row="4" column="1">
+                    <item row="4" column="1" alignment="Qt::AlignLeft">
                      <widget class="QLabel" name="speciesLabel">
                       <property name="styleSheet">
                        <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
-                       <string>SPECIES</string>
+                       <string>SPECIES: CAT</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="1">
+                    <item row="0" column="1" alignment="Qt::AlignLeft">
                      <widget class="QLabel" name="petColorLabel">
                       <property name="styleSheet">
                        <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
-                       <string>COLOR</string>
+                       <string>COLOR: COLOR</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
-                    <item row="4" column="0">
+                    <item row="4" column="0" alignment="Qt::AlignLeft">
                      <widget class="QLabel" name="breedLabel">
                       <property name="styleSheet">
                        <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
-                       <string>BREED</string>
+                       <string>BREED: BREED</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="0">
+                    <item row="0" column="0" alignment="Qt::AlignLeft">
                      <widget class="QLabel" name="petProfileNameLabel">
                       <property name="styleSheet">
                        <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
-                       <string>PET NAME</string>
+                       <string>NAME: PET NAME</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
-                    <item row="5" column="0">
+                    <item row="5" column="0" alignment="Qt::AlignLeft">
                      <widget class="QLabel" name="petSexLabel">
                       <property name="styleSheet">
                        <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
-                       <string>SEX</string>
+                       <string>SEX: SEX</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
-                    <item row="5" column="1">
+                    <item row="5" column="1" alignment="Qt::AlignLeft">
                      <widget class="QLabel" name="petAgeLabel">
                       <property name="styleSheet">
                        <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
-                       <string>AGE</string>
+                       <string>AGE: 5</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="0" column="0" alignment="Qt::AlignLeft">
+                  <widget class="QFrame" name="petProfileBackFrame">
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_59">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item alignment="Qt::AlignLeft">
+                     <widget class="QToolButton" name="petProfileBackBtn">
+                      <property name="cursor">
+                       <cursorShape>PointingHandCursor</cursorShape>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background:transparent;</string>
+                      </property>
+                      <property name="text">
+                       <string>...</string>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource.qrc">
+                        <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
                       </property>
                      </widget>
                     </item>
@@ -7775,78 +7847,6 @@ color:rgb(0, 0, 0);</string>
                         </widget>
                        </item>
                       </layout>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="petProfileIcon">
-                   <property name="maximumSize">
-                    <size>
-                     <width>120</width>
-                     <height>120</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="margin">
-                    <number>0</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0" alignment="Qt::AlignLeft">
-                  <widget class="QFrame" name="petProfileBackFrame">
-                   <property name="styleSheet">
-                    <string notr="true">background:transparent;</string>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_59">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item alignment="Qt::AlignLeft">
-                     <widget class="QToolButton" name="petProfileBackBtn">
-                      <property name="cursor">
-                       <cursorShape>PointingHandCursor</cursorShape>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">background:transparent;</string>
-                      </property>
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="resource.qrc">
-                        <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
-                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -8089,8 +8089,8 @@ border:none</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>93</width>
-                       <height>51</height>
+                       <width>810</width>
+                       <height>314</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -8254,7 +8254,7 @@ QComboBox QAbstractItemView {
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
-	border:none;
+	border:1px solid rgb(209, 209, 209);
 }
 
 /* List items */
@@ -8316,12 +8316,80 @@ QComboBox QLineEdit {
                              <property name="editable">
                               <bool>false</bool>
                              </property>
+                             <property name="currentText">
+                              <string>Select Service</string>
+                             </property>
                              <property name="currentIndex">
-                              <number>-1</number>
+                              <number>0</number>
                              </property>
                              <property name="maxVisibleItems">
                               <number>10</number>
                              </property>
+                             <item>
+                              <property name="text">
+                               <string>Select Service</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Vaccination</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Deworming &amp; Tick and Flea Prevention</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Consultation</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Wellness Check</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Surgery</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Comprehensive Hematology (CBC)</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Blood Chemistry</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Progesterone test</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Pregnancy test (Relaxin)</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Diagnostic Microscopy</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Urinalysis</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Antigen/Antibody Rapid Test</string>
+                              </property>
+                             </item>
                             </widget>
                            </item>
                           </layout>
@@ -8431,14 +8499,12 @@ QCalendarWidget QMenu {
 QCalendarWidget QSpinBox {
     width: 70px;
 }
-
 QCalendarWidget QAbstractItemView:enabled {
     font: 57 14pt &quot;Montserrat Medium&quot;;
     color: black;
     background-color: white;
-    selection-background-color: #86C5FF;
-    selection-color: black;
 }
+
 
 
 QCalendarWidget QToolButton#qt_calendar_prevmonth {
@@ -8587,17 +8653,36 @@ color:rgb(39, 39, 39);</string>
                               <item>
                                <widget class="QCheckBox" name="returnCheckBox">
                                 <property name="styleSheet">
-                                 <string notr="true">QCheckBox{
-   font: 63 12pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
+                                 <string notr="true">QCheckBox {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
 }
+
 QCheckBox::indicator {
-    width: 20px;
-    height: 20px;
-}</string>
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgb(120, 179, 206);
+	border-radius:3px;
+    background-color: white;
+}
+
+QCheckBox::indicator:checked {
+	background-color:rgb(120, 179, 206);
+    image: url(:/Icons/Icons/checkBox.png); 
+    border: 1px solid rgb(104, 104, 104);
+	border-radius:3px;
+}
+
+QCheckBox::indicator:hover {
+    background-color: rgb(120, 179, 206);
+}
+</string>
                                 </property>
                                 <property name="text">
                                  <string>Return Date (Optional)</string>
+                                </property>
+                                <property name="checkable">
+                                 <bool>true</bool>
                                 </property>
                                 <property name="tristate">
                                  <bool>false</bool>
@@ -8606,6 +8691,9 @@ QCheckBox::indicator {
                               </item>
                               <item>
                                <widget class="QDateEdit" name="returnDateEdit">
+                                <property name="enabled">
+                                 <bool>true</bool>
+                                </property>
                                 <property name="sizePolicy">
                                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                   <horstretch>0</horstretch>
@@ -8687,11 +8775,32 @@ QCalendarWidget QToolButton#qt_calendar_nextmonth {
 }
 </string>
                                 </property>
-                                <property name="specialValueText">
-                                 <string/>
-                                </property>
                                 <property name="calendarPopup">
                                  <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="returnDatePlaceholder">
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>174</width>
+                                  <height>45</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QLineEdit{
+	border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
+    border-radius: 5px;
+	background-color:rgb(225, 225, 225);
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+}</string>
+                                </property>
+                                <property name="placeholderText">
+                                 <string/>
                                 </property>
                                </widget>
                               </item>
