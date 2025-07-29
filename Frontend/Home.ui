@@ -7597,7 +7597,8 @@ QPushButton:hover{
                  <item row="1" column="2" alignment="Qt::AlignTop">
                   <widget class="QFrame" name="frame_52">
                    <property name="styleSheet">
-                    <string notr="true">background:transparent;</string>
+                    <string notr="true">background:transparent;
+border:none;</string>
                    </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
@@ -7755,7 +7756,8 @@ color:rgb(0, 0, 0);</string>
                  <item row="0" column="2">
                   <widget class="QFrame" name="frame_55">
                    <property name="styleSheet">
-                    <string notr="true">background:transparent;</string>
+                    <string notr="true">background:transparent;
+border:none;</string>
                    </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
@@ -8471,50 +8473,7 @@ QDateEdit::down-arrow {
     image: url(:/Icons/Icons/calendar.png);
     width: 30px;
     height: 30px;
-}
-
-
-QCalendarWidget {
-    background-color: white;
-    border: 1px solid gray;
-    border-radius: 8px;
-}
-
-QCalendarWidget QWidget#qt_calendar_navigationbar {
-    background-color: rgb(129, 191, 218);
-    border: none;
-}
-
-QCalendarWidget QToolButton {
-    font: 57 12pt &quot;Montserrat Medium&quot;;
-    color: rgb(39, 39, 39);
-    icon-size: 24px;
-    background-color: transparent;
-}
-
-QCalendarWidget QMenu {
-    background-color: white;
-}
-
-QCalendarWidget QSpinBox {
-    width: 70px;
-}
-QCalendarWidget QAbstractItemView:enabled {
-    font: 57 14pt &quot;Montserrat Medium&quot;;
-    color: black;
-    background-color: white;
-}
-
-
-
-QCalendarWidget QToolButton#qt_calendar_prevmonth {
-    qproperty-icon: url(:/Icons/Icons/left-arrow.png);
-}
-
-QCalendarWidget QToolButton#qt_calendar_nextmonth {
-    qproperty-icon: url(:/Icons/Icons/right-arrow.png);
-}
-</string>
+}</string>
                              </property>
                              <property name="accelerated">
                               <bool>false</bool>
@@ -8609,6 +8568,9 @@ color:rgb(39, 39, 39);</string>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">border:none;</string>
                           </property>
                           <property name="frameShape">
                            <enum>QFrame::StyledPanel</enum>
@@ -8728,52 +8690,7 @@ QDateEdit::down-arrow {
     image: url(:/Icons/Icons/calendar.png);
     width: 30px;
     height: 30px;
-}
-
-
-QCalendarWidget {
-    background-color: white;
-    border: 1px solid gray;
-    border-radius: 8px;
-}
-
-QCalendarWidget QWidget#qt_calendar_navigationbar {
-    background-color: rgb(129, 191, 218);
-    border: none;
-}
-
-QCalendarWidget QToolButton {
-    font: 57 12pt &quot;Montserrat Medium&quot;;
-    color: rgb(39, 39, 39);
-    icon-size: 24px;
-    background-color: transparent;
-}
-
-QCalendarWidget QMenu {
-    background-color: white;
-}
-
-QCalendarWidget QSpinBox {
-    width: 70px;
-}
-
-QCalendarWidget QAbstractItemView:enabled {
-    font: 57 14pt &quot;Montserrat Medium&quot;;
-    color: black;
-    background-color: white;
-    selection-background-color: #86C5FF;
-    selection-color: black;
-}
-
-
-QCalendarWidget QToolButton#qt_calendar_prevmonth {
-    qproperty-icon: url(:/Icons/Icons/left-arrow.png);
-}
-
-QCalendarWidget QToolButton#qt_calendar_nextmonth {
-    qproperty-icon: url(:/Icons/Icons/right-arrow.png);
-}
-</string>
+}</string>
                                 </property>
                                 <property name="calendarPopup">
                                  <bool>true</bool>

@@ -19,6 +19,8 @@ class MainUI(QMainWindow):
         super(MainUI, self).__init__()
         uic.loadUi("Home.ui", self)
 
+        app.setStyleSheet(calendar_style)
+        self.setStyleSheet(QframeStyle)
         self.ui_handler = UIHandler(self.provinceComboBox, self.cityComboBox, self.barangayComboBox)
         self.ui_handler.load_provinces()
 
