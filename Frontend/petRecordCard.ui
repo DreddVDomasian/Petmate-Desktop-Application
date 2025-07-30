@@ -102,6 +102,18 @@
       </item>
       <item>
        <widget class="QLabel" name="petNameCard">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>318</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">font: 22pt &quot;Montserrat Black&quot;;
 color:rgb(39, 39, 39);</string>
@@ -109,8 +121,14 @@ color:rgb(39, 39, 39);</string>
         <property name="text">
          <string>Petname</string>
         </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

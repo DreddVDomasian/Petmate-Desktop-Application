@@ -10,6 +10,7 @@ class basicInfo(models.Model):
     detailedAddress = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     emergencyNumber = models.CharField(max_length=255)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.firstName} {self.lastName}"
@@ -26,6 +27,7 @@ class Pet(models.Model):
     species = models.CharField(max_length=255)
     age = models.CharField(max_length=50)
     sex = models.CharField(max_length=50)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.petName} (Owner: {self.owner.firstName})"
@@ -44,6 +46,7 @@ class Service(models.Model):
     service_type = models.CharField(max_length=255)
     date = models.DateField()
     return_date = models.DateField(null=True, blank=True)  # optional
+    date_added = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
 
     def __str__(self):

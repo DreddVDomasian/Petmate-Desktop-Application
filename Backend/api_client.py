@@ -47,3 +47,20 @@ def get_all_patients():
     except Exception as e:
         print("Error:", e)
         return []
+
+    
+def add_new_service(data):
+    """
+    data: dict with service info
+    """
+    try:
+        response = requests.post(f"{BASE_URL}/services/", json=data)
+        if response.status_code == 201:
+            print("Successfully added service!")
+            return True
+        else:
+            print("Failed to add service:", response.status_code, response.text)
+            return False
+    except Exception as e:
+        print("Error:", e)
+        return False

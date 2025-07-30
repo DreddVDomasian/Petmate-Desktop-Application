@@ -7925,9 +7925,10 @@ QPushButton:hover {
 	border-radius:5px;
 }
 QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
+    background-color:rgb(252, 213, 151);   
 	border-radius:5px;
-    color: rgb(40, 40, 40);                           /* Active text color */
+    color: rgb(40, 40, 40);
+	border: none;                        
 }</string>
                    </property>
                    <property name="text">
@@ -7969,7 +7970,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8104,7 +8105,7 @@ border-bottom-right-radius:10px;
                    </widget>
                   </item>
                   <item>
-                   <widget class="QScrollArea" name="scrollArea_4">
+                   <widget class="QScrollArea" name="serviceHistoryScrollArea">
                     <property name="styleSheet">
                      <string notr="true">background:transparent;
 border:none</string>
@@ -8112,13 +8113,13 @@ border:none</string>
                     <property name="widgetResizable">
                      <bool>true</bool>
                     </property>
-                    <widget class="QWidget" name="scrollAreaWidgetContents_5">
+                    <widget class="QWidget" name="serviceHistoryScrollPage">
                      <property name="geometry">
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>93</width>
-                       <height>51</height>
+                       <width>810</width>
+                       <height>319</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -9299,7 +9300,7 @@ border-bottom-right-radius:10px;
                       <x>0</x>
                       <y>0</y>
                       <width>834</width>
-                      <height>443</height>
+                      <height>438</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64">

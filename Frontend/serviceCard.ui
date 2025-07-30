@@ -6,14 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>322</height>
+    <width>895</width>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -27,16 +42,16 @@
        <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QFrame" name="upperFrame">
@@ -62,17 +77,11 @@
          <property name="leftMargin">
           <number>20</number>
          </property>
-         <property name="topMargin">
-          <number>20</number>
-         </property>
          <property name="rightMargin">
           <number>20</number>
          </property>
-         <property name="bottomMargin">
-          <number>20</number>
-         </property>
          <item>
-          <widget class="QLabel" name="seviceLabel">
+          <widget class="QLabel" name="serviceLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -123,78 +132,39 @@ color:rgb(39, 39, 39);</string>
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="seeNotesBtn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <widget class="QToolButton" name="OpenNoteBtn">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">#seeNotesBtn{
+            <string notr="true">QToolButton{
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
 	background-color:rgb(129, 191, 218);
 	border-radius:10px;
+	padding:10px;
+}
+QToolButton:hover{
+	background-color:rgb(117, 174, 198);
+
 }</string>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="text">
+            <string>Open Note</string>
            </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+           <property name="icon">
+            <iconset resource="resource.qrc">
+             <normaloff>:/Icons/Icons/downArrow.png</normaloff>:/Icons/Icons/downArrow.png</iconset>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="spacing">
-             <number>10</number>
-            </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-            <item alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="label_6">
-              <property name="styleSheet">
-               <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-              </property>
-              <property name="text">
-               <string>Open Note</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_7">
-              <property name="maximumSize">
-               <size>
-                <width>15</width>
-                <height>15</height>
-               </size>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="resource.qrc">:/Icons/Icons/downArrow.png</pixmap>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
           </widget>
          </item>
         </layout>
        </widget>
       </item>
-      <item alignment="Qt::AlignTop">
+      <item>
        <widget class="QFrame" name="lowerFrame">
         <property name="styleSheet">
          <string notr="true">#lowerFrame{
@@ -348,7 +318,7 @@ color:rgb(39, 39, 39);</string>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -364,7 +334,7 @@ color:rgb(39, 39, 39);</string>
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item alignment="Qt::AlignBottom">
+            <item>
              <widget class="QFrame" name="frame_6">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -447,72 +417,33 @@ color:rgb(39, 39, 39);</string>
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="closeNotesBt">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="QToolButton" name="closeNotesBtn">
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
               </property>
               <property name="styleSheet">
-               <string notr="true">#closeNotesBt{
+               <string notr="true">QToolButton{
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
 	background-color:rgb(129, 191, 218);
 	border-radius:10px;
+	padding:10px;
+}
+QToolButton:hover{
+	background-color:rgb(117, 174, 198);
+
 }</string>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+              <property name="text">
+               <string>Close Note</string>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
+              <property name="icon">
+               <iconset resource="resource.qrc">
+                <normaloff>:/Icons/Icons/upArrow.png</normaloff>:/Icons/Icons/upArrow.png</iconset>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_7">
-               <property name="spacing">
-                <number>10</number>
-               </property>
-               <property name="leftMargin">
-                <number>10</number>
-               </property>
-               <property name="topMargin">
-                <number>10</number>
-               </property>
-               <property name="rightMargin">
-                <number>10</number>
-               </property>
-               <property name="bottomMargin">
-                <number>10</number>
-               </property>
-               <item alignment="Qt::AlignHCenter">
-                <widget class="QLabel" name="label_8">
-                 <property name="styleSheet">
-                  <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                 </property>
-                 <property name="text">
-                  <string>Close Note</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_9">
-                 <property name="maximumSize">
-                  <size>
-                   <width>15</width>
-                   <height>15</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="resource.qrc">:/Icons/Icons/downArrow.png</pixmap>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
              </widget>
             </item>
            </layout>
