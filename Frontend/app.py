@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter
 from PyQt6 import uic
 from PyQt6.QtCore import Qt,QDate
 import resources_rc
@@ -21,8 +21,32 @@ class MainUI(QMainWindow):
 
         app.setStyleSheet(calendar_style)
         self.setStyleSheet(QframeStyle)
+
         self.ui_handler = UIHandler(self.provinceComboBox, self.cityComboBox, self.barangayComboBox)
         self.ui_handler.load_provinces()
+
+        self.provinceComboBox.lineEdit().setPlaceholderText("Select Province")
+        self.cityComboBox.lineEdit().setPlaceholderText("Select City")
+        self.barangayComboBox.lineEdit().setPlaceholderText("Select Barangay")
+        # type suggest
+        self.provinceComboBox.setEditable(True)
+        self.cityComboBox.setEditable(True)
+        self.barangayComboBox.setEditable(True)
+
+        self.provinceComboBox.setEditable(True)
+        self.provinceComboBox.lineEdit().setReadOnly(False)
+        self.cityComboBox.setEditable(True)
+        self.cityComboBox.lineEdit().setReadOnly(False)
+        self.barangayComboBox.setEditable(True)
+        self.barangayComboBox.lineEdit().setReadOnly(False)
+        for cb in [self.provinceComboBox, self.cityComboBox, self.barangayComboBox]:
+            cb.setEditable(True)
+            le = cb.lineEdit()
+            if le is not None:
+                le.setReadOnly(False)
+                le.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+
 
         # Set layout before loading patients
         self.patientListLayout = self.scrollAreaWidgetContents.layout()

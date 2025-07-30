@@ -591,7 +591,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>9</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1205,7 +1205,10 @@ color:rgb(39, 39, 39);</string>
 	padding-left: 10px;
 
 }
-
+QLineEdit{
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}
 QComboBox::drop-down {
     background-color: white;
     border: none;
@@ -1285,7 +1288,7 @@ QComboBox QLineEdit {
 }</string>
                    </property>
                    <property name="editable">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -1327,7 +1330,10 @@ color:rgb(39, 39, 39);</string>
 	padding-left: 10px;
 
 }
-
+QLineEdit{
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}
 QComboBox::drop-down {
     background-color: white;
     border: none;
@@ -1407,7 +1413,7 @@ QComboBox QLineEdit {
 }</string>
                    </property>
                    <property name="editable">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="currentIndex">
                     <number>-1</number>
@@ -1455,6 +1461,12 @@ color:rgb(39, 39, 39);</string>
 	padding-left: 10px;
 
 }
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; 
+    background: transparent;
+}
 
 QComboBox::drop-down {
     background-color: white;
@@ -1535,7 +1547,7 @@ QComboBox QLineEdit {
 }</string>
                    </property>
                    <property name="editable">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="sizeAdjustPolicy">
                     <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
@@ -1939,8 +1951,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>874</width>
+                <height>505</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2374,8 +2386,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>413</width>
-                    <height>543</height>
+                    <width>857</width>
+                    <height>606</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -4869,6 +4881,11 @@ color:rgb(39, 39, 39);</string>
 
 }
 
+QLineEdit{
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}
+
 QComboBox::drop-down {
     background-color: white;
     border: none;
@@ -4946,6 +4963,15 @@ QComboBox QLineEdit {
     border: none; /* optional para di mag mukhang double border */
     background: transparent;
 }</string>
+                       </property>
+                       <property name="editable">
+                        <bool>false</bool>
+                       </property>
+                       <property name="currentText">
+                        <string>Select Species</string>
+                       </property>
+                       <property name="currentIndex">
+                        <number>0</number>
                        </property>
                        <item>
                         <property name="text">

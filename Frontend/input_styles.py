@@ -236,3 +236,61 @@ QframeStyle = """
 QFrame {border:none;}
 """
 
+completer_popup_style = """
+QListView {
+    background-color: white;
+    selection-background-color: rgb(193, 193, 193);
+    selection-color: black;
+    font: 63 12pt "Montserrat SemiBold";
+    border: 1px solid rgb(209, 209, 209);
+    outline: none;
+}
+
+/* List items */
+QListView::item {
+    background-color: white;
+    color: black;
+    height: 25px;
+    font: 63 12pt "Montserrat SemiBold";
+}
+
+QListView::item:hover {
+    background-color: rgb(193, 193, 193);
+    color: black;
+}
+
+/* Scrollbar inside completer */
+QScrollBar:vertical {
+    background-color: transparent;
+    width: 10px;
+    border: none;
+}
+
+QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QScrollBar::groove:vertical {
+    background: transparent;
+    outline: none;
+    border: none;
+}
+
+QScrollBar, QScrollBar::handle, QScrollBar::groove {
+    outline: none;
+    border: none;
+}
+"""
