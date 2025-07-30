@@ -1939,8 +1939,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>866</width>
-                <height>487</height>
+                <width>150</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2374,8 +2374,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>845</width>
-                    <height>618</height>
+                    <width>413</width>
+                    <height>543</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3180,8 +3180,8 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>845</width>
-                    <height>551</height>
+                    <width>543</width>
+                    <height>477</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4431,7 +4431,7 @@ color:rgb(58, 58, 58);</string>
                     <x>0</x>
                     <y>0</y>
                     <width>401</width>
-                    <height>111</height>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -8091,8 +8091,8 @@ border:none</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>106</width>
-                       <height>55</height>
+                       <width>93</width>
+                       <height>51</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -9146,7 +9146,7 @@ color: #272727;</string>
                    </layout>
                   </widget>
                  </item>
-                 <item alignment="Qt::AlignTop">
+                 <item alignment="Qt::AlignRight|Qt::AlignTop">
                   <widget class="QFrame" name="frame_78">
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
@@ -9158,7 +9158,7 @@ color: #272727;</string>
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <item>
+                    <item alignment="Qt::AlignRight">
                      <widget class="QLineEdit" name="lineEdit_9">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -9188,9 +9188,12 @@ color: #272727;</string>
                       <property name="text">
                        <string/>
                       </property>
+                      <property name="placeholderText">
+                       <string>Search...</string>
+                      </property>
                      </widget>
                     </item>
-                    <item>
+                    <item alignment="Qt::AlignRight">
                      <widget class="QFrame" name="frame_79">
                       <property name="styleSheet">
                        <string notr="true">QFrame#frame_79{
@@ -9211,7 +9214,7 @@ border-bottom-right-radius:10px;
                         <number>0</number>
                        </property>
                        <property name="leftMargin">
-                        <number>0</number>
+                        <number>9</number>
                        </property>
                        <item>
                         <widget class="QLabel" name="label_172">
@@ -9265,9 +9268,9 @@ border-bottom-right-radius:10px;
                     <property name="geometry">
                      <rect>
                       <x>0</x>
-                      <y>-30</y>
-                      <width>797</width>
-                      <height>441</height>
+                      <y>0</y>
+                      <width>834</width>
+                      <height>443</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64">
