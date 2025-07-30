@@ -1,6 +1,6 @@
 from rest_framework import generics
-from .models import basicInfo,Pet
-from .serializers import BasicInfoSerializer, PetSerializer
+from .models import basicInfo,Pet,Service
+from .serializers import BasicInfoSerializer, PetSerializer,ServiceSerializer
 
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
@@ -25,3 +25,21 @@ class PetListCreateView(generics.ListCreateAPIView):
 class PetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pet.objects.all()
     serializer_class = PetSerializer
+
+
+class ServiceListCreateView(generics.ListCreateAPIView):
+    serializer_class = ServiceSerializer
+
+    def get_queryset(self):
+        pet_id = self.request.query_params.get('pet_id')
+        owner_id = self.request.query_params.get('owner_id')
+        queryset = Service.objects.all()
+        if pet_id:
+            queryset = queryset.filter(pet_id=pet_id)
+        if owner_id:
+            queryset = queryset.filter(owner_id=owner_id)
+        return queryset
+
+class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
