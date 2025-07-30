@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>725</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -591,7 +591,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1952,7 +1952,7 @@ border-bottom-right-radius:10px;
                 <x>0</x>
                 <y>0</y>
                 <width>874</width>
-                <height>505</height>
+                <height>500</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -3193,7 +3193,7 @@ font: 20px Montserrat;</string>
                     <x>0</x>
                     <y>0</y>
                     <width>543</width>
-                    <height>477</height>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -8426,7 +8426,7 @@ QComboBox QLineEdit {
                         <item>
                          <widget class="QFrame" name="frame_64">
                           <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
@@ -8443,6 +8443,9 @@ background-color: transparent;
                            <enum>QFrame::Raised</enum>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_55">
+                           <property name="spacing">
+                            <number>0</number>
+                           </property>
                            <property name="leftMargin">
                             <number>0</number>
                            </property>

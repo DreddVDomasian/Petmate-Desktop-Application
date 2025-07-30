@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter,QCalendarWidget
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate
+from PyQt6.QtCore import Qt,QDate,QPoint
 import resources_rc
 from PyQt6.QtGui import QFontDatabase, QFont, QPixmap, QIcon, QAction,QColor
 from uiLogic import UIHandler
@@ -19,7 +19,17 @@ class MainUI(QMainWindow):
         super(MainUI, self).__init__()
         uic.loadUi("Home.ui", self)
 
-        app.setStyleSheet(calendar_style)
+        # custom calendar picker
+        self.customCalendar = uic.loadUi("customCalendar.ui")
+        self.customCalendar.setParent(None)
+        self.customCalendar.setWindowFlags(Qt.WindowType.Popup)
+
+        self.calendarWidget = self.customCalendar.findChild(QCalendarWidget, "calendarWidget")
+        self.calendarWidget.clicked.connect(self.set_date_from_calendar)
+        self.calendarWidget.setSelectedDate(QDate.currentDate())
+
+
+
         self.setStyleSheet(QframeStyle)
 
         self.ui_handler = UIHandler(self.provinceComboBox, self.cityComboBox, self.barangayComboBox)
@@ -111,8 +121,14 @@ class MainUI(QMainWindow):
         self.serviceHistoryBtn.setChecked(True)
         self.serviceHistoryBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(0))
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
+
         # Set to current date
+        self.activeDateEdit = None
+        self.dateEdit.mousePressEvent = lambda event: self.show_custom_calendar(self.dateEdit)
+        self.returnDateEdit.mousePressEvent = lambda event: self.show_custom_calendar(self.returnDateEdit)
         self.dateEdit.setDate(QDate.currentDate())
+
+
         #return date optional
         self.returnDatePlaceholder.setReadOnly(True)
         self.returnDateEdit.hide()
@@ -155,6 +171,7 @@ class MainUI(QMainWindow):
 
 
 
+    # check/uncheck return date
     def toggle_return_date(self, checked):
         if checked:
             self.returnDateEdit.show()
@@ -171,7 +188,7 @@ class MainUI(QMainWindow):
         missing = []
 
         def apply_style(widget, error=False):
-            is_combobox = "QComboBox" in widget.__class__.__name__
+            is_combobox = isinstance(widget, QComboBox)
             if error:
                 if is_combobox:
                     widget.setStyleSheet(error_combobox_style)
@@ -183,11 +200,17 @@ class MainUI(QMainWindow):
                 else:
                     widget.setStyleSheet(default_style)
 
+        def is_valid_combobox_input(combo):
+            text = combo.currentText()
+            for i in range(combo.count()):
+                if combo.itemText(i).strip().lower() == text.strip().lower():
+                    return True
+            return False
+
         data = {}
         for name, widget in required_fields.items():
-            is_combobox = "QComboBox" in widget.__class__.__name__
-            if is_combobox:
-                if widget.currentIndex() == 0:
+            if isinstance(widget, QComboBox):
+                if widget.currentIndex() == 0 or not is_valid_combobox_input(widget):
                     apply_style(widget, error=True)
                     missing.append(name)
                 else:
@@ -475,6 +498,22 @@ class MainUI(QMainWindow):
         # Navigate to pet profile page (adjust index if needed)
         self.stackedWidget.setCurrentIndex(8)
 
+    def show_custom_calendar(self, dateEdit):
+        self.activeDateEdit = dateEdit
+        pos = dateEdit.mapToGlobal(QPoint(0, dateEdit.height()))
+        self.customCalendar.move(pos)
+
+        current_date = dateEdit.date()
+        self.calendarWidget.setSelectedDate(current_date)
+
+        self.customCalendar.show()
+        QApplication.processEvents()
+        self.calendarWidget.repaint()
+
+    def set_date_from_calendar(self, date):
+        if self.activeDateEdit:
+            self.activeDateEdit.setDate(date)
+        self.customCalendar.hide()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

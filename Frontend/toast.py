@@ -33,7 +33,7 @@ class Toast(QWidget):
         text_label.setStyleSheet("""
             QLabel {
                 color: black;
-                font: 63 12pt "Montserrat SemiBold";
+                font: 63 13pt "Montserrat SemiBold";
             }
         """)
         container_layout.addWidget(text_label)
@@ -46,7 +46,7 @@ class Toast(QWidget):
         # 🔹 Style only the inner container
         self.setStyleSheet("""
             QWidget#toastContainer {
-                background-color: white;
+                background-color: #C4C4C4;
                 border-radius: 15px;
                 border-bottom: 1px solid #cccccc;
                 border-right: 1px solid #cccccc;
@@ -72,7 +72,7 @@ class Toast(QWidget):
         self.raise_()
 
         self.slide_animation = QPropertyAnimation(self, b"pos")
-        self.slide_animation.setDuration(500)
+        self.slide_animation.setDuration(800)
         self.slide_animation.setStartValue(self.pos())
         self.slide_animation.setEndValue(QPoint(x, y))
         self.slide_animation.setEasingCurve(QEasingCurve.Type.OutBack)

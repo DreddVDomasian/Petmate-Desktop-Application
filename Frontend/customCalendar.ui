@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>416</width>
+    <height>304</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background:transparent;
+border:none;</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QCalendarWidget" name="calendarWidget">
+     <property name="styleSheet">
+      <string notr="true">QCalendarWidget {
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 8px;
+}
+
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+    background-color: rgb(129, 191, 218);
+    border: none;
+}
+
+QCalendarWidget QToolButton {
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    icon-size: 24px;
+    background-color: transparent;
+}
+
+QCalendarWidget QMenu {
+    background-color: white;
+}
+
+QCalendarWidget QSpinBox {
+    width: 70px;
+}
+
+QCalendarWidget QToolButton#qt_calendar_prevmonth {
+    qproperty-icon: url(:/Icons/Icons/left-arrow.png);
+}
+
+QCalendarWidget QToolButton#qt_calendar_nextmonth {
+    qproperty-icon: url(:/Icons/Icons/right-arrow.png);
+}
+
+QCalendarWidget QAbstractItemView:enabled {
+    font: 57 14pt &quot;Montserrat Medium&quot;;
+    color: black;
+    background-color: rgb(255, 255, 255); 
+}
+
+/* 🎯 add these: */
+QCalendarWidget QAbstractItemView::item:selected {
+    background-color: rgb(252, 213, 151);  /* selected cell bg */
+    color: black;               /* text when selected */
+    border-radius: 4px;
+}
+
+QCalendarWidget QAbstractItemView::item:hover {
+    background-color: rgba(252, 213, 151,0.4); /* hover effect */
+}
+</string>
+     </property>
+     <property name="gridVisible">
+      <bool>false</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QCalendarWidget::SingleSelection</enum>
+     </property>
+     <property name="verticalHeaderFormat">
+      <enum>QCalendarWidget::NoVerticalHeader</enum>
+     </property>
+     <property name="navigationBarVisible">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

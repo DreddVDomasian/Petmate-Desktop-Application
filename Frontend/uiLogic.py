@@ -45,6 +45,8 @@ class UIHandler:
         self.barangayComboBox.addItem("", None)
 
         if index == 0:
+            self.cityComboBox.setEnabled(False)
+            self.barangayComboBox.setEnabled(False)
             return
 
         prov_code = self.provinceComboBox.itemData(index)
@@ -58,11 +60,14 @@ class UIHandler:
         # update completer for cities
         self.set_dynamic_completer(self.cityComboBox)
 
+        self.cityComboBox.setEnabled(True)
+
     def on_city_selected(self, index):
         self.barangayComboBox.clear()
         self.barangayComboBox.addItem("", None)
 
         if index == 0:
+            self.barangayComboBox.setEnabled(False)
             return
 
         mun_code = self.cityComboBox.itemData(index)
@@ -75,3 +80,5 @@ class UIHandler:
 
         # update completer for barangays
         self.set_dynamic_completer(self.barangayComboBox)
+        self.barangayComboBox.setEnabled(True)
+

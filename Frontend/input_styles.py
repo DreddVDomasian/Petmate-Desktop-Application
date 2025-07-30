@@ -186,52 +186,6 @@ error_style = """
             }"""
 
 
-calendar_style = """
-QCalendarWidget {
-    background-color: white;
-    border: 1px solid gray;
-    border-radius: 8px;
-}
-
-QCalendarWidget QWidget#qt_calendar_navigationbar {
-    background-color: rgb(129, 191, 218);
-    border: none;
-}
-
-QCalendarWidget QToolButton {
-    font: 57 12pt "Montserrat Medium";
-    color: rgb(39, 39, 39);
-    icon-size: 24px;
-    background-color: transparent;
-}
-
-QCalendarWidget QMenu {
-    background-color: white;
-}
-
-QCalendarWidget QSpinBox {
-    width: 70px;
-}
-QCalendarWidget QAbstractItemView:enabled {
-    font: 57 14pt "Montserrat Medium";
-    color: black;
-    background-color: white;
-	selection-background-color: #86C5FF;
-    selection-color: black;
-}
-
-
-
-QCalendarWidget QToolButton#qt_calendar_prevmonth {
-    qproperty-icon: url(:/Icons/Icons/left-arrow.png);
-}
-
-QCalendarWidget QToolButton#qt_calendar_nextmonth {
-    qproperty-icon: url(:/Icons/Icons/right-arrow.png);
-}
-
-"""
-
 QframeStyle = """
 QFrame {border:none;}
 """
