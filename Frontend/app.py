@@ -560,7 +560,7 @@ class MainUI(QMainWindow):
             return
 
         self.patientToDelete = self.selected_patient_id
-        self.confirmCard.show()
+        self.confirmCard.show_card()
 
     def confirm_and_delete(self, patient_id):
         self.patientToDelete = patient_id
@@ -654,7 +654,6 @@ class MainUI(QMainWindow):
         if self.activeDateEdit:
             self.activeDateEdit.setDate(date)
         self.customCalendar.hide()
-
 
 
 

@@ -8,8 +8,10 @@ class ConfirmCard(QWidget):
         uic.loadUi("ConfirmDialog.ui", self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
-        # Optional: self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
+
+        if parent:
+            parent.installEventFilter(self)
     def show_card(self):
         if self.parent():
             parent_widget = self.parent()
@@ -28,3 +30,12 @@ class ConfirmCard(QWidget):
         anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         anim.start()
         self.anim = anim  # Keep reference para di ma-garbage collect
+
+    def eventFilter(self, obj, event):
+        if obj == self.parent() and event.type() == event.Type.Resize:
+            if self.isVisible():
+                # re-center
+                x = (obj.width() - self.width()) // 2
+                y = (obj.height() - self.height()) // 2
+                self.move(x, y)
+        return super().eventFilter(obj, event)

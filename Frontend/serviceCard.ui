@@ -65,6 +65,8 @@
          <string notr="true">#upperFrame{
 	border-radius:10px;
 	background-color:rgb(231, 231, 231);
+	border-bottom:2px solid rgb(206, 206, 206);
+	border-right:1px solid rgb(206, 206, 206);
 }</string>
         </property>
         <property name="frameShape">
@@ -140,13 +142,14 @@ color:rgb(39, 39, 39);</string>
             <string notr="true">QToolButton{
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
-	background-color:rgb(129, 191, 218);
+	background-color:rgb(252, 213, 151);
 	border-radius:10px;
+	border-bottom: 2px solid rgb(235, 198, 141);
+	border-right: 1px solid rgb(235, 198, 141);
 	padding:10px;
 }
 QToolButton:hover{
-	background-color:rgb(117, 174, 198);
-
+	background-color:rgb(252, 205, 127);
 }</string>
            </property>
            <property name="text">
@@ -170,13 +173,14 @@ QToolButton:hover{
             <string notr="true">QToolButton{
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
-	background-color:rgb(129, 191, 218);
+	background-color:rgb(252, 213, 151);
 	border-radius:10px;
+	border-bottom: 2px solid rgb(235, 198, 141);
+	border-right: 1px solid rgb(235, 198, 141);
 	padding:10px;
 }
 QToolButton:hover{
-	background-color:rgb(117, 174, 198);
-
+	background-color:rgb(252, 205, 127);
 }</string>
            </property>
            <property name="text">
@@ -201,6 +205,8 @@ QToolButton:hover{
 	border-bottom-left-radius:10px;
 	border-bottom-right-radius:10px;
 	background-color:rgb(231, 231, 231);
+	border-bottom:2px solid rgb(206, 206, 206);
+	border-right:1px solid rgb(206, 206, 206);
 }</string>
         </property>
         <property name="frameShape">

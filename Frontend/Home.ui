@@ -26,8 +26,8 @@
    <string>PETMATE INFORMATION SYSTEM</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/images/desktopIcon.png</normaloff>:/images/desktopIcon.png</iconset>
+   <iconset resource="resource.qrc">
+    <normaloff>:/images/image/desktopIcon.png</normaloff>:/images/image/desktopIcon.png</iconset>
   </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
@@ -568,7 +568,6 @@ QToolButton:hover{
       <property name="styleSheet">
        <string notr="true">#MainContent{
 	background-color:white;
-	border:none;
 	border-radius: 15px;
 }</string>
       </property>
@@ -591,7 +590,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>9</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -7961,7 +7960,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8107,10 +8106,13 @@ border-bottom-right-radius:10px;
                   <item>
                    <widget class="QFrame" name="serviceTableHeader">
                     <property name="styleSheet">
-                     <string notr="true">QFrame{
+                     <string notr="true">#serviceTableHeader{
+	background-color:rgb(129, 191, 218);
+	border-bottom:2px solid rgb(115, 170, 194);
+}
+QFrame{
 	color: rgb(48, 48, 48);
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
-	background-color:rgb(129, 191, 218);
 }</string>
                     </property>
                     <property name="frameShape">
@@ -9403,8 +9405,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>834</width>
-                      <height>438</height>
+                      <width>494</width>
+                      <height>408</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64">

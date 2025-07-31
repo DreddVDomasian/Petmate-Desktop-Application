@@ -260,6 +260,8 @@ upper_Frame_Noborrad = """
     #upperFrame{
     	border-top-left-radius:10px;
     	border-top-right-radius:10px;
+    	border:none;
+    	border-right:1px solid rgb(206, 206, 206);
         background-color:rgb(231, 231, 231);
     }
 
