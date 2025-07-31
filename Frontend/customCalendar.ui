@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
-    <height>304</height>
+    <width>390</width>
+    <height>306</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -50,18 +56,30 @@ QCalendarWidget QWidget#qt_calendar_navigationbar {
 QCalendarWidget QToolButton {
     font: 57 12pt &quot;Montserrat Medium&quot;;
     color: rgb(39, 39, 39);
-    icon-size: 24px;
+    icon-size: 16px;
     background-color: transparent;
+	padding:6px;
 }
 
 QCalendarWidget QMenu {
+    font: 57 10pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
     background-color: white;
 }
 
 QCalendarWidget QSpinBox {
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
     width: 70px;
 }
-
+QSpinBox::up-button {
+	image: url(:/Icons/Icons/upArrow.png);
+	width:13px;
+}
+QSpinBox::down-button {
+	image: url(:/Icons/Icons/downArrow.png);
+	width:13px;
+}
 QCalendarWidget QToolButton#qt_calendar_prevmonth {
     qproperty-icon: url(:/Icons/Icons/left-arrow.png);
 }
@@ -76,15 +94,15 @@ QCalendarWidget QAbstractItemView:enabled {
     background-color: rgb(255, 255, 255); 
 }
 
-/* 🎯 add these: */
+
 QCalendarWidget QAbstractItemView::item:selected {
-    background-color: rgb(252, 213, 151);  /* selected cell bg */
-    color: black;               /* text when selected */
+    background-color: rgb(252, 213, 151);
+    color: black;              
     border-radius: 4px;
 }
 
 QCalendarWidget QAbstractItemView::item:hover {
-    background-color: rgba(252, 213, 151,0.4); /* hover effect */
+    background-color: rgba(252, 213, 151,0.4);
 }
 </string>
      </property>

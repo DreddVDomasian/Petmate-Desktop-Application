@@ -9,6 +9,7 @@ from toast import Toast
 from Backend.api_client import add_new_patient, add_new_pet, add_new_service
 from confirm_card import ConfirmCard
 from functools import partial
+from datetime import datetime
 import requests
 import os
 import sys
@@ -492,19 +493,19 @@ class MainUI(QMainWindow):
 
             # Always cast to str to avoid None crashing
             service_type = str(service.get("service_type", "N/A"))
-            done_on = str(service.get("date", "N/A"))
-            return_date = service.get("return_date")  # can be None
+            done_on = self.format_date(service.get("date")) or "N/A"
+            return_date = self.format_date(service.get("return_date"))
             notes = str(service.get("notes"))
-
             # Fill data
             service_card.findChild(QLabel, "serviceLabel").setText(service_type)
             service_card.findChild(QLabel, "doneOnLabel").setText(done_on)
             return_label = service_card.findChild(QLabel, "returnDateLabel")
-            return_label.setText(f"{return_date}" if return_date else "None")
+            return_label.setText(f"{return_date}" if return_date else "       None")
 
             note_label = service_card.findChild(QLabel, "noteLabel")
-            note_label.setText(f"{notes}" if return_date else "No Notes")
+            note_label.setText(f"{notes}" if notes else "No Notes")
 
+            upper_frame = service_card.findChild(QWidget, "upperFrame")
             lower_frame = service_card.findChild(QWidget, "lowerFrame")
             lower_frame.setVisible(False)
 
@@ -517,15 +518,31 @@ class MainUI(QMainWindow):
                 open_btn.setVisible(True)
                 close_btn.setVisible(False)
 
-                open_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, True))
-                close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False))
+                open_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, True,upper_frame))
+                close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False,upper_frame))
 
             self.serviceListLayout.addWidget(service_card)
 
-    def toggle_note(self, frame, open_btn, close_btn, show):
+    def format_date(self, raw):
+        if raw:
+            try:
+                dt = datetime.strptime(raw, "%Y-%m-%d")
+                return f"{dt.strftime('%b')} {dt.day}, {dt.year}"
+            except Exception:
+                return raw
+        return None
+
+    def toggle_note(self, frame, open_btn, close_btn, show, upper_frame=None):
         frame.setVisible(show)
         open_btn.setVisible(not show)
         close_btn.setVisible(show)
+        if upper_frame:
+            if show:
+                # remove bottom radius para magmukhang dikit sa lower_frame
+                upper_frame.setStyleSheet(upper_Frame_Noborrad)
+            else:
+                # ibalik original radius
+                upper_frame.setStyleSheet(upper_Frame_borrad)
 
     def delete_patient(self, patient_id):
         response = requests.delete(f"http://127.0.0.1:8000/api/patients/{patient_id}/")
@@ -637,6 +654,7 @@ class MainUI(QMainWindow):
         if self.activeDateEdit:
             self.activeDateEdit.setDate(date)
         self.customCalendar.hide()
+
 
 
 

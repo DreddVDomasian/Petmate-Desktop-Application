@@ -248,3 +248,19 @@ QScrollBar, QScrollBar::handle, QScrollBar::groove {
     border: none;
 }
 """
+
+upper_Frame_borrad = """
+    	#upperFrame{
+        border-radius:10px;
+        background-color:rgb(231, 231, 231);
+    }
+"""
+
+upper_Frame_Noborrad = """
+    #upperFrame{
+    	border-top-left-radius:10px;
+    	border-top-right-radius:10px;
+        background-color:rgb(231, 231, 231);
+    }
+
+"""
