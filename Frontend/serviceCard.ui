@@ -161,6 +161,36 @@ QToolButton:hover{
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QToolButton" name="closeNotesBtn">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton{
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	background-color:rgb(129, 191, 218);
+	border-radius:10px;
+	padding:10px;
+}
+QToolButton:hover{
+	background-color:rgb(117, 174, 198);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>Close Note</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resource.qrc">
+             <normaloff>:/Icons/Icons/upArrow.png</normaloff>:/Icons/Icons/upArrow.png</iconset>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -414,36 +444,6 @@ color:rgb(39, 39, 39);</string>
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="closeNotesBtn">
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton{
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	background-color:rgb(129, 191, 218);
-	border-radius:10px;
-	padding:10px;
-}
-QToolButton:hover{
-	background-color:rgb(117, 174, 198);
-
-}</string>
-              </property>
-              <property name="text">
-               <string>Close Note</string>
-              </property>
-              <property name="icon">
-               <iconset resource="resource.qrc">
-                <normaloff>:/Icons/Icons/upArrow.png</normaloff>:/Icons/Icons/upArrow.png</iconset>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextBesideIcon</enum>
-              </property>
              </widget>
             </item>
            </layout>

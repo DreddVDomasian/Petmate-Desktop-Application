@@ -1951,8 +1951,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>874</width>
-                <height>500</height>
+                <width>150</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2386,7 +2386,7 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>857</width>
+                    <width>413</width>
                     <height>606</height>
                    </rect>
                   </property>
@@ -4377,7 +4377,7 @@ color:rgb(58, 58, 58);</string>
            <item>
             <widget class="QStackedWidget" name="profileStackedWidget">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="petCardsPage">
               <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4442,8 +4442,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>401</width>
-                    <height>109</height>
+                    <width>812</width>
+                    <height>417</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -7561,15 +7561,6 @@ QPushButton:hover{
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_51">
-              <property name="leftMargin">
-               <number>40</number>
-              </property>
-              <property name="topMargin">
-               <number>30</number>
-              </property>
-              <property name="rightMargin">
-               <number>40</number>
-              </property>
               <item>
                <widget class="QFrame" name="petProfileCard">
                 <property name="styleSheet">
@@ -8004,6 +7995,15 @@ QPushButton:checked {
                      <property name="sizeConstraint">
                       <enum>QLayout::SetDefaultConstraint</enum>
                      </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
                      <item alignment="Qt::AlignRight">
                       <widget class="QLineEdit" name="searchBar_3">
                        <property name="sizePolicy">
@@ -8105,6 +8105,92 @@ border-bottom-right-radius:10px;
                    </widget>
                   </item>
                   <item>
+                   <widget class="QFrame" name="serviceTableHeader">
+                    <property name="styleSheet">
+                     <string notr="true">QFrame{
+	color: rgb(48, 48, 48);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+	background-color:rgb(129, 191, 218);
+}</string>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_74">
+                     <property name="leftMargin">
+                      <number>20</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>20</number>
+                     </property>
+                     <item>
+                      <widget class="QLabel" name="label_157">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true"/>
+                       </property>
+                       <property name="text">
+                        <string>Service</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_158">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true"/>
+                       </property>
+                       <property name="text">
+                        <string>Done On</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_159">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Return Date</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_160">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">color:rgba(63, 63, 63, 0);</string>
+                       </property>
+                       <property name="text">
+                        <string>Open Notes ey ho</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QScrollArea" name="serviceHistoryScrollArea">
                     <property name="styleSheet">
                      <string notr="true">background:transparent;
@@ -8118,11 +8204,23 @@ border:none</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>810</width>
-                       <height>319</height>
+                       <width>872</width>
+                       <height>307</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
                       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
                        <widget class="QLabel" name="label_138">
                         <property name="styleSheet">

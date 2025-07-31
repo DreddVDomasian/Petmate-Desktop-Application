@@ -349,6 +349,9 @@ class MainUI(QMainWindow):
             toast = Toast(self, "Service added!", icon_path="Icons/check.png")
             toast.show_toast()
 
+            self.serviceHistoryBtn.setChecked(True)
+            self.serviceHistoryStackedWidget.setCurrentIndex(0)
+            self.load_services_for_pet(self.selected_pet_id)
             # Clear fields or reset
             self.serviceTypeComboBox.setCurrentIndex(0)
             self.dateEdit.setDate(QDate.currentDate())
@@ -358,7 +361,7 @@ class MainUI(QMainWindow):
             self.returnDateEdit.hide()
             self.returnDatePlaceholder.show()
 
-            # (optional) refresh service history
+
         else:
             toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
             toast.show_toast()
@@ -380,6 +383,7 @@ class MainUI(QMainWindow):
         response = requests.get("http://127.0.0.1:8000/api/patients/")
         if response.status_code == 200:
             patients = response.json()
+
         else:
             patients = []
 
@@ -388,6 +392,14 @@ class MainUI(QMainWindow):
             child = self.patientListLayout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
+
+        if not patients:
+            empty_label = QLabel("NO PATIENTS")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+            self.patientListLayout.addStretch()
+            self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self.patientListLayout.addStretch()
+            return
 
         for patient in patients:
             card = uic.loadUi("PatientCard.ui")
@@ -454,6 +466,9 @@ class MainUI(QMainWindow):
         response = requests.get(f"http://127.0.0.1:8000/api/services/?pet_id={pet_id}")
         services = response.json() if response.status_code == 200 else []
 
+        header = self.findChild(QWidget, "serviceTableHeader")
+
+
         # Clear existing service cards
         while self.serviceListLayout.count():
             item = self.serviceListLayout.takeAt(0)
@@ -461,37 +476,56 @@ class MainUI(QMainWindow):
                 item.widget().deleteLater()
 
         if not services:
+            header.setVisible(False)
             empty_label = QLabel("EMPTY")
             empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+            self.serviceListLayout.addStretch()
             self.serviceListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self.serviceListLayout.addStretch()
             return
+
+        else:
+            header.setVisible(True)
 
         for service in services:
             service_card = uic.loadUi("serviceCard.ui")
 
-            # Fill service data
-            service_card.findChild(QLabel, "serviceLabel").setText(service["service_type"])
-            service_card.findChild(QLabel, "doneOnLabel").setText(f"Done on: {service['done_on']}")
-            return_date = service.get("return_date")
+            # Always cast to str to avoid None crashing
+            service_type = str(service.get("service_type", "N/A"))
+            done_on = str(service.get("date", "N/A"))
+            return_date = service.get("return_date")  # can be None
+            notes = str(service.get("notes"))
+
+            # Fill data
+            service_card.findChild(QLabel, "serviceLabel").setText(service_type)
+            service_card.findChild(QLabel, "doneOnLabel").setText(done_on)
             return_label = service_card.findChild(QLabel, "returnDateLabel")
-            return_label.setText(f"Return: {return_date}" if return_date else "No return date")
+            return_label.setText(f"{return_date}" if return_date else "None")
 
             note_label = service_card.findChild(QLabel, "noteLabel")
-            note_label.setText(service["notes"])
+            note_label.setText(f"{notes}" if return_date else "No Notes")
 
             lower_frame = service_card.findChild(QWidget, "lowerFrame")
             lower_frame.setVisible(False)
 
+            # Find buttons safely
             open_btn = service_card.findChild(QToolButton, "OpenNoteBtn")
             close_btn = service_card.findChild(QToolButton, "closeNotesBtn")
 
-            # Use lambda with 'checked' arg para di mag-crash
-            if open_btn and lower_frame:
-                open_btn.clicked.connect(lambda checked, f=lower_frame: f.setVisible(True))
-            if close_btn and lower_frame:
-                close_btn.clicked.connect(lambda checked, f=lower_frame: f.setVisible(False))
+            # Connect buttons safely
+            if open_btn and close_btn and lower_frame:
+                open_btn.setVisible(True)
+                close_btn.setVisible(False)
+
+                open_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, True))
+                close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False))
 
             self.serviceListLayout.addWidget(service_card)
+
+    def toggle_note(self, frame, open_btn, close_btn, show):
+        frame.setVisible(show)
+        open_btn.setVisible(not show)
+        close_btn.setVisible(show)
 
     def delete_patient(self, patient_id):
         response = requests.delete(f"http://127.0.0.1:8000/api/patients/{patient_id}/")
@@ -604,14 +638,8 @@ class MainUI(QMainWindow):
             self.activeDateEdit.setDate(date)
         self.customCalendar.hide()
 
-    def make_toggle_func(self, frame, visible):
-        def handler(event):
-            frame.setVisible(visible)
 
-        return handler
 
-    def toggle_note_frame(self, frame, visible):
-        frame.setVisible(visible)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
