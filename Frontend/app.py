@@ -395,7 +395,7 @@ class MainUI(QMainWindow):
                 child.widget().deleteLater()
 
         if not patients:
-            empty_label = QLabel("NO PATIENTS")
+            empty_label = QLabel("NO RECORDS")
             empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
             self.patientListLayout.addStretch()
             self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
