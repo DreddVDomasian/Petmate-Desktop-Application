@@ -10,6 +10,7 @@ from Backend.api_client import add_new_patient, add_new_pet, add_new_service
 from confirm_card import ConfirmCard
 from functools import partial
 from datetime import datetime
+from shadowEffects import *
 import requests
 import os
 import sys
@@ -33,8 +34,12 @@ class MainUI(QMainWindow):
         # Initial page and data
         self.selected_patient_id = None
         self.stackedWidget.setCurrentIndex(0)
+        self.set_current_month_in_combobox()
         self.load_patients()
         self.load_scheduled_services()
+        self.setup_shadow()
+
+        self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -161,6 +166,17 @@ class MainUI(QMainWindow):
             btn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(1))
         self.addPetButton.mousePressEvent = lambda event: self.profileStackedWidget.setCurrentIndex(1)
 
+    def setup_shadow(self):
+        shadow = create_card_shadow()
+        self.ProfileCard.setGraphicsEffect(shadow)
+
+    def set_current_month_in_combobox(self):
+        current_month = datetime.now().strftime("%B")
+        index = self.monthComboBox.findText(current_month)
+        if index >= 0:
+            self.monthComboBox.setCurrentIndex(index)
+
+
     # check/uncheck return date
     def toggle_return_date(self, checked):
         if checked:
@@ -176,6 +192,7 @@ class MainUI(QMainWindow):
             self.returnDatePlaceholder.show()
 
     def navigate_to_page(self, index):
+        self.set_current_month_in_combobox()
         self.stackedWidget.setCurrentIndex(index)
 
     def collect_and_validate_fields(self, required_fields):
@@ -438,39 +455,9 @@ class MainUI(QMainWindow):
 
             card.mousePressEvent = make_handler(patient, self)
 
+            shadow = create_card_shadow()
+            card.setGraphicsEffect(shadow)
             self.patientListLayout.insertWidget(0, card)
-
-
-    def load_scheduled_services(self):
-        response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
-        if response.status_code == 200:
-            scheduled_services = response.json()
-        else:
-            scheduled_services = []
-
-        while self.scheduled_serviceLayout.count():
-            child = self.scheduled_serviceLayout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
-        if not scheduled_services:
-            empty_label = QLabel("EMPTY")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
-            self.scheduled_serviceLayout.addStretch()
-            self.scheduled_serviceLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-            self.scheduled_serviceLayout.addStretch()
-            return
-
-        for scheduled_service in scheduled_services:
-            card = uic.loadUi("schedCard.ui")
-            card.ReturnNameLabel.setText(scheduled_service['owner_full_name'])
-            card.ReturnServiceLabel.setText(scheduled_service['service_type'])
-            return_date = self.format_date(scheduled_service.get("return_date"))
-            card.ReturnDateCardLabel.setText(return_date)
-
-            self.scheduled_serviceLayout.insertWidget(0, card)
-
-
 
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")
@@ -507,6 +494,8 @@ class MainUI(QMainWindow):
             pet_card.petCardIcon.setScaledContents(True)
 
             pet_card.mousePressEvent = lambda event, p=pet: self.show_pet_profile(p)
+            shadow = create_card_shadow()
+            pet_card.setGraphicsEffect(shadow)
 
             self.gridLayout_6.addWidget(pet_card, row, col)
             col += 1
@@ -573,6 +562,57 @@ class MainUI(QMainWindow):
                 close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False,upper_frame))
 
             self.serviceListLayout.addWidget(service_card)
+
+    def load_scheduled_services(self):
+        response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
+        if response.status_code == 200:
+            scheduled_services = response.json()
+        else:
+            scheduled_services = []
+
+        # get selected month from combobox
+        selected_month = self.monthComboBox.currentText()  # e.g., 'August'
+
+        # filter by return_date month
+        filtered_services = []
+        for service in scheduled_services:
+            return_date_str = service.get("return_date")  # e.g., '2025-08-05'
+            if return_date_str:
+                try:
+                    date_obj = datetime.strptime(return_date_str, "%Y-%m-%d")
+                    month_name = date_obj.strftime("%B")  # 'August'
+                    if month_name == selected_month:
+                        filtered_services.append(service)
+                except ValueError:
+                    pass  # skip invalid date
+
+        # clear old cards
+        while self.scheduled_serviceLayout.count():
+            child = self.scheduled_serviceLayout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        # show empty message if no records
+        if not filtered_services:
+            empty_label = QLabel("EMPTY")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+            self.scheduled_serviceLayout.addStretch()
+            self.scheduled_serviceLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self.scheduled_serviceLayout.addStretch()
+            return
+
+        # create cards
+        for service in filtered_services:
+            card = uic.loadUi("schedCard.ui")
+            card.ReturnNameLabel.setText(service['owner_full_name'])
+            card.ReturnServiceLabel.setText(service['service_type'])
+            return_date = self.format_date(service.get("return_date"))
+            card.ReturnDateCardLabel.setText(return_date)
+
+            shadow = create_card_shadow()
+            card.setGraphicsEffect(shadow)
+
+            self.scheduled_serviceLayout.insertWidget(0, card)
 
     def format_date(self, raw):
         if raw:

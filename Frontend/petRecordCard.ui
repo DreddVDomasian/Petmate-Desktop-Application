@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
+    <width>419</width>
     <height>100</height>
    </rect>
   </property>
@@ -14,13 +14,13 @@
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
     <number>0</number>
    </property>
    <property name="bottomMargin">
@@ -44,9 +44,7 @@
       <string notr="true">#petRecordCard{
 	border-radius:15px;
 	background-color:rgb(244, 244, 244);
-	border-bottom:1.5px solid rgb(184, 184, 184);
-	border-right:1.5px solid rgb(184, 184, 184);
-	border-left:1px solid rgb(198, 198, 198);
+
 }
 #petRecordCard:hover{
 	background-color:rgb(226, 226, 226);

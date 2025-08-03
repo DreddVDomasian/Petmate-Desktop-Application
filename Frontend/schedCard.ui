@@ -59,8 +59,7 @@
       <string notr="true">#SchedCard{
 	border-radius:10px;
 	background-color:rgb(231, 231, 231);
-	border-bottom:1px solid rgb(185, 185, 185);
-	border-right:1px solid rgb(185, 185, 185);
+
 }
 #SchedCard:hover{
 	background-color:rgb(179, 179, 179);

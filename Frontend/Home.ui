@@ -631,7 +631,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2394,7 +2394,7 @@ border-bottom-right-radius:10px;
            <item>
             <widget class="QStackedWidget" name="walkInOrWeb">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="walkIn">
               <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -4211,7 +4211,7 @@ color:rgb(39, 39, 39);
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_75">
                     <item>
-                     <widget class="QComboBox" name="comboBox">
+                     <widget class="QComboBox" name="monthComboBox">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                         <horstretch>0</horstretch>
@@ -4314,11 +4314,69 @@ QComboBox QLineEdit {
 }</string>
                       </property>
                       <property name="currentText">
-                       <string>Monthly</string>
+                       <string>January</string>
+                      </property>
+                      <property name="maxVisibleItems">
+                       <number>12</number>
                       </property>
                       <item>
                        <property name="text">
-                        <string>Monthly</string>
+                        <string>January</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>February</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>March</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>April</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>May</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>June</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>July</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>August</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>September</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>October</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>November</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>December</string>
                        </property>
                       </item>
                      </widget>
@@ -4428,11 +4486,16 @@ QComboBox QLineEdit {
 color: #272727;</string>
                       </property>
                       <property name="currentText">
-                       <string>Weekly/Daily</string>
+                       <string>Today</string>
                       </property>
                       <item>
                        <property name="text">
-                        <string>Weekly/Daily</string>
+                        <string>Today</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>This Week</string>
                        </property>
                       </item>
                      </widget>
@@ -4599,14 +4662,17 @@ border-bottom-right-radius:10px;
            <string notr="true">background:transparent;</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
-           <property name="leftMargin">
-            <number>40</number>
+           <property name="spacing">
+            <number>15</number>
            </property>
-           <property name="topMargin">
+           <property name="leftMargin">
             <number>30</number>
            </property>
+           <property name="topMargin">
+            <number>20</number>
+           </property>
            <property name="rightMargin">
-            <number>40</number>
+            <number>30</number>
            </property>
            <item>
             <widget class="QFrame" name="ProfileCard">
@@ -4614,9 +4680,7 @@ border-bottom-right-radius:10px;
               <string notr="true">#ProfileCard{
 	border-radius:10px;
 	background-color:rgb(244, 244, 244);
-	border-bottom:1.5px solid rgb(184, 184, 184);
-	border-right:1.5px solid rgb(184, 184, 184);
-	border-left:1px solid rgb(198, 198, 198);
+
 
 }</string>
              </property>
@@ -4943,8 +5007,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>812</width>
-                    <height>418</height>
+                    <width>832</width>
+                    <height>421</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
