@@ -34,6 +34,7 @@ class MainUI(QMainWindow):
         self.selected_patient_id = None
         self.stackedWidget.setCurrentIndex(0)
         self.load_patients()
+        self.load_scheduled_services()
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -69,6 +70,10 @@ class MainUI(QMainWindow):
         # pet cards grid layout
         self.gridLayout_6.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.gridLayout_6.addWidget(self.addPetButton, 0, 0)  # fixed add pet button
+        #scheduled services
+        self.scheduled_serviceLayout = self.scheduledReturnScrollPage.layout()
+        self.scheduled_serviceLayout.setSpacing(10)
+        self.scheduled_serviceLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
     def setup_buttons(self):
         # page navigation
@@ -76,8 +81,14 @@ class MainUI(QMainWindow):
             (self.homeBtn, 0), (self.addPatientBtn, 1), (self.petRecordsBtn, 2),
             (self.appointmentBtn, 3), (self.schedVaxBtn, 4)
         ]
+        self.navBtnGroup = QButtonGroup(self)
+        self.navBtnGroup.setExclusive(True)
         for btn, index in nav:
+            btn.setCheckable(True)
+            self.navBtnGroup.addButton(btn)
             btn.clicked.connect(lambda _, i=index: self.navigate_to_page(i))
+
+        self.homeBtn.setChecked(True)
 
         # send data
         self.confirmButton.clicked.connect(self.submit_data)
@@ -95,8 +106,15 @@ class MainUI(QMainWindow):
         self.walkInBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(True))
         self.websiteBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(False))
         self.walkInOrWeb.setCurrentIndex(0)
+        self.sourceBtnGroup = QButtonGroup(self)
+        self.sourceBtnGroup.setExclusive(True)
+        for btn in [self.walkInBtn, self.websiteBtn]:
+            self.sourceBtnGroup.addButton(btn)
+        self.walkInBtn.setChecked(True)
         self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
         self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
+
+
 
         # back buttons
         self.profileBackbutton.clicked.connect(lambda: self.navigate_to_page(2))
@@ -112,7 +130,7 @@ class MainUI(QMainWindow):
         self.serviceHistoryStackedWidget.setCurrentIndex(0)
         self.sourceBtnGroup = QButtonGroup(self)
         self.sourceBtnGroup.setExclusive(True)
-        for btn in [self.walkInBtn, self.websiteBtn, self.addNewServiceBtn, self.serviceHistoryBtn]:
+        for btn in [self.addNewServiceBtn, self.serviceHistoryBtn]:
             self.sourceBtnGroup.addButton(btn)
         self.serviceHistoryBtn.setChecked(True)
         self.serviceHistoryBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(0))
@@ -353,6 +371,7 @@ class MainUI(QMainWindow):
             self.serviceHistoryBtn.setChecked(True)
             self.serviceHistoryStackedWidget.setCurrentIndex(0)
             self.load_services_for_pet(self.selected_pet_id)
+            self.load_scheduled_services()
             # Clear fields or reset
             self.serviceTypeComboBox.setCurrentIndex(0)
             self.dateEdit.setDate(QDate.currentDate())
@@ -420,6 +439,38 @@ class MainUI(QMainWindow):
             card.mousePressEvent = make_handler(patient, self)
 
             self.patientListLayout.insertWidget(0, card)
+
+
+    def load_scheduled_services(self):
+        response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
+        if response.status_code == 200:
+            scheduled_services = response.json()
+        else:
+            scheduled_services = []
+
+        while self.scheduled_serviceLayout.count():
+            child = self.scheduled_serviceLayout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        if not scheduled_services:
+            empty_label = QLabel("EMPTY")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+            self.scheduled_serviceLayout.addStretch()
+            self.scheduled_serviceLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self.scheduled_serviceLayout.addStretch()
+            return
+
+        for scheduled_service in scheduled_services:
+            card = uic.loadUi("schedCard.ui")
+            card.ReturnNameLabel.setText(scheduled_service['owner_full_name'])
+            card.ReturnServiceLabel.setText(scheduled_service['service_type'])
+            return_date = self.format_date(scheduled_service.get("return_date"))
+            card.ReturnDateCardLabel.setText(return_date)
+
+            self.scheduled_serviceLayout.insertWidget(0, card)
+
+
 
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")

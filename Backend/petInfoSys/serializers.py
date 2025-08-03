@@ -12,6 +12,11 @@ class PetSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ServiceSerializer(serializers.ModelSerializer):
+    owner_full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Service
         fields = '__all__'
+
+    def get_owner_full_name(self, obj):
+        return f"{obj.owner.firstName} {obj.owner.lastName}"

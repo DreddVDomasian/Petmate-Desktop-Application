@@ -43,3 +43,17 @@ class ServiceListCreateView(generics.ListCreateAPIView):
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+
+
+class ScheduledServiceListView(generics.ListAPIView):
+    serializer_class = ServiceSerializer
+
+    def get_queryset(self):
+        pet_id = self.request.query_params.get('pet_id')
+        owner_id = self.request.query_params.get('owner_id')
+        queryset = Service.objects.filter(return_date__isnull=False)
+        if pet_id:
+            queryset = queryset.filter(pet_id=pet_id)
+        if owner_id:
+            queryset = queryset.filter(owner_id=owner_id)
+        return queryset
