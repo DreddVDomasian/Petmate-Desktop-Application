@@ -60,16 +60,16 @@
      <number>20</number>
     </property>
     <property name="leftMargin">
-     <number>20</number>
+     <number>15</number>
     </property>
     <property name="topMargin">
-     <number>20</number>
+     <number>15</number>
     </property>
     <property name="rightMargin">
-     <number>20</number>
+     <number>15</number>
     </property>
     <property name="bottomMargin">
-     <number>20</number>
+     <number>15</number>
     </property>
     <item>
      <widget class="QFrame" name="sideNav">
@@ -1950,8 +1950,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>864</width>
-                <height>490</height>
+                <width>150</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2385,8 +2385,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>847</width>
-                    <height>606</height>
+                    <width>368</width>
+                    <height>525</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3192,7 +3192,7 @@ font: 20px Montserrat;</string>
                     <x>0</x>
                     <y>0</y>
                     <width>543</width>
-                    <height>540</height>
+                    <height>486</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4441,8 +4441,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>802</width>
-                    <height>407</height>
+                    <width>401</width>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -8206,8 +8206,8 @@ border:none</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>862</width>
-                       <height>297</height>
+                       <width>83</width>
+                       <height>33</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -9405,8 +9405,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>824</width>
-                      <height>428</height>
+                      <width>444</width>
+                      <height>354</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64">

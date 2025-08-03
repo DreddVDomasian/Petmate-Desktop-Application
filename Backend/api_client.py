@@ -48,7 +48,7 @@ def get_all_patients():
         print("Error:", e)
         return []
 
-    
+
 def add_new_service(data):
     """
     data: dict with service info
