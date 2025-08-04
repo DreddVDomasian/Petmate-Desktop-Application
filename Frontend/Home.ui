@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>721</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -82,12 +82,6 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>320</width>
-        <height>0</height>
-       </size>
-      </property>
       <property name="styleSheet">
        <string notr="true">#sideNav{
 	background-color:white;
@@ -99,8 +93,14 @@
        <enum>QFrame::NoFrame</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>15</number>
+       </property>
        <property name="topMargin">
         <number>29</number>
+       </property>
+       <property name="rightMargin">
+        <number>15</number>
        </property>
        <property name="bottomMargin">
         <number>29</number>
@@ -144,18 +144,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>260</width>
-           <height>260</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>260</width>
-           <height>260</height>
-          </size>
-         </property>
          <property name="styleSheet">
           <string notr="true">QFrame{
 	background-color:transparent;
@@ -166,19 +154,19 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
-           <number>0</number>
+           <number>10</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="rightMargin">
            <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>0</number>
+           <number>5</number>
           </property>
           <item>
            <widget class="QToolButton" name="homeBtn">
@@ -215,7 +203,7 @@ QToolButton:checked{
 }</string>
             </property>
             <property name="text">
-             <string>HOME</string>
+             <string>   HOME</string>
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
@@ -276,7 +264,7 @@ QToolButton:checked{
 }</string>
             </property>
             <property name="text">
-             <string>ADD PATIENT</string>
+             <string>   ADD PATIENT</string>
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
@@ -337,7 +325,7 @@ QToolButton:checked{
 }</string>
             </property>
             <property name="text">
-             <string>RECORDS</string>
+             <string>   RECORDS</string>
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
@@ -398,7 +386,7 @@ QToolButton:checked{
 }</string>
             </property>
             <property name="text">
-             <string>APPOINTMENT</string>
+             <string>   APPOINTMENT</string>
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
@@ -459,7 +447,7 @@ QToolButton:checked{
 }</string>
             </property>
             <property name="text">
-             <string>SCHEDULED RETURNS</string>
+             <string>   SCHEDULED RETURNS</string>
             </property>
             <property name="icon">
              <iconset resource="resource.qrc">
@@ -487,19 +475,6 @@ QToolButton:checked{
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item alignment="Qt::AlignHCenter">
         <widget class="QLabel" name="label">
@@ -537,19 +512,6 @@ QToolButton:checked{
           <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item alignment="Qt::AlignHCenter">
         <widget class="QToolButton" name="toolButton">
@@ -631,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1991,8 +1953,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>874</width>
-                <height>501</height>
+                <width>904</width>
+                <height>500</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2425,8 +2387,8 @@ border-bottom-right-radius:10px;
                   <property name="geometry">
                    <rect>
                     <x>0</x>
-                    <y>-8</y>
-                    <width>857</width>
+                    <y>0</y>
+                    <width>413</width>
                     <height>606</height>
                    </rect>
                   </property>
@@ -3232,7 +3194,7 @@ font: 20px Montserrat;</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>857</width>
+                    <width>887</width>
                     <height>540</height>
                    </rect>
                   </property>
@@ -4641,8 +4603,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>852</width>
-                      <height>457</height>
+                      <width>882</width>
+                      <height>456</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>
@@ -5007,8 +4969,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>832</width>
-                    <height>421</height>
+                    <width>862</width>
+                    <height>420</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -8526,7 +8488,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8772,8 +8734,8 @@ border:none</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>872</width>
-                       <height>308</height>
+                       <width>902</width>
+                       <height>307</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">

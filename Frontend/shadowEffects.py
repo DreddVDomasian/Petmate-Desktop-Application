@@ -9,3 +9,5 @@ def create_card_shadow(blur_radius=5, x_offset=3, y_offset=4, color=QColor(0, 0,
     shadow.setColor(color)
     return shadow
 
+def inputShadowEffect():
+    return create_card_shadow(blur_radius=3, x_offset=2, y_offset=2, color=QColor(0, 0, 0, 60))

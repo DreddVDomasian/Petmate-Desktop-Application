@@ -8,6 +8,7 @@ from input_styles import *
 from toast import Toast
 from Backend.api_client import add_new_patient, add_new_pet, add_new_service
 from confirm_card import ConfirmCard
+from  appointmentPopUp import AddAppointmentCard
 from functools import partial
 from datetime import datetime
 from shadowEffects import *
@@ -29,6 +30,7 @@ class MainUI(QMainWindow):
         self.setup_service_tab()
         self.setup_dates()
         self.setup_confirm_card()
+        self.setup_add_appintmentPopUp()
         self.setup_pet_buttons()
 
         # Initial page and data
@@ -102,8 +104,8 @@ class MainUI(QMainWindow):
 
         # add appointment
         for tb in [self.toolButton_2, self.toolButton_3]:
-            tb.clicked.connect(lambda: self.navigate_to_page(6))
-        self.addWalkinButton.mousePressEvent = lambda event: self.navigate_to_page(6)
+            tb.clicked.connect(lambda: self.open_addAppointment())
+        self.addWalkinButton.mousePressEvent = lambda event: self.open_addAppointment()
 
         # toggle walk-in/website
         self.walkInBtn.setCheckable(True)
@@ -160,6 +162,22 @@ class MainUI(QMainWindow):
         self.patientToDelete = None
         self.profileDeleteBtn.clicked.connect(self.delete_selected_patient)
 
+    def setup_add_appintmentPopUp(self):
+        self.appointmentCard = AddAppointmentCard(
+            parent=self.findChild(QWidget, "MainContent"),
+            main_window=self  # pass the MainUI instance
+        )
+        self.appointmentCard.hide()
+        self.appointmentCard.closePopUpBtn.clicked.connect(self.cancel_appointment)
+        self.appointmentCard.cancelAddAppointment.clicked.connect(self.cancel_appointment)
+
+
+    def cancel_appointment(self):
+        self.appointmentCard.hide()
+
+    def open_addAppointment(self):
+        self.appointmentCard.load_patients_to_combobox()
+        self.appointmentCard.show_card()
     def setup_pet_buttons(self):
         self.profileStackedWidget.setCurrentIndex(0)
         for btn in [self.addpetQtoolBtn, self.plusSignBtn]:

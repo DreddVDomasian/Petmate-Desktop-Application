@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>738</width>
+    <height>349</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QFrame" name="addPopUPFrame">
+     <property name="styleSheet">
+      <string notr="true">#addPopUPFrame{
+	background-color:#FFFFFF;
+	border-bottom:2px solid rgb(212, 212, 212);
+	border-right:2px solid rgb(212, 212, 212);
+	border-left:1px solid rgb(212, 212, 212);
+	border-radius:15px;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item alignment="Qt::AlignLeft|Qt::AlignTop">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="closePopUpBtn">
+           <property name="styleSheet">
+            <string notr="true">border:none;
+background-color:transparent;</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resource.qrc">
+             <normaloff>:/Icons/Icons/close.png</normaloff>:/Icons/Icons/close.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_2">
+        <property name="styleSheet">
+         <string notr="true">background-color:rgb(255, 255, 255);
+font: 57 12pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QFrame" name="frame_7">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="leftMargin">
+             <number>20</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_141">
+              <property name="styleSheet">
+               <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+              </property>
+              <property name="text">
+               <string>Select Patient</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="selectPatientPopUp">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>174</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QComboBox {
+	border-right: 2px solid rgb(212, 212, 212);
+    border-bottom: 2px solid rgb(212, 212, 212);
+    border-radius: 5px;
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+	background-color:rgb(255, 255, 255);
+}
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; 
+	 background-color: white;
+}
+
+QComboBox::drop-down {
+    background-color: white;
+    border: none;
+}
+
+QComboBox::down-arrow {
+    image: url(:/Icons/Icons/downArrow.png);
+    width: 12px;
+    height: 12px;
+    padding-right: 10px;
+}
+
+/* Dropdown list */
+QComboBox QAbstractItemView {
+    background-color: white;
+    selection-background-color: rgb(193, 193, 193); 
+    selection-color: black;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    outline: none;
+	border:1px solid rgb(209, 209, 209);
+}
+
+/* List items */
+QComboBox QAbstractItemView::item {
+    background-color: white;
+    color: black;
+    height: 25px;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgb(193, 193, 193);
+    color: black;
+}
+
+/* Scrollbar inside dropdown */
+QComboBox QAbstractItemView QScrollBar:vertical {
+    background-color: transparent; /* or set a solid color */
+    width: 10px;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QComboBox QAbstractItemView QScrollBar::add-line:vertical,
+QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::groove:vertical {
+    background: transparent;
+    outline: none;
+    border: none;
+}
+QComboBox QAbstractItemView QScrollBar,
+QComboBox QAbstractItemView QScrollBar::handle,
+QComboBox QAbstractItemView QScrollBar::groove {
+    outline: none;
+    border: none;
+}
+
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; /* optional para di mag mukhang double border */
+    background: transparent;
+}</string>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+              </property>
+              <property name="duplicatesEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Select Patient</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_8">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_142">
+              <property name="styleSheet">
+               <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+              </property>
+              <property name="text">
+               <string>Select Pet</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="selectPetPopUp">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>174</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QComboBox {
+	border-right: 2px solid rgb(212, 212, 212);
+    border-bottom: 2px solid rgb(212, 212, 212);
+    border-radius: 5px;
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+	background-color:rgb(255, 255, 255);
+}
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; 
+	 background-color: white;
+}
+
+QComboBox::drop-down {
+    background-color: white;
+    border: none;
+}
+
+QComboBox::down-arrow {
+    image: url(:/Icons/Icons/downArrow.png);
+    width: 12px;
+    height: 12px;
+    padding-right: 10px;
+}
+
+/* Dropdown list */
+QComboBox QAbstractItemView {
+    background-color: white;
+    selection-background-color: rgb(193, 193, 193); 
+    selection-color: black;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    outline: none;
+	border:1px solid rgb(209, 209, 209);
+}
+
+/* List items */
+QComboBox QAbstractItemView::item {
+    background-color: white;
+    color: black;
+    height: 25px;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgb(193, 193, 193);
+    color: black;
+}
+
+/* Scrollbar inside dropdown */
+QComboBox QAbstractItemView QScrollBar:vertical {
+    background-color: transparent; /* or set a solid color */
+    width: 10px;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QComboBox QAbstractItemView QScrollBar::add-line:vertical,
+QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::groove:vertical {
+    background: transparent;
+    outline: none;
+    border: none;
+}
+QComboBox QAbstractItemView QScrollBar,
+QComboBox QAbstractItemView QScrollBar::handle,
+QComboBox QAbstractItemView QScrollBar::groove {
+    outline: none;
+    border: none;
+}
+
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; /* optional para di mag mukhang double border */
+    background: transparent;
+}</string>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+              </property>
+              <property name="duplicatesEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Select Pet</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_3">
+        <property name="styleSheet">
+         <string notr="true">background-color:rgb(255, 255, 255);
+font: 57 12pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item alignment="Qt::AlignTop">
+          <widget class="QFrame" name="frame_5">
+           <property name="styleSheet">
+            <string notr="true">background-color:rgb(255, 255, 255);
+font: 57 12pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="leftMargin">
+             <number>20</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_139">
+              <property name="styleSheet">
+               <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+              </property>
+              <property name="text">
+               <string>Preffered Date</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDateEdit" name="popUpDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>174</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QDateEdit {
+	border-right: 2px solid rgb(212, 212, 212);
+    border-bottom: 2px solid rgb(212, 212, 212);
+    border-radius: 5px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
+}
+
+QDateEdit::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 40px;
+    border: none;
+    background: transparent;
+}
+
+QDateEdit::down-arrow {
+    image: url(:/Icons/Icons/calendar.png);
+    width: 30px;
+    height: 30px;
+}</string>
+              </property>
+              <property name="accelerated">
+               <bool>false</bool>
+              </property>
+              <property name="displayFormat">
+               <string>MMM d, yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_6">
+           <property name="styleSheet">
+            <string notr="true">background-color:rgb(255, 255, 255);
+font: 57 12pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_140">
+              <property name="styleSheet">
+               <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+              </property>
+              <property name="text">
+               <string>Preffered Time</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTimeEdit" name="timeEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>174</width>
+                <height>45</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QTimeEdit {
+	border-right: 2px solid rgb(212, 212, 212);
+    border-bottom: 2px solid rgb(212, 212, 212);
+    border-radius: 5px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
+
+}
+
+QTimeEdit::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 15px;
+    height: 15px;
+    image: url(:/Icons/Icons/upArrow.png); /* custom icon */
+    background: transparent;
+    border: none;
+    padding-right: 10px;
+	padding-top: 5px;
+}
+
+QTimeEdit::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 15px;
+    height: 15px;
+    image:url(:/Icons/Icons/downArrow.png); /* custom icon */
+    background: transparent;
+    border: none;
+    padding-right: 10px;
+	padding-bottom: 5px;
+}</string>
+              </property>
+              <property name="maximumTime">
+               <time>
+                <hour>17</hour>
+                <minute>0</minute>
+                <second>0</second>
+               </time>
+              </property>
+              <property name="minimumTime">
+               <time>
+                <hour>9</hour>
+                <minute>0</minute>
+                <second>0</second>
+               </time>
+              </property>
+              <property name="currentSection">
+               <enum>QDateTimeEdit::HourSection</enum>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_4">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>20</number>
+         </property>
+         <property name="leftMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>20</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="cancelAddAppointment">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>174</width>
+             <height>45</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	font: 63 15pt &quot;Montserrat SemiBold&quot;;
+	color:rgb(39, 39, 39);
+	background-color:	rgb(220, 90, 90);
+	border-radius: 5px;
+	border-right:1px solid rgb(200, 200, 200);
+	border-bottom:2px solid rgb(200, 200, 200);
+}
+
+QPushButton:hover{
+	background-color:rgb(180, 120, 125);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>CANCEL</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addAppointmentBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>174</width>
+             <height>45</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	font: 63 15pt &quot;Montserrat SemiBold&quot;;
+	color:rgb(39, 39, 39);
+	background-color:rgb(129, 191, 218);
+	border-radius: 5px;
+	border-right:1px solid rgb(200, 200, 200);
+	border-bottom:2px solid rgb(200, 200, 200);
+}
+
+QPushButton:hover{
+	background-color:rgb(110, 163, 186);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>ADD</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>
