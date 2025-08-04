@@ -20,6 +20,7 @@ class UIHandler:
         self.provinceComboBox.currentIndexChanged.connect(self.on_province_selected)
         self.cityComboBox.currentIndexChanged.connect(self.on_city_selected)
 
+
     def set_dynamic_completer(self, comboBox):
         """Attach completer that always matches current combobox items"""
         completer = QCompleter(comboBox.model())

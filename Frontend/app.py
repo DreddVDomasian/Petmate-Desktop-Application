@@ -102,6 +102,7 @@ class MainUI(QMainWindow):
         self.petConfirmButton.clicked.connect(self.submit_pet_data)
         self.addServiceBtn.clicked.connect(self.submit_service_data)
 
+
         # add appointment
         for tb in [self.toolButton_2, self.toolButton_3]:
             tb.clicked.connect(lambda: self.open_addAppointment())

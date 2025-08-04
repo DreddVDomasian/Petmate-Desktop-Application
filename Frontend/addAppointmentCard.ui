@@ -154,19 +154,19 @@ color:rgb(39, 39, 39);</string>
               </property>
               <property name="styleSheet">
                <string notr="true">QComboBox {
-	border-right: 2px solid rgb(212, 212, 212);
-    border-bottom: 2px solid rgb(212, 212, 212);
+    border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(255, 255, 255);
+
 }
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     color: rgb(39, 39, 39);
     border: none; 
-	 background-color: white;
+    background: transparent;
 }
 
 QComboBox::drop-down {
@@ -311,19 +311,19 @@ color:rgb(39, 39, 39);</string>
               </property>
               <property name="styleSheet">
                <string notr="true">QComboBox {
-	border-right: 2px solid rgb(212, 212, 212);
-    border-bottom: 2px solid rgb(212, 212, 212);
+    border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: 5px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(255, 255, 255);
+
 }
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     color: rgb(39, 39, 39);
     border: none; 
-	 background-color: white;
+    background: transparent;
 }
 
 QComboBox::drop-down {

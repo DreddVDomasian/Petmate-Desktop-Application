@@ -59,17 +59,28 @@ class Toast(QWidget):
             parent.installEventFilter(self)
 
     def show_toast(self):
-        # Inside show_toast()
+        x, y = 100, 100  # default fallback position in case content_widget not found
+
         if self.parent():
-            content_widget = self.parent().findChild(QWidget,"MainContent")  # Or use stackedWidget.parent() if it's the content container
+            content_widget = self.parent().findChild(QWidget, "MainContent")
             if content_widget:
                 content_pos = content_widget.mapToGlobal(QPoint(0, 0))
                 content_width = content_widget.width()
+                content_height = content_widget.height()
 
                 x = content_pos.x() + (content_width - self.width()) // 2
                 y = content_pos.y() + 15
-
                 self.move(x, y - self.height())
+            else:
+                print("[Toast] Warning: MainContent not found, using default position")
+                parent_pos = self.parent().mapToGlobal(QPoint(0, 0))
+                x = parent_pos.x() + 50
+                y = parent_pos.y() + 50
+                self.move(x, y - self.height())
+
+        else:
+            print("[Toast] Warning: parent() is None, using default position")
+            self.move(100, 100)
 
         self.show()
         self.raise_()
@@ -81,7 +92,7 @@ class Toast(QWidget):
         self.slide_animation.setEasingCurve(QEasingCurve.Type.OutBack)
         self.slide_animation.start()
 
-        QTimer.singleShot(self.duration + 300, lambda: self.fade_out())
+        QTimer.singleShot(self.duration + 300, self.fade_out)
 
         self.target_pos = QPoint(x, y)
 

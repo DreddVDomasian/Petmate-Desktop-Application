@@ -1,6 +1,6 @@
 from rest_framework import generics
-from .models import basicInfo,Pet,Service
-from .serializers import BasicInfoSerializer, PetSerializer,ServiceSerializer
+from .models import *
+from .serializers import *
 
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
@@ -57,3 +57,13 @@ class ScheduledServiceListView(generics.ListAPIView):
         if owner_id:
             queryset = queryset.filter(owner_id=owner_id)
         return queryset
+
+
+class WalkInListCreateView(generics.ListCreateAPIView):
+    queryset = WalkInAppointment.objects.all()
+    serializer_class = WalkInSerializer
+
+# GET / PUT / DELETE single patient by id
+class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WalkInAppointment.objects.all()
+    serializer_class = WalkInSerializer

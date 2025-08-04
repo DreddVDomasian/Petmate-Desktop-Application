@@ -11,4 +11,7 @@ urlpatterns = [
     path('services/', ServiceListCreateView.as_view(), name='services-list-create'),
     path('services/<int:pk>/', ServiceRetrieveUpdateDestroyView.as_view(), name='services-detail'),
     path('scheduled-services/', ScheduledServiceListView.as_view(), name='scheduled-services'),
+
+    path('walkIn/', WalkInListCreateView.as_view(), name='walk-in'),
+    path('walkIn/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
 ]

@@ -51,3 +51,10 @@ class Service(models.Model):
 
     def __str__(self):
         return f"Service: {self.service_type} for {self.pet.petName} ({self.date})"
+
+class WalkInAppointment(models.Model):
+    owner = models.ForeignKey(basicInfo, on_delete=models.CASCADE)
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    date = models.DateField()
+    prefTime = models.TimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
