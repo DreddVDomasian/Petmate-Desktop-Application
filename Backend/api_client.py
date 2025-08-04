@@ -67,6 +67,4 @@ def add_new_service(data):
 
 def add_new_appointment(data):
     response = requests.post("http://127.0.0.1:8000/api/walkIn/", json=data)
-    print("STATUS:", response.status_code)
-    print("RESPONSE:", response.text)
     return response.status_code == 201
