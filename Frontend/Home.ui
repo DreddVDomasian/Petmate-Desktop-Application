@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1953,8 +1953,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>893</width>
-                <height>500</height>
+                <width>162</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2421,8 +2421,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>893</width>
-                    <height>393</height>
+                    <width>100</width>
+                    <height>30</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2507,8 +2507,8 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>883</width>
-                    <height>540</height>
+                    <width>518</width>
+                    <height>551</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -3949,8 +3949,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>871</width>
-                      <height>456</height>
+                      <width>100</width>
+                      <height>30</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>
@@ -4315,8 +4315,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>851</width>
-                    <height>420</height>
+                    <width>401</width>
+                    <height>111</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -8080,8 +8080,8 @@ border:none</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>902</width>
-                       <height>307</height>
+                       <width>84</width>
+                       <height>33</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
