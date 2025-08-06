@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from . import views
 
 urlpatterns = [
     path('patients/', BasicInfoListCreateView.as_view(), name='patients-list-create'),
@@ -14,4 +15,7 @@ urlpatterns = [
 
     path('walkIn/', WalkInListCreateView.as_view(), name='walk-in'),
     path('walkIn/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
+
+    path("print/<int:owner_id>/<int:pet_id>/", views.print_record, name="print_record"),
+
 ]

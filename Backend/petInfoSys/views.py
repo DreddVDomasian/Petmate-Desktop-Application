@@ -1,7 +1,20 @@
 from rest_framework import generics
 from .models import *
+from django.shortcuts import render, get_object_or_404
 from .serializers import *
 
+
+
+def print_record(request, owner_id, pet_id):
+    owner = get_object_or_404(basicInfo, id=owner_id)
+    pet = get_object_or_404(Pet, id=pet_id, owner=owner)
+    services = Service.objects.filter(pet=pet).order_by("date")
+
+    return render(request, "print_template.html", {
+        "owner": owner,
+        "pet": pet,
+        "services": services
+    })
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
     queryset = basicInfo.objects.all()

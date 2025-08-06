@@ -13,6 +13,7 @@ from functools import partial
 from datetime import datetime
 from shadowEffects import *
 import requests
+import webbrowser
 import os
 import sys
 
@@ -131,6 +132,8 @@ class MainUI(QMainWindow):
         self.petProfileBackBtn.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(5))
         self.backBtn.clicked.connect(self.cancelBtn)
 
+        #print btn
+        self.printBtn.clicked.connect(self.handlePrintButton)
     def setup_service_tab(self):
         # toggle service history / add new
         self.addNewServiceBtn.setCheckable(True)
@@ -765,7 +768,12 @@ class MainUI(QMainWindow):
             self.activeDateEdit.setDate(date)
         self.customCalendar.hide()
 
-
+    def handlePrintButton(self):
+        if self.selected_patient_id and self.selected_pet_id:
+            print_url = f"http://127.0.0.1:8000/api/print/{self.selected_patient_id}/{self.selected_pet_id}/"
+            webbrowser.open(print_url)
+        else:
+            QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
 
 
 if __name__ == "__main__":
