@@ -12,6 +12,7 @@ from  appointmentPopUp import AddAppointmentCard
 from functools import partial
 from datetime import datetime
 from shadowEffects import *
+from delete import Delete
 import requests
 import webbrowser
 import os
@@ -23,7 +24,8 @@ class MainUI(QMainWindow):
     def __init__(self):
         super(MainUI, self).__init__()
         uic.loadUi("Home.ui", self)
-
+        #to delete.py
+        self.deleteFunction = Delete(self)
         self.setup_calendar()
         self.setup_comboboxes()
         self.setup_layouts()
@@ -43,6 +45,8 @@ class MainUI(QMainWindow):
         self.setup_shadow()
 
         self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
+
+
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -161,10 +165,10 @@ class MainUI(QMainWindow):
     def setup_confirm_card(self):
         self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
         self.confirmCard.hide()
-        self.confirmCard.yesButton.clicked.connect(self.really_delete_patient)
-        self.confirmCard.noButton.clicked.connect(self.cancel_delete)
+        self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete_patient)
+        self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
         self.patientToDelete = None
-        self.profileDeleteBtn.clicked.connect(self.delete_selected_patient)
+        self.profileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_patient)
 
     def setup_add_appintmentPopUp(self):
         self.appointmentCard = AddAppointmentCard(
@@ -434,10 +438,6 @@ class MainUI(QMainWindow):
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
 
-
-
-
-
     def load_patients(self):
         response = requests.get("http://127.0.0.1:8000/api/patients/")
         if response.status_code == 200:
@@ -466,7 +466,7 @@ class MainUI(QMainWindow):
             card.emailLabel.setText(patient['email'])
 
             # Connect delete button
-            card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.confirm_and_delete(p_id))
+            card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.deleteFunction.confirm_and_delete(p_id))
 
             # Connect the card click to open profile
             def make_handler(patient, self):
@@ -656,39 +656,6 @@ class MainUI(QMainWindow):
             else:
                 # ibalik original radius
                 upper_frame.setStyleSheet(upper_Frame_borrad)
-
-    def delete_patient(self, patient_id):
-        response = requests.delete(f"http://127.0.0.1:8000/api/patients/{patient_id}/")
-        if response.status_code == 204:
-            toast = Toast(self, "Deleted successfully!", icon_path="Icons/check.png")
-            toast.show_toast()
-            self.load_patients()
-        else:
-            toast = Toast(self, "Failed to delete!", icon_path="Icons/warning.png")
-            toast.show_toast()
-
-    def delete_selected_patient(self):
-        if self.selected_patient_id is None:
-            QMessageBox.warning(self, "Error", "No patient selected.")
-            return
-
-        self.patientToDelete = self.selected_patient_id
-        self.confirmCard.show_card()
-
-    def confirm_and_delete(self, patient_id):
-        self.patientToDelete = patient_id
-        self.confirmCard.show_card()
-
-    def really_delete_patient(self):
-        if self.patientToDelete is not None:
-            self.delete_patient(self.patientToDelete)
-            self.patientToDelete = None
-            self.stackedWidget.setCurrentIndex(2)
-        self.confirmCard.hide()
-
-    def cancel_delete(self):
-        self.patientToDelete = None
-        self.confirmCard.hide()
 
     def show_patient_profile(self, patient):
         full_name = f"{patient['firstName']} {patient['lastName']}"

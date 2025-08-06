@@ -186,9 +186,9 @@ class AddAppointmentCard(QWidget):
         if not walkInAppointment:
             empty_label = QLabel("NO RECORDS")
             empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
-            self.patientListLayout.addStretch()
-            self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-            self.patientListLayout.addStretch()
+            self.walkInAppointmentListLayout.addStretch()
+            self.walkInAppointmentListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self.walkInAppointmentListLayout.addStretch()
             return
 
         for walkInAppointments in walkInAppointment:

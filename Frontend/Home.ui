@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>8</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
