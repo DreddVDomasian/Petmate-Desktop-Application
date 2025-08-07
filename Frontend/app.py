@@ -13,6 +13,7 @@ from functools import partial
 from datetime import datetime
 from shadowEffects import *
 from delete import Delete
+from updateFunction import Update
 import requests
 import webbrowser
 import os
@@ -26,6 +27,7 @@ class MainUI(QMainWindow):
         uic.loadUi("Home.ui", self)
         #to delete.py
         self.deleteFunction = Delete(self)
+        self.updateFunction = Update(self)
         self.setup_calendar()
         self.setup_comboboxes()
         self.setup_layouts()
@@ -138,6 +140,11 @@ class MainUI(QMainWindow):
 
         #print btn
         self.printBtn.clicked.connect(self.handlePrintButton)
+
+
+        #update buttons
+        self.updateBasicInfo.hide()
+        self.cancelButton.hide()
     def setup_service_tab(self):
         # toggle service history / add new
         self.addNewServiceBtn.setCheckable(True)
@@ -165,10 +172,27 @@ class MainUI(QMainWindow):
     def setup_confirm_card(self):
         self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
         self.confirmCard.hide()
-        self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete_patient)
+        self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete)
         self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
         self.patientToDelete = None
+
+        # delete buttons sa profile patient/pet
         self.profileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_patient)
+        self.petProfileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_pet)
+
+    def clearInputs(self):
+        # clear fields
+        self.firstNameEdit.clear()
+        self.lastNameEdit.clear()
+        self.phoneNumberEdit.clear()
+        self.detailedAddressEdit.clear()
+        self.emailEdit.clear()
+        self.emergencyNoEdit.clear()
+
+        # Reset combo boxes to first index
+        self.provinceComboBox.setCurrentIndex(0)
+        self.cityComboBox.setCurrentIndex(0)
+        self.barangayComboBox.setCurrentIndex(0)
 
     def setup_add_appintmentPopUp(self):
         self.appointmentCard = AddAppointmentCard(
@@ -179,13 +203,13 @@ class MainUI(QMainWindow):
         self.appointmentCard.closePopUpBtn.clicked.connect(self.cancel_appointment)
         self.appointmentCard.cancelAddAppointment.clicked.connect(self.cancel_appointment)
 
-
     def cancel_appointment(self):
         self.appointmentCard.hide()
 
     def open_addAppointment(self):
         self.appointmentCard.load_patients_to_combobox()
         self.appointmentCard.show_card()
+
     def setup_pet_buttons(self):
         self.profileStackedWidget.setCurrentIndex(0)
         for btn in [self.addpetQtoolBtn, self.plusSignBtn]:
@@ -202,7 +226,6 @@ class MainUI(QMainWindow):
         if index >= 0:
             self.monthComboBox.setCurrentIndex(index)
 
-
     # check/uncheck return date
     def toggle_return_date(self, checked):
         if checked:
@@ -217,9 +240,20 @@ class MainUI(QMainWindow):
             self.returnDateEdit.hide()
             self.returnDatePlaceholder.show()
 
-    def navigate_to_page(self, index):
+    def navigate_to_page(self, index, is_update=False):
         self.set_current_month_in_combobox()
         self.stackedWidget.setCurrentIndex(index)
+
+        if index == 1:  # Add Patient page
+            if is_update:
+                self.updateBasicInfo.show()
+                self.cancelButton.show()
+                self.confirmButton.hide()
+            else:
+                self.clearInputs()
+                self.updateBasicInfo.hide()
+                self.cancelButton.hide()
+                self.confirmButton.show()
 
     def collect_and_validate_fields(self, required_fields):
         missing = []
@@ -290,18 +324,7 @@ class MainUI(QMainWindow):
             self.navigate_to_page(2)
             self.load_patients()
 
-            # clear fields
-            self.firstNameEdit.clear()
-            self.lastNameEdit.clear()
-            self.phoneNumberEdit.clear()
-            self.detailedAddressEdit.clear()
-            self.emailEdit.clear()
-            self.emergencyNoEdit.clear()
-
-            # Reset combo boxes to first index
-            self.provinceComboBox.setCurrentIndex(0)
-            self.cityComboBox.setCurrentIndex(0)
-            self.barangayComboBox.setCurrentIndex(0)
+            self.clearInputs()
 
             # Reset styles to default
             for widget in required_fields.values():
@@ -317,7 +340,6 @@ class MainUI(QMainWindow):
         else:
             toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
             toast.show_toast()
-
 
     def submit_pet_data(self):
         required_fields = {
@@ -466,8 +488,8 @@ class MainUI(QMainWindow):
             card.emailLabel.setText(patient['email'])
 
             # Connect delete button
-            card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.deleteFunction.confirm_and_delete(p_id))
-
+            card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.deleteFunction.set_delete_target("patient", p_id))
+            card.editBtn.clicked.connect(lambda _, p_id=patient['id']: self.updateFunction.update_patient_info(p_id))
             # Connect the card click to open profile
             def make_handler(patient, self):
                 def handler(event):
@@ -575,6 +597,8 @@ class MainUI(QMainWindow):
             open_btn = service_card.findChild(QToolButton, "OpenNoteBtn")
             close_btn = service_card.findChild(QToolButton, "closeNotesBtn")
 
+            service_card.serviceDeleteBtn.clicked.connect(lambda _, service_id=service['id']: self.deleteFunction.set_delete_target("service", service_id))
+
             # Connect buttons safely
             if open_btn and close_btn and lower_frame:
                 open_btn.setVisible(True)
@@ -670,7 +694,7 @@ class MainUI(QMainWindow):
         self.phoneLabel.setText(contactNumbers)
 
         self.selected_patient_id = patient['id']
-
+        self.profileEditBtn.clicked.connect(lambda: self.updateFunction.update_patient_info(self.selected_patient_id))
         self.load_pets_for_owner(self.selected_patient_id)
         # Navigate to the profile page
         self.stackedWidget.setCurrentIndex(5)

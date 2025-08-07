@@ -424,7 +424,7 @@ color:rgb(39, 39, 39);</string>
                 </widget>
                </item>
                <item alignment="Qt::AlignBottom">
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="serviceDeleteBtn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

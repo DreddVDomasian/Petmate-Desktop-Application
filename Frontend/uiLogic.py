@@ -1,5 +1,5 @@
 import json, os
-from PyQt6.QtWidgets import QCompleter
+from PyQt6.QtWidgets import QCompleter, QComboBox
 from PyQt6.QtCore import Qt
 from input_styles import completer_popup_style
 

@@ -104,7 +104,6 @@ class AddAppointmentCard(QWidget):
         if self.main_window:
             self.main_window.show_custom_calendar(dateEdit)
 
-
     def setup_comboboxes(self):
         self.selectPetPopUp, self.selectPatientPopUp
         self.load_patients_to_combobox()
