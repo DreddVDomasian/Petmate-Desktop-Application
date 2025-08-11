@@ -7,6 +7,7 @@ class BasicInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PetSerializer(serializers.ModelSerializer):
+    owner = BasicInfoSerializer(read_only=True)
     class Meta:
         model = Pet
         fields = '__all__'

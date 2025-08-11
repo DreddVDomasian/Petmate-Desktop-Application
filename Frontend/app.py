@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter,QCalendarWidget,QToolButton
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter,QCalendarWidget,QToolButton,QTextEdit
 from PyQt6 import uic
 from PyQt6.QtCore import Qt,QDate,QPoint
 import resources_rc
@@ -40,6 +40,7 @@ class MainUI(QMainWindow):
 
         # Initial page and data
         self.selected_patient_id = None
+        self.selected_service_id = None
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
         self.load_patients()
@@ -145,6 +146,8 @@ class MainUI(QMainWindow):
         #update buttons
         self.updateBasicInfo.hide()
         self.cancelButton.hide()
+        self.petUpdateButton.hide()
+        self.updateServiceBtn.hide()
     def setup_service_tab(self):
         # toggle service history / add new
         self.addNewServiceBtn.setCheckable(True)
@@ -155,8 +158,16 @@ class MainUI(QMainWindow):
         for btn in [self.addNewServiceBtn, self.serviceHistoryBtn]:
             self.sourceBtnGroup.addButton(btn)
         self.serviceHistoryBtn.setChecked(True)
-        self.serviceHistoryBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(0))
+        self.serviceHistoryBtn.clicked.connect(lambda: self.service_stackedWidget(0))
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
+
+    def service_stackedWidget(self,index):
+        self.serviceHistoryBtn.setChecked(True)
+        self.serviceHistoryStackedWidget.setCurrentIndex(index)
+        self.addNewServiceBtn.setText("Add New service")
+        self.clearInputs()
+        self.addServiceBtn.show()
+        self.updateServiceBtn.hide()
 
     def setup_dates(self):
         self.activeDateEdit = None
@@ -194,6 +205,22 @@ class MainUI(QMainWindow):
         self.cityComboBox.setCurrentIndex(0)
         self.barangayComboBox.setCurrentIndex(0)
 
+        # clear service inputs
+        self.serviceTypeComboBox.setCurrentIndex(0)
+        self.dateEdit.setDate(QDate.currentDate())
+        self.returnDateEdit.setDate(QDate.currentDate())
+        self.addNoteLineEdit.clear()
+        self.returnCheckBox.setChecked(False)
+        self.returnDateEdit.hide()
+        self.returnDatePlaceholder.show()
+
+        #clear pet info
+        self.petName.clear()
+        self.petColor.clear()
+        self.breed.clear()
+        self.age.clear()
+        self.speciesComboBox.setCurrentIndex(0)
+        self.petSexComboBox.setCurrentIndex(0)
     def setup_add_appintmentPopUp(self):
         self.appointmentCard = AddAppointmentCard(
             parent=self.findChild(QWidget, "MainContent"),
@@ -367,15 +394,7 @@ class MainUI(QMainWindow):
             self.profileStackedWidget.setCurrentIndex(0)
             self.load_pets_for_owner(self.selected_patient_id)
 
-            self.petName.clear()
-            self.petColor.clear()
-            self.breed.clear()
-            self.age.clear()
-
-
-            self.speciesComboBox.setCurrentIndex(0)
-            self.petSexComboBox.setCurrentIndex(0)
-
+            self.clearInputs()
             for widget in required_fields.values():
                 if isinstance(widget, QLineEdit):
                     widget.setStyleSheet(default_style)
@@ -399,7 +418,7 @@ class MainUI(QMainWindow):
         else:
             return_date = None
 
-        notes = self.addNoteLineEdit.text().strip()
+        notes = self.addNoteLineEdit.toPlainText().strip()
 
         required_fields = {
             "service_type": self.serviceTypeComboBox
@@ -438,14 +457,7 @@ class MainUI(QMainWindow):
             self.load_services_for_pet(self.selected_pet_id)
             self.load_scheduled_services()
             # Clear fields or reset
-            self.serviceTypeComboBox.setCurrentIndex(0)
-            self.dateEdit.setDate(QDate.currentDate())
-            self.returnDateEdit.setDate(QDate.currentDate())
-            self.addNoteLineEdit.clear()
-            self.returnCheckBox.setChecked(False)
-            self.returnDateEdit.hide()
-            self.returnDatePlaceholder.show()
-
+            self.clearInputs()
 
         else:
             toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
@@ -586,8 +598,8 @@ class MainUI(QMainWindow):
             return_label = service_card.findChild(QLabel, "returnDateLabel")
             return_label.setText(f"{return_date}" if return_date else "       None")
 
-            note_label = service_card.findChild(QLabel, "noteLabel")
-            note_label.setText(f"{notes}" if notes else "No Notes")
+            note_label = service_card.findChild(QTextEdit, "noteLabel")
+            note_label.setPlainText(f"{notes}" if notes else "No Notes")
 
             upper_frame = service_card.findChild(QWidget, "upperFrame")
             lower_frame = service_card.findChild(QWidget, "lowerFrame")
@@ -598,7 +610,7 @@ class MainUI(QMainWindow):
             close_btn = service_card.findChild(QToolButton, "closeNotesBtn")
 
             service_card.serviceDeleteBtn.clicked.connect(lambda _, service_id=service['id']: self.deleteFunction.set_delete_target("service", service_id))
-
+            service_card.updateServiceCardBtn.clicked.connect(lambda _, service_id=service["id"]: self.updateFunction.update_service_info(service_id))
             # Connect buttons safely
             if open_btn and close_btn and lower_frame:
                 open_btn.setVisible(True)
@@ -658,7 +670,7 @@ class MainUI(QMainWindow):
             shadow = create_card_shadow()
             card.setGraphicsEffect(shadow)
 
-            self.scheduled_serviceLayout.insertWidget(0, card)
+            self.scheduled_serviceLayout.insertWidget(0,card)
 
     def format_date(self, raw):
         if raw:
@@ -727,7 +739,7 @@ class MainUI(QMainWindow):
 
         # Keep track of which pet is selected
         self.selected_pet_id = pet["id"]
-
+        self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))
         # Navigate to pet profile page (adjust index if needed)
         self.stackedWidget.setCurrentIndex(8)
         self.load_services_for_pet(pet["id"])
