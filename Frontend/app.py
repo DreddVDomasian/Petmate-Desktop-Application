@@ -154,6 +154,7 @@ class MainUI(QMainWindow):
 
         # cancel
         self.backBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(0))
+        self.cancelButton.clicked.connect(lambda: self.navigate_to_page(2))
         #update buttons
         self.updateBasicInfo.hide()
         self.cancelButton.hide()
@@ -265,9 +266,8 @@ class MainUI(QMainWindow):
 
 
     def setup_shadow(self):
-        shadow = create_card_shadow()
-        self.ProfileCard.setGraphicsEffect(shadow)
-        self.petProfileCard.setGraphicsEffect(shadow)
+        self.ProfileCard.setGraphicsEffect(create_card_shadow())
+        self.petProfileCard.setGraphicsEffect(create_card_shadow())
 
     def set_current_month_in_combobox(self):
         current_month = datetime.now().strftime("%B")
@@ -578,8 +578,7 @@ class MainUI(QMainWindow):
 
             card.mousePressEvent = make_handler(patient, self)
 
-            shadow = create_card_shadow()
-            card.setGraphicsEffect(shadow)
+            card.setGraphicsEffect(create_card_shadow())
             self.patientListLayout.insertWidget(0, card)
 
     def load_pets_for_owner(self, owner_id):
@@ -617,8 +616,7 @@ class MainUI(QMainWindow):
             pet_card.petCardIcon.setScaledContents(True)
 
             pet_card.mousePressEvent = lambda event, p=pet: self.show_pet_profile(p)
-            shadow = create_card_shadow()
-            pet_card.setGraphicsEffect(shadow)
+            pet_card.setGraphicsEffect(create_card_shadow())
 
             self.gridLayout_6.addWidget(pet_card, row, col)
             col += 1
@@ -733,9 +731,7 @@ class MainUI(QMainWindow):
             card.ReturnServiceLabel.setText(service['service_type'])
             return_date = self.format_date(service.get("return_date"))
             card.ReturnDateCardLabel.setText(return_date)
-
-            shadow = create_card_shadow()
-            card.setGraphicsEffect(shadow)
+            card.setGraphicsEffect(create_card_shadow())
 
             self.scheduled_serviceLayout.insertWidget(0,card)
 
