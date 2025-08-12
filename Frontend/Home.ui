@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>8</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -648,6 +648,14 @@ QToolButton:hover{
               <property name="bottomMargin">
                <number>0</number>
               </property>
+              <item alignment="Qt::AlignLeft">
+               <widget class="QPushButton" name="homeBackBtn">
+                <property name="icon">
+                 <iconset resource="resource.qrc">
+                  <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+                </property>
+               </widget>
+              </item>
               <item>
                <widget class="QFrame" name="frame">
                 <property name="sizePolicy">
@@ -915,6 +923,14 @@ Keeping tails wagging and hearts happy!</string>
            <property name="sizeConstraint">
             <enum>QLayout::SetDefaultConstraint</enum>
            </property>
+           <item alignment="Qt::AlignLeft">
+            <widget class="QPushButton" name="addPatientBackBtn">
+             <property name="icon">
+              <iconset resource="resource.qrc">
+               <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QFrame" name="frame_2">
              <property name="styleSheet">
@@ -1826,12 +1842,21 @@ QPushButton:hover{
           </layout>
           <zorder>frame_3</zorder>
           <zorder>frame_2</zorder>
+          <zorder>addPatientBackBtn</zorder>
          </widget>
          <widget class="QWidget" name="PetRecords">
           <property name="styleSheet">
            <string notr="true">background:transparent;</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
+           <item alignment="Qt::AlignLeft">
+            <widget class="QPushButton" name="RecordsBackBtn">
+             <property name="icon">
+              <iconset resource="resource.qrc">
+               <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+             </property>
+            </widget>
+           </item>
            <item alignment="Qt::AlignTop">
             <widget class="QFrame" name="PersonalRecords">
              <property name="sizePolicy">
@@ -2049,7 +2074,7 @@ border-bottom-right-radius:10px;
                 <x>0</x>
                 <y>0</y>
                 <width>893</width>
-                <height>500</height>
+                <height>470</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2099,6 +2124,14 @@ color:rgb(141, 141, 141);</string>
 }</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item alignment="Qt::AlignLeft">
+            <widget class="QPushButton" name="appointmentBackBtn">
+             <property name="icon">
+              <iconset resource="resource.qrc">
+               <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QFrame" name="frame_4">
              <property name="styleSheet">
@@ -2517,7 +2550,7 @@ border-bottom-right-radius:10px;
                     <x>0</x>
                     <y>0</y>
                     <width>893</width>
-                    <height>393</height>
+                    <height>363</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3506,6 +3539,14 @@ border-radius: 10px;
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_62">
+              <item alignment="Qt::AlignLeft">
+               <widget class="QPushButton" name="ReturnBackBtn">
+                <property name="icon">
+                 <iconset resource="resource.qrc">
+                  <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+                </property>
+               </widget>
+              </item>
               <item>
                <widget class="QFrame" name="frame_70">
                 <property name="styleSheet">
@@ -4045,7 +4086,7 @@ border-bottom-right-radius:10px;
                       <x>0</x>
                       <y>0</y>
                       <width>871</width>
-                      <height>456</height>
+                      <height>426</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>

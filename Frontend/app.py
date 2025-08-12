@@ -46,10 +46,15 @@ class MainUI(QMainWindow):
         self.load_patients()
         self.load_scheduled_services()
         self.setup_shadow()
+        self.setup_all_back_buttons()
 
         self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
 
-
+        #page history
+        self.page_history = []  # stores (index, params)
+        self.current_page_index = 0
+        self.current_params = {}
+        self.update_back_button_visibility()
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -105,6 +110,17 @@ class MainUI(QMainWindow):
 
         self.homeBtn.setChecked(True)
 
+        self.page_to_nav_button = {
+            0: self.homeBtn,
+            1: self.addPatientBtn,
+            2: self.petRecordsBtn,
+            3: self.appointmentBtn,
+            4: self.schedVaxBtn,
+            # Profile and Pet Profile pages should highlight Pet Records
+            5: self.petRecordsBtn,
+            8: self.petRecordsBtn
+        }
+
         # send data
         self.confirmButton.clicked.connect(self.submit_data)
         self.petConfirmButton.clicked.connect(self.submit_pet_data)
@@ -132,12 +148,6 @@ class MainUI(QMainWindow):
 
 
 
-        # back buttons
-        self.profileBackbutton.clicked.connect(lambda: self.navigate_to_page(2))
-        self.profileBackbutton.clicked.connect(self.cancelBtn)
-        self.petProfileBackBtn.clicked.connect(lambda: self.load_pets_for_owner(self.selected_patient_id))
-        self.petProfileBackBtn.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(5))
-        self.backBtn.clicked.connect(self.cancelBtn)
 
         #print btn
         self.printBtn.clicked.connect(self.handlePrintButton)
@@ -267,11 +277,38 @@ class MainUI(QMainWindow):
             self.returnDateEdit.hide()
             self.returnDatePlaceholder.show()
 
-    def navigate_to_page(self, index, is_update=False):
-        self.set_current_month_in_combobox()
-        self.stackedWidget.setCurrentIndex(index)
+    def setup_all_back_buttons(self):
+        self.all_back_buttons = [
+            self.homeBackBtn,
+            self.addPatientBackBtn,
+            self.RecordsBackBtn,
+            self.appointmentBackBtn,
+            self.ReturnBackBtn,
+            self.profileBackbutton,
+            self.petProfileBackBtn
+        ]
+        for btn in self.all_back_buttons:
+            btn.clicked.connect(self.go_back)
 
-        if index == 1:  # Add Patient page
+    def update_back_button_visibility(self):
+        visible = bool(self.page_history)
+        for btn in self.all_back_buttons:
+            btn.setVisible(visible)
+
+    def navigate_to_page(self, index, is_update=False, **kwargs):
+        # Save current page & parameters
+        self.page_history.append((self.current_page_index, self.current_params))
+
+
+        self.current_page_index = index
+        self.current_params = kwargs
+
+        self.update_back_button_visibility()
+        self.stackedWidget.setCurrentIndex(index)
+        if index in self.page_to_nav_button:
+            self.page_to_nav_button[index].setChecked(True)
+        # Your existing Add Patient logic
+        if index == 1:
             if is_update:
                 self.updateBasicInfo.show()
                 self.cancelButton.show()
@@ -281,6 +318,23 @@ class MainUI(QMainWindow):
                 self.updateBasicInfo.hide()
                 self.cancelButton.hide()
                 self.confirmButton.show()
+
+    def go_back(self):
+        if self.page_history:
+            index, params = self.page_history.pop()
+
+            self.current_page_index = index
+            self.current_params = params
+            self.update_back_button_visibility()
+            self.stackedWidget.setCurrentIndex(index)
+            if index in self.page_to_nav_button:
+                self.page_to_nav_button[index].setChecked(True)
+
+            # Load page data if needed
+            if index == 5 and "owner_id" in params:
+                self.load_pets_for_owner(params["owner_id"])
+            elif index == 8 and "pet_id" in params:
+                self.load_services_for_pet(params["pet_id"])
 
     def collect_and_validate_fields(self, required_fields):
         missing = []
@@ -709,7 +763,7 @@ class MainUI(QMainWindow):
         self.profileEditBtn.clicked.connect(lambda: self.updateFunction.update_patient_info(self.selected_patient_id))
         self.load_pets_for_owner(self.selected_patient_id)
         # Navigate to the profile page
-        self.stackedWidget.setCurrentIndex(5)
+        self.navigate_to_page(5, owner_id=patient['id'])
 
     def show_pet_profile(self, pet):
         # Fill labels with pet data
@@ -741,7 +795,7 @@ class MainUI(QMainWindow):
         self.selected_pet_id = pet["id"]
         self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))
         # Navigate to pet profile page (adjust index if needed)
-        self.stackedWidget.setCurrentIndex(8)
+        self.navigate_to_page(8, pet_id=pet["id"])
         self.load_services_for_pet(pet["id"])
 
     def show_custom_calendar(self, dateEdit):
