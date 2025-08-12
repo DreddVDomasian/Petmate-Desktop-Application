@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
+    <width>892</width>
     <height>81</height>
    </rect>
   </property>
@@ -100,7 +100,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="ownerName">
         <property name="styleSheet">
          <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
@@ -111,7 +111,21 @@ color:rgb(57, 57, 57);</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="petNameApp">
+        <property name="styleSheet">
+         <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="text">
+         <string>Petname</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="appDate">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
@@ -120,9 +134,12 @@ color:rgb(39, 39, 39);</string>
         <property name="text">
          <string>Aug, 2, 2025</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QLabel" name="preferredTime">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
@@ -130,6 +147,9 @@ color:rgb(39, 39, 39);</string>
         </property>
         <property name="text">
          <string>11:45 AM</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

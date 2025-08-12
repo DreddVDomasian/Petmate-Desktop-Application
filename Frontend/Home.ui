@@ -1029,6 +1029,9 @@ color:rgb(39, 39, 39);</string>
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3" columnstretch="8,8,8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_6">
                    <property name="styleSheet">
@@ -7978,7 +7981,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8543,7 +8546,12 @@ QComboBox QLineEdit {
                              </item>
                              <item>
                               <property name="text">
-                               <string>Deworming &amp; Tick and Flea Prevention</string>
+                               <string>Deworming</string>
+                              </property>
+                             </item>
+                             <item>
+                              <property name="text">
+                               <string>Tick &amp; Flea Prevention</string>
                               </property>
                              </item>
                              <item>
@@ -8563,7 +8571,7 @@ QComboBox QLineEdit {
                              </item>
                              <item>
                               <property name="text">
-                               <string>Comprehensive Hematology (CBC)</string>
+                               <string>CBC</string>
                               </property>
                              </item>
                              <item>
@@ -8578,7 +8586,7 @@ QComboBox QLineEdit {
                              </item>
                              <item>
                               <property name="text">
-                               <string>Pregnancy test (Relaxin)</string>
+                               <string>Pregnancy test</string>
                               </property>
                              </item>
                              <item>
@@ -8593,7 +8601,7 @@ QComboBox QLineEdit {
                              </item>
                              <item>
                               <property name="text">
-                               <string>Antigen/Antibody Rapid Test</string>
+                               <string>Antigen/Antibody</string>
                               </property>
                              </item>
                             </widget>

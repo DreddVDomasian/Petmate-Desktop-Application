@@ -58,7 +58,9 @@ class Delete:
                 self.ui.load_pets_for_owner(self.ui.selected_patient_id)  # use existing patient id
                 self.ui.stackedWidget.setCurrentIndex(5)
             elif self.delete_type == "service":
+                self.ui.load_scheduled_services()
                 self.ui.load_services_for_pet(self.ui.selected_pet_id)
+
 
         else:
             Toast(self.ui, f"Failed to delete {self.delete_type}.", icon_path="Icons/warning.png").show_toast()

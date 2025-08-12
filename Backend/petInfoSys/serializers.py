@@ -14,7 +14,6 @@ class PetSerializer(serializers.ModelSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     owner_full_name = serializers.SerializerMethodField()
-
     class Meta:
         model = Service
         fields = '__all__'
@@ -22,10 +21,16 @@ class ServiceSerializer(serializers.ModelSerializer):
     def get_owner_full_name(self, obj):
         return f"{obj.owner.firstName} {obj.owner.lastName}"
 
+
+
 class WalkInSerializer(serializers.ModelSerializer):
     owner_full_name = serializers.SerializerMethodField()
+    petName = serializers.SerializerMethodField()
     class Meta:
         model = WalkInAppointment
         fields = '__all__'
     def get_owner_full_name(self, obj):
         return f"{obj.owner.firstName} {obj.owner.lastName}"
+
+    def get_petName(self, obj):
+        return obj.pet.petName

@@ -193,6 +193,7 @@ class AddAppointmentCard(QWidget):
         for walkInAppointments in walkInAppointment:
             card = uic.loadUi("appointmentCard.ui")
             card.ownerName.setText(walkInAppointments["owner_full_name"])
+            card.petNameApp.setText(walkInAppointments["petName"])
             date = self.main_window.format_date(walkInAppointments.get("date"))
             card.appDate.setText(date)
 
