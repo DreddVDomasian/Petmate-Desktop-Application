@@ -152,12 +152,14 @@ class MainUI(QMainWindow):
         #print btn
         self.printBtn.clicked.connect(self.handlePrintButton)
 
-
+        # cancel
+        self.backBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(0))
         #update buttons
         self.updateBasicInfo.hide()
         self.cancelButton.hide()
         self.petUpdateButton.hide()
         self.updateServiceBtn.hide()
+
     def setup_service_tab(self):
         # toggle service history / add new
         self.addNewServiceBtn.setCheckable(True)
@@ -231,6 +233,7 @@ class MainUI(QMainWindow):
         self.age.clear()
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
+
     def setup_add_appintmentPopUp(self):
         self.appointmentCard = AddAppointmentCard(
             parent=self.findChild(QWidget, "MainContent"),
@@ -251,11 +254,20 @@ class MainUI(QMainWindow):
         self.profileStackedWidget.setCurrentIndex(0)
         for btn in [self.addpetQtoolBtn, self.plusSignBtn]:
             btn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(1))
+            btn.clicked.connect(lambda: self.clearInputs())
+            btn.clicked.connect(lambda: self.petUpdateButton.hide())
+            btn.clicked.connect(lambda: self.petConfirmButton.show())
         self.addPetButton.mousePressEvent = lambda event: self.profileStackedWidget.setCurrentIndex(1)
+        self.addPetButton.mousePressEvent = lambda event: self.clearInputs()
+        self.addPetButton.mousePressEvent = lambda event: self.petUpdateButton.hide()
+        self.addPetButton.mousePressEvent = lambda event: self.petConfirmButton.show()
+
+
 
     def setup_shadow(self):
         shadow = create_card_shadow()
         self.ProfileCard.setGraphicsEffect(shadow)
+        self.petProfileCard.setGraphicsEffect(shadow)
 
     def set_current_month_in_combobox(self):
         current_month = datetime.now().strftime("%B")
@@ -305,6 +317,7 @@ class MainUI(QMainWindow):
 
         self.update_back_button_visibility()
         self.stackedWidget.setCurrentIndex(index)
+        self.profileStackedWidget.setCurrentIndex(0)
         if index in self.page_to_nav_button:
             self.page_to_nav_button[index].setChecked(True)
         # Your existing Add Patient logic
@@ -441,7 +454,7 @@ class MainUI(QMainWindow):
             return
 
         # Add owner_id sa data
-        data["owner"] = self.selected_patient_id
+        data["owner_id"] = self.selected_patient_id
 
         # Call your API: e.g. add_new_pet(data)
         if add_new_pet(data):

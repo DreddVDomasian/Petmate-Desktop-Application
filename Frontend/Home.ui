@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -4119,162 +4119,147 @@ border-bottom-right-radius:10px;
             <number>30</number>
            </property>
            <item>
-            <widget class="QFrame" name="ProfileCard">
-             <property name="styleSheet">
-              <string notr="true">#ProfileCard{
-	border-radius:10px;
-	background-color:rgb(244, 244, 244);
-
-
-}</string>
-             </property>
+            <widget class="QFrame" name="frame_13">
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QGridLayout" name="gridLayout_2">
-              <property name="leftMargin">
-               <number>20</number>
-              </property>
-              <property name="bottomMargin">
-               <number>20</number>
-              </property>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_22">
-                <property name="maximumSize">
-                 <size>
-                  <width>120</width>
-                  <height>120</height>
-                 </size>
+             <layout class="QHBoxLayout" name="horizontalLayout_24">
+              <item>
+               <widget class="QFrame" name="ProfileCard">
+                <property name="styleSheet">
+                 <string notr="true">#ProfileCard{
+	border-radius:10px;
+	background-color:rgb(244, 244, 244);
+
+
+}</string>
                 </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="pixmap">
-                 <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
-                </property>
-                <property name="scaledContents">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <widget class="QFrame" name="frame_8">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_19">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
+                <layout class="QGridLayout" name="gridLayout_2">
                  <property name="leftMargin">
-                  <number>10</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
+                  <number>20</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>20</number>
                  </property>
-                 <item>
-                  <widget class="QLabel" name="profileNameLabel">
-                   <property name="styleSheet">
-                    <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
-color:rgb(0, 0, 0);</string>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_22">
+                   <property name="maximumSize">
+                    <size>
+                     <width>120</width>
+                     <height>120</height>
+                    </size>
                    </property>
                    <property name="text">
-                    <string>Dredd Domasian</string>
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="profileEmailLabel">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
-                   </property>
-                   <property name="text">
-                    <string>DomasianDredd@gmail.com</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="addressLabel">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
-                   </property>
-                   <property name="text">
-                    <string>San Francisco, General Trias Cavite</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="detailedAddressLabel">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
-                   </property>
-                   <property name="text">
-                    <string>Detailed Address</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="phoneLabel">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
-                   </property>
-                   <property name="text">
-                    <string>09272483891</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QFrame" name="frame_9">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_14">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item alignment="Qt::AlignRight">
-                  <widget class="QFrame" name="frame_10">
+                 <item row="1" column="2">
+                  <widget class="QFrame" name="frame_8">
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <layout class="QVBoxLayout" name="verticalLayout_19">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>10</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="profileNameLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
+                      <property name="text">
+                       <string>Dredd Domasian</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="profileEmailLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
+color:rgb(58, 58, 58);</string>
+                      </property>
+                      <property name="text">
+                       <string>DomasianDredd@gmail.com</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="addressLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
+color:rgb(58, 58, 58);</string>
+                      </property>
+                      <property name="text">
+                       <string>San Francisco, General Trias Cavite</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="detailedAddressLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
+color:rgb(58, 58, 58);</string>
+                      </property>
+                      <property name="text">
+                       <string>Detailed Address</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="phoneLabel">
+                      <property name="styleSheet">
+                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
+color:rgb(58, 58, 58);</string>
+                      </property>
+                      <property name="text">
+                       <string>09272483891</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QFrame" name="frame_9">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_14">
                     <property name="spacing">
                      <number>0</number>
                     </property>
@@ -4290,97 +4275,124 @@ color:rgb(58, 58, 58);</string>
                     <property name="bottomMargin">
                      <number>0</number>
                     </property>
-                    <item>
-                     <widget class="QToolButton" name="profileEditBtn">
-                      <property name="cursor">
-                       <cursorShape>PointingHandCursor</cursorShape>
+                    <item alignment="Qt::AlignRight">
+                     <widget class="QFrame" name="frame_10">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
                       </property>
-                      <property name="styleSheet">
-                       <string notr="true">background:transparent;</string>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
                       </property>
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="resource.qrc">
-                        <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>25</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="profileDeleteBtn">
-                      <property name="cursor">
-                       <cursorShape>PointingHandCursor</cursorShape>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">background:transparent;</string>
-                      </property>
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="resource.qrc">
-                        <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
-                      </property>
-                      <property name="iconSize">
-                       <size>
-                        <width>25</width>
-                        <height>25</height>
-                       </size>
-                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_15">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QToolButton" name="profileEditBtn">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background:transparent;</string>
+                         </property>
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="resource.qrc">
+                           <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>25</width>
+                           <height>25</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QToolButton" name="profileDeleteBtn">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">background:transparent;</string>
+                         </property>
+                         <property name="text">
+                          <string>...</string>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="resource.qrc">
+                           <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
+                         </property>
+                         <property name="iconSize">
+                          <size>
+                           <width>25</width>
+                           <height>25</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                    </layout>
                   </widget>
                  </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="0" column="0" alignment="Qt::AlignLeft">
-               <widget class="QFrame" name="profileBackfFrame">
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_17">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item alignment="Qt::AlignLeft">
-                  <widget class="QToolButton" name="profileBackbutton">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
+                 <item row="0" column="0" alignment="Qt::AlignLeft">
+                  <widget class="QFrame" name="profileBackfFrame">
+                   <property name="styleSheet">
+                    <string notr="true"/>
                    </property>
-                   <property name="text">
-                    <string>...</string>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
                    </property>
-                   <property name="icon">
-                    <iconset resource="resource.qrc">
-                     <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
                    </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_17">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item alignment="Qt::AlignLeft">
+                     <widget class="QToolButton" name="profileBackbutton">
+                      <property name="cursor">
+                       <cursorShape>PointingHandCursor</cursorShape>
+                      </property>
+                      <property name="text">
+                       <string>...</string>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource.qrc">
+                        <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>
@@ -4392,7 +4404,7 @@ color:rgb(58, 58, 58);</string>
            <item>
             <widget class="QStackedWidget" name="profileStackedWidget">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="petCardsPage">
               <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4458,7 +4470,7 @@ color:rgb(58, 58, 58);</string>
                     <x>0</x>
                     <y>0</y>
                     <width>851</width>
-                    <height>420</height>
+                    <height>418</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -7622,61 +7634,31 @@ QPushButton:hover{
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_51">
+              <property name="leftMargin">
+               <number>30</number>
+              </property>
+              <property name="topMargin">
+               <number>20</number>
+              </property>
+              <property name="rightMargin">
+               <number>30</number>
+              </property>
               <item>
-               <widget class="QFrame" name="petProfileCard">
-                <property name="styleSheet">
-                 <string notr="true">#petProfileCard{
-	border-radius:10px;
-	background-color:rgb(244, 244, 244);
-	border-bottom:1.5px solid rgb(184, 184, 184);
-	border-right:1.5px solid rgb(184, 184, 184);
-	border-left:1px solid rgb(198, 198, 198);
-
-}</string>
-                </property>
+               <widget class="QFrame" name="frame_14">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_7">
-                 <property name="leftMargin">
-                  <number>20</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>20</number>
-                 </property>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="petProfileIcon">
-                   <property name="maximumSize">
-                    <size>
-                     <width>120</width>
-                     <height>120</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="margin">
-                    <number>0</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2" alignment="Qt::AlignTop">
-                  <widget class="QFrame" name="frame_52">
+                <layout class="QHBoxLayout" name="horizontalLayout_25">
+                 <item>
+                  <widget class="QFrame" name="petProfileCard">
                    <property name="styleSheet">
-                    <string notr="true">background:transparent;
-border:none;</string>
+                    <string notr="true">#petProfileCard{
+	border-radius:10px;
+	background-color:rgb(244, 244, 244);
+}</string>
                    </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
@@ -7684,183 +7666,173 @@ border:none;</string>
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
-                   <layout class="QGridLayout" name="gridLayout_8">
+                   <layout class="QGridLayout" name="gridLayout_7">
                     <property name="leftMargin">
-                     <number>100</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
+                     <number>20</number>
                     </property>
                     <property name="bottomMargin">
-                     <number>0</number>
+                     <number>20</number>
                     </property>
-                    <item row="4" column="1" alignment="Qt::AlignLeft">
-                     <widget class="QLabel" name="speciesLabel">
-                      <property name="styleSheet">
-                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
-color:rgb(0, 0, 0);</string>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="petProfileIcon">
+                      <property name="maximumSize">
+                       <size>
+                        <width>120</width>
+                        <height>120</height>
+                       </size>
                       </property>
                       <property name="text">
-                       <string>SPECIES: CAT</string>
+                       <string/>
+                      </property>
+                      <property name="pixmap">
+                       <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>true</bool>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
+                      </property>
+                      <property name="margin">
+                       <number>0</number>
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="1" alignment="Qt::AlignLeft">
-                     <widget class="QLabel" name="petColorLabel">
+                    <item row="1" column="2" alignment="Qt::AlignTop">
+                     <widget class="QFrame" name="frame_52">
                       <property name="styleSheet">
-                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+                       <string notr="true">background:transparent;
+border:none;</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QGridLayout" name="gridLayout_8">
+                       <property name="leftMargin">
+                        <number>100</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="horizontalSpacing">
+                        <number>9</number>
+                       </property>
+                       <item row="4" column="1" alignment="Qt::AlignLeft">
+                        <widget class="QLabel" name="speciesLabel">
+                         <property name="styleSheet">
+                          <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
-                      </property>
-                      <property name="text">
-                       <string>COLOR: COLOR</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0" alignment="Qt::AlignLeft">
-                     <widget class="QLabel" name="breedLabel">
-                      <property name="styleSheet">
-                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+                         </property>
+                         <property name="text">
+                          <string>SPECIES: CAT</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1" alignment="Qt::AlignLeft">
+                        <widget class="QLabel" name="petColorLabel">
+                         <property name="styleSheet">
+                          <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
 color:rgb(0, 0, 0);</string>
-                      </property>
-                      <property name="text">
-                       <string>BREED: BREED</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
+                         </property>
+                         <property name="text">
+                          <string>COLOR: COLOR</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="4" column="0" alignment="Qt::AlignLeft">
+                        <widget class="QLabel" name="breedLabel">
+                         <property name="styleSheet">
+                          <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                         </property>
+                         <property name="text">
+                          <string>BREED: BREED</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0" alignment="Qt::AlignLeft">
+                        <widget class="QLabel" name="petProfileNameLabel">
+                         <property name="styleSheet">
+                          <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(0, 0, 0);</string>
+                         </property>
+                         <property name="text">
+                          <string>NAME: PET NAME</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="5" column="0" alignment="Qt::AlignLeft">
+                        <widget class="QLabel" name="petSexLabel">
+                         <property name="styleSheet">
+                          <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                         </property>
+                         <property name="text">
+                          <string>SEX: SEX</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="5" column="1" alignment="Qt::AlignLeft">
+                        <widget class="QLabel" name="petAgeLabel">
+                         <property name="styleSheet">
+                          <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
+color:rgb(0, 0, 0);</string>
+                         </property>
+                         <property name="text">
+                          <string>AGE: 5</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                         <property name="wordWrap">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                     <item row="0" column="0" alignment="Qt::AlignLeft">
-                     <widget class="QLabel" name="petProfileNameLabel">
-                      <property name="styleSheet">
-                       <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
-color:rgb(0, 0, 0);</string>
-                      </property>
-                      <property name="text">
-                       <string>NAME: PET NAME</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="5" column="0" alignment="Qt::AlignLeft">
-                     <widget class="QLabel" name="petSexLabel">
-                      <property name="styleSheet">
-                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
-color:rgb(0, 0, 0);</string>
-                      </property>
-                      <property name="text">
-                       <string>SEX: SEX</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="5" column="1" alignment="Qt::AlignLeft">
-                     <widget class="QLabel" name="petAgeLabel">
-                      <property name="styleSheet">
-                       <string notr="true">font: 63 16pt &quot;Montserrat SemiBold&quot;;
-color:rgb(0, 0, 0);</string>
-                      </property>
-                      <property name="text">
-                       <string>AGE: 5</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item row="0" column="0" alignment="Qt::AlignLeft">
-                  <widget class="QFrame" name="petProfileBackFrame">
-                   <property name="styleSheet">
-                    <string notr="true">background:transparent;</string>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_59">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item alignment="Qt::AlignLeft">
-                     <widget class="QToolButton" name="petProfileBackBtn">
-                      <property name="cursor">
-                       <cursorShape>PointingHandCursor</cursorShape>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">background:transparent;</string>
-                      </property>
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="resource.qrc">
-                        <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QFrame" name="frame_55">
-                   <property name="styleSheet">
-                    <string notr="true">background:transparent;
-border:none;</string>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_57">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item alignment="Qt::AlignRight">
-                     <widget class="QFrame" name="frame_57">
+                     <widget class="QFrame" name="petProfileBackFrame">
                       <property name="styleSheet">
                        <string notr="true">background:transparent;</string>
                       </property>
@@ -7870,7 +7842,7 @@ border:none;</string>
                       <property name="frameShadow">
                        <enum>QFrame::Raised</enum>
                       </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_58">
+                      <layout class="QHBoxLayout" name="horizontalLayout_59">
                        <property name="spacing">
                         <number>0</number>
                        </property>
@@ -7886,8 +7858,11 @@ border:none;</string>
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QToolButton" name="petProfileEditBtn">
+                       <item alignment="Qt::AlignLeft">
+                        <widget class="QToolButton" name="petProfileBackBtn">
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
                          <property name="styleSheet">
                           <string notr="true">background:transparent;</string>
                          </property>
@@ -7896,34 +7871,109 @@ border:none;</string>
                          </property>
                          <property name="icon">
                           <iconset resource="resource.qrc">
-                           <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
-                         </property>
-                         <property name="iconSize">
-                          <size>
-                           <width>25</width>
-                           <height>25</height>
-                          </size>
+                           <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
                          </property>
                         </widget>
                        </item>
-                       <item>
-                        <widget class="QToolButton" name="petProfileDeleteBtn">
+                      </layout>
+                     </widget>
+                    </item>
+                    <item row="0" column="2">
+                     <widget class="QFrame" name="frame_55">
+                      <property name="styleSheet">
+                       <string notr="true">background:transparent;
+border:none;</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_57">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item alignment="Qt::AlignRight">
+                        <widget class="QFrame" name="frame_57">
                          <property name="styleSheet">
                           <string notr="true">background:transparent;</string>
                          </property>
-                         <property name="text">
-                          <string>...</string>
+                         <property name="frameShape">
+                          <enum>QFrame::StyledPanel</enum>
                          </property>
-                         <property name="icon">
-                          <iconset resource="resource.qrc">
-                           <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
                          </property>
-                         <property name="iconSize">
-                          <size>
-                           <width>25</width>
-                           <height>25</height>
-                          </size>
-                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_58">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QToolButton" name="petProfileEditBtn">
+                            <property name="styleSheet">
+                             <string notr="true">background:transparent;</string>
+                            </property>
+                            <property name="text">
+                             <string>...</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resource.qrc">
+                              <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
+                            </property>
+                            <property name="iconSize">
+                             <size>
+                              <width>25</width>
+                              <height>25</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QToolButton" name="petProfileDeleteBtn">
+                            <property name="styleSheet">
+                             <string notr="true">background:transparent;</string>
+                            </property>
+                            <property name="text">
+                             <string>...</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resource.qrc">
+                              <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
+                            </property>
+                            <property name="iconSize">
+                             <size>
+                              <width>25</width>
+                              <height>25</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                       </layout>
@@ -8022,7 +8072,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8327,8 +8377,8 @@ background:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>891</width>
-                       <height>307</height>
+                       <width>849</width>
+                       <height>278</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">

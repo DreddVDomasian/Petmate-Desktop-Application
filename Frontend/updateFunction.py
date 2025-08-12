@@ -1,7 +1,7 @@
 import requests
 from toast import Toast
 from PyQt6.QtWidgets import QMessageBox,QComboBox
-from PyQt6.QtCore import QDate
+from PyQt6.QtCore import Qt, QDate
 
 
 class Update:
@@ -11,13 +11,23 @@ class Update:
         self.ui.petUpdateButton.clicked.connect(self.update_pet_to_api)
         self.ui.updateServiceBtn.clicked.connect(self.update_service_to_api)
     # UPDATE OWNER INFO
+
+    def set_combobox_value(self, combo: QComboBox, value: str):
+        if not isinstance(value, str):
+            value = ""
+        index = combo.findText(value.strip(), Qt.MatchFlag.MatchFixedString)
+        if index >= 0:
+            combo.setCurrentIndex(index)
+        else:
+            combo.setCurrentIndex(0)
+
     def populate_patient_form(self, patient):
         self.ui.firstNameEdit.setText(patient["firstName"])
         self.ui.lastNameEdit.setText(patient["lastName"])
         self.ui.phoneNumberEdit.setText(patient["phoneNumber"])
-        self.ui.provinceComboBox.setCurrentText(patient["province"])
-        self.ui.cityComboBox.setCurrentText(patient["city"])
-        self.ui.barangayComboBox.setCurrentText(patient["barangay"])
+        self.set_combobox_value(self.ui.provinceComboBox, patient["province"])
+        self.set_combobox_value(self.ui.cityComboBox, patient["city"])
+        self.set_combobox_value(self.ui.barangayComboBox, patient["barangay"])
         self.ui.detailedAddressEdit.setText(patient["detailedAddress"])
         self.ui.emailEdit.setText(patient["email"])
         self.ui.emergencyNoEdit.setText(patient["emergencyNumber"])
@@ -110,7 +120,7 @@ class Update:
             "species": self.ui.speciesComboBox.currentText(),
             "age": self.ui.age.text(),
             "sex": self.ui.petSexComboBox.currentText(),
-            "owner": self.ui.selected_patient_id
+            "owner_id": self.ui.selected_patient_id
         }
 
         url = f"http://127.0.0.1:8000/api/pets/{pet_id}/"

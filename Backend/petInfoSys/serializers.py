@@ -7,7 +7,15 @@ class BasicInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PetSerializer(serializers.ModelSerializer):
+    # For reading
     owner = BasicInfoSerializer(read_only=True)
+    # For writing
+    owner_id = serializers.PrimaryKeyRelatedField(
+        queryset=basicInfo.objects.all(),
+        source='owner',  # maps to the FK
+        write_only=True
+    )
+
     class Meta:
         model = Pet
         fields = '__all__'
