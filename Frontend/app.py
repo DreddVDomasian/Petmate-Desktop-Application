@@ -146,6 +146,15 @@ class MainUI(QMainWindow):
         self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
         self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
 
+        self.pendingBtn.setCheckable(True)
+        self.completedBtn.setCheckable(True)
+        self.statusStackedWidget.setCurrentIndex(0)
+        self.statusBtnGroup = QButtonGroup(self)
+        for btn in [self.pendingBtn, self.completedBtn]:
+            self.statusBtnGroup.addButton(btn)
+        self.pendingBtn.setChecked(True)
+        self.pendingBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(0))
+        self.completedBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(1))
 
 
 

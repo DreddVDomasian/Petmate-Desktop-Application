@@ -197,15 +197,25 @@ class AddAppointmentCard(QWidget):
             date = self.main_window.format_date(walkInAppointments.get("date"))
             card.appDate.setText(date)
 
-            time_str = walkInAppointments.get("prefTime")  # e.g., "10:00:00"
+            time_str = walkInAppointments.get("prefTime")
             if time_str:
                 time_obj = datetime.strptime(time_str, "%H:%M:%S")
-                formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")  # e.g., "10:00 AM"
+                formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")
                 card.preferredTime.setText(formatted_time)
             else:
                 card.preferredTime.setText("N/A")
 
             shadow = create_card_shadow()
             card.setGraphicsEffect(shadow)
+
+            # 🔑 Make card clickable → go to pet profile
+            pet_id = walkInAppointments.get("pet")
+            card.mousePressEvent = lambda event, pid=pet_id: self.open_pet_from_appointment(pid)
+
             self.walkInAppointmentListLayout.insertWidget(0, card)
 
+    def open_pet_from_appointment(self, pet_id):
+        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
+        if response.status_code == 200:
+            pet = response.json()
+            self.main_window.show_pet_profile(pet)  # Reuse your existing function

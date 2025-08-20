@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>8</number>
+          <number>6</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2144,6 +2144,12 @@ color:rgb(141, 141, 141);</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_13">
                 <property name="styleSheet">
@@ -2193,6 +2199,18 @@ color:rgb(39, 39, 39);
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QFrame" name="frame_6">
                 <property name="frameShape">
@@ -2504,9 +2522,99 @@ border-bottom-right-radius:10px;
                 <number>0</number>
                </property>
                <item>
-                <widget class="QScrollArea" name="walkInScrollArea">
+                <widget class="QFrame" name="pendingCompletedBtn">
                  <property name="styleSheet">
-                  <string notr="true">#walkInScrollArea{
+                  <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(80, 80, 80);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                           /* Active text color */
+}</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_26">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pendingBtn">
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Pending</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="completedBtn">
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Completed</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QStackedWidget" name="statusStackedWidget">
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <widget class="QWidget" name="pending">
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_66" stretch="0">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="walkInScrollArea">
+                     <property name="styleSheet">
+                      <string notr="true">#walkInScrollArea{
 	border:none;
 
 }
@@ -2540,34 +2648,39 @@ border-bottom-right-radius:10px;
     border-radius: 0px;
 }
 </string>
-                 </property>
-                 <property name="widgetResizable">
-                  <bool>true</bool>
-                 </property>
-                 <widget class="QWidget" name="walkInScrollAreaWidgetContents">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>893</width>
-                    <height>363</height>
-                   </rect>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_17">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
+                     </property>
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <widget class="QWidget" name="walkInScrollAreaWidgetContents">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>893</width>
+                        <height>342</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_17">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
+                 <widget class="QWidget" name="completed"/>
                 </widget>
                </item>
               </layout>
@@ -2635,7 +2748,7 @@ border-bottom-right-radius:10px;
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>543</width>
+                    <width>883</width>
                     <height>540</height>
                    </rect>
                   </property>
@@ -4469,8 +4582,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>851</width>
-                    <height>418</height>
+                    <width>401</width>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
