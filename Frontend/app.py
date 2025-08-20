@@ -148,13 +148,15 @@ class MainUI(QMainWindow):
 
         self.pendingBtn.setCheckable(True)
         self.completedBtn.setCheckable(True)
+        self.cancelledBtn.setCheckable(True)
         self.statusStackedWidget.setCurrentIndex(0)
         self.statusBtnGroup = QButtonGroup(self)
-        for btn in [self.pendingBtn, self.completedBtn]:
+        for btn in [self.pendingBtn, self.completedBtn, self.cancelledBtn]:
             self.statusBtnGroup.addButton(btn)
         self.pendingBtn.setChecked(True)
         self.pendingBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(0))
         self.completedBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(1))
+        self.cancelledBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(2))
 
 
 

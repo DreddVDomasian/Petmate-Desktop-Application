@@ -2076,8 +2076,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>893</width>
-                <height>488</height>
+                <width>150</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2557,18 +2557,6 @@ QPushButton:checked {
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>10</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>10</number>
-                  </property>
                   <item>
                    <widget class="QPushButton" name="pendingBtn">
                     <property name="styleSheet">
@@ -2589,6 +2577,16 @@ QPushButton:checked {
                     </property>
                    </widget>
                   </item>
+                  <item>
+                   <widget class="QPushButton" name="cancelledBtn">
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Cancelled</string>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
                 </widget>
                </item>
@@ -2597,7 +2595,7 @@ QPushButton:checked {
                  <property name="currentIndex">
                   <number>0</number>
                  </property>
-                 <widget class="QWidget" name="pending">
+                 <widget class="QWidget" name="pendingPage">
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -2663,8 +2661,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>893</width>
-                        <height>347</height>
+                        <width>100</width>
+                        <height>30</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2686,7 +2684,8 @@ QPushButton:checked {
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QWidget" name="completed"/>
+                 <widget class="QWidget" name="completedPage"/>
+                 <widget class="QWidget" name="cancelledPage"/>
                 </widget>
                </item>
               </layout>
@@ -2754,8 +2753,8 @@ QPushButton:checked {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>883</width>
-                    <height>540</height>
+                    <width>543</width>
+                    <height>486</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4219,8 +4218,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>889</width>
-                      <height>462</height>
+                      <width>100</width>
+                      <height>30</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>

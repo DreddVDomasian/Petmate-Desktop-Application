@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/cancel.png</file>
     <file>Icons/close.png</file>
     <file>Icons/checkBox.png</file>
     <file>Icons/left-arrow.png</file>
