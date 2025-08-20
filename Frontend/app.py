@@ -813,7 +813,7 @@ class MainUI(QMainWindow):
         self.selected_pet_id = pet["id"]
         self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))
         # Navigate to pet profile page (adjust index if needed)
-        self.navigate_to_page(8, pet_id=pet["id"])
+        self.navigate_to_page(6, pet_id=pet["id"])
         self.load_services_for_pet(pet["id"])
 
     def show_custom_calendar(self, dateEdit):
