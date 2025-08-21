@@ -176,6 +176,9 @@ class MainUI(QMainWindow):
         # toggle service history / add new
         self.addNewServiceBtn.setCheckable(True)
         self.serviceHistoryBtn.setCheckable(True)
+        self.serviceShadow.setGraphicsEffect(create_card_shadow())
+        self.addServiceShadow.setGraphicsEffect(create_card_shadow())
+        self.searchServiceFrame.setGraphicsEffect(create_card_shadow())
         self.serviceHistoryStackedWidget.setCurrentIndex(0)
         self.sourceBtnGroup = QButtonGroup(self)
         self.sourceBtnGroup.setExclusive(True)

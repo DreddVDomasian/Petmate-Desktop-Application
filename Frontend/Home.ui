@@ -2661,8 +2661,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>72</width>
+                        <height>16</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2754,7 +2754,7 @@ QPushButton:checked {
                     <x>0</x>
                     <y>0</y>
                     <width>543</width>
-                    <height>486</height>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4218,8 +4218,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>100</width>
-                      <height>30</height>
+                      <width>68</width>
+                      <height>18</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>
@@ -5915,23 +5915,51 @@ border:none;</string>
                   <number>5</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>5</number>
                  </property>
                  <property name="topMargin">
                   <number>0</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>5</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>10</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="serviceHistoryBtn">
+                  <widget class="QFrame" name="serviceShadow">
                    <property name="styleSheet">
-                    <string notr="true">QPushButton {
+                    <string notr="true">border-radius: 5px;
+border:none;</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_27">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QPushButton" name="serviceHistoryBtn">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton {
     border: none;
-    background-color: transparent;
+    background-color:rgb(220, 220, 220);
     color: rgb(80, 80, 80);
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     padding: 10px 15px;
@@ -5949,18 +5977,49 @@ QPushButton:checked {
     color: rgb(40, 40, 40);
 	border: none;                        
 }</string>
-                   </property>
-                   <property name="text">
-                    <string>Service History</string>
-                   </property>
+                      </property>
+                      <property name="text">
+                       <string>Service History</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="addNewServiceBtn">
+                  <widget class="QFrame" name="addServiceShadow">
                    <property name="styleSheet">
-                    <string notr="true">QPushButton {
+                    <string notr="true">border-radius: 5px;
+border:none;</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_28">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QPushButton" name="addNewServiceBtn">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton {
     border: none;
-    background-color: transparent;
+    background-color:rgb(220, 220, 220);
     color: rgb(80, 80, 80);
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     padding: 10px 15px;
@@ -5973,14 +6032,18 @@ QPushButton:hover {
 	border-radius:5px;
 }
 QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
+    background-color:rgb(252, 213, 151);   
 	border-radius:5px;
-    color: rgb(40, 40, 40);                           /* Active text color */
+    color: rgb(40, 40, 40);
+	border: none;                        
 }</string>
-                   </property>
-                   <property name="text">
-                    <string>Add New Service</string>
-                   </property>
+                      </property>
+                      <property name="text">
+                       <string>Add New Service</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>
@@ -6006,7 +6069,7 @@ QPushButton:checked {
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QFrame" name="searchframe_3">
+                   <widget class="QFrame" name="searchServiceFrame">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -6014,7 +6077,12 @@ QPushButton:checked {
                      </sizepolicy>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true"/>
+                     <string notr="true">#searchServiceFrame{
+	border-radius:10px;
+	border:none;
+}
+
+</string>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_63">
                      <property name="spacing">
@@ -6295,7 +6363,7 @@ background:none;</string>
                        <x>0</x>
                        <y>0</y>
                        <width>891</width>
-                       <height>258</height>
+                       <height>248</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
