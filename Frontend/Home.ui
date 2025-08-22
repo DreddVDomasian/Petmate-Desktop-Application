@@ -2076,8 +2076,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>893</width>
+                <height>488</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2661,8 +2661,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>72</width>
-                        <height>16</height>
+                        <width>893</width>
+                        <height>349</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -4218,8 +4218,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>68</width>
-                      <height>18</height>
+                      <width>889</width>
+                      <height>462</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>
@@ -4486,36 +4486,6 @@ color:rgb(58, 58, 58);</string>
                    </layout>
                   </widget>
                  </item>
-                 <item row="0" column="0" alignment="Qt::AlignLeft">
-                  <widget class="QFrame" name="profileBackfFrame">
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_17">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                   </layout>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
               </item>
@@ -4590,8 +4560,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>401</width>
-                    <height>109</height>
+                    <width>893</width>
+                    <height>389</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -5765,36 +5735,6 @@ color:rgb(0, 0, 0);</string>
                       </layout>
                      </widget>
                     </item>
-                    <item row="0" column="0" alignment="Qt::AlignLeft">
-                     <widget class="QFrame" name="petProfileBackFrame">
-                      <property name="styleSheet">
-                       <string notr="true">background:transparent;</string>
-                      </property>
-                      <property name="frameShape">
-                       <enum>QFrame::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Raised</enum>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_59">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
-                       <property name="leftMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="bottomMargin">
-                        <number>0</number>
-                       </property>
-                      </layout>
-                     </widget>
-                    </item>
                     <item row="0" column="2">
                      <widget class="QFrame" name="frame_55">
                       <property name="styleSheet">
@@ -5894,6 +5834,23 @@ border:none;</string>
                         </widget>
                        </item>
                       </layout>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" alignment="Qt::AlignLeft">
+                     <widget class="QPushButton" name="pushButton">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="resource.qrc">
+                        <normaloff>:/Icons/Icons/checklist.png</normaloff>:/Icons/Icons/checklist.png</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>30</width>
+                        <height>30</height>
+                       </size>
+                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -6321,7 +6278,6 @@ background:none;</string>
                     <property name="styleSheet">
                      <string notr="true">#serviceHistoryScrollArea{
 	border:none;
-
 }
 #serviceHistoryScrollArea QScrollBar:vertical {
     background: transparent;
@@ -6363,7 +6319,7 @@ background:none;</string>
                        <x>0</x>
                        <y>0</y>
                        <width>891</width>
-                       <height>248</height>
+                       <height>238</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">

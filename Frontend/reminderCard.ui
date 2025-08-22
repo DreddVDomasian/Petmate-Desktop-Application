@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>792</width>
+    <height>81</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="reminderCard">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>81</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#reminderCard{
+	border-radius:10px;
+	background-color:rgb(231, 231, 231);
+	border-bottom:1px solid rgb(185, 185, 185);
+	border-right:1px solid rgb(185, 185, 185);
+}
+
+
+</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>25</number>
+      </property>
+      <property name="leftMargin">
+       <number>20</number>
+      </property>
+      <property name="topMargin">
+       <number>20</number>
+      </property>
+      <property name="rightMargin">
+       <number>20</number>
+      </property>
+      <property name="bottomMargin">
+       <number>20</number>
+      </property>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="typeReq">
+        <property name="styleSheet">
+         <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(57, 57, 57);</string>
+        </property>
+        <property name="text">
+         <string>TYPE</string>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="dateReq">
+        <property name="styleSheet">
+         <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="text">
+         <string>DATE</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="timeOptional">
+        <property name="styleSheet">
+         <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="text">
+         <string>TIME</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="serviceOptional">
+        <property name="styleSheet">
+         <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="text">
+         <string>SERVICE</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="markAsDone">
+        <property name="styleSheet">
+         <string notr="true">#markAsDone{
+	font: 57 14pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding:10px 25px 10px 25px;
+	border:none;
+	border-radius:15px;
+	background-color:#79DE75;
+}
+
+#markAsDone:hover{
+	background-color:#56C552;
+}
+</string>
+        </property>
+        <property name="text">
+         <string>Mark as Done</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+  <include location="C:/Program Files (x86)/Qt Designer/resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>
