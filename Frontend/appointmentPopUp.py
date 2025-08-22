@@ -14,9 +14,25 @@ class AddAppointmentCard(QWidget):
         self.main_window = main_window  # keep reference
         uic.loadUi("addAppointmentCard.ui", self)
 
-        self.walkInAppointmentListLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
-        self.walkInAppointmentListLayout.setSpacing(10)
-        self.walkInAppointmentListLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        #pending layout
+        self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
+        self.pendingLayout.setSpacing(10)
+        self.pendingLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # completed layout
+        self.completedLayout = self.main_window.completedScrollAreaWidgetContents.layout()
+        self.completedLayout.setSpacing(10)
+        self.completedLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # overdue layout
+        self.overdueLayout = self.main_window.overdueScrollAreaWidgetContents.layout()
+        self.overdueLayout.setSpacing(10)
+        self.overdueLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # cancelled layout
+        self.cancelledLayout = self.main_window.cancelledScrollAreaWidgetContents.layout()
+        self.cancelledLayout.setSpacing(10)
+        self.cancelledLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
 
@@ -171,33 +187,26 @@ class AddAppointmentCard(QWidget):
     def load_walkInAppointments(self):
         response = requests.get("http://127.0.0.1:8000/api/walkIn/")
         if response.status_code == 200:
-            walkInAppointment = response.json()
-
+            walkInAppointments = response.json()
         else:
-            walkInAppointment = []
+            walkInAppointments = []
 
-        # 🧹 Clear existing items before adding new ones
-        while self.walkInAppointmentListLayout.count():
-            child = self.walkInAppointmentListLayout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
+        # 🧹 clear all layouts before adding new cards
+        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
+            while layout.count():
+                child = layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
 
-        if not walkInAppointment:
-            empty_label = QLabel("NO RECORDS")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
-            self.walkInAppointmentListLayout.addStretch()
-            self.walkInAppointmentListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-            self.walkInAppointmentListLayout.addStretch()
-            return
+        today = datetime.today().date()
 
-        for walkInAppointments in walkInAppointment:
+        for appt in walkInAppointments:
             card = uic.loadUi("appointmentCard.ui")
-            card.ownerName.setText(walkInAppointments["owner_full_name"])
-            card.petNameApp.setText(walkInAppointments["petName"])
-            date = self.main_window.format_date(walkInAppointments.get("date"))
-            card.appDate.setText(date)
+            card.ownerName.setText(appt["owner_full_name"].title())
+            card.petNameApp.setText(appt["petName"].capitalize())
+            card.appDate.setText(self.main_window.format_date(appt.get("date")))
 
-            time_str = walkInAppointments.get("prefTime")
+            time_str = appt.get("prefTime")
             if time_str:
                 time_obj = datetime.strptime(time_str, "%H:%M:%S")
                 formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")
@@ -205,17 +214,40 @@ class AddAppointmentCard(QWidget):
             else:
                 card.preferredTime.setText("N/A")
 
-            shadow = create_card_shadow()
-            card.setGraphicsEffect(shadow)
+            card.setGraphicsEffect(create_card_shadow())
 
-            # 🔑 Make card clickable → go to pet profile
-            pet_id = walkInAppointments.get("pet")
-            card.mousePressEvent = lambda event, pid=pet_id: self.open_pet_from_appointment(pid)
+            # 👉 decide which layout
+            status = appt.get("status", "pending")
+            appt_date = datetime.strptime(appt["date"], "%Y-%m-%d").date()
 
-            self.walkInAppointmentListLayout.insertWidget(0, card)
+            if status == "completed":
+                self.completedLayout.addWidget(card)
+            elif status == "cancelled":
+                card.deleteButton.hide()
+                self.cancelledLayout.addWidget(card)
+            elif status == "pending":
+                if appt_date < today:
+                    self.overdueLayout.addWidget(card)  # auto overdue
+                else:
+                    self.pendingLayout.addWidget(card)
+
+            card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
+
+        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
+            if layout.count() == 0:
+                self.add_empty_label(layout)
+
+    def add_empty_label(self, layout, message="EMPTY"):
+        empty_label = QLabel(message)
+        empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+        layout.addStretch()
+        layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addStretch()
 
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
-            self.main_window.show_pet_profile(pet)  # Reuse your existing function
+            self.main_window.show_pet_profile(pet)
+
+

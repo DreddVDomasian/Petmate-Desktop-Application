@@ -91,10 +91,23 @@ class MainUI(QMainWindow):
         # pet cards grid layout
         self.gridLayout_6.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.gridLayout_6.addWidget(self.addPetButton, 0, 0)  # fixed add pet button
+
+
         #scheduled services
-        self.scheduled_serviceLayout = self.scheduledReturnScrollPage.layout()
-        self.scheduled_serviceLayout.setSpacing(10)
-        self.scheduled_serviceLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # Pending Page
+        self.pendingLayout = self.pendingScrollPage.layout()
+        self.pendingLayout.setSpacing(10)
+        self.pendingLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Completed Page
+        self.completedLayout = self.completedScrollPage.layout()
+        self.completedLayout.setSpacing(10)
+        self.completedLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Overdue Page
+        self.overdueLayout = self.overdueScrollPage.layout()
+        self.overdueLayout.setSpacing(10)
+        self.overdueLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
     def setup_buttons(self):
         # page navigation
@@ -147,18 +160,33 @@ class MainUI(QMainWindow):
         self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
         self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
 
+        # toggle walk-in status Btn
         self.pendingBtn.setCheckable(True)
         self.completedBtn.setCheckable(True)
+        self.overdueBtn.setCheckable(True)
         self.cancelledBtn.setCheckable(True)
         self.statusStackedWidget.setCurrentIndex(0)
         self.statusBtnGroup = QButtonGroup(self)
-        for btn in [self.pendingBtn, self.completedBtn, self.cancelledBtn]:
+        for btn in [self.pendingBtn, self.completedBtn, self.overdueBtn,self.cancelledBtn]:
             self.statusBtnGroup.addButton(btn)
         self.pendingBtn.setChecked(True)
         self.pendingBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(0))
         self.completedBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(1))
-        self.cancelledBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(2))
+        self.overdueBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(2))
+        self.cancelledBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(3))
 
+        # toggle sched return status Btn
+        self.pendingReturnBtn.setCheckable(True)
+        self.completeReurnBtn.setCheckable(True)
+        self.overdueReturnBtn.setCheckable(True)
+        self.returnStackedWidget.setCurrentIndex(0)
+        self.returnStatusBtnGroup = QButtonGroup(self)
+        for btn in [self.pendingReturnBtn, self.completeReurnBtn, self.overdueReturnBtn]:
+            self.returnStatusBtnGroup.addButton(btn)
+        self.pendingReturnBtn.setChecked(True)
+        self.pendingReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(0))
+        self.completeReurnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(1))
+        self.overdueReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(2))
 
 
         #print btn
@@ -612,7 +640,7 @@ class MainUI(QMainWindow):
 
         for patient in patients:
             card = uic.loadUi("PatientCard.ui")
-            card.nameLabel.setText(f"{patient['firstName']} {patient['lastName']}")
+            card.nameLabel.setText(f"{patient['firstName']} {patient['lastName']}".title())
             card.emailLabel.setText(patient['email'])
 
             # Connect delete button
@@ -737,52 +765,58 @@ class MainUI(QMainWindow):
 
     def load_scheduled_services(self):
         response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
-        if response.status_code == 200:
-            scheduled_services = response.json()
-        else:
-            scheduled_services = []
+        scheduled_services = response.json() if response.status_code == 200 else []
 
         # get selected month from combobox
         selected_month = self.monthComboBox.currentText()  # e.g., 'August'
 
+        # clear all layouts before repopulating
+        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout]:
+            while layout.count():
+                child = layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
         # filter by return_date month
         filtered_services = []
         for service in scheduled_services:
-            return_date_str = service.get("return_date")  # e.g., '2025-08-05'
+            return_date_str = service.get("return_date")
             if return_date_str:
                 try:
                     date_obj = datetime.strptime(return_date_str, "%Y-%m-%d")
-                    month_name = date_obj.strftime("%B")  # 'August'
-                    if month_name == selected_month:
+                    month_name = date_obj.strftime("%B")
+                    if month_name == selected_month:  # match month
                         filtered_services.append(service)
                 except ValueError:
-                    pass  # skip invalid date
+                    pass  # skip invalid dates
 
-        # clear old cards
-        while self.scheduled_serviceLayout.count():
-            child = self.scheduled_serviceLayout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
-        # show empty message if no records
         if not filtered_services:
-            empty_label = QLabel("EMPTY")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
-            self.scheduled_serviceLayout.addStretch()
-            self.scheduled_serviceLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-            self.scheduled_serviceLayout.addStretch()
+            # show empty in each page if no services at all for the month
+            for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout]:
+                empty_label = QLabel("EMPTY")
+                empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+                layout.addStretch()
+                layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+                layout.addStretch()
             return
 
-        # create cards
+        # segregate by status after filtering
         for service in filtered_services:
             card = uic.loadUi("schedCard.ui")
-            card.ReturnNameLabel.setText(service['owner_full_name'])
+            card.ReturnNameLabel.setText(service['owner_full_name'].title())
+            card.petName.setText(service['pet_name'].capitalize())
             card.ReturnServiceLabel.setText(service['service_type'])
             return_date = self.format_date(service.get("return_date"))
             card.ReturnDateCardLabel.setText(return_date)
             card.setGraphicsEffect(create_card_shadow())
 
-            self.scheduled_serviceLayout.insertWidget(0,card)
+            status = service.get("status")
+            if status == "pending":
+                self.pendingLayout.addWidget(card)
+            elif status == "completed":
+                self.completedLayout.addWidget(card)
+            elif status == "overdue":
+                self.overdueLayout.addWidget(card)
 
     def format_date(self, raw):
         if raw:
@@ -837,6 +871,11 @@ class MainUI(QMainWindow):
         self.petSexLabel.setText(setPetSex.upper())
         age = f"AGE: {pet['age']} "
         self.petAgeLabel.setText(age)
+
+        if pet.get("has_reminder", False):
+            self.reminderBtn.show()
+        else:
+            self.reminderBtn.hide()
 
         species = pet.get("species", "").lower()
         if species == "dog":

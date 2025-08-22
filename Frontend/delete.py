@@ -53,9 +53,12 @@ class Delete:
 
             if self.delete_type == "patient":
                 self.ui.load_patients()
+                self.ui.load_scheduled_services()
                 self.ui.appointmentCard.load_walkInAppointments()
                 self.ui.stackedWidget.setCurrentIndex(2)
             elif self.delete_type == "pet":
+                self.ui.load_scheduled_services()
+                self.ui.appointmentCard.load_walkInAppointments()
                 self.ui.load_pets_for_owner(self.ui.selected_patient_id)  # use existing patient id
                 self.ui.stackedWidget.setCurrentIndex(5)
             elif self.delete_type == "service":

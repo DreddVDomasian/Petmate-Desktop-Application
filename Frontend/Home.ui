@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>6</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2076,8 +2076,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>893</width>
+                <height>488</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2198,6 +2198,27 @@ color:rgb(39, 39, 39);
            </item>
            <item>
             <widget class="QFrame" name="frame_5">
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
+}</string>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -2241,25 +2262,7 @@ color:rgb(39, 39, 39);
                  <item>
                   <widget class="QPushButton" name="walkInBtn">
                    <property name="styleSheet">
-                    <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(80, 80, 80);
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                           /* Active text color */
-}</string>
+                    <string notr="true"/>
                    </property>
                    <property name="text">
                     <string>Walk-ins</string>
@@ -2269,25 +2272,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QPushButton" name="websiteBtn">
                    <property name="styleSheet">
-                    <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(80, 80, 80);
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                           /* Active text color */
-}</string>
+                    <string notr="true"/>
                    </property>
                    <property name="text">
                     <string>Website</string>
@@ -2533,7 +2518,7 @@ border-bottom-right-radius:10px;
                   <string notr="true">QPushButton {
     border: none;
     background-color: transparent;
-    color: rgb(80, 80, 80);
+    color: rgb(166, 166, 166);
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     padding: 10px 15px;
     border-radius: 5px;
@@ -2547,7 +2532,7 @@ QPushButton:hover {
 QPushButton:checked {
     background-color:rgb(252, 213, 151);   /* Active bg color */
 	border-radius:5px;
-    color: rgb(40, 40, 40);                           /* Active text color */
+    color: rgb(40, 40, 40);                         
 }</string>
                  </property>
                  <property name="frameShape">
@@ -2557,6 +2542,21 @@ QPushButton:checked {
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_26">
+                  <property name="spacing">
+                   <number>5</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>10</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>10</number>
+                  </property>
                   <item>
                    <widget class="QPushButton" name="pendingBtn">
                     <property name="styleSheet">
@@ -2578,6 +2578,16 @@ QPushButton:checked {
                    </widget>
                   </item>
                   <item>
+                   <widget class="QPushButton" name="overdueBtn">
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Overdue</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
                    <widget class="QPushButton" name="cancelledBtn">
                     <property name="styleSheet">
                      <string notr="true"/>
@@ -2593,7 +2603,7 @@ QPushButton:checked {
                <item>
                 <widget class="QStackedWidget" name="statusStackedWidget">
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="pendingPage">
                   <property name="styleSheet">
@@ -2661,8 +2671,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>98</width>
-                        <height>28</height>
+                        <width>893</width>
+                        <height>367</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2684,8 +2694,183 @@ QPushButton:checked {
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QWidget" name="completedPage"/>
-                 <widget class="QWidget" name="cancelledPage"/>
+                 <widget class="QWidget" name="completedPage">
+                  <layout class="QVBoxLayout" name="verticalLayout_34">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="scrollArea_4">
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <widget class="QWidget" name="completedScrollAreaWidgetContents">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>891</width>
+                        <height>365</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_37">
+                       <property name="spacing">
+                        <number>6</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="label_5">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="overduePage">
+                  <layout class="QVBoxLayout" name="verticalLayout_35">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="scrollArea_5">
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <widget class="QWidget" name="overdueScrollAreaWidgetContents">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>891</width>
+                        <height>365</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_38">
+                       <property name="spacing">
+                        <number>6</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="label_25">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="cancelledPage">
+                  <layout class="QVBoxLayout" name="verticalLayout_36">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="scrollArea_6">
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <widget class="QWidget" name="cancelledScrollAreaWidgetContents">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>891</width>
+                        <height>345</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_39">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="label_26">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </widget>
                </item>
               </layout>
@@ -3656,7 +3841,7 @@ border-radius: 10px;
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_62">
+             <layout class="QVBoxLayout" name="verticalLayout_23">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -3925,125 +4110,6 @@ QComboBox QLineEdit {
                       </item>
                      </widget>
                     </item>
-                    <item>
-                     <widget class="QComboBox" name="comboBox_2">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>234</width>
-                        <height>44</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">QComboBox {
-    border-right: 2px solid #cccccc;
-    border-bottom: 2px solid #cccccc;
-    border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	padding-left: 10px;
-
-}
-
-QComboBox::drop-down {
-    background-color: white;
-    border: none;
-}
-
-QComboBox::down-arrow {
-    image: url(:/Icons/Icons/downArrow.png);
-    width: 12px;
-    height: 12px;
-    padding-right: 10px;
-}
-
-/* Dropdown list */
-QComboBox QAbstractItemView {
-    background-color: white;
-    selection-background-color: rgb(193, 193, 193); 
-    selection-color: black;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    outline: none;
-	border:1px solid rgb(209, 209, 209);
-}
-
-/* List items */
-QComboBox QAbstractItemView::item {
-    background-color: white;
-    color: black;
-    height: 25px;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-}
-
-QComboBox QAbstractItemView::item:hover {
-    background-color: rgb(193, 193, 193);
-    color: black;
-}
-
-/* Scrollbar inside dropdown */
-QComboBox QAbstractItemView QScrollBar:vertical {
-    background-color: transparent; /* or set a solid color */
-    width: 10px;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical {
-    background-color: rgb(129, 191, 218);
-    border-radius: 5px;
-    min-height: 120px;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
-    background-color: rgb(86, 127, 145);
-}
-
-QComboBox QAbstractItemView QScrollBar::add-line:vertical,
-QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
-    height: 0px;
-    background: none;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::groove:vertical {
-    background: transparent;
-    outline: none;
-    border: none;
-}
-QComboBox QAbstractItemView QScrollBar,
-QComboBox QAbstractItemView QScrollBar::handle,
-QComboBox QAbstractItemView QScrollBar::groove {
-    outline: none;
-    border: none;
-}
-
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; /* optional para di mag mukhang double border */
-    background: transparent;
-}font: 14px &quot;Montserrat&quot;;
-color: #272727;</string>
-                      </property>
-                      <property name="currentText">
-                       <string>Today</string>
-                      </property>
-                      <item>
-                       <property name="text">
-                        <string>Today</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>This Week</string>
-                       </property>
-                      </item>
-                     </widget>
-                    </item>
                    </layout>
                   </widget>
                  </item>
@@ -4148,7 +4214,25 @@ border-bottom-right-radius:10px;
               <item>
                <widget class="QFrame" name="frame_72">
                 <property name="styleSheet">
-                 <string notr="true">background-color: transparent;</string>
+                 <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
+}</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -4156,9 +4240,9 @@ border-bottom-right-radius:10px;
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_63">
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>5</number>
                  </property>
                  <property name="leftMargin">
                   <number>0</number>
@@ -4170,12 +4254,58 @@ border-bottom-right-radius:10px;
                   <number>0</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>5</number>
                  </property>
                  <item>
-                  <widget class="QScrollArea" name="schedReturnScrollArea">
-                   <property name="styleSheet">
-                    <string notr="true">#schedReturnScrollArea{
+                  <widget class="QPushButton" name="pendingReturnBtn">
+                   <property name="text">
+                    <string>Pending</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="completeReurnBtn">
+                   <property name="text">
+                    <string>Completed</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="overdueReturnBtn">
+                   <property name="text">
+                    <string>Overdue</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QStackedWidget" name="returnStackedWidget">
+                <property name="currentIndex">
+                 <number>1</number>
+                </property>
+                <widget class="QWidget" name="pendingReturn">
+                 <layout class="QVBoxLayout" name="verticalLayout_24">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QScrollArea" name="schedReturnScrollArea">
+                    <property name="styleSheet">
+                     <string notr="true">#schedReturnScrollArea{
 	border:none;
 
 }
@@ -4209,24 +4339,115 @@ border-bottom-right-radius:10px;
     border-radius: 0px;
 }
 </string>
-                   </property>
-                   <property name="widgetResizable">
-                    <bool>true</bool>
-                   </property>
-                   <widget class="QWidget" name="scheduledReturnScrollPage">
-                    <property name="geometry">
-                     <rect>
-                      <x>0</x>
-                      <y>0</y>
-                      <width>98</width>
-                      <height>28</height>
-                     </rect>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_64"/>
+                    <property name="widgetResizable">
+                     <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="pendingScrollPage">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>891</width>
+                       <height>412</height>
+                      </rect>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_67"/>
+                    </widget>
                    </widget>
-                  </widget>
-                 </item>
-                </layout>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="CompletedReturn">
+                 <layout class="QVBoxLayout" name="verticalLayout_29">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QScrollArea" name="scrollArea">
+                    <property name="widgetResizable">
+                     <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="completedScrollPage">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>889</width>
+                       <height>410</height>
+                      </rect>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_33">
+                      <item>
+                       <widget class="QPushButton" name="pushButton_2">
+                        <property name="text">
+                         <string>PushButton</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="OverdureReturn">
+                 <layout class="QVBoxLayout" name="verticalLayout_31">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QScrollArea" name="scrollArea_2">
+                    <property name="widgetResizable">
+                     <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="overdueScrollPage">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>889</width>
+                       <height>410</height>
+                      </rect>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_32">
+                      <item>
+                       <widget class="QPushButton" name="pushButton">
+                        <property name="text">
+                         <string>PushButton</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
                </widget>
               </item>
              </layout>

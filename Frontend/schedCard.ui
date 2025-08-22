@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1018</width>
+    <width>950</width>
     <height>81</height>
    </rect>
   </property>
@@ -35,7 +35,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item alignment="Qt::AlignTop">
+   <item>
     <widget class="QFrame" name="SchedCard">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
@@ -114,6 +114,17 @@ color:rgb(57, 57, 57);</string>
         </property>
         <property name="text">
          <string>Robert Moleno</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="petName">
+        <property name="styleSheet">
+         <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(57, 57, 57);</string>
+        </property>
+        <property name="text">
+         <string>Petname</string>
         </property>
        </widget>
       </item>
