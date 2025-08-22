@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>828</width>
-    <height>428</height>
+    <width>753</width>
+    <height>418</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,30 +137,19 @@ color:rgb(0, 0, 0);</string>
         <property name="widgetResizable">
          <bool>true</bool>
         </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents">
+        <widget class="QWidget" name="reminderScrollAreaContents">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>792</width>
-           <height>274</height>
+           <width>717</width>
+           <height>275</height>
           </rect>
          </property>
          <property name="styleSheet">
           <string notr="true">background-color:rgb(255, 255, 255);</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="resource.qrc">:/images/image/image 1.png</pixmap>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <layout class="QVBoxLayout" name="verticalLayout_3"/>
         </widget>
        </widget>
       </item>
@@ -173,8 +162,32 @@ color:rgb(0, 0, 0);</string>
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="DoneBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
            <property name="styleSheet">
             <string notr="true">QPushButton{
 	font: 63 15pt &quot;Montserrat SemiBold&quot;;

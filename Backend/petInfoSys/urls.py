@@ -14,8 +14,8 @@ urlpatterns = [
     path('scheduled-services/', ScheduledServiceListView.as_view(), name='scheduled-services'),
 
     path('walkIn/', WalkInListCreateView.as_view(), name='walk-in'),
-    path('walkIn/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
+    path('walkIn/<int:pk>/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
 
     path("print/<int:owner_id>/<int:pet_id>/", views.print_record, name="print_record"),
-
+    path("reminders/", views.reminders, name="reminders"),
 ]

@@ -1,4 +1,7 @@
 from rest_framework import generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from datetime import date
 from .models import *
 from django.shortcuts import render, get_object_or_404
 from .serializers import *
@@ -15,6 +18,49 @@ def print_record(request, owner_id, pet_id):
         "pet": pet,
         "services": services
     })
+
+
+@api_view(['GET'])
+def reminders(request):
+    reminders = []
+
+    # Pending/overdue appointments
+    appointments = WalkInAppointment.objects.filter(status__in=["pending", "overdue"])
+
+    for appt in appointments:
+        reminders.append({
+            "id": appt.id,
+            "type": "appointment",
+            "date": appt.date.strftime("%Y-%m-%d"),
+            "time": appt.prefTime.strftime("%I:%M %p") if appt.prefTime else None,
+            "service": appt.service_name,
+            "pet_id": appt.pet.id,
+            "status": appt.status
+        })
+
+    # Pending service returns
+    services = Service.objects.filter(return_date__isnull=False)
+    for svc in services:
+        # dynamically calculate status
+        if svc.return_date < date.today():
+            status = "overdue"
+        else:
+            status = "pending"
+
+        reminders.append({
+            "id": svc.id,
+            "type": "Service Return",
+            "date": svc.return_date.strftime("%Y-%m-%d"),
+            "time": None,
+            "service": svc.service_type,
+            "pet_id": svc.pet.id,
+            "status": status
+        })
+
+    # Sort by date
+    reminders = sorted(reminders, key=lambda x: x["date"])
+    return Response(reminders)
+
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
     queryset = basicInfo.objects.all()
@@ -80,3 +126,4 @@ class WalkInListCreateView(generics.ListCreateAPIView):
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WalkInAppointment.objects.all()
     serializer_class = WalkInSerializer
+

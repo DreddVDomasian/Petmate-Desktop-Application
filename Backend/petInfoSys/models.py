@@ -58,4 +58,5 @@ class WalkInAppointment(models.Model):
     date = models.DateField()
     prefTime = models.TimeField()
     status = models.CharField(max_length=20, default='pending')
+    service_name = models.CharField(max_length=100, default='none')
     created_at = models.DateTimeField(auto_now_add=True)

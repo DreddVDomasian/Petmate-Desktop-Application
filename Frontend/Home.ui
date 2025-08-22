@@ -2603,7 +2603,7 @@ QPushButton:checked {
                <item>
                 <widget class="QStackedWidget" name="statusStackedWidget">
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="pendingPage">
                   <property name="styleSheet">
@@ -2661,6 +2661,33 @@ QPushButton:checked {
     border: none;
     border-radius: 0px;
 }
+
+
+#walkInScrollArea QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /* horizontal thickness */
+    margin: 0px;
+}
+
+#walkInScrollArea QScrollBar::handle:horizontal {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    height: 10px; /* same as scrollbar height */
+}
+
+#walkInScrollArea QScrollBar::add-line:horizontal,
+#walkInScrollArea QScrollBar::sub-line:horizontal {
+    width: 0px; /* hide buttons */
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#walkInScrollArea QScrollBar::groove:horizontal {
+    background: transparent;
+    border: none;
+}
+
 </string>
                      </property>
                      <property name="widgetResizable">
@@ -2672,7 +2699,7 @@ QPushButton:checked {
                         <x>0</x>
                         <y>0</y>
                         <width>893</width>
-                        <height>367</height>
+                        <height>347</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2722,7 +2749,7 @@ QPushButton:checked {
                         <x>0</x>
                         <y>0</y>
                         <width>891</width>
-                        <height>365</height>
+                        <height>345</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -2782,7 +2809,7 @@ QPushButton:checked {
                         <x>0</x>
                         <y>0</y>
                         <width>891</width>
-                        <height>365</height>
+                        <height>345</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -6236,7 +6263,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">

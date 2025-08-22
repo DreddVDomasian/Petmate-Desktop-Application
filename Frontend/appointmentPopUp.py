@@ -149,6 +149,7 @@ class AddAppointmentCard(QWidget):
 
         date = self.popUpDateEdit.date().toString("yyyy-MM-dd")
         time = self.timeEdit.time().toString("HH:mm:ss")
+        service_name = self.serviceTypeComboBox.currentText()
 
         # basic validation
         missing = []
@@ -158,6 +159,8 @@ class AddAppointmentCard(QWidget):
             missing.append("Date")
         if not time:
             missing.append("Time")
+        if not service_name:
+            missing.append("Service")
 
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
@@ -171,6 +174,7 @@ class AddAppointmentCard(QWidget):
             "pet": pet_id,
             "date": date,
             "prefTime": time,
+            "service_name": service_name,  # include service
             # add notes or other fields if you have
         }
 
@@ -204,6 +208,7 @@ class AddAppointmentCard(QWidget):
             card = uic.loadUi("appointmentCard.ui")
             card.ownerName.setText(appt["owner_full_name"].title())
             card.petNameApp.setText(appt["petName"].capitalize())
+            card.serviceApp.setText(appt["service_name"].capitalize())
             card.appDate.setText(self.main_window.format_date(appt.get("date")))
 
             time_str = appt.get("prefTime")

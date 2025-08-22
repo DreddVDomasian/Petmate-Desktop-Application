@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
+    <width>793</width>
     <height>81</height>
    </rect>
   </property>
@@ -100,7 +100,7 @@
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignHCenter">
+      <item>
        <widget class="QLabel" name="ownerName">
         <property name="styleSheet">
          <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
@@ -109,9 +109,12 @@ color:rgb(57, 57, 57);</string>
         <property name="text">
          <string>Robert Moleno</string>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignHCenter">
+      <item>
        <widget class="QLabel" name="petNameApp">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
@@ -123,9 +126,35 @@ color:rgb(39, 39, 39);</string>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignHCenter">
+      <item>
+       <widget class="QLabel" name="serviceApp">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="text">
+         <string>Service</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="appDate">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
@@ -137,9 +166,12 @@ color:rgb(39, 39, 39);</string>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignHCenter">
+      <item>
        <widget class="QLabel" name="preferredTime">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
@@ -150,6 +182,9 @@ color:rgb(39, 39, 39);</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

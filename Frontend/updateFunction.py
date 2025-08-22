@@ -82,6 +82,7 @@ class Update:
         if response.status_code == 200:
             Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
             self.ui.load_patients()
+            self.ui.load_walkInAppointments()
             self.ui.navigate_to_page(2)
         else:
             Toast(self.ui, "Update failed!", icon_path="Icons/warning.png").show_toast()

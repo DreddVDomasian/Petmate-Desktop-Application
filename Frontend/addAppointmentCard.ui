@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>738</width>
-    <height>349</height>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item alignment="Qt::AlignLeft|Qt::AlignTop">
+      <item>
        <widget class="QFrame" name="frame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -56,7 +56,7 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
+         <item alignment="Qt::AlignLeft">
           <widget class="QPushButton" name="closePopUpBtn">
            <property name="styleSheet">
             <string notr="true">border:none;
@@ -424,6 +424,245 @@ QComboBox QLineEdit {
              </widget>
             </item>
            </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_63">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color:rgb(255, 255, 255);
+font: 57 12pt &quot;Montserrat Medium&quot;;
+color:rgb(39, 39, 39);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_54">
+         <property name="leftMargin">
+          <number>20</number>
+         </property>
+         <property name="rightMargin">
+          <number>20</number>
+         </property>
+         <property name="bottomMargin">
+          <number>9</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_137">
+           <property name="styleSheet">
+            <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+           </property>
+           <property name="text">
+            <string>Service Type</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="serviceTypeComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>174</width>
+             <height>45</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QComboBox {
+    border-right: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
+    border-radius: 5px;
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+
+}
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; 
+    background: transparent;
+}
+
+QComboBox::drop-down {
+    background-color: white;
+    border: none;
+}
+
+QComboBox::down-arrow {
+    image: url(:/Icons/Icons/downArrow.png);
+    width: 12px;
+    height: 12px;
+    padding-right: 10px;
+}
+
+/* Dropdown list */
+QComboBox QAbstractItemView {
+    background-color: white;
+    selection-background-color: rgb(193, 193, 193); 
+    selection-color: black;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    outline: none;
+	border:1px solid rgb(209, 209, 209);
+}
+
+/* List items */
+QComboBox QAbstractItemView::item {
+    background-color: white;
+    color: black;
+    height: 25px;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgb(193, 193, 193);
+    color: black;
+}
+
+/* Scrollbar inside dropdown */
+QComboBox QAbstractItemView QScrollBar:vertical {
+    background-color: transparent; /* or set a solid color */
+    width: 10px;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QComboBox QAbstractItemView QScrollBar::add-line:vertical,
+QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::groove:vertical {
+    background: transparent;
+    outline: none;
+    border: none;
+}
+QComboBox QAbstractItemView QScrollBar,
+QComboBox QAbstractItemView QScrollBar::handle,
+QComboBox QAbstractItemView QScrollBar::groove {
+    outline: none;
+    border: none;
+}
+
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; /* optional para di mag mukhang double border */
+    background: transparent;
+}</string>
+           </property>
+           <property name="editable">
+            <bool>false</bool>
+           </property>
+           <property name="currentText">
+            <string>Select Service</string>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="maxVisibleItems">
+            <number>10</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Select Service</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Vaccination</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Deworming</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tick &amp; Flea Prevention</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Consultation</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Wellness Check</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Surgery</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CBC</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Blood Chemistry</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Progesterone test</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Pregnancy test</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Diagnostic Microscopy</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Urinalysis</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Antigen/Antibody</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
