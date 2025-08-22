@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter,QCalendarWidget,QToolButton,QTextEdit
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate,QPoint
+from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect, QSize
 import resources_rc
 from PyQt6.QtGui import QFontDatabase, QFont, QPixmap, QIcon, QAction,QColor
 from uiLogic import UIHandler
@@ -8,6 +8,7 @@ from input_styles import *
 from toast import Toast
 from Backend.api_client import add_new_patient, add_new_pet, add_new_service
 from confirm_card import ConfirmCard
+from ReminderPopUp import ReminderPopup
 from  appointmentPopUp import AddAppointmentCard
 from functools import partial
 from datetime import datetime
@@ -172,6 +173,30 @@ class MainUI(QMainWindow):
         self.petUpdateButton.hide()
         self.updateServiceBtn.hide()
 
+        #reminder pop up
+        self.make_icon_pulse(self.reminderBtn)
+
+    def make_icon_pulse(self, button):
+        rect = button.iconSize()
+
+        grow = QPropertyAnimation(button, b"iconSize")
+        grow.setDuration(500)
+        grow.setStartValue(rect)
+        grow.setEndValue(rect + QSize(6, 6))  # grow
+        grow.setEasingCurve(QEasingCurve.Type.OutCubic)
+
+        shrink = QPropertyAnimation(button, b"iconSize")
+        shrink.setDuration(500)
+        shrink.setStartValue(rect + QSize(6, 6))
+        shrink.setEndValue(rect)
+        shrink.setEasingCurve(QEasingCurve.Type.InCubic)
+
+        self.pulse_anim = QSequentialAnimationGroup(self)
+        self.pulse_anim.addAnimation(grow)
+        self.pulse_anim.addAnimation(shrink)
+        self.pulse_anim.setLoopCount(-1)
+        self.pulse_anim.start()
+
     def setup_service_tab(self):
         # toggle service history / add new
         self.addNewServiceBtn.setCheckable(True)
@@ -264,6 +289,16 @@ class MainUI(QMainWindow):
     def open_addAppointment(self):
         self.appointmentCard.load_patients_to_combobox()
         self.appointmentCard.show_card()
+
+    def open_reminderPopup(self):
+        self.reminderPopup = ReminderPopup(
+            parent=self.findChild(QWidget, "MainContent"),
+            main_window=self
+        )
+        self.reminderPopup.show_reminder()
+
+    def done_reminder(self):
+        self.reminderPopup.hide()
 
     def setup_pet_buttons(self):
         self.profileStackedWidget.setCurrentIndex(0)
@@ -811,9 +846,9 @@ class MainUI(QMainWindow):
         else:
             icon_path = "Icons/otherSpecies.png"
 
+        self.reminderBtn.clicked.connect(lambda: self.open_reminderPopup())
+
         self.petProfileIcon.setPixmap(QPixmap(icon_path))
-
-
         # Keep track of which pet is selected
         self.selected_pet_id = pet["id"]
         self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))

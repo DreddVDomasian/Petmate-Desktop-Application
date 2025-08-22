@@ -2076,8 +2076,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>893</width>
-                <height>488</height>
+                <width>150</width>
+                <height>33</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2661,8 +2661,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>893</width>
-                        <height>349</height>
+                        <width>98</width>
+                        <height>28</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -4218,8 +4218,8 @@ border-bottom-right-radius:10px;
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>889</width>
-                      <height>462</height>
+                      <width>98</width>
+                      <height>28</height>
                      </rect>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_64"/>
@@ -4560,8 +4560,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>893</width>
-                    <height>389</height>
+                    <width>401</width>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -5837,7 +5837,13 @@ border:none;</string>
                      </widget>
                     </item>
                     <item row="0" column="0" alignment="Qt::AlignLeft">
-                     <widget class="QPushButton" name="pushButton">
+                     <widget class="QPushButton" name="reminderBtn">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
                       <property name="text">
                        <string/>
                       </property>

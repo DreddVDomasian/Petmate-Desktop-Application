@@ -161,7 +161,7 @@ color:rgb(39, 39, 39);</string>
  </widget>
  <resources>
   <include location="resource.qrc"/>
-  <include location="C:/Program Files (x86)/Qt Designer/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>
