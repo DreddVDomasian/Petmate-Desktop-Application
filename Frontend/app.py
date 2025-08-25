@@ -90,7 +90,7 @@ class MainUI(QMainWindow):
 
         # pet cards grid layout
         self.gridLayout_6.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.gridLayout_6.addWidget(self.addPetButton, 0, 0)  # fixed add pet button
+        self.gridLayout_6.addWidget(self.addPetButton, 0, 0)
 
 
         #scheduled services
@@ -319,10 +319,11 @@ class MainUI(QMainWindow):
         self.appointmentCard.show_card()
 
     def open_reminderPopup(self):
-        self.reminderPopup = ReminderPopup(
-            parent=self.findChild(QWidget, "MainContent"),
-            main_window=self
-        )
+        if not hasattr(self, "reminderPopup") or self.reminderPopup is None:
+            self.reminderPopup = ReminderPopup(
+                parent=self.findChild(QWidget, "MainContent"),
+                main_window=self
+            )
         self.reminderPopup.show_reminder()
 
     def done_reminder(self):

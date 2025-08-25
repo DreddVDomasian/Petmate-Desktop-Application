@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>950</width>
+    <width>847</width>
     <height>81</height>
    </rect>
   </property>
@@ -115,6 +115,9 @@ color:rgb(57, 57, 57);</string>
         <property name="text">
          <string>Robert Moleno</string>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -125,6 +128,12 @@ color:rgb(57, 57, 57);</string>
         </property>
         <property name="text">
          <string>Petname</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -137,6 +146,12 @@ color:rgb(57, 57, 57);</string>
         <property name="text">
          <string>Check up</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -147,6 +162,12 @@ color:rgb(57, 57, 57);</string>
         </property>
         <property name="text">
          <string>Aug 1, 2025</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

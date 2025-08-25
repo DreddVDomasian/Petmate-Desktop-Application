@@ -1,5 +1,6 @@
+import requests
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget,QLabel
 from  shadowEffects import *
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect
 
@@ -8,13 +9,17 @@ class ReminderPopup(QWidget):
         super().__init__(parent)
         self.main_window = main_window
         uic.loadUi("reminderPopUp.ui", self)  # load your reminder popup UI
-
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.remidersChecklists.setGraphicsEffect(create_card_shadow())
+
+        self.reminderLayout = self.reminderScrollAreaContents.layout()
+        self.reminderLayout.setSpacing(10)
+        self.reminderLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.DoneBtn.clicked.connect(self.done_reminder)
         if parent:
             parent.installEventFilter(self)
+
 
     def show_reminder(self):
         if self.parent():
@@ -24,6 +29,8 @@ class ReminderPopup(QWidget):
             y = (parent_widget.height() - self.height()) // 2
             self.move(x, y)
 
+        if self.main_window and hasattr(self.main_window, "selected_pet_id"):
+            self.load_reminder(self.main_window.selected_pet_id)
         # Fade in
         self.setWindowOpacity(0)
         self.show()
@@ -51,3 +58,55 @@ class ReminderPopup(QWidget):
     def done_reminder(self):
         self.hide()
 
+    def load_reminder(self, pet_id):
+        response = requests.get(f"http://127.0.0.1:8000/api/reminders/?pet_id={pet_id}")
+        if response.status_code == 200:
+            reminders = response.json()
+
+        else:
+            reminders = []
+
+        while self.reminderLayout.count():
+            child = self.reminderLayout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        if reminders:
+            pet_name = reminders[0].get("pet_name", "")
+            self.reminderForLabel.setText(f"REMINDERS FOR {pet_name.upper()}")
+
+        for reminder in reminders:
+            card = uic.loadUi("reminderCard.ui")
+            card.typeReq.setText(reminder["type"])
+            card.dateReq.setText(self.main_window.format_date(reminder["date"]))
+            if not reminder["time"] or reminder["time"] == "null":
+                layout = card.layout()
+                layout.removeWidget(card.timeOptional)
+                card.timeOptional.deleteLater()  # deletes widget so no space is reserved
+            else:
+                card.timeOptional.setText(reminder["time"])
+            card.serviceOptional.setText(reminder["service"])
+
+            reminder_id = reminder["id"]
+            reminder_type = reminder["type"].lower()  # "appointment" or "service"
+            card.markAsDone.clicked.connect(lambda _, rid=reminder_id, rtype=reminder_type: self.complete_reminder(rid, rtype))
+
+            card.setGraphicsEffect(create_card_shadow())
+            self.reminderLayout.insertWidget(0, card)
+
+    def complete_reminder(self, reminder_id, reminder_type):
+        url = ""
+        if reminder_type == "appointment":
+            url = f"http://127.0.0.1:8000/api/walkIn/{reminder_id}/"
+        elif reminder_type == "service return":
+            url = f"http://127.0.0.1:8000/api/services/{reminder_id}/"
+
+        if url:
+            response = requests.patch(url, json={"status": "completed"})
+            if response.status_code in [200, 202]:
+                print("Reminder marked as completed")
+                self.load_reminder(self.main_window.selected_pet_id)
+                self.main_window.load_scheduled_services()
+                self.main_window.appointmentCard.load_walkInAppointments()
+            else:
+                print("Failed:", response.text)

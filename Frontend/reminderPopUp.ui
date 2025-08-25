@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>753</width>
-    <height>418</height>
+    <width>813</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -102,35 +102,34 @@ color:rgb(0, 0, 0);</string>
         <property name="styleSheet">
          <string notr="true">#reminderScrollArea{
 	border:none;
+
 }
-#reminderScrollArea QScrollBar:vertical {
+QScrollBar:vertical {
     background: transparent;
     width: 10px;
     margin: 0px;
 }
 
-#reminderScrollArea QScrollBar::handle:vertical {
+QScrollBar::handle:vertical {
     background-color: rgb(129, 191, 218);
     border-radius: 5px;
-    min-height: 120px;
-	min-height: 200px;
+    min-height: 50px;
 }
 
-#reminderScrollArea QScrollBar::handle:vertical:hover {
+QScrollBar::handle:vertical:hover {
     background-color: rgb(86, 127, 145);
 }
 
-#reminderScrollArea QScrollBar::add-line:vertical,
-#reminderScrollArea QScrollBar::sub-line:vertical {
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
     height: 0px;
     background: none;
     border: none;
 }
 
-#reminderScrollArea QScrollBar::groove:vertical {
+QScrollBar::groove:vertical {
     background: transparent;
     border: none;
-    border-radius: 0px;
 }
 </string>
         </property>
@@ -142,14 +141,27 @@ color:rgb(0, 0, 0);</string>
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>717</width>
-           <height>275</height>
+           <width>777</width>
+           <height>357</height>
           </rect>
          </property>
          <property name="styleSheet">
           <string notr="true">background-color:rgb(255, 255, 255);</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3"/>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+         </layout>
         </widget>
        </widget>
       </item>

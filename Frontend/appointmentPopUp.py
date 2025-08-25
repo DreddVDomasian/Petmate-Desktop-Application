@@ -202,7 +202,6 @@ class AddAppointmentCard(QWidget):
                 if child.widget():
                     child.widget().deleteLater()
 
-        today = datetime.today().date()
 
         for appt in walkInAppointments:
             card = uic.loadUi("appointmentCard.ui")
@@ -231,10 +230,9 @@ class AddAppointmentCard(QWidget):
                 card.deleteButton.hide()
                 self.cancelledLayout.addWidget(card)
             elif status == "pending":
-                if appt_date < today:
-                    self.overdueLayout.addWidget(card)  # auto overdue
-                else:
-                    self.pendingLayout.addWidget(card)
+                self.pendingLayout.addWidget(card)
+            elif status == "overdue":
+                self.overdueLayout.addWidget(card)
 
             card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
 

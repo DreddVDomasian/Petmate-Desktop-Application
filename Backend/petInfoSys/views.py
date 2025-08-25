@@ -24,24 +24,37 @@ def print_record(request, owner_id, pet_id):
 def reminders(request):
     reminders = []
 
-    # Pending/overdue appointments
+    pet_id = request.query_params.get("pet_id", None)
+
+    # Appointments (only show pending/overdue)
     appointments = WalkInAppointment.objects.filter(status__in=["pending", "overdue"])
+    if pet_id:
+        appointments = appointments.filter(pet_id=pet_id)
 
     for appt in appointments:
         reminders.append({
             "id": appt.id,
-            "type": "appointment",
+            "type": "Appointment",
             "date": appt.date.strftime("%Y-%m-%d"),
             "time": appt.prefTime.strftime("%I:%M %p") if appt.prefTime else None,
             "service": appt.service_name,
             "pet_id": appt.pet.id,
+            "pet_name": appt.pet.petName,
             "status": appt.status
         })
 
-    # Pending service returns
+    # Services
     services = Service.objects.filter(return_date__isnull=False)
+
+    if pet_id:
+        services = services.filter(pet_id=pet_id)
+
     for svc in services:
-        # dynamically calculate status
+        # if already completed, skip it
+        if svc.status == "completed":
+            continue
+
+            # otherwise, dynamically calculate
         if svc.return_date < date.today():
             status = "overdue"
         else:
@@ -54,6 +67,7 @@ def reminders(request):
             "time": None,
             "service": svc.service_type,
             "pet_id": svc.pet.id,
+            "pet_name": svc.pet.petName,
             "status": status
         })
 
@@ -88,16 +102,19 @@ class PetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class ServiceListCreateView(generics.ListCreateAPIView):
     serializer_class = ServiceSerializer
+    queryset = Service.objects.all()
 
     def get_queryset(self):
-        pet_id = self.request.query_params.get('pet_id')
-        owner_id = self.request.query_params.get('owner_id')
-        queryset = Service.objects.all()
-        if pet_id:
-            queryset = queryset.filter(pet_id=pet_id)
-        if owner_id:
-            queryset = queryset.filter(owner_id=owner_id)
-        return queryset
+        today = date.today()
+        services = Service.objects.all()
+
+        for svc in services:
+            if svc.status not in ["completed", "cancelled"]:
+                if svc.return_date and svc.return_date < today and svc.status != "overdue":
+                    svc.status = "overdue"
+                    svc.save(update_fields=["status"])
+        return services
+
 
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
@@ -119,11 +136,30 @@ class ScheduledServiceListView(generics.ListAPIView):
 
 
 class WalkInListCreateView(generics.ListCreateAPIView):
-    queryset = WalkInAppointment.objects.all()
     serializer_class = WalkInSerializer
 
-# GET / PUT / DELETE single patient by id
+    def get_queryset(self):
+        today = date.today()
+        appointments = WalkInAppointment.objects.all()
+
+        for appt in appointments:
+            if appt.status not in ["completed", "cancelled"]:
+                if appt.date < today and appt.status != "overdue":
+                    appt.status = "overdue"
+                    appt.save(update_fields=["status"])
+
+        return appointments
+
+
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WalkInAppointment.objects.all()
     serializer_class = WalkInSerializer
+    queryset = WalkInAppointment.objects.all()
 
+    def get_object(self):
+        obj = super().get_object()
+        today = date.today()
+        if obj.status not in ["completed", "cancelled"]:
+            if obj.date < today and obj.status != "overdue":
+                obj.status = "overdue"
+                obj.save(update_fields=["status"])
+        return obj
