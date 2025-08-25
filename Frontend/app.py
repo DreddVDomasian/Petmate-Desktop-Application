@@ -48,7 +48,7 @@ class MainUI(QMainWindow):
         self.load_scheduled_services()
         self.setup_shadow()
         self.setup_all_back_buttons()
-
+        self.setup_input_shadows()
         self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
 
         #page history
@@ -56,6 +56,7 @@ class MainUI(QMainWindow):
         self.current_page_index = 0
         self.current_params = {}
         self.update_back_button_visibility()
+
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -341,7 +342,22 @@ class MainUI(QMainWindow):
         self.addPetButton.mousePressEvent = lambda event: self.petUpdateButton.hide()
         self.addPetButton.mousePressEvent = lambda event: self.petConfirmButton.show()
 
+    def setup_input_shadows(self):
+        for line_edit in self.frame_3.findChildren(QLineEdit):
+            line_edit.setGraphicsEffect(create_card_shadow())
 
+        for comboBox in self.frame_3.findChildren(QComboBox):
+            # Save the internal line edit
+            inner_line_edit = comboBox.lineEdit()
+            # Temporarily remove it from parent so shadow won't apply to it
+            inner_line_edit.setGraphicsEffect(None)
+            comboBox.setGraphicsEffect(create_card_shadow())
+
+        self.serviceTypeComboBox.setGraphicsEffect(create_card_shadow())
+        self.returnDatePlaceholder.setGraphicsEffect(create_card_shadow())
+        self.addNoteLineEdit.setGraphicsEffect(create_card_shadow())
+        for dates in self.frame_61.findChildren(QDateEdit):
+            dates.setGraphicsEffect(create_card_shadow())
 
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())

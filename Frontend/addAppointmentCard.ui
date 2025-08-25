@@ -19,10 +19,160 @@
      <property name="styleSheet">
       <string notr="true">#addPopUPFrame{
 	background-color:#FFFFFF;
-	border-bottom:2px solid rgb(212, 212, 212);
-	border-right:2px solid rgb(212, 212, 212);
-	border-left:1px solid rgb(212, 212, 212);
 	border-radius:15px;
+}
+
+QDateEdit {
+    border: 2px solid rgb(229, 229, 229);
+	background-color:rgb(229, 229, 229);
+    border-radius: 10px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
+}
+
+QDateEdit::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 40px;
+    border: none;
+    background: transparent;
+}
+
+QDateEdit::down-arrow {
+    image: url(:/Icons/Icons/calendar.png);
+    width: 30px;
+    height: 30px;
+}
+
+QComboBox {
+    border: 2px solid rgb(229, 229, 229);
+	background-color:rgb(229, 229, 229);
+    border-radius: 10px;
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+
+}
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; 
+}
+QComboBox:focus{
+	border: 2px solid rgb(197, 197, 197);
+	placeholder:none;
+}
+QComboBox::drop-down {
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+QComboBox::down-arrow {
+    image: url(:/Icons/Icons/downArrow.png);
+    width: 12px;
+    height: 12px;
+    padding-right: 10px;
+}
+
+/* Dropdown list */
+QComboBox QAbstractItemView {
+    background-color: rgb(232, 232, 232);
+    selection-background-color: rgb(217, 217, 217); 
+    selection-color: black;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    outline: none;
+	border:1px solid rgb(209, 209, 209);
+}
+
+/* List items */
+QComboBox QAbstractItemView::item {
+    background-color:  rgb(232, 232, 232);
+    color: black;
+    height: 25px;
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: rgb(193, 193, 193);
+    color: black;
+}
+
+/* Scrollbar inside dropdown */
+QComboBox QAbstractItemView QScrollBar:vertical {
+    background-color: transparent; /* or set a solid color */
+    width: 10px;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+}
+
+QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QComboBox QAbstractItemView QScrollBar::add-line:vertical,
+QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QComboBox QAbstractItemView QScrollBar::groove:vertical {
+    background: transparent;
+    outline: none;
+    border: none;
+}
+QComboBox QAbstractItemView QScrollBar,
+QComboBox QAbstractItemView QScrollBar::handle,
+QComboBox QAbstractItemView QScrollBar::groove {
+    outline: none;
+    border: none;
+}
+
+QComboBox QLineEdit {
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    color: rgb(39, 39, 39);
+    border: none; /* optional para di mag mukhang double border */
+    background: transparent;
+}
+
+QTimeEdit {
+    border: 2px solid rgb(229, 229, 229);
+	background-color:rgb(229, 229, 229);
+    border-radius: 10px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
+
+}
+
+QTimeEdit::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 15px;
+    height: 15px;
+    image: url(:/Icons/Icons/upArrow.png); /* custom icon */
+    background: transparent;
+    border: none;
+    padding-right: 10px;
+	padding-top: 5px;
+}
+
+QTimeEdit::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 15px;
+    height: 15px;
+    image:url(:/Icons/Icons/downArrow.png); /* custom icon */
+    background: transparent;
+    border: none;
+    padding-right: 10px;
+	padding-bottom: 5px;
 }</string>
      </property>
      <property name="frameShape">
@@ -83,9 +233,11 @@ background-color:transparent;</string>
       <item>
        <widget class="QFrame" name="frame_2">
         <property name="styleSheet">
-         <string notr="true">background-color:rgb(255, 255, 255);
-font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+         <string notr="true">#frame_2{
+	background-color:rgb(255, 255, 255);
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -153,99 +305,7 @@ color:rgb(39, 39, 39);</string>
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="styleSheet">
-               <string notr="true">QComboBox {
-    border-right: 2px solid #cccccc;
-    border-bottom: 2px solid #cccccc;
-    border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	padding-left: 10px;
-
-}
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; 
-    background: transparent;
-}
-
-QComboBox::drop-down {
-    background-color: white;
-    border: none;
-}
-
-QComboBox::down-arrow {
-    image: url(:/Icons/Icons/downArrow.png);
-    width: 12px;
-    height: 12px;
-    padding-right: 10px;
-}
-
-/* Dropdown list */
-QComboBox QAbstractItemView {
-    background-color: white;
-    selection-background-color: rgb(193, 193, 193); 
-    selection-color: black;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    outline: none;
-	border:1px solid rgb(209, 209, 209);
-}
-
-/* List items */
-QComboBox QAbstractItemView::item {
-    background-color: white;
-    color: black;
-    height: 25px;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-}
-
-QComboBox QAbstractItemView::item:hover {
-    background-color: rgb(193, 193, 193);
-    color: black;
-}
-
-/* Scrollbar inside dropdown */
-QComboBox QAbstractItemView QScrollBar:vertical {
-    background-color: transparent; /* or set a solid color */
-    width: 10px;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical {
-    background-color: rgb(129, 191, 218);
-    border-radius: 5px;
-    min-height: 120px;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
-    background-color: rgb(86, 127, 145);
-}
-
-QComboBox QAbstractItemView QScrollBar::add-line:vertical,
-QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
-    height: 0px;
-    background: none;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::groove:vertical {
-    background: transparent;
-    outline: none;
-    border: none;
-}
-QComboBox QAbstractItemView QScrollBar,
-QComboBox QAbstractItemView QScrollBar::handle,
-QComboBox QAbstractItemView QScrollBar::groove {
-    outline: none;
-    border: none;
-}
-
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; /* optional para di mag mukhang double border */
-    background: transparent;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="editable">
                <bool>true</bool>
@@ -310,99 +370,7 @@ color:rgb(39, 39, 39);</string>
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="styleSheet">
-               <string notr="true">QComboBox {
-    border-right: 2px solid #cccccc;
-    border-bottom: 2px solid #cccccc;
-    border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	padding-left: 10px;
-
-}
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; 
-    background: transparent;
-}
-
-QComboBox::drop-down {
-    background-color: white;
-    border: none;
-}
-
-QComboBox::down-arrow {
-    image: url(:/Icons/Icons/downArrow.png);
-    width: 12px;
-    height: 12px;
-    padding-right: 10px;
-}
-
-/* Dropdown list */
-QComboBox QAbstractItemView {
-    background-color: white;
-    selection-background-color: rgb(193, 193, 193); 
-    selection-color: black;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    outline: none;
-	border:1px solid rgb(209, 209, 209);
-}
-
-/* List items */
-QComboBox QAbstractItemView::item {
-    background-color: white;
-    color: black;
-    height: 25px;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-}
-
-QComboBox QAbstractItemView::item:hover {
-    background-color: rgb(193, 193, 193);
-    color: black;
-}
-
-/* Scrollbar inside dropdown */
-QComboBox QAbstractItemView QScrollBar:vertical {
-    background-color: transparent; /* or set a solid color */
-    width: 10px;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical {
-    background-color: rgb(129, 191, 218);
-    border-radius: 5px;
-    min-height: 120px;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
-    background-color: rgb(86, 127, 145);
-}
-
-QComboBox QAbstractItemView QScrollBar::add-line:vertical,
-QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
-    height: 0px;
-    background: none;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::groove:vertical {
-    background: transparent;
-    outline: none;
-    border: none;
-}
-QComboBox QAbstractItemView QScrollBar,
-QComboBox QAbstractItemView QScrollBar::handle,
-QComboBox QAbstractItemView QScrollBar::groove {
-    outline: none;
-    border: none;
-}
-
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; /* optional para di mag mukhang double border */
-    background: transparent;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="editable">
                <bool>true</bool>
@@ -438,9 +406,11 @@ QComboBox QLineEdit {
          </sizepolicy>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color:rgb(255, 255, 255);
-font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+         <string notr="true">#frame_63{
+	background-color:rgb(255, 255, 255);
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -487,99 +457,7 @@ color:rgb(39, 39, 39);</string>
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">QComboBox {
-    border-right: 2px solid #cccccc;
-    border-bottom: 2px solid #cccccc;
-    border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	padding-left: 10px;
-
-}
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; 
-    background: transparent;
-}
-
-QComboBox::drop-down {
-    background-color: white;
-    border: none;
-}
-
-QComboBox::down-arrow {
-    image: url(:/Icons/Icons/downArrow.png);
-    width: 12px;
-    height: 12px;
-    padding-right: 10px;
-}
-
-/* Dropdown list */
-QComboBox QAbstractItemView {
-    background-color: white;
-    selection-background-color: rgb(193, 193, 193); 
-    selection-color: black;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    outline: none;
-	border:1px solid rgb(209, 209, 209);
-}
-
-/* List items */
-QComboBox QAbstractItemView::item {
-    background-color: white;
-    color: black;
-    height: 25px;
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-}
-
-QComboBox QAbstractItemView::item:hover {
-    background-color: rgb(193, 193, 193);
-    color: black;
-}
-
-/* Scrollbar inside dropdown */
-QComboBox QAbstractItemView QScrollBar:vertical {
-    background-color: transparent; /* or set a solid color */
-    width: 10px;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical {
-    background-color: rgb(129, 191, 218);
-    border-radius: 5px;
-    min-height: 120px;
-}
-
-QComboBox QAbstractItemView QScrollBar::handle:vertical:hover {
-    background-color: rgb(86, 127, 145);
-}
-
-QComboBox QAbstractItemView QScrollBar::add-line:vertical,
-QComboBox QAbstractItemView QScrollBar::sub-line:vertical {
-    height: 0px;
-    background: none;
-    border: none;
-}
-
-QComboBox QAbstractItemView QScrollBar::groove:vertical {
-    background: transparent;
-    outline: none;
-    border: none;
-}
-QComboBox QAbstractItemView QScrollBar,
-QComboBox QAbstractItemView QScrollBar::handle,
-QComboBox QAbstractItemView QScrollBar::groove {
-    outline: none;
-    border: none;
-}
-
-QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
-    border: none; /* optional para di mag mukhang double border */
-    background: transparent;
-}</string>
+            <string notr="true"/>
            </property>
            <property name="editable">
             <bool>false</bool>
@@ -671,9 +549,11 @@ QComboBox QLineEdit {
       <item>
        <widget class="QFrame" name="frame_3">
         <property name="styleSheet">
-         <string notr="true">background-color:rgb(255, 255, 255);
-font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+         <string notr="true">#frame_3{
+	background-color:rgb(255, 255, 255);
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -700,9 +580,11 @@ color:rgb(39, 39, 39);</string>
          <item alignment="Qt::AlignTop">
           <widget class="QFrame" name="frame_5">
            <property name="styleSheet">
-            <string notr="true">background-color:rgb(255, 255, 255);
-font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+            <string notr="true">#frame_5{
+	background-color:rgb(255, 255, 255);
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -743,28 +625,7 @@ color:rgb(39, 39, 39);</string>
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QDateEdit {
-	border-right: 2px solid rgb(212, 212, 212);
-    border-bottom: 2px solid rgb(212, 212, 212);
-    border-radius: 5px;
-    font: 57 12pt &quot;Montserrat Medium&quot;;
-    color: rgb(39, 39, 39);
-    padding-left: 10px;
-}
-
-QDateEdit::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 40px;
-    border: none;
-    background: transparent;
-}
-
-QDateEdit::down-arrow {
-    image: url(:/Icons/Icons/calendar.png);
-    width: 30px;
-    height: 30px;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="accelerated">
                <bool>false</bool>
@@ -783,9 +644,11 @@ QDateEdit::down-arrow {
          <item>
           <widget class="QFrame" name="frame_6">
            <property name="styleSheet">
-            <string notr="true">background-color:rgb(255, 255, 255);
-font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+            <string notr="true">#frame_6{
+	background-color:rgb(255, 255, 255);
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+}</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -826,39 +689,7 @@ color:rgb(39, 39, 39);</string>
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QTimeEdit {
-	border-right: 2px solid rgb(212, 212, 212);
-    border-bottom: 2px solid rgb(212, 212, 212);
-    border-radius: 5px;
-    font: 57 12pt &quot;Montserrat Medium&quot;;
-    color: rgb(39, 39, 39);
-    padding-left: 10px;
-
-}
-
-QTimeEdit::up-button {
-    subcontrol-origin: border;
-    subcontrol-position: top right;
-    width: 15px;
-    height: 15px;
-    image: url(:/Icons/Icons/upArrow.png); /* custom icon */
-    background: transparent;
-    border: none;
-    padding-right: 10px;
-	padding-top: 5px;
-}
-
-QTimeEdit::down-button {
-    subcontrol-origin: border;
-    subcontrol-position: bottom right;
-    width: 15px;
-    height: 15px;
-    image:url(:/Icons/Icons/downArrow.png); /* custom icon */
-    background: transparent;
-    border: none;
-    padding-right: 10px;
-	padding-bottom: 5px;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="maximumTime">
                <time>

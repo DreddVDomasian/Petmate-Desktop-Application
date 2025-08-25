@@ -1,5 +1,5 @@
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget,QCompleter,QLabel
+from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate
 from input_styles import *
 from  shadowEffects import *
@@ -41,6 +41,8 @@ class AddAppointmentCard(QWidget):
         self.addAppointmentBtn.setGraphicsEffect(create_card_shadow())
 
         self.selectPatientPopUp.currentIndexChanged.connect(self.on_patient_selected)
+        # shaadow
+        self.setup_input_shadow()
 
         self.popUpDateEdit.setDate(QDate.currentDate())
         self.popUpDateEdit.mousePressEvent = lambda event: self.on_date_field_clicked(self.popUpDateEdit)
@@ -55,6 +57,14 @@ class AddAppointmentCard(QWidget):
 
         if parent:
             parent.installEventFilter(self)
+
+    def setup_input_shadow(self):
+        for comboBox in self.addPopUPFrame.findChildren(QComboBox):
+            comboBox.setGraphicsEffect(create_card_shadow())
+
+        self.popUpDateEdit.setGraphicsEffect(create_card_shadow())
+        self.timeEdit.setGraphicsEffect(create_card_shadow())
+
     def show_card(self):
         if self.parent():
             parent_widget = self.parent()
