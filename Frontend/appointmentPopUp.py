@@ -254,14 +254,22 @@ class AddAppointmentCard(QWidget):
                 self.add_empty_label(layout)
 
     def cancelled_appointment(self,appointment_id):
-        url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
-        if url:
-            response = requests.patch(url, json={"status": "cancelled"})
-            if response.status_code in [200, 202]:
-                print("Reminder marked as completed")
-                self.main_window.appointmentCard.load_walkInAppointments()
-            else:
-                print("Failed:", response.text)
+        self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
+        self.main_window.confirmCard.show_card()
+        def clicked_yes():
+            url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+            if url:
+                response = requests.patch(url, json={"status": "cancelled"})
+                if response.status_code in [200, 202]:
+                    print("Reminder marked as completed")
+                    self.main_window.appointmentCard.load_walkInAppointments()
+                else:
+                    print("Failed:", response.text)
+        def clicked_no():
+            self.main_window.appointmentCard.hide()
+
+        self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
+        self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
 
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)

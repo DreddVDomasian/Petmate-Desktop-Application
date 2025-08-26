@@ -57,7 +57,6 @@ class MainUI(QMainWindow):
         self.current_params = {}
         self.update_back_button_visibility()
 
-
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
         self.customCalendar.setParent(None)
@@ -264,8 +263,11 @@ class MainUI(QMainWindow):
     def setup_confirm_card(self):
         self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
         self.confirmCard.hide()
+        self.confirmCard.setGraphicsEffect(create_card_shadow())
         self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete)
         self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
+        self.confirmCard.yesButton.setGraphicsEffect(create_card_shadow())
+        self.confirmCard.noButton.setGraphicsEffect(create_card_shadow())
         self.patientToDelete = None
 
         # delete buttons sa profile patient/pet
