@@ -3,6 +3,7 @@ from django.db import models
 class basicInfo(models.Model):
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
+    middleName = models.CharField(max_length=255, null=True, blank=True)
     phoneNumber = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -13,7 +14,8 @@ class basicInfo(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.firstName} {self.lastName}"
+        parts = [self.firstName, self.middleName, self.lastName]
+        return " ".join(p for p in parts if p)
 
 class Pet(models.Model):
     owner = models.ForeignKey(

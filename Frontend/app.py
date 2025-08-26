@@ -277,6 +277,7 @@ class MainUI(QMainWindow):
     def clearInputs(self):
         # clear fields
         self.firstNameEdit.clear()
+        self.middleNameEdit.clear()
         self.lastNameEdit.clear()
         self.phoneNumberEdit.clear()
         self.detailedAddressEdit.clear()
@@ -510,7 +511,7 @@ class MainUI(QMainWindow):
         }
 
         data, missing = self.collect_and_validate_fields(required_fields)
-
+        data["middleName"] = self.middleNameEdit.text().strip() if self.middleNameEdit.text().strip() else None
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
             toast = Toast(self, message, icon_path="Icons/warning.png")
@@ -666,8 +667,10 @@ class MainUI(QMainWindow):
             return
 
         for patient in patients:
+            parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+            full_name = " ".join(p for p in parts if p)
             card = uic.loadUi("PatientCard.ui")
-            card.nameLabel.setText(f"{patient['firstName']} {patient['lastName']}".title())
+            card.nameLabel.setText(full_name.title())
             card.emailLabel.setText(patient['email'])
 
             # Connect delete button
@@ -844,6 +847,13 @@ class MainUI(QMainWindow):
                 self.completedLayout.addWidget(card)
             elif status == "overdue":
                 self.overdueLayout.addWidget(card)
+            card.mousePressEvent = lambda event, pid=service["pet"]: self.open_pet_from_service(pid)
+
+    def open_pet_from_service(self, pet_id):
+        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
+        if response.status_code == 200:
+            pet = response.json()
+            self.show_pet_profile(pet)
 
     def format_date(self, raw):
         if raw:
@@ -867,7 +877,8 @@ class MainUI(QMainWindow):
                 upper_frame.setStyleSheet(upper_Frame_borrad)
 
     def show_patient_profile(self, patient):
-        full_name = f"{patient['firstName']} {patient['lastName']}"
+        parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+        full_name = " ".join(p for p in parts if p)
         self.profileNameLabel.setText(full_name)
         self.profileEmailLabel.setText(patient['email'])
 

@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1000,7 +1000,7 @@ color:rgb(39, 39, 39);
              <property name="styleSheet">
               <string notr="true">QLineEdit{
     border-radius: 10px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
+	font: 63 14pt &quot;Montserrat SemiBold&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
@@ -1014,13 +1014,13 @@ QLineEdit:focus{
 
 QComboBox {
     border-radius: 10px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
+	font: 63 12pt &quot;Montserrat SemiBold&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
 }
 QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+	font: 63 12pt &quot;Montserrat SemiBold&quot;;
     color: rgb(39, 39, 39);
     border: none; 
 }
@@ -1139,7 +1139,7 @@ color:rgb(39, 39, 39);</string>
               <item>
                <widget class="QFrame" name="ownerDetails">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1153,33 +1153,30 @@ color:rgb(39, 39, 39);</string>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_3" columnstretch="8,8,8">
+                <layout class="QGridLayout" name="gridLayout_3">
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
+                 <property name="verticalSpacing">
+                  <number>25</number>
+                 </property>
                  <item row="0" column="0">
-                  <widget class="QLabel" name="label_6">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
+                  <widget class="QLineEdit" name="firstNameEdit">
+                   <property name="minimumSize">
+                    <size>
+                     <width>174</width>
+                     <height>45</height>
+                    </size>
                    </property>
-                   <property name="text">
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="placeholderText">
                     <string>First name</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="2">
-                  <widget class="QLabel" name="label_14">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>Phone number</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
+                 <item row="0" column="1">
                   <widget class="QLineEdit" name="lastNameEdit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1196,9 +1193,47 @@ color:rgb(39, 39, 39);</string>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
+                   <property name="placeholderText">
+                    <string>Last name</string>
+                   </property>
                   </widget>
                  </item>
-                 <item row="1" column="2">
+                 <item row="0" column="2">
+                  <widget class="QLineEdit" name="middleNameEdit">
+                   <property name="minimumSize">
+                    <size>
+                     <width>174</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Middle Name (optional)</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLineEdit" name="emailEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>256</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="placeholderText">
+                    <string>Email</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
                   <widget class="QLineEdit" name="phoneNumberEdit">
                    <property name="minimumSize">
                     <size>
@@ -1209,29 +1244,30 @@ color:rgb(39, 39, 39);</string>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
+                   <property name="placeholderText">
+                    <string>Phone number</string>
+                   </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLineEdit" name="firstNameEdit">
+                 <item row="1" column="2">
+                  <widget class="QLineEdit" name="emergencyNoEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
-                     <width>174</width>
+                     <width>256</width>
                      <height>45</height>
                     </size>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_11">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>Last name</string>
+                   <property name="placeholderText">
+                    <string>Emergency no.</string>
                    </property>
                   </widget>
                  </item>
@@ -1258,7 +1294,7 @@ color:rgb(39, 39, 39);</string>
               <item>
                <widget class="QFrame" name="ownerDetails_2">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1272,106 +1308,14 @@ color:rgb(39, 39, 39);</string>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_4">
+                <layout class="QHBoxLayout" name="horizontalLayout_30">
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
-                 <item row="1" column="3">
-                  <widget class="QLabel" name="label_17">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>Barangay</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="3">
-                  <widget class="QComboBox" name="barangayComboBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>IBeamCursor</cursorShape>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::NoFocus</enum>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="editable">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QLabel" name="label_18">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>City/Municipality</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="2">
-                  <widget class="QComboBox" name="cityComboBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>IBeamCursor</cursorShape>
-                   </property>
-                   <property name="focusPolicy">
-                    <enum>Qt::NoFocus</enum>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="editable">
-                    <bool>true</bool>
-                   </property>
-                   <property name="currentIndex">
-                    <number>-1</number>
-                   </property>
-                   <property name="maxVisibleItems">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_16">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>Province</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
                   <widget class="QComboBox" name="provinceComboBox">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1408,13 +1352,75 @@ color:rgb(39, 39, 39);</string>
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QComboBox" name="cityComboBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>174</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>IBeamCursor</cursorShape>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="currentIndex">
+                    <number>-1</number>
+                   </property>
+                   <property name="maxVisibleItems">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="barangayComboBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>174</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>IBeamCursor</cursorShape>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="editable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
               <item>
                <widget class="QFrame" name="ownerDetails_3">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1428,11 +1434,14 @@ color:rgb(39, 39, 39);</string>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_5" columnstretch="8,8,8">
+                <layout class="QHBoxLayout" name="horizontalLayout_31">
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
-                 <item row="1" column="0">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
                   <widget class="QLineEdit" name="detailedAddressEdit">
                    <property name="minimumSize">
                     <size>
@@ -1443,69 +1452,7 @@ color:rgb(39, 39, 39);</string>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_21">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>Email</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QLineEdit" name="emergencyNoEdit">
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QLabel" name="label_20">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
-                    <string>Emergency no.</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="emailEdit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_19">
-                   <property name="styleSheet">
-                    <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
-                   </property>
-                   <property name="text">
+                   <property name="placeholderText">
                     <string>Subdivision/Ph/Blk-L</string>
                    </property>
                   </widget>
@@ -1516,7 +1463,7 @@ color:rgb(39, 39, 39);</string>
               <item alignment="Qt::AlignHCenter">
                <widget class="QFrame" name="frame_12">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -2408,8 +2355,71 @@ QPushButton:checked {
                </item>
                <item>
                 <widget class="QStackedWidget" name="statusStackedWidget">
+                 <property name="styleSheet">
+                  <string notr="true">QScrollArea{
+	border:none;
+
+}
+QScrollArea QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollArea QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+QScrollAreaa QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QScrollArea QScrollBar::add-line:vertical,
+QScrollArea QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QScrollArea QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+
+QScrollArea QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /* horizontal thickness */
+    margin: 0px;
+}
+
+#walkInScrollArea QScrollBar::handle:horizontal {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    height: 10px; /* same as scrollbar height */
+}
+
+QScrollArea QScrollBar::add-line:horizontal,
+QScrollArea QScrollBar::sub-line:horizontal {
+    width: 0px; /* hide buttons */
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QScrollArea QScrollBar::groove:horizontal {
+    background: transparent;
+    border: none;
+}
+
+</string>
+                 </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>1</number>
                  </property>
                  <widget class="QWidget" name="pendingPage">
                   <property name="styleSheet">
@@ -2554,8 +2564,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>98</width>
-                        <height>28</height>
+                        <width>893</width>
+                        <height>347</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -2614,8 +2624,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>98</width>
-                        <height>28</height>
+                        <width>100</width>
+                        <height>30</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -2674,8 +2684,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>98</width>
-                        <height>28</height>
+                        <width>100</width>
+                        <height>30</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -2772,7 +2782,7 @@ QPushButton:checked {
                     <x>0</x>
                     <y>0</y>
                     <width>543</width>
-                    <height>477</height>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">

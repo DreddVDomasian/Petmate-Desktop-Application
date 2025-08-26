@@ -47,12 +47,14 @@ class ServiceSerializer(serializers.ModelSerializer):
     owner_full_name = serializers.SerializerMethodField()
     pet_name = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Service
         fields = '__all__'
 
     def get_owner_full_name(self, obj):
-        return f"{obj.owner.firstName} {obj.owner.lastName}"
+        parts = [obj.owner.firstName, obj.owner.middleName, obj.owner.lastName]
+        return " ".join(p for p in parts if p)  # skips None or ""
 
     def get_pet_name(self, obj):
         return obj.pet.petName
@@ -67,7 +69,8 @@ class WalkInSerializer(serializers.ModelSerializer):
         model = WalkInAppointment
         fields = '__all__'
     def get_owner_full_name(self, obj):
-        return f"{obj.owner.firstName} {obj.owner.lastName}"
+        parts = [obj.owner.firstName, obj.owner.middleName, obj.owner.lastName]
+        return " ".join(p for p in parts if p)  # skips None or ""
 
     def get_petName(self, obj):
         return obj.pet.petName

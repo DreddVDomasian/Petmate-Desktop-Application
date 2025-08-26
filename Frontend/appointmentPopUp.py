@@ -100,7 +100,8 @@ class AddAppointmentCard(QWidget):
             self.selectPatientPopUp.clear()
             self.selectPatientPopUp.addItem("", None)
             for patient in patients:
-                full_name = f"{patient['firstName']} {patient['lastName']}"
+                parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+                full_name = " ".join(p for p in parts if p)
                 self.selectPatientPopUp.addItem(full_name, patient['id'])
 
             self.set_dynamic_completer(self.selectPatientPopUp)
@@ -261,12 +262,13 @@ class AddAppointmentCard(QWidget):
             if url:
                 response = requests.patch(url, json={"status": "cancelled"})
                 if response.status_code in [200, 202]:
-                    print("Reminder marked as completed")
+                    print("Reminder marked as cancelled")
                     self.main_window.appointmentCard.load_walkInAppointments()
                 else:
                     print("Failed:", response.text)
+            self.main_window.confirmCard.hide()
         def clicked_no():
-            self.main_window.appointmentCard.hide()
+            self.main_window.confirmCard.hide()
 
         self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)

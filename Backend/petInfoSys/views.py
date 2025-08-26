@@ -108,12 +108,20 @@ class ServiceListCreateView(generics.ListCreateAPIView):
         today = date.today()
         services = Service.objects.all()
 
+        # 🔎 Filter by pet_id if provided in query params
+        pet_id = self.request.query_params.get("pet_id")
+        if pet_id:
+            services = services.filter(pet_id=pet_id)
+
+        # 🔄 Auto-update status to overdue if needed
         for svc in services:
             if svc.status not in ["completed", "cancelled"]:
                 if svc.return_date and svc.return_date < today and svc.status != "overdue":
                     svc.status = "overdue"
                     svc.save(update_fields=["status"])
-        return services
+
+        return services.order_by("date")
+
 
 
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
