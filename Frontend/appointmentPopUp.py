@@ -245,12 +245,23 @@ class AddAppointmentCard(QWidget):
             elif status == "overdue":
                 self.overdueLayout.addWidget(card)
 
-
+            appointment_id = appt["id"]
+            card.deleteButton.clicked.connect(lambda _, a_id=appointment_id: self.cancelled_appointment(a_id))
             card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
 
         for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
             if layout.count() == 0:
                 self.add_empty_label(layout)
+
+    def cancelled_appointment(self,appointment_id):
+        url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+        if url:
+            response = requests.patch(url, json={"status": "cancelled"})
+            if response.status_code in [200, 202]:
+                print("Reminder marked as completed")
+                self.main_window.appointmentCard.load_walkInAppointments()
+            else:
+                print("Failed:", response.text)
 
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
