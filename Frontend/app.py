@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter,QCalendarWidget,QToolButton,QTextEdit
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect, QSize
+from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect, QSize,QTimer
 import resources_rc
 from PyQt6.QtGui import QFontDatabase, QFont, QPixmap, QIcon, QAction,QColor
 from uiLogic import UIHandler
@@ -56,6 +56,16 @@ class MainUI(QMainWindow):
         self.current_page_index = 0
         self.current_params = {}
         self.update_back_button_visibility()
+
+
+        # Optional: use min/max to prevent invalid dates
+        self.Bday.setMinimumDate(QDate(1900, 1, 1))
+        self.Bday.setMaximumDate(QDate.currentDate())
+
+        #age update
+        self.daily_age_timer = QTimer()
+        self.daily_age_timer.timeout.connect(lambda: self.update_bday_display(self.Bday.date()))
+        self.daily_age_timer.start(24 * 60 * 60 * 1000)
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -260,6 +270,46 @@ class MainUI(QMainWindow):
         self.returnDateEdit.hide()
         self.returnCheckBox.toggled.connect(self.toggle_return_date)
 
+        #pet info side
+        self.Bday.setSpecialValueText("Birthday (optional)")
+        self.Bday.setDisplayFormat(" ")  # start blank
+
+        # Use sentinel date to represent "no birthday"
+        sentinel = QDate(1900, 1, 1)
+        self.Bday.setDate(sentinel)
+        self.Bday.setMinimumDate(sentinel)
+
+        # When user clicks, show calendar
+        self.Bday.mousePressEvent = lambda event: self.show_custom_calendar(self.Bday)
+
+        # Update format when date is picked
+        self.Bday.dateChanged.connect(self.update_bday_display)
+
+    def update_bday_display(self, date: QDate):
+        sentinel = QDate(1900, 1, 1)
+        if date == sentinel:
+            # No birthday selected → show placeholder
+            self.Bday.setDisplayFormat(" ")
+            self.age.clear()  # allow user to type estimated age
+        else:
+            self.Bday.setDisplayFormat("MMM d, yyyy")
+            today = QDate.currentDate()
+            days = date.daysTo(today)
+
+            if days < 7:
+                age_str = f"{days} day{'s' if days != 1 else ''} old"
+            elif days < 30:
+                weeks = days // 7
+                age_str = f"{weeks} week{'s' if weeks != 1 else ''} old"
+            elif days < 365:
+                months = days // 30
+                age_str = f"{months} month{'s' if months != 1 else ''} old"
+            else:
+                years = days // 365
+                age_str = f"{years} year{'s' if years != 1 else ''} old"
+
+            self.age.setText(age_str)
+
     def setup_confirm_card(self):
         self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
         self.confirmCard.hide()
@@ -305,6 +355,10 @@ class MainUI(QMainWindow):
         self.age.clear()
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
+        # reset birthday → back to placeholder
+        sentinel = QDate(1900, 1, 1)
+        self.Bday.setDate(sentinel)
+        self.update_bday_display(sentinel)
 
     def setup_add_appintmentPopUp(self):
         self.appointmentCard = AddAppointmentCard(
@@ -363,12 +417,17 @@ class MainUI(QMainWindow):
         for dates in self.frame_61.findChildren(QDateEdit):
             dates.setGraphicsEffect(create_card_shadow())
 
-        #pet info foem
+        #pet info form
         for petLineEdit in self.petDetailsPage.findChildren(QLineEdit):
             petLineEdit.setGraphicsEffect(create_card_shadow())
         for petComboBox in self.petDetailsPage.findChildren(QComboBox):
             petComboBox.setGraphicsEffect(create_card_shadow())
 
+        for dateEdit in self.petDetailsPage.findChildren(QDateEdit):
+            inner_line_edit = dateEdit.findChild(QLineEdit)
+            if inner_line_edit:
+                inner_line_edit.setGraphicsEffect(None)  # remove shadow from text
+            dateEdit.setGraphicsEffect(create_card_shadow())
 
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
@@ -495,6 +554,15 @@ class MainUI(QMainWindow):
                     apply_style(widget, error=False)
                     data[name] = text.strip()
 
+        sentinel = QDate(1900, 1, 1)
+        if self.Bday.date() != sentinel:
+            bday = self.Bday.date()
+            data["birthDay"] = bday.toString("yyyy-MM-dd")
+            data["age"] = self.age.text().strip()  # already computed/typed
+        else:
+            data["birthDay"] = None
+            data["age"] = self.age.text().strip() if self.age.text().strip() else None
+
         return data, missing
 
     def submit_data(self):
@@ -551,7 +619,7 @@ class MainUI(QMainWindow):
         }
 
         data, missing = self.collect_and_validate_fields(required_fields)
-
+        data["remarks"] = self.petRemarks.text().strip() if self.petRemarks.text().strip() else None
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
             toast = Toast(self, message, icon_path="Icons/warning.png")
@@ -938,19 +1006,24 @@ class MainUI(QMainWindow):
         pos = dateEdit.mapToGlobal(QPoint(0, dateEdit.height()))
         self.customCalendar.move(pos)
 
-        # special condition for returnDateEdit
-        if dateEdit == self.returnDateEdit:
+        sentinel = QDate(1900, 1, 1)
+        current_date = dateEdit.date()
+        if dateEdit == self.Bday and current_date == sentinel:
+            current_date = QDate.currentDate()
+
+        # Limit max date for birthday to today
+        if dateEdit == self.Bday:
+            self.calendarWidget.setMaximumDate(QDate.currentDate())
+            self.calendarWidget.setMinimumDate(QDate(1900, 1, 1))  # optional, if you want a realistic range
+        elif dateEdit == self.returnDateEdit:
             min_date = self.dateEdit.date().addDays(1)
             self.calendarWidget.setMinimumDate(min_date)
+            self.calendarWidget.setMaximumDate(QDate(7999, 12, 31))  # some far future max
         else:
-            # reset to today or earliest allowed
-            self.calendarWidget.setMinimumDate(QDate(1752, 9, 14))  # earliest date supported
-        # optional: also reset max date if you want
-        # self.calendarWidget.setMaximumDate(QDate(9999, 12, 31))
+            self.calendarWidget.setMinimumDate(QDate(1752, 9, 14))
+            self.calendarWidget.setMaximumDate(QDate(7999, 12, 31))  # default max
 
-        current_date = dateEdit.date()
         self.calendarWidget.setSelectedDate(current_date)
-
         self.customCalendar.show()
         QApplication.processEvents()
         self.calendarWidget.repaint()

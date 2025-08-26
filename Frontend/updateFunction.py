@@ -96,6 +96,11 @@ class Update:
         self.ui.age.setText(str(pet["age"]))
         self.ui.petSexComboBox.setCurrentText(pet["sex"])
         self.ui.selected_pet_id = pet["id"]
+        date_str = pet.get("birthDate")
+        if date_str:
+            qdate = QDate.fromString(date_str, "yyyy-MM-dd")
+            if qdate.isValid():
+                self.ui.Bday.setDate(qdate)
 
     def update_pet_info(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")

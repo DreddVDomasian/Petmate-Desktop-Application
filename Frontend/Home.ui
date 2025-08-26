@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1312,8 +1312,11 @@ color:rgb(39, 39, 39);</string>
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
-                 <property name="bottomMargin">
+                 <property name="topMargin">
                   <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
                  </property>
                  <item>
                   <widget class="QComboBox" name="provinceComboBox">
@@ -4125,6 +4128,69 @@ QPushButton:checked {
               </item>
               <item>
                <widget class="QStackedWidget" name="returnStackedWidget">
+                <property name="styleSheet">
+                 <string notr="true">QScrollArea{
+	border:none;
+
+}
+QScrollArea QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollArea QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+QScrollAreaa QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+QScrollArea QScrollBar::add-line:vertical,
+QScrollArea QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QScrollArea QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+
+QScrollArea QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /* horizontal thickness */
+    margin: 0px;
+}
+
+#walkInScrollArea QScrollBar::handle:horizontal {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    height: 10px; /* same as scrollbar height */
+}
+
+QScrollArea QScrollBar::add-line:horizontal,
+QScrollArea QScrollBar::sub-line:horizontal {
+    width: 0px; /* hide buttons */
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+QScrollArea QScrollBar::groove:horizontal {
+    background: transparent;
+    border: none;
+}
+
+</string>
+                </property>
                 <property name="currentIndex">
                  <number>1</number>
                 </property>
@@ -4228,8 +4294,8 @@ QPushButton:checked {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>889</width>
-                       <height>410</height>
+                       <width>891</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_33">
@@ -4740,7 +4806,10 @@ color:#4F4F4F;</string>
              </widget>
              <widget class="QWidget" name="petDetailsPage">
               <property name="styleSheet">
-               <string notr="true">QLineEdit{
+               <string notr="true">
+
+
+QLineEdit{
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
@@ -4753,6 +4822,28 @@ QLineEdit:focus{
 	background-color:rgb(227, 227, 227);
 }
 
+
+QDateEdit {
+	background-color:rgb(245, 245, 245);
+    border-radius: 10px;
+    font: 57 12pt &quot;Montserrat Medium&quot;;
+    color: rgb(39, 39, 39);
+    padding-left: 10px;
+}
+
+QDateEdit::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 40px;
+    border: none;
+    background: transparent;
+}
+
+QDateEdit::down-arrow {
+    image: url(:/Icons/Icons/calendar.png);
+    width: 30px;
+    height: 30px;
+}
 
 QComboBox {
     border-radius: 10px;
@@ -4850,7 +4941,7 @@ QComboBox QLineEdit {
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_30">
                <item>
-                <widget class="QFrame" name="frame_7">
+                <widget class="QFrame" name="petDetailsFrame">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -4901,6 +4992,12 @@ color:rgb(39, 39, 39);</string>
                </item>
                <item>
                 <widget class="QFrame" name="nameAndColorFrame">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -4912,111 +5009,47 @@ color:rgb(39, 39, 39);</string>
                    <number>35</number>
                   </property>
                   <property name="leftMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="topMargin">
                    <number>0</number>
                   </property>
                   <property name="rightMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="bottomMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <item>
-                   <widget class="QFrame" name="petNameFrame">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QLineEdit" name="petName">
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="styleSheet">
+                     <string notr="true"/>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_21">
-                     <property name="leftMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_28">
-                       <property name="styleSheet">
-                        <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                       </property>
-                       <property name="text">
-                        <string>Pet name</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="petName">
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <property name="placeholderText">
+                     <string>Pet name</string>
+                    </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QFrame" name="petColorFrame">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QLineEdit" name="petColor">
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="styleSheet">
+                     <string notr="true"/>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_22">
-                     <property name="leftMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_29">
-                       <property name="styleSheet">
-                        <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                       </property>
-                       <property name="text">
-                        <string>Color</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="petColor">
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <property name="placeholderText">
+                     <string>Color</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -5035,159 +5068,86 @@ color:rgb(39, 39, 39);</string>
                    <number>35</number>
                   </property>
                   <property name="leftMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="topMargin">
                    <number>0</number>
                   </property>
                   <property name="rightMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="bottomMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <item>
-                   <widget class="QFrame" name="breedFrame">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QLineEdit" name="breed">
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="styleSheet">
+                     <string notr="true"/>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_25">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="leftMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_32">
-                       <property name="styleSheet">
-                        <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                       </property>
-                       <property name="text">
-                        <string>Breed</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="breed">
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <property name="placeholderText">
+                     <string>Breed</string>
+                    </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QFrame" name="speciesFrame">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QComboBox" name="speciesComboBox">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_26">
-                     <property name="spacing">
-                      <number>0</number>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="editable">
+                     <bool>false</bool>
+                    </property>
+                    <property name="currentText">
+                     <string>Select Species</string>
+                    </property>
+                    <property name="currentIndex">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>Select Species</string>
                      </property>
-                     <property name="leftMargin">
-                      <number>5</number>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Cat</string>
                      </property>
-                     <property name="topMargin">
-                      <number>0</number>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Dog</string>
                      </property>
-                     <property name="rightMargin">
-                      <number>5</number>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Others</string>
                      </property>
-                     <property name="bottomMargin">
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_33">
-                       <property name="styleSheet">
-                        <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                       </property>
-                       <property name="text">
-                        <string>Species</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="speciesComboBox">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                       <property name="editable">
-                        <bool>false</bool>
-                       </property>
-                       <property name="currentText">
-                        <string>Select Species</string>
-                       </property>
-                       <property name="currentIndex">
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <property name="text">
-                         <string>Select Species</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Cat</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Dog</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Others</string>
-                        </property>
-                       </item>
-                      </widget>
-                     </item>
-                    </layout>
+                    </item>
                    </widget>
                   </item>
                  </layout>
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_19">
+                <widget class="QFrame" name="bdayAge">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5199,142 +5159,137 @@ color:rgb(39, 39, 39);</string>
                    <number>35</number>
                   </property>
                   <property name="leftMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="topMargin">
                    <number>0</number>
                   </property>
                   <property name="rightMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <property name="bottomMargin">
-                   <number>0</number>
+                   <number>5</number>
                   </property>
                   <item>
-                   <widget class="QFrame" name="ageFrame">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QDateEdit" name="Bday">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_27">
-                     <property name="leftMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_34">
-                       <property name="styleSheet">
-                        <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                       </property>
-                       <property name="text">
-                        <string>Age (estimated)</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="age">
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <property name="specialValueText">
+                     <string>Birthday (optional)</string>
+                    </property>
+                    <property name="calendarPopup">
+                     <bool>true</bool>
+                    </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QFrame" name="sexFrame">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QLineEdit" name="age">
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="styleSheet">
+                     <string notr="true"/>
                     </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_28">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="leftMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>5</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="label_35">
-                       <property name="styleSheet">
-                        <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
-                       </property>
-                       <property name="text">
-                        <string>Sex</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="petSexComboBox">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                       <item>
-                        <property name="text">
-                         <string>Sex</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Male</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Female</string>
-                        </property>
-                       </item>
-                      </widget>
-                     </item>
-                    </layout>
+                    <property name="placeholderText">
+                     <string>Age (estimated)</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_11">
+                <widget class="QFrame" name="frame_7">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_29">
+                  <property name="spacing">
+                   <number>35</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QComboBox" name="petSexComboBox">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>Sex</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Male</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Female</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="petRemarks">
+                    <property name="minimumSize">
+                     <size>
+                      <width>174</width>
+                      <height>45</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="placeholderText">
+                     <string>Remarks (optional)</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="actionBtns">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5979,7 +5934,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="serviceHistoryPage">
                  <layout class="QVBoxLayout" name="verticalLayout_50">

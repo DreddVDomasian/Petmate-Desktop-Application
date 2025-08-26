@@ -27,8 +27,10 @@ class Pet(models.Model):
     petColor = models.CharField(max_length=255)
     breed = models.CharField(max_length=255)
     species = models.CharField(max_length=255)
+    birthDay = models.DateField(null=True, blank=True)  # optional
     age = models.CharField(max_length=50)
     sex = models.CharField(max_length=50)
+    remarks = models.CharField(max_length=350, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
