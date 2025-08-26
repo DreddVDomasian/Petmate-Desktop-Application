@@ -235,6 +235,7 @@ class AddAppointmentCard(QWidget):
             appt_date = datetime.strptime(appt["date"], "%Y-%m-%d").date()
 
             if status == "completed":
+                card.deleteButton.hide()
                 self.completedLayout.addWidget(card)
             elif status == "cancelled":
                 card.deleteButton.hide()
@@ -243,6 +244,7 @@ class AddAppointmentCard(QWidget):
                 self.pendingLayout.addWidget(card)
             elif status == "overdue":
                 self.overdueLayout.addWidget(card)
+
 
             card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
 

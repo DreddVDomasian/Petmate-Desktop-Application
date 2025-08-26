@@ -23,8 +23,7 @@
 }
 
 QDateEdit {
-    border: 2px solid rgb(229, 229, 229);
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
     border-radius: 10px;
     font: 57 12pt &quot;Montserrat Medium&quot;;
     color: rgb(39, 39, 39);
@@ -46,8 +45,7 @@ QDateEdit::down-arrow {
 }
 
 QComboBox {
-    border: 2px solid rgb(229, 229, 229);
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
@@ -60,8 +58,8 @@ QComboBox QLineEdit {
     border: none; 
 }
 QComboBox:focus{
-	border: 2px solid rgb(197, 197, 197);
-	placeholder:none;
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 QComboBox::drop-down {
     background-color: transparent;
@@ -142,8 +140,7 @@ QComboBox QLineEdit {
 }
 
 QTimeEdit {
-    border: 2px solid rgb(229, 229, 229);
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
     border-radius: 10px;
     font: 57 12pt &quot;Montserrat Medium&quot;;
     color: rgb(39, 39, 39);

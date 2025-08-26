@@ -343,6 +343,7 @@ class MainUI(QMainWindow):
         self.addPetButton.mousePressEvent = lambda event: self.petConfirmButton.show()
 
     def setup_input_shadows(self):
+        # owner info form
         for line_edit in self.frame_3.findChildren(QLineEdit):
             line_edit.setGraphicsEffect(create_card_shadow())
 
@@ -352,12 +353,19 @@ class MainUI(QMainWindow):
             # Temporarily remove it from parent so shadow won't apply to it
             inner_line_edit.setGraphicsEffect(None)
             comboBox.setGraphicsEffect(create_card_shadow())
-
+        #service form
         self.serviceTypeComboBox.setGraphicsEffect(create_card_shadow())
         self.returnDatePlaceholder.setGraphicsEffect(create_card_shadow())
         self.addNoteLineEdit.setGraphicsEffect(create_card_shadow())
         for dates in self.frame_61.findChildren(QDateEdit):
             dates.setGraphicsEffect(create_card_shadow())
+
+        #pet info foem
+        for petLineEdit in self.petDetailsPage.findChildren(QLineEdit):
+            petLineEdit.setGraphicsEffect(create_card_shadow())
+        for petComboBox in self.petDetailsPage.findChildren(QComboBox):
+            petComboBox.setGraphicsEffect(create_card_shadow())
+
 
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
