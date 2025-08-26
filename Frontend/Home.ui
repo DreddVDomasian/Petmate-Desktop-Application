@@ -999,27 +999,25 @@ color:rgb(39, 39, 39);
              </property>
              <property name="styleSheet">
               <string notr="true">QLineEdit{
-    border: 2px solid rgb(229, 229, 229);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
 }
 
 QLineEdit:focus{
-    border: 2px solid rgb(197, 197, 197);
-
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 
 
 QComboBox {
-    border: 2px solid rgb(229, 229, 229);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
 }
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
@@ -1027,8 +1025,8 @@ QComboBox QLineEdit {
     border: none; 
 }
 QComboBox:focus{
-	border: 2px solid rgb(197, 197, 197);
-	placeholder:none;
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 QComboBox::drop-down {
     background-color: transparent;
@@ -2774,7 +2772,7 @@ QPushButton:checked {
                     <x>0</x>
                     <y>0</y>
                     <width>543</width>
-                    <height>540</height>
+                    <height>477</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4733,27 +4731,25 @@ color:#4F4F4F;</string>
              <widget class="QWidget" name="petDetailsPage">
               <property name="styleSheet">
                <string notr="true">QLineEdit{
-    border: 2px solid rgb(229, 229, 229);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
 }
 
 QLineEdit:focus{
-    border: 2px solid rgb(197, 197, 197);
-
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 
 
 QComboBox {
-    border: 2px solid rgb(229, 229, 229);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
 }
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
@@ -4761,8 +4757,8 @@ QComboBox QLineEdit {
     border: none; 
 }
 QComboBox:focus{
-	border: 2px solid rgb(197, 197, 197);
-	placeholder:none;
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 QComboBox::drop-down {
     background-color: transparent;
@@ -6282,8 +6278,8 @@ background:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>891</width>
-                       <height>238</height>
+                       <width>90</width>
+                       <height>33</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -6337,8 +6333,7 @@ color:rgb(168, 168, 168);</string>
                    <widget class="QFrame" name="frame_61">
                     <property name="styleSheet">
                      <string notr="true">QDateEdit {
-    border: 2px solid rgb(229, 229, 229);
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
     border-radius: 10px;
     font: 57 12pt &quot;Montserrat Medium&quot;;
     color: rgb(39, 39, 39);
@@ -6360,12 +6355,11 @@ QDateEdit::down-arrow {
 }
 
 QComboBox {
-    border: 2px solid rgb(229, 229, 229);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(245, 245, 245);
 }
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
@@ -6373,8 +6367,8 @@ QComboBox QLineEdit {
     border: none; 
 }
 QComboBox:focus{
-	border: 2px solid rgb(197, 197, 197);
-	placeholder:none;
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 QComboBox::drop-down {
     background-color: transparent;
@@ -6517,6 +6511,9 @@ background-color: transparent;
                            <enum>QFrame::Raised</enum>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_54">
+                           <property name="leftMargin">
+                            <number>0</number>
+                           </property>
                            <property name="bottomMargin">
                             <number>9</number>
                            </property>
@@ -6759,13 +6756,17 @@ color:rgb(39, 39, 39);</string>
                            <item>
                             <widget class="QTextEdit" name="addNoteLineEdit">
                              <property name="styleSheet">
-                              <string notr="true">QTextEdit{
-            border: 2px solid rgb(229, 229, 229);
-            border-radius: 10px;
-            font: 57 12pt &quot;Montserrat Medium&quot;;
-            color:rgb(39, 39, 39);
-            padding-left: 10px;
-            background-color:rgb(229, 229, 229);
+                              <string notr="true">
+QTextEdit{
+    border-radius: 10px;
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+	background-color:rgb(245, 245, 245);
+}
+QTextEdit:focus{
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
 }
 </string>
                              </property>
@@ -6904,13 +6905,13 @@ QCheckBox::indicator:hover {
                                  </size>
                                 </property>
                                 <property name="styleSheet">
-                                 <string notr="true">           QLineEdit{
-            border-radius: 10px;
-            font: 57 12pt &quot;Montserrat Medium&quot;;
-            color:rgb(39, 39, 39);
-            padding-left: 10px;
-            background-color:rgb(206, 206, 206);
-        }</string>
+                                 <string notr="true">QLineEdit{
+    border-radius: 10px;
+	font: 57 12pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+	background-color:rgb(229, 229, 229);
+}</string>
                                 </property>
                                 <property name="placeholderText">
                                  <string/>
