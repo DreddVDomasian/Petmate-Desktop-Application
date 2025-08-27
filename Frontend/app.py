@@ -285,6 +285,8 @@ class MainUI(QMainWindow):
         # Update format when date is picked
         self.Bday.dateChanged.connect(self.update_bday_display)
 
+
+
     def update_bday_display(self, date: QDate):
         sentinel = QDate(1900, 1, 1)
         if date == sentinel:
@@ -562,6 +564,7 @@ class MainUI(QMainWindow):
         else:
             data["birthDay"] = None
             data["age"] = self.age.text().strip() if self.age.text().strip() else None
+
 
         return data, missing
 
@@ -964,19 +967,15 @@ class MainUI(QMainWindow):
         self.navigate_to_page(5, owner_id=patient['id'])
 
     def show_pet_profile(self, pet):
-        # Fill labels with pet data
-        setPetName = f"NAME: {pet['petName']} "
-        self.petProfileNameLabel.setText(setPetName.upper())
-        setPetColor = f"COLOR: {pet['petColor']} "
-        self.petColorLabel.setText(setPetColor.upper())
-        setPetBreed = f"BREED: {pet['breed']} "
-        self.breedLabel.setText(setPetBreed.upper())
-        setPetSpecies = f"SPECIES: {pet['species']} "
-        self.speciesLabel.setText(setPetSpecies.upper())
-        setPetSex = f"SEX: {pet['sex']} "
-        self.petSexLabel.setText(setPetSex.upper())
-        age = f"AGE: {pet['age']} "
-        self.petAgeLabel.setText(age)
+        self.petProfileNameLabel.setText(f"<b>NAME:</b> {pet['petName'].upper()}")
+        self.petColorLabel.setText(f"<b>COLOR:</b> {pet['petColor'].upper()}")
+        self.petRemarksLabel.setText(f"<b>REMARKS:</b> {(pet['remarks'] or 'None').upper()}")
+        self.breedLabel.setText(f"<b>BREED:</b> {pet['breed'].upper()}")
+        self.speciesLabel.setText(f"<b>SPECIES:</b> {pet['species'].upper()}")
+        self.petSexLabel.setText(f"<b>SEX:</b> {pet['sex'].upper()}")
+        birthday = (self.format_date(pet.get("birthDay")) or "N/A").upper()
+        self.petBirthdayOptional.setText(f"<b>BIRTHDAY:</b> {birthday}")
+        self.petAgeLabel.setText(f"<b>AGE:</b> {pet['age'].upper()}")
 
         if pet.get("has_reminder", False):
             self.reminderBtn.show()
