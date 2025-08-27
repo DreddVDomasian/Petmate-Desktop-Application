@@ -2784,8 +2784,8 @@ QScrollArea QScrollBar::groove:horizontal {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>508</width>
-                    <height>468</height>
+                    <width>543</width>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -5519,6 +5519,12 @@ QPushButton:hover{
                        </property>
                        <item alignment="Qt::AlignTop">
                         <widget class="QFrame" name="frame_17">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>
@@ -5545,6 +5551,21 @@ QPushButton:hover{
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>40</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>40</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true"/>
                             </property>
                             <property name="text">
                              <string/>
@@ -7642,7 +7663,7 @@ QPushButton:hover{
  </widget>
  <resources>
   <include location="resource.qrc"/>
-  <include location="C:/Users/domas/.designer/backup/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

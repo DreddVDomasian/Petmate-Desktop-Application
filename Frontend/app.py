@@ -215,17 +215,20 @@ class MainUI(QMainWindow):
         self.make_icon_pulse(self.reminderBtn)
 
     def make_icon_pulse(self, button):
+        # Lock button size so layout won’t move
+        button.setFixedSize(button.size())
+
         rect = button.iconSize()
 
         grow = QPropertyAnimation(button, b"iconSize")
         grow.setDuration(500)
         grow.setStartValue(rect)
-        grow.setEndValue(rect + QSize(6, 6))  # grow
+        grow.setEndValue(rect + QSize(4, 4))
         grow.setEasingCurve(QEasingCurve.Type.OutCubic)
 
         shrink = QPropertyAnimation(button, b"iconSize")
         shrink.setDuration(500)
-        shrink.setStartValue(rect + QSize(6, 6))
+        shrink.setStartValue(rect + QSize(4, 4))
         shrink.setEndValue(rect)
         shrink.setEasingCurve(QEasingCurve.Type.InCubic)
 
@@ -967,15 +970,15 @@ class MainUI(QMainWindow):
         self.navigate_to_page(5, owner_id=patient['id'])
 
     def show_pet_profile(self, pet):
-        self.petProfileNameLabel.setText(f"<b>NAME:</b> {pet['petName'].upper()}")
-        self.petColorLabel.setText(f"<b>COLOR:</b> {pet['petColor'].upper()}")
-        self.petRemarksLabel.setText(f"<b>REMARKS:</b> {(pet['remarks'] or 'None').upper()}")
-        self.breedLabel.setText(f"<b>BREED:</b> {pet['breed'].upper()}")
-        self.speciesLabel.setText(f"<b>SPECIES:</b> {pet['species'].upper()}")
-        self.petSexLabel.setText(f"<b>SEX:</b> {pet['sex'].upper()}")
-        birthday = (self.format_date(pet.get("birthDay")) or "N/A").upper()
-        self.petBirthdayOptional.setText(f"<b>BIRTHDAY:</b> {birthday}")
-        self.petAgeLabel.setText(f"<b>AGE:</b> {pet['age'].upper()}")
+        self.petProfileNameLabel.setText(pet['petName'].title())
+        self.petColorLabel.setText(pet['petColor'].title())
+        self.petRemarksLabel.setText(pet['remarks'].capitalize())
+        self.breedLabel.setText(pet['breed'].title())
+        self.speciesLabel.setText(pet['species'].title())
+        self.petSexLabel.setText(pet['sex'].title())
+        birthday = self.format_date(pet.get("birthDay"))
+        self.petBirthdayOptional.setText(birthday.title())
+        self.petAgeLabel.setText(pet['age'].title())
 
         if pet.get("has_reminder", False):
             self.reminderBtn.show()
