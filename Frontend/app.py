@@ -62,11 +62,6 @@ class MainUI(QMainWindow):
         self.Bday.setMinimumDate(QDate(1900, 1, 1))
         self.Bday.setMaximumDate(QDate.currentDate())
 
-        #age update
-        self.daily_age_timer = QTimer()
-        self.daily_age_timer.timeout.connect(lambda: self.update_bday_display(self.Bday.date()))
-        self.daily_age_timer.start(24 * 60 * 60 * 1000)
-
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
         self.customCalendar.setParent(None)
@@ -273,47 +268,61 @@ class MainUI(QMainWindow):
         self.returnDateEdit.hide()
         self.returnCheckBox.toggled.connect(self.toggle_return_date)
 
-        #pet info side
+        # --- Pet birthday setup ---
+        sentinel = QDate(1900, 1, 1)
         self.Bday.setSpecialValueText("Birthday (optional)")
         self.Bday.setDisplayFormat(" ")  # start blank
-
-        # Use sentinel date to represent "no birthday"
-        sentinel = QDate(1900, 1, 1)
-        self.Bday.setDate(sentinel)
+        self.Bday.setDate(sentinel)  # sentinel means "no birthday"
         self.Bday.setMinimumDate(sentinel)
+        self.Bday.setMaximumDate(QDate.currentDate())  # no future birthdays
 
-        # When user clicks, show calendar
+        # open your custom calendar
         self.Bday.mousePressEvent = lambda event: self.show_custom_calendar(self.Bday)
 
-        # Update format when date is picked
+        # recompute age when birthday changes
         self.Bday.dateChanged.connect(self.update_bday_display)
 
-
+        # make sure age is editable only when no birthday
+        self.age.setReadOnly(True)  # will be flipped in update_bday_display
 
     def update_bday_display(self, date: QDate):
         sentinel = QDate(1900, 1, 1)
+
         if date == sentinel:
-            # No birthday selected → show placeholder
+            # No birthday selected → show placeholder and allow manual age
             self.Bday.setDisplayFormat(" ")
-            self.age.clear()  # allow user to type estimated age
+            # avoid emitting textChanged if you have handlers
+            self.age.blockSignals(True)
+            self.age.clear()
+            self.age.blockSignals(False)
+            self.age.setReadOnly(False)  # user can type stored_age
+            return
+
+        # Birthday selected → compute age and lock the field
+        self.Bday.setDisplayFormat("MMM d, yyyy")
+        today = QDate.currentDate()
+        days = date.daysTo(today)
+
+        if days < 0:
+            # just in case — shouldn't happen with maxDate set
+            days = 0
+
+        if days < 7:
+            age_str = f"{days} day{'s' if days != 1 else ''} old"
+        elif days < 30:
+            weeks = days // 7
+            age_str = f"{weeks} week{'s' if weeks != 1 else ''} old"
+        elif days < 365:
+            months = days // 30
+            age_str = f"{months} month{'s' if months != 1 else ''} old"
         else:
-            self.Bday.setDisplayFormat("MMM d, yyyy")
-            today = QDate.currentDate()
-            days = date.daysTo(today)
+            years = days // 365
+            age_str = f"{years} year{'s' if years != 1 else ''} old"
 
-            if days < 7:
-                age_str = f"{days} day{'s' if days != 1 else ''} old"
-            elif days < 30:
-                weeks = days // 7
-                age_str = f"{weeks} week{'s' if weeks != 1 else ''} old"
-            elif days < 365:
-                months = days // 30
-                age_str = f"{months} month{'s' if months != 1 else ''} old"
-            else:
-                years = days // 365
-                age_str = f"{years} year{'s' if years != 1 else ''} old"
-
-            self.age.setText(age_str)
+        self.age.blockSignals(True)
+        self.age.setText(age_str)
+        self.age.blockSignals(False)
+        self.age.setReadOnly(True)  # computed only
 
     def setup_confirm_card(self):
         self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
@@ -561,13 +570,14 @@ class MainUI(QMainWindow):
 
         sentinel = QDate(1900, 1, 1)
         if self.Bday.date() != sentinel:
+            # real birthday chosen
             bday = self.Bday.date()
             data["birthDay"] = bday.toString("yyyy-MM-dd")
-            data["age"] = self.age.text().strip()  # already computed/typed
+            data["stored_age"] = None
         else:
+            # no birthday, only stored_age if entered
             data["birthDay"] = None
-            data["age"] = self.age.text().strip() if self.age.text().strip() else None
-
+            data["stored_age"] = self.age.text().strip() if self.age.text().strip() else None
 
         return data, missing
 
@@ -615,32 +625,52 @@ class MainUI(QMainWindow):
             toast.show_toast()
 
     def submit_pet_data(self):
+        # Only fields that are always required go here:
         required_fields = {
             "petName": self.petName,
             "petColor": self.petColor,
             "breed": self.breed,
             "species": self.speciesComboBox,
-            "age":self.age,
-            "sex": self.petSexComboBox
+            "sex": self.petSexComboBox,
         }
 
         data, missing = self.collect_and_validate_fields(required_fields)
-        data["remarks"] = self.petRemarks.text().strip() if self.petRemarks.text().strip() else None
-        if missing:
-            message = "The following fields are required:\n• " + "\n• ".join(missing)
-            toast = Toast(self, message, icon_path="Icons/warning.png")
+
+        # optional remarks
+        data["remarks"] = self.petRemarks.text().strip() or None
+
+        # ---- Birthday / stored_age logic (exclusive) ----
+        sentinel = QDate(1900, 1, 1)
+        bday_qdate = self.Bday.date()
+        has_birthday = (bday_qdate is not None) and (bday_qdate != sentinel)
+
+        if has_birthday:
+            data["birthDay"] = bday_qdate.toString("yyyy-MM-dd")
+            data["stored_age"] = None
+        else:
+            data["birthDay"] = None
+            typed_age = self.age.text().strip()
+            data["stored_age"] = typed_age if typed_age else None
+
+        # Enforce: at least one of them must be present
+        if not has_birthday and not data["stored_age"]:
+            toast = Toast(self, "Please provide either Birthday or Age.", icon_path="Icons/warning.png")
             toast.show_toast()
             return
 
-        # Add owner_id sa data
+        # owner
         data["owner_id"] = self.selected_patient_id
 
-        # Call your API: e.g. add_new_pet(data)
+        # (Optional) Debug: confirm payload is clean
+        # print("Submitting data:", data)
+
         if add_new_pet(data):
             self.profileStackedWidget.setCurrentIndex(0)
             self.load_pets_for_owner(self.selected_patient_id)
 
             self.clearInputs()
+
+            # reset styles for required widgets
             for widget in required_fields.values():
                 if isinstance(widget, QLineEdit):
                     widget.setStyleSheet(default_style)
@@ -649,8 +679,6 @@ class MainUI(QMainWindow):
 
             toast = Toast(self, icon_path="Icons/check.png")
             toast.show_toast()
-
-
         else:
             toast = Toast(self, "Failed to add pet!", icon_path="Icons/warning.png")
             toast.show_toast()
@@ -970,15 +998,18 @@ class MainUI(QMainWindow):
         self.navigate_to_page(5, owner_id=patient['id'])
 
     def show_pet_profile(self, pet):
-        self.petProfileNameLabel.setText(pet['petName'].title())
-        self.petColorLabel.setText(pet['petColor'].title())
-        self.petRemarksLabel.setText(pet['remarks'].capitalize())
-        self.breedLabel.setText(pet['breed'].title())
-        self.speciesLabel.setText(pet['species'].title())
-        self.petSexLabel.setText(pet['sex'].title())
+        self.petProfileNameLabel.setText((pet.get('petName') or "").title())
+        self.petColorLabel.setText((pet.get('petColor') or "").title())
+        self.petRemarksLabel.setText((pet.get('remarks') or "None"))  # no .capitalize() if None
+        self.breedLabel.setText((pet.get('breed') or "").title())
+        self.speciesLabel.setText((pet.get('species') or "").title())
+        self.petSexLabel.setText((pet.get('sex') or "").title())
+
         birthday = self.format_date(pet.get("birthDay"))
-        self.petBirthdayOptional.setText(birthday.title())
-        self.petAgeLabel.setText(pet['age'].title())
+        self.petBirthdayOptional.setText((birthday or "None"))
+
+        # Show stored/dynamic age, or "Unknown" if missing
+        self.petAgeLabel.setText((pet.get('age') or "Unknown"))
 
         if pet.get("has_reminder", False):
             self.reminderBtn.show()

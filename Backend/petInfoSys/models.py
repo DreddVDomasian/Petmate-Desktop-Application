@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 
 class basicInfo(models.Model):
@@ -19,22 +20,43 @@ class basicInfo(models.Model):
 
 class Pet(models.Model):
     owner = models.ForeignKey(
-        basicInfo,
+        "basicInfo",
         on_delete=models.CASCADE,
-        related_name='pets'
+        related_name="pets"
     )
     petName = models.CharField(max_length=255)
     petColor = models.CharField(max_length=255)
     breed = models.CharField(max_length=255)
     species = models.CharField(max_length=255)
     birthDay = models.DateField(null=True, blank=True)  # optional
-    age = models.CharField(max_length=50)
+
+    stored_age = models.CharField(max_length=50, null=True, blank=True)
     sex = models.CharField(max_length=50)
     remarks = models.CharField(max_length=350, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.petName} (Owner: {self.owner.firstName})"
+
+    @property
+    def age(self):
+        """Return dynamic age if birthday exists, otherwise stored age."""
+        if self.birthDay:
+            today = date.today()
+            days = (today - self.birthDay).days
+
+            if days < 7:
+                return f"{days} day{'s' if days != 1 else ''} old"
+            elif days < 30:
+                weeks = days // 7
+                return f"{weeks} week{'s' if weeks != 1 else ''} old"
+            elif days < 365:
+                months = days // 30
+                return f"{months} month{'s' if months != 1 else ''} old"
+            else:
+                years = days // 365
+                return f"{years} year{'s' if years != 1 else ''} old"
+        return self.stored_age or "Unknown"
 
 class Service(models.Model):
     owner = models.ForeignKey(

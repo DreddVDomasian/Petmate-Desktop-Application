@@ -2567,8 +2567,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>72</width>
+                        <height>16</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -5645,7 +5645,7 @@ border:none;</string>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_25">
                        <property name="spacing">
-                        <number>30</number>
+                        <number>40</number>
                        </property>
                        <property name="leftMargin">
                         <number>0</number>
@@ -5824,7 +5824,7 @@ color:rgb(0, 0, 0);</string>
                              <item>
                               <widget class="QFrame" name="frame_20">
                                <property name="sizePolicy">
-                                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                  <horstretch>0</horstretch>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
@@ -5893,7 +5893,7 @@ color:rgb(0, 0, 0);</string>
                              <item>
                               <widget class="QFrame" name="frame_21">
                                <property name="sizePolicy">
-                                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                  <horstretch>0</horstretch>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
@@ -5960,9 +5960,9 @@ color:rgb(0, 0, 0);</string>
                               </widget>
                              </item>
                              <item>
-                              <widget class="QFrame" name="frame_30">
+                              <widget class="QFrame" name="frame_33">
                                <property name="sizePolicy">
-                                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                                  <horstretch>0</horstretch>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
@@ -5973,7 +5973,7 @@ color:rgb(0, 0, 0);</string>
                                <property name="frameShadow">
                                 <enum>QFrame::Raised</enum>
                                </property>
-                               <layout class="QHBoxLayout" name="horizontalLayout_45">
+                               <layout class="QHBoxLayout" name="horizontalLayout_49">
                                 <property name="leftMargin">
                                  <number>0</number>
                                 </property>
@@ -5987,9 +5987,9 @@ color:rgb(0, 0, 0);</string>
                                  <number>0</number>
                                 </property>
                                 <item>
-                                 <widget class="QLabel" name="label_14">
+                                 <widget class="QLabel" name="label_18">
                                   <property name="sizePolicy">
-                                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
@@ -5999,26 +5999,23 @@ color:rgb(0, 0, 0);</string>
 color:rgb(0, 0, 0);</string>
                                   </property>
                                   <property name="text">
-                                   <string>SPECIES:</string>
+                                   <string>REMARKS:</string>
                                   </property>
                                  </widget>
                                 </item>
                                 <item>
-                                 <widget class="QLabel" name="speciesLabel">
+                                 <widget class="QLabel" name="petRemarksLabel">
                                   <property name="sizePolicy">
-                                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
                                   </property>
-                                  <property name="styleSheet">
-                                   <string notr="true"/>
-                                  </property>
                                   <property name="text">
-                                   <string>CAT</string>
+                                   <string>REMARKS</string>
                                   </property>
                                   <property name="alignment">
-                                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                                   </property>
                                   <property name="wordWrap">
                                    <bool>true</bool>
@@ -6195,7 +6192,7 @@ color:rgb(0, 0, 0);</string>
                               </widget>
                              </item>
                              <item>
-                              <widget class="QFrame" name="frame_33">
+                              <widget class="QFrame" name="frame_30">
                                <property name="sizePolicy">
                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                                  <horstretch>0</horstretch>
@@ -6208,7 +6205,7 @@ color:rgb(0, 0, 0);</string>
                                <property name="frameShadow">
                                 <enum>QFrame::Raised</enum>
                                </property>
-                               <layout class="QHBoxLayout" name="horizontalLayout_49">
+                               <layout class="QHBoxLayout" name="horizontalLayout_45">
                                 <property name="leftMargin">
                                  <number>0</number>
                                 </property>
@@ -6222,9 +6219,9 @@ color:rgb(0, 0, 0);</string>
                                  <number>0</number>
                                 </property>
                                 <item>
-                                 <widget class="QLabel" name="label_18">
+                                 <widget class="QLabel" name="label_14">
                                   <property name="sizePolicy">
-                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
@@ -6234,20 +6231,26 @@ color:rgb(0, 0, 0);</string>
 color:rgb(0, 0, 0);</string>
                                   </property>
                                   <property name="text">
-                                   <string>REMARKS:</string>
+                                   <string>SPECIES:</string>
                                   </property>
                                  </widget>
                                 </item>
                                 <item>
-                                 <widget class="QLabel" name="petRemarksLabel">
+                                 <widget class="QLabel" name="speciesLabel">
                                   <property name="sizePolicy">
                                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
                                   </property>
+                                  <property name="styleSheet">
+                                   <string notr="true"/>
+                                  </property>
                                   <property name="text">
-                                   <string>REMARKS</string>
+                                   <string>CAT</string>
+                                  </property>
+                                  <property name="alignment">
+                                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                                   </property>
                                   <property name="wordWrap">
                                    <bool>true</bool>

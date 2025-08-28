@@ -13,34 +13,43 @@ class PetSerializer(serializers.ModelSerializer):
     # For writing
     owner_id = serializers.PrimaryKeyRelatedField(
         queryset=basicInfo.objects.all(),
-        source='owner',  # maps to the FK
+        source='owner',
         write_only=True
     )
     has_reminder = serializers.SerializerMethodField()
+    age = serializers.ReadOnlyField()
+
     class Meta:
         model = Pet
         fields = '__all__'
 
+    def validate(self, attrs):
+        """
+        Ensure stored_age is only saved if birthDay is not provided.
+        """
+        if attrs.get("birthDay"):
+            # drop stored_age if birthday exists
+            attrs["stored_age"] = None
+        return attrs
+
     def get_has_reminder(self, obj):
-        # ✅ Avoid circular imports
         from django.utils.timezone import localdate
         today = localdate()
 
-        # 🔎 Appointments that still need action (pending or overdue only)
         has_appointment = WalkInAppointment.objects.filter(
             pet=obj,
             status__in=["pending", "overdue"]
         ).exists()
 
-        # 🔎 Services that still need action (pending or overdue only)
         has_service = Service.objects.filter(
             pet=obj,
             return_date__isnull=False,
             status__in=["pending", "overdue"]
         ).exists()
 
-        # ✅ Only true if something is still pending/overdue
         return has_appointment or has_service
+
+
 
 
 class ServiceSerializer(serializers.ModelSerializer):

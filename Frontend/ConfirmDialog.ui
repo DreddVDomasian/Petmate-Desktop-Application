@@ -31,7 +31,7 @@
      <property name="styleSheet">
       <string notr="true">#confirmation{
 	border-radius:15px;
-	background-color:rgb(208, 208, 208);
+	background-color:rgb(255, 255, 255);
 	border-bottom:1px solid rgb(199, 199, 199);
 }</string>
      </property>
