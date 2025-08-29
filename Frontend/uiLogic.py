@@ -34,7 +34,7 @@ class UIHandler:
         self.provinceComboBox.clear()
         self.provinceComboBox.addItem("", None)
         for prov in sorted(self.provinces, key=lambda x: x["name"]):
-            self.provinceComboBox.addItem(prov["name"], prov["prov_code"])
+            self.provinceComboBox.addItem(prov["name"].title(), prov["prov_code"])
 
         # set completer based on current items
         self.set_dynamic_completer(self.provinceComboBox)
@@ -56,7 +56,7 @@ class UIHandler:
             key=lambda x: x["name"]
         )
         for city in filtered:
-            self.cityComboBox.addItem(city["name"], city["mun_code"])
+            self.cityComboBox.addItem(city["name"].title(), city["mun_code"])
 
         # update completer for cities
         self.set_dynamic_completer(self.cityComboBox)
@@ -77,7 +77,7 @@ class UIHandler:
             key=lambda x: x["name"]
         )
         for brgy in filtered:
-            self.barangayComboBox.addItem(brgy["name"])
+            self.barangayComboBox.addItem(brgy["name"].title())
 
         # update completer for barangays
         self.set_dynamic_completer(self.barangayComboBox)
