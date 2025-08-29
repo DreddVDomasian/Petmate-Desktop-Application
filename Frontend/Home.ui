@@ -1832,8 +1832,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>893</width>
+                <height>488</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2567,8 +2567,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>72</width>
-                        <height>16</height>
+                        <width>893</width>
+                        <height>347</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -2784,8 +2784,8 @@ QScrollArea QScrollBar::groove:horizontal {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>543</width>
-                    <height>540</height>
+                    <width>508</width>
+                    <height>468</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4294,8 +4294,8 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>93</width>
-                       <height>41</height>
+                       <width>891</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_33">
