@@ -171,3 +171,193 @@ class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
                 obj.status = "overdue"
                 obj.save(update_fields=["status"])
         return obj
+
+
+#------------------------------WEB APPOINTMENT VIEWS----------------------------------------------------
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
+import json
+from .models import Client, Pet, AppointmentType
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def create_booking(request):
+    try:
+        # Parse JSON data from request
+        data = json.loads(request.body)
+
+        # Use database transaction to ensure data integrity
+        with transaction.atomic():
+            # 1. Create or get client
+            client_data = {
+                'client_type': data.get('client_type'),
+                'first_name': data.get('first_name'),
+                'last_name': data.get('last_name'),
+                'email': data.get('email'),
+                'phone': data.get('phone'),
+                'emergency_contact': data.get('emergency_contact'),
+                'province': data.get('province'),
+                'city': data.get('city'),
+                'barangay': data.get('barangay'),
+                'detailed_address': data.get('detailed_address'),
+            }
+
+            # Check if client already exists by email
+            client, created = Client.objects.get_or_create(
+                email=client_data['email'],
+                defaults=client_data
+            )
+
+            # If client exists, update their information
+            if not created:
+                for key, value in client_data.items():
+                    if key != 'email':  # Don't update email
+                        setattr(client, key, value)
+                client.save()
+
+            # 2. Create pet
+            pet = PetWeb.objects.create(
+                client=client,
+                pet_name=data.get('pet_name'),
+                species=data.get('species'),
+                breed=data.get('breed'),
+                color=data.get('color'),
+                sex=data.get('sex'),
+            )
+
+            # 3. Create appointment
+            appointment = AppointmentType.objects.create(
+                client=client,
+                pet=pet,
+                appointment_reason=data.get('appointment_reason'),
+                provider=data.get('provider'),
+                appointment_datetime=data.get('appointment_datetime'),
+                comments=data.get('comments', ''),
+                status='pending'
+            )
+
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Booking created successfully',
+            'data': {
+                'client_id': client.id,
+                'pet_id': pet.id,
+                'appointment_id': appointment.id,
+                'client_name': client.full_name,
+                'pet_name': pet.pet_name,
+                'appointment_datetime': appointment.appointment_datetime,
+                'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@csrf_exempt
+def get_clients(request):
+    """Get all clients"""
+    try:
+        clients = Client.objects.all().order_by('-created_at')
+        clients_data = []
+
+        for client in clients:
+            clients_data.append({
+                'id': client.id,
+                'client_type': client.client_type,
+                'full_name': client.full_name,
+                'email': client.email,
+                'phone': client.phone,
+                'emergency_contact': client.emergency_contact,
+                'full_address': client.full_address,
+                'total_pets': client.pets.count(),
+                'total_appointments': client.appointments.count(),
+                'created_at': client.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+        return JsonResponse({
+            'status': 'success',
+            'clients': clients_data,
+            'total': len(clients_data)
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@csrf_exempt
+def get_pets(request):
+    """Get all pets"""
+    try:
+        pets = PetWeb.objects.select_related('client').all().order_by('-created_at')
+        pets_data = []
+
+        for pet in pets:
+            pets_data.append({
+                'id': pet.id,
+                'pet_name': pet.pet_name,
+                'species': pet.species,
+                'breed': pet.breed,
+                'color': pet.color,
+                'sex': pet.sex,
+                'client_name': pet.client.full_name,
+                'client_id': pet.client.id,
+                'total_appointments': pet.appointments.count(),
+                'created_at': pet.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+        return JsonResponse({
+            'status': 'success',
+            'pets': pets_data,
+            'total': len(pets_data)
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+
+@csrf_exempt
+def get_appointments(request):
+    """Get all appointments"""
+    try:
+        appointments = AppointmentType.objects.select_related('client', 'pet').all().order_by('-created_at')
+        appointments_data = []
+
+        for appointment in appointments:
+            appointments_data.append({
+                'id': appointment.id,
+                'client_name': appointment.client.full_name,
+                'pet_name': appointment.pet.pet_name,
+                'appointment_reason': appointment.appointment_reason,
+                'provider': appointment.provider,
+                'appointment_datetime': appointment.appointment_datetime,
+                'status': appointment.status,
+                'comments': appointment.comments,
+                'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+        return JsonResponse({
+            'status': 'success',
+            'appointments': appointments_data,
+            'total': len(appointments_data)
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)

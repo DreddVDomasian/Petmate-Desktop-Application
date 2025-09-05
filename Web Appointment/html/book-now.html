@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Book Appointment - Petmate Animal Clinic</title>
+    <!-- CSS LINKS -->
+    <link rel="stylesheet" href="../css/book-now.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    
+    <!-- JAVASCRIPT LINKS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+    <script src="../js/book-now.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo transition-logo">
+                <img src="../assets/PETMATE LOGO.png" alt="PetMate Logo" />
+            </div>
+        </nav>
+    </header>
+
+    <section class="page-header">
+        <p class="breadcrumb">Home / Book Appointment</p>
+        <h1 class="main-title">Book Appointment</h1>
+    </section>
+
+    <main class="booking-wrapper">
+        <p class="subtext">
+        Use this form to request an appointment with us. While we will do our best to accommodate your requested day and time, please note, your appointment is not fully booked until you get a confirmation from us!
+        </p>
+
+        <!-- Step 1 -->
+        <section class="appointment-form">
+            <h2 class="form-title">Request An Appointment</h2>
+            <p class="form-subtitle">How can we help you?</p>
+
+            <div class="stepper">
+                <div class="step active">1</div>
+                <div class="line"></div>
+                <div class="step">2</div>
+                <div class="line"></div>
+                <div class="step">3</div>
+            </div>
+
+            <div class="client-type">
+                <p class="section-label">This appointment is for:</p>
+                <div class="options">
+                    <label class="option-box">
+                        <input type="radio" name="clientType" value="new" /> New Client
+                    </label>
+                    <label class="option-box">
+                        <input type="radio" name="clientType" value="returning" /> Returning Client
+                    </label>
+                </div>
+            </div>
+
+            <div class="location">
+                <p class="section-label">Location:</p>
+                <div class="location-box">
+                    <strong>PetMate Animal Clinic</strong><br />
+                    <span>Imus Cavite</span>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="continue-btn">Continue</button>
+            </div>
+        </section>
+
+
+
+        <!-- Step 2 -->
+        <section class="scheduling-step" style="display:none;">
+            <div class="stepper">
+                <div class="step active">1</div>
+                <div class="line"></div>
+                <div class="step active">2</div>
+                <div class="line"></div>
+                <div class="step">3</div>
+            </div>
+
+            <h2 class="form-title">Select Appointment Details</h2>
+            <p class="form-subtitle">Choose reason, provider, and time</p>
+
+            <div class="scheduling-grid">
+                <div class="left-section">
+                    <div class="reason-selection">
+                        <label for="reason">Reason:</label>
+                        <select id="reason">
+                            <option value="vaccination">Vaccination</option>
+                            <option value="checkup">Check-up</option>
+                            <option value="surgery">Surgery</option>
+                            <option value="consultations">Consultations</option>
+                            <option value="deworming">Deworming</option>
+                        </select>
+                    </div>
+
+                    <div class="provider-selection">
+                        <label for="provider">Provider:</label>
+                        <select id="provider">
+                            <option value="#">Dr. Gonzales</option>
+                            <option value="#">Dr. Domasian</option>
+                            <option value="#">Dr. Jerusalem</option>
+                            <option value="#">Dr. Moleno</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="right-section">
+                    <div class="date-selection">
+                        <label for="appointmentDate">Select Date & Time:</label>
+                        <input type="text" id="appointmentDate" placeholder="Pick date & time" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="back-btn">Back</button>
+                <button class="continue-schedule-btn">Continue</button>
+            </div>
+        </section>
+
+        <!-- Step 3  Appointment Information / Client Information-->
+        <section class="confirmation-step" style="display:none;">
+            <div class="stepper">
+                <div class="step active">1</div>
+                <div class="line"></div>
+                <div class="step active">2</div>
+                <div class="line"></div>
+                <div class="step active">3</div>
+            </div>
+
+            <div class = "confirmation-header">
+                <h2 class="form-title">Appointment Summary</h2>
+                <p class="form-subtitle">Review and complete your request</p>
+            </div>
+
+            <div class="confirmation-grid">
+                <div class="appointment-summary">
+                    <h3>Appointment Information</h3>
+                    <p><strong>Location:</strong><br></p>
+                    <p id="provider-display"></p>
+                    <p id="reason-display"></p>
+                    <p id="datetime-display"></p>
+                </div>
+
+                <div class="client-form">
+                    <h3>Client Information</h3>
+                    <form>
+                        <div class="form-row">
+                            <input type="text" id="firstName" placeholder="First Name*" required>
+                            <input type="text" id="lastName" placeholder="Last Name*" required>
+                        </div>
+                        
+                        <input type="email" id="email" placeholder="Email*" required>
+                        <input type="tel" id="phone" placeholder="Phone Number*" required>
+                        <input type="tel" id="emergencyContact" placeholder="Emergency Contact Number" required>
+
+                        <select id="province" required>
+                            <option value="">Select Province*</option>
+                        </select>
+
+                        <select id="city" required>
+                            <option value="">Select City*</option>
+                        </select>
+
+                        <select id="barangay" required>
+                            <option value="">Select Barangay*</option>
+                        </select>
+                        
+                        <input type="text" id="detailed_address" placeholder="Detailed Address (Street, House Number, etc.)*" required>
+
+                        <h3 class="form-title-ins">Pet Information</h3>
+                        <p class="form-subtitle-ins">Please provide details about your pet</p>
+                        <input type="text" id="petName" placeholder="Pet Name*" required>
+                        <select id="species" required>
+                            <option value="">Select Species*</option>
+                            <option value="dog">Dog</option>
+                            <option value="cat">Cat</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" id="breed" placeholder="Breed*" required>
+                        <input type="text" id="color" placeholder="Color*" required>
+                        
+                        <select id="sex" required>
+                            <option value="" >Select Sex*</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                        
+                        <textarea id="comments" placeholder="Comments (optional)" maxlength="400"></textarea>
+                        <div class="btn-container">
+                            <button type="button" class="back-schedule-btn">Back</button>
+                            <button type="submit" class="submit-btn">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Confirmation Message / STEP 4 -->
+        <section class="confirmation-message" style="display: none;">
+            <h2 class="form-title"></h2>
+            <p class="form-subtitle"></p>
+
+            <div class="booking-confirmation-box">
+                <div class="confirmation-item">
+                    <label></label>
+                    <div class="info-box">
+                        <div><strong></strong></div>
+                        <div></div>
+                    </div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label></label>
+                    <div class="info-box"></div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label></label>
+                    <div class="info-box"></div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label></label>
+                    <div class="info-box">
+                        <i class="calendar-icon"></i> 
+                    </div>
+                </div>
+            </div>
+
+            <!-- BACK BUTTON -->
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="index.html">
+                <button type="button" class="back-home-btn">Back to Homepage</button>
+                </a>
+            </div>
+        </section>
+
+
+
+        <!-- CONGRATUALATIONS MESSAGE / DETAILS -->
+
+
+
+
+
+
+    </main>
+
+    <!-- Loading Screen Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="office-hours">
+            <h1>Office Hours</h1>
+            <div class="hours-grid">
+                <div><p>Monday</p><span>9:00 am - 6:00 pm</span></div>
+                <div><p>Tuesday</p><span>9:00 am - 6:00 pm</span></div>
+                <div><p>Wednesday</p><span>9:00 am - 6:00 pm</span></div>
+                <div><p>Thursday</p><span>9:00 am - 6:00 pm</span></div>
+                <div><p>Friday</p><span>9:00 am - 6:00 pm</span></div>
+                <div><p>Saturday</p><span>9:00 am - 6:00 pm</span></div>
+                <div><p>Sunday</p><span>By Appointment</span></div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-left">
+                <p>PETMATE ANIMAL CLINIC<br>
+                NIA ROAD QUEL COMMERCIAL BUILDING, CARSADANG BAGO 2
+                <br>IMUS, CAVITE, 4103 PHILIPPINES
+                </p>
+            </div>
+            <div class="footer-contact"><p>(+63) 9226235529</p></div>
+        </div>
+
+        <div class="footer-bottom-line">
+        <p>| BSIT 3-1 | 
+            <a href="#">| JOHN FRANCIS E JERUSALEM |</a> 
+            <a href="#">| DREDD V DOMASIAN |</a>            
+            <a href="#">| ROBERT MOLENO |</a>
+        </p>
+        </div>
+    </footer>
+
+
+</body>
+</html>
