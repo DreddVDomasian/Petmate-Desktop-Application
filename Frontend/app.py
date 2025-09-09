@@ -12,7 +12,7 @@ from PyQt6.QtGui import QFontDatabase, QPixmap
 from uiLogic import UIHandler
 from input_styles import *
 from toast import Toast
-
+import resources_rc
 from Backend.petInfoSys.api_client import add_new_patient, add_new_pet, add_new_service
 from confirm_card import ConfirmCard
 from ReminderPopUp import ReminderPopup
