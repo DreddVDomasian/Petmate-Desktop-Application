@@ -1,15 +1,22 @@
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QDateEdit, QCompleter,QCalendarWidget,QToolButton,QTextEdit
+import os
+import sys
+
+# ETO ANG SAGGOT
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect, QSize,QTimer
-import resources_rc
-from PyQt6.QtGui import QFontDatabase, QFont, QPixmap, QIcon, QAction,QColor
+from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize
+from PyQt6.QtGui import QFontDatabase, QPixmap
 from uiLogic import UIHandler
 from input_styles import *
 from toast import Toast
-from Backend.api_client import add_new_patient, add_new_pet, add_new_service
+
+from Backend.petInfoSys.api_client import add_new_patient, add_new_pet, add_new_service
 from confirm_card import ConfirmCard
 from ReminderPopUp import ReminderPopup
-from  appointmentPopUp import AddAppointmentCard
+from appointmentPopUp import AddAppointmentCard
 from functools import partial
 from datetime import datetime
 from shadowEffects import *
@@ -17,8 +24,6 @@ from delete import Delete
 from updateFunction import Update
 import requests
 import webbrowser
-import os
-import sys
 
 
 

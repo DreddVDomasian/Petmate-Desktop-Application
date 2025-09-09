@@ -1,10 +1,17 @@
+import os
+import sys
+
+# ETO ANG SAGGOT
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate
 from input_styles import *
 from  shadowEffects import *
 from toast import Toast
-from Backend.api_client import add_new_appointment
+from Backend.petInfoSys.api_client import add_new_appointment
 from datetime import datetime
 import requests
 
