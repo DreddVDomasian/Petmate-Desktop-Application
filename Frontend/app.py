@@ -1078,6 +1078,26 @@ class MainUI(QMainWindow):
         else:
             QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
 
+    def scale_widget_font(self, widget, base_size, min_size=8, max_size=20, family=None):
+        w_scale = self.width() / 1280
+        h_scale = self.height() / 720
+        scale = min(w_scale, h_scale)
+
+        scaled_size = int(base_size * scale)
+        final_size = max(min_size, min(scaled_size, max_size))
+
+        f = widget.font()
+        if family:  # if provided, override
+            f.setFamily(family)
+        f.setPointSize(final_size)
+        widget.setFont(f)
+
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        # for Qline Edits
+        for line_edit in self.findChildren(QLineEdit):
+            self.scale_widget_font(line_edit, base_size=12, min_size=10, max_size=25,family="Montserrat Medium")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

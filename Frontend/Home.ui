@@ -593,7 +593,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>6</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -1000,12 +1000,12 @@ color:rgb(39, 39, 39);
              <property name="styleSheet">
               <string notr="true">QLineEdit{
     border-radius: 10px;
-	font: 63 14pt &quot;Montserrat SemiBold&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
 }
-
 QLineEdit:focus{
     border: 1px solid rgb(235, 235, 235);
 	background-color:rgb(227, 227, 227);
@@ -1120,6 +1120,22 @@ QComboBox QLineEdit {
                <number>50</number>
               </property>
               <item>
+               <spacer name="verticalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
                <widget class="QLabel" name="label_4">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1137,15 +1153,24 @@ color:rgb(39, 39, 39);</string>
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="ownerDetails">
+               <widget class="QFrame" name="frame_36">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -1153,15 +1178,27 @@ color:rgb(39, 39, 39);</string>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_3">
+                <layout class="QHBoxLayout" name="horizontalLayout_52">
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
-                 <property name="verticalSpacing">
-                  <number>25</number>
+                 <property name="topMargin">
+                  <number>0</number>
                  </property>
-                 <item row="0" column="0">
+                 <property name="rightMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
                   <widget class="QLineEdit" name="firstNameEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>174</width>
@@ -1176,10 +1213,10 @@ color:rgb(39, 39, 39);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
+                 <item>
                   <widget class="QLineEdit" name="lastNameEdit">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1198,8 +1235,14 @@ color:rgb(39, 39, 39);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="2">
+                 <item>
                   <widget class="QLineEdit" name="middleNameEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>174</width>
@@ -1211,7 +1254,68 @@ color:rgb(39, 39, 39);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QFrame" name="ownerDetails">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_51">
+                 <property name="spacing">
+                  <number>15</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
                   <widget class="QLineEdit" name="emailEdit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1233,8 +1337,14 @@ color:rgb(39, 39, 39);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
+                 <item>
                   <widget class="QLineEdit" name="phoneNumberEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>174</width>
@@ -1249,7 +1359,7 @@ color:rgb(39, 39, 39);</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="2">
+                 <item>
                   <widget class="QLineEdit" name="emergencyNoEdit">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1259,7 +1369,7 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>256</width>
+                     <width>174</width>
                      <height>45</height>
                     </size>
                    </property>
@@ -1273,6 +1383,22 @@ color:rgb(39, 39, 39);</string>
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
                <widget class="QLabel" name="label_15">
@@ -1292,12 +1418,40 @@ color:rgb(39, 39, 39);</string>
                </widget>
               </item>
               <item>
+               <spacer name="verticalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Maximum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
                <widget class="QFrame" name="ownerDetails_2">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -1321,7 +1475,7 @@ color:rgb(39, 39, 39);</string>
                  <item>
                   <widget class="QComboBox" name="provinceComboBox">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1358,7 +1512,7 @@ color:rgb(39, 39, 39);</string>
                  <item>
                   <widget class="QComboBox" name="cityComboBox">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1392,7 +1546,7 @@ color:rgb(39, 39, 39);</string>
                  <item>
                   <widget class="QComboBox" name="barangayComboBox">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1421,12 +1575,40 @@ color:rgb(39, 39, 39);</string>
                </widget>
               </item>
               <item>
+               <spacer name="verticalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Minimum</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
                <widget class="QFrame" name="ownerDetails_3">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -1446,6 +1628,12 @@ color:rgb(39, 39, 39);</string>
                  </property>
                  <item>
                   <widget class="QLineEdit" name="detailedAddressEdit">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>174</width>
@@ -1462,6 +1650,19 @@ color:rgb(39, 39, 39);</string>
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item alignment="Qt::AlignHCenter">
                <widget class="QFrame" name="frame_12">
@@ -2784,8 +2985,8 @@ QScrollArea QScrollBar::groove:horizontal {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>508</width>
-                    <height>468</height>
+                    <width>543</width>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4690,8 +4891,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>401</width>
-                    <height>109</height>
+                    <width>893</width>
+                    <height>389</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -4806,12 +5007,11 @@ color:#4F4F4F;</string>
              </widget>
              <widget class="QWidget" name="petDetailsPage">
               <property name="styleSheet">
-               <string notr="true">
-
-
-QLineEdit{
+               <string notr="true">QLineEdit{
     border-radius: 10px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
+	font-size:12pt;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
@@ -4940,6 +5140,12 @@ QComboBox QLineEdit {
 }</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_30">
+               <property name="spacing">
+                <number>15</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetMinAndMaxSize</enum>
+               </property>
                <item>
                 <widget class="QFrame" name="petDetailsFrame">
                  <property name="sizePolicy">
@@ -4993,10 +5199,22 @@ color:rgb(39, 39, 39);</string>
                <item>
                 <widget class="QFrame" name="nameAndColorFrame">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>80</height>
+                  </size>
                  </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
@@ -5022,6 +5240,12 @@ color:rgb(39, 39, 39);</string>
                   </property>
                   <item>
                    <widget class="QLineEdit" name="petName">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>174</width>
@@ -5038,6 +5262,12 @@ color:rgb(39, 39, 39);</string>
                   </item>
                   <item>
                    <widget class="QLineEdit" name="petColor">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>174</width>
@@ -5056,7 +5286,41 @@ color:rgb(39, 39, 39);</string>
                 </widget>
                </item>
                <item>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Maximum</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QFrame" name="breedAndSpeciesFrame">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>80</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5081,6 +5345,12 @@ color:rgb(39, 39, 39);</string>
                   </property>
                   <item>
                    <widget class="QLineEdit" name="breed">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>174</width>
@@ -5098,7 +5368,7 @@ color:rgb(39, 39, 39);</string>
                   <item>
                    <widget class="QComboBox" name="speciesComboBox">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -5147,7 +5417,41 @@ color:rgb(39, 39, 39);</string>
                 </widget>
                </item>
                <item>
+                <spacer name="verticalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Maximum</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QFrame" name="bdayAge">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>80</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5173,7 +5477,7 @@ color:rgb(39, 39, 39);</string>
                   <item>
                    <widget class="QDateEdit" name="Bday">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -5194,6 +5498,12 @@ color:rgb(39, 39, 39);</string>
                   </item>
                   <item>
                    <widget class="QLineEdit" name="age">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>174</width>
@@ -5212,7 +5522,41 @@ color:rgb(39, 39, 39);</string>
                 </widget>
                </item>
                <item>
+                <spacer name="verticalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Maximum</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QFrame" name="frame_7">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>80</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5238,7 +5582,7 @@ color:rgb(39, 39, 39);</string>
                   <item>
                    <widget class="QComboBox" name="petSexComboBox">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -5271,6 +5615,12 @@ color:rgb(39, 39, 39);</string>
                   </item>
                   <item>
                    <widget class="QLineEdit" name="petRemarks">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>174</width>
@@ -5289,7 +5639,29 @@ color:rgb(39, 39, 39);</string>
                 </widget>
                </item>
                <item>
+                <spacer name="verticalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Maximum</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>150</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
                 <widget class="QFrame" name="actionBtns">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>65</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -5299,6 +5671,12 @@ color:rgb(39, 39, 39);</string>
                  <layout class="QHBoxLayout" name="horizontalLayout_20">
                   <property name="spacing">
                    <number>10</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
                   </property>
                   <item>
                    <widget class="QPushButton" name="backBtn">
@@ -7356,7 +7734,9 @@ color:rgb(39, 39, 39);</string>
                               <string notr="true">
 QTextEdit{
     border-radius: 10px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
+	font-size:12pt;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
