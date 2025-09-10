@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>720</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>6</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2600,7 +2600,7 @@ border-bottom-right-radius:10px;
               </size>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="walkIn">
               <property name="sizePolicy">
@@ -3213,8 +3213,8 @@ QScrollArea QScrollBar::groove:horizontal {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>543</width>
-                    <height>486</height>
+                    <width>914</width>
+                    <height>540</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -4104,11 +4104,39 @@ border-radius: 10px;
           </layout>
          </widget>
          <widget class="QWidget" name="SchedVax">
+          <property name="styleSheet">
+           <string notr="true">background-color: transparent;</string>
+          </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QFrame" name="schedFrame">
              <property name="styleSheet">
-              <string notr="true">background-color: transparent;</string>
+              <string notr="true">
+QFrame{
+	background-color: transparent;
+
+}
+
+QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+	font-family:&quot;Montserrat SemiBold&quot;;
+    font-weight: 63;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
+}</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -4230,7 +4258,7 @@ QLabel{
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>80</height>
+                  <height>90</height>
                  </size>
                 </property>
                 <property name="styleSheet">
@@ -4244,6 +4272,18 @@ QLabel{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_72">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QFrame" name="frame_80">
                    <property name="sizePolicy">
@@ -4265,6 +4305,9 @@ QLabel{
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_75">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
                     <item>
                      <widget class="QComboBox" name="monthComboBox">
                       <property name="sizePolicy">
@@ -4484,6 +4527,9 @@ QComboBox QLineEdit {
                     <property name="spacing">
                      <number>0</number>
                     </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
                     <item>
                      <widget class="QLineEdit" name="lineEdit_9">
                       <property name="sizePolicy">
@@ -4491,6 +4537,12 @@ QComboBox QLineEdit {
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>45</height>
+                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">#lineEdit_9 {
@@ -4515,6 +4567,12 @@ QComboBox QLineEdit {
                     </item>
                     <item>
                      <widget class="QFrame" name="frame_79">
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>45</height>
+                       </size>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">QFrame#frame_79{
 background-color: #F0F0F0;
@@ -4566,26 +4624,20 @@ border-bottom-right-radius:10px;
               </item>
               <item>
                <widget class="QFrame" name="frame_72">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>90</height>
+                 </size>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(166, 166, 166);
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                         
-}</string>
+                 <string notr="true"/>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -4611,6 +4663,18 @@ QPushButton:checked {
                  </property>
                  <item>
                   <widget class="QPushButton" name="pendingReturnBtn">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>60</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Pending</string>
                    </property>
@@ -4618,6 +4682,21 @@ QPushButton:checked {
                  </item>
                  <item>
                   <widget class="QPushButton" name="completeReurnBtn">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>60</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
                    <property name="text">
                     <string>Completed</string>
                    </property>
@@ -4625,6 +4704,18 @@ QPushButton:checked {
                  </item>
                  <item>
                   <widget class="QPushButton" name="overdueReturnBtn">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>60</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Overdue</string>
                    </property>
@@ -4793,6 +4884,12 @@ QScrollArea QScrollBar::groove:horizontal {
                   </property>
                   <item>
                    <widget class="QScrollArea" name="scrollArea">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>450</height>
+                     </size>
+                    </property>
                     <property name="widgetResizable">
                      <bool>true</bool>
                     </property>
@@ -4801,19 +4898,11 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>93</width>
-                       <height>41</height>
+                       <width>922</width>
+                       <height>450</height>
                       </rect>
                      </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_33">
-                      <item>
-                       <widget class="QPushButton" name="pushButton_2">
-                        <property name="text">
-                         <string>PushButton</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <layout class="QVBoxLayout" name="verticalLayout_33"/>
                     </widget>
                    </widget>
                   </item>
@@ -4846,8 +4935,8 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>93</width>
-                       <height>41</height>
+                       <width>117</width>
+                       <height>55</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -4892,6 +4981,12 @@ QScrollArea QScrollBar::groove:horizontal {
            </item>
            <item>
             <widget class="QFrame" name="frame_13">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -4901,6 +4996,12 @@ QScrollArea QScrollBar::groove:horizontal {
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QFrame" name="ProfileCard">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">#ProfileCard{
 	border-radius:10px;
@@ -4922,27 +5023,19 @@ QScrollArea QScrollBar::groove:horizontal {
                  <property name="bottomMargin">
                   <number>20</number>
                  </property>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_22">
-                   <property name="maximumSize">
-                    <size>
-                     <width>120</width>
-                     <height>120</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="pixmap">
-                    <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="2">
                   <widget class="QFrame" name="frame_8">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">font-family: &quot;Montserrat Light&quot;;
+font-weight:63;
+color:rgb(58, 58, 58);</string>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -4968,7 +5061,8 @@ QScrollArea QScrollBar::groove:horizontal {
                     <item>
                      <widget class="QLabel" name="profileNameLabel">
                       <property name="styleSheet">
-                       <string notr="true">font: 81 16pt &quot;Montserrat ExtraBold&quot;;
+                       <string notr="true">font-family:&quot;Montserrat ExtraBold&quot;;
+font-weight: 81;
 color:rgb(0, 0, 0);</string>
                       </property>
                       <property name="text">
@@ -4979,8 +5073,7 @@ color:rgb(0, 0, 0);</string>
                     <item>
                      <widget class="QLabel" name="profileEmailLabel">
                       <property name="styleSheet">
-                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>DomasianDredd@gmail.com</string>
@@ -4990,8 +5083,7 @@ color:rgb(58, 58, 58);</string>
                     <item>
                      <widget class="QLabel" name="addressLabel">
                       <property name="styleSheet">
-                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>San Francisco, General Trias Cavite</string>
@@ -5001,8 +5093,7 @@ color:rgb(58, 58, 58);</string>
                     <item>
                      <widget class="QLabel" name="detailedAddressLabel">
                       <property name="styleSheet">
-                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>Detailed Address</string>
@@ -5012,8 +5103,7 @@ color:rgb(58, 58, 58);</string>
                     <item>
                      <widget class="QLabel" name="phoneLabel">
                       <property name="styleSheet">
-                       <string notr="true">font: 63 12pt &quot;Montserrat Light&quot;;
-color:rgb(58, 58, 58);</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>09272483891</string>
@@ -5023,8 +5113,14 @@ color:rgb(58, 58, 58);</string>
                    </layout>
                   </widget>
                  </item>
-                 <item row="0" column="2">
+                 <item row="0" column="2" alignment="Qt::AlignTop">
                   <widget class="QFrame" name="frame_9">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>38</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -5121,6 +5217,37 @@ color:rgb(58, 58, 58);</string>
                      </widget>
                     </item>
                    </layout>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="profileIcon">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>120</width>
+                     <height>120</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>120</width>
+                     <height>120</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                 </layout>

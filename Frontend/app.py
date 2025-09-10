@@ -1130,6 +1130,7 @@ class MainUI(QMainWindow):
         self.scale_label_pixmap(self.clinicIconP3, min_size=64, max_size=256)
         self.scale_label_pixmap(self.clinicIconP4, min_size=64, max_size=256)
         self.scale_label_pixmap(self.PetmateLogo, min_size=81, max_size=356)
+        self.scale_label_pixmap(self.profileIcon, min_size=120, max_size=200)
 
         # for Qline Edits
         for line_edit in self.findChildren(QLineEdit):
@@ -1141,7 +1142,7 @@ class MainUI(QMainWindow):
         for dateEdit in self.findChildren(QDateEdit):
             self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
         #owner details title label
-        for title_label in self.findChildren(QLabel):
+        for title_label in self.ownerDetailsFrame.findChildren(QLabel):
             self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35,family="Rubik Mono One")
         #owner details header
         self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35,family="Rubik Mono One")
@@ -1151,13 +1152,22 @@ class MainUI(QMainWindow):
         for submitBtns in self.findChildren(QPushButton):
             self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
         for navBtns in self.Buttons.findChildren(QToolButton):
-            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=35, family="Montserrat Black")
+            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=45, family="Montserrat Black")
 
         #Appointment page
         for pushBtns in self.AppointmentPage.findChildren(QPushButton):
             self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
         for toolBtn in self.addWalkinButton.findChildren(QToolButton):
             self.scale_widget_font(toolBtn, base_size=25, min_size=25, max_size=45, family="Montserrat ExtraBold")
+
+        #Sched page
+        for pushBtns in self.schedFrame.findChildren(QPushButton):
+            self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
+
+        #Profile card
+        for ownerDetail in self.frame_13.findChildren(QLabel):
+            self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
+        self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
