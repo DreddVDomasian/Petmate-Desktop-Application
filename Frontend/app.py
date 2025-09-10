@@ -5,7 +5,7 @@ import sys
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit,QPushButton
 from PyQt6 import uic
 from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize
 from PyQt6.QtGui import QFontDatabase, QPixmap
@@ -420,10 +420,10 @@ class MainUI(QMainWindow):
 
     def setup_input_shadows(self):
         # owner info form
-        for line_edit in self.frame_3.findChildren(QLineEdit):
+        for line_edit in self.ownerDetailsFrame.findChildren(QLineEdit):
             line_edit.setGraphicsEffect(create_card_shadow())
 
-        for comboBox in self.frame_3.findChildren(QComboBox):
+        for comboBox in self.ownerDetailsFrame.findChildren(QComboBox):
             # Save the internal line edit
             inner_line_edit = comboBox.lineEdit()
             # Temporarily remove it from parent so shadow won't apply to it
@@ -448,11 +448,13 @@ class MainUI(QMainWindow):
                 inner_line_edit.setGraphicsEffect(None)  # remove shadow from text
             dateEdit.setGraphicsEffect(create_card_shadow())
 
+
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
         self.petProfileCard.setGraphicsEffect(create_card_shadow())
 
     def set_current_month_in_combobox(self):
+        self.monthComboBox.setGraphicsEffect(create_card_shadow())
         current_month = datetime.now().strftime("%B")
         index = self.monthComboBox.findText(current_month)
         if index >= 0:
@@ -1092,12 +1094,70 @@ class MainUI(QMainWindow):
         f.setPointSize(final_size)
         widget.setFont(f)
 
+    def scale_label_pixmap(self, label, min_size=32, max_size=256):
+        """
+        Scale a QLabel pixmap relative to window size.
+        Uses the Designer's original size as baseline.
+        """
+        # cache the base size once
+        if not hasattr(label, "_base_size"):
+            base_w = label.maximumWidth() if label.maximumWidth() > 0 else label.width()
+            base_h = label.maximumHeight() if label.maximumHeight() > 0 else label.height()
+            label._base_size = (base_w, base_h)
+
+        base_w, base_h = label._base_size
+
+        # scale relative to baseline window size
+        w_scale = self.width() / 1280
+        h_scale = self.height() / 720
+        scale = min(w_scale, h_scale)
+
+        new_w = int(base_w * scale)
+        new_h = int(base_h * scale)
+
+        # clamp
+        new_w = max(min_size, min(new_w, max_size))
+        new_h = max(min_size, min(new_h, max_size))
+
+        label.setFixedSize(new_w, new_h)
+        label.setScaledContents(True)
+
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
+        self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP2, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP3, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP4, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.PetmateLogo, min_size=81, max_size=356)
+
         # for Qline Edits
         for line_edit in self.findChildren(QLineEdit):
-            self.scale_widget_font(line_edit, base_size=12, min_size=10, max_size=25,family="Montserrat Medium")
+            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+        #for comboBox
+        for comboBox in self.findChildren(QComboBox):
+            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+        # for date
+        for dateEdit in self.findChildren(QDateEdit):
+            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+        #owner details title label
+        for title_label in self.findChildren(QLabel):
+            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35,family="Rubik Mono One")
+        #owner details header
+        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35,family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        for submitBtns in self.findChildren(QPushButton):
+            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
+        for navBtns in self.Buttons.findChildren(QToolButton):
+            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=35, family="Montserrat Black")
+
+        #Appointment page
+        for pushBtns in self.AppointmentPage.findChildren(QPushButton):
+            self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
+        for toolBtn in self.addWalkinButton.findChildren(QToolButton):
+            self.scale_widget_font(toolBtn, base_size=25, min_size=25, max_size=45, family="Montserrat ExtraBold")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

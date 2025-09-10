@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>1280</width>
-    <height>720</height>
+    <width>800</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -113,12 +113,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>212</width>
-           <height>81</height>
-          </size>
-         </property>
          <property name="maximumSize">
           <size>
            <width>212</width>
@@ -145,8 +139,24 @@
           </sizepolicy>
          </property>
          <property name="styleSheet">
-          <string notr="true">QFrame{
+          <string notr="true">QToolButton{
+	border:none;
 	background-color:transparent;
+	font-family:&quot;Montserrat Black&quot;;
+	font-weight:87;
+	color:#78B3CE;
+	border-radius:15px;
+	padding:10;
+}
+QToolButton:hover{
+	background-color: rgb(255, 241, 206);
+
+}
+
+QToolButton:checked{
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:15px;
+    color: #78B3CE;    
 }</string>
          </property>
          <property name="frameShape">
@@ -170,10 +180,16 @@
           </property>
           <item>
            <widget class="QToolButton" name="homeBtn">
-            <property name="minimumSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
              <size>
-              <width>240</width>
-              <height>0</height>
+              <width>16777215</width>
+              <height>70</height>
              </size>
             </property>
             <property name="cursor">
@@ -183,24 +199,7 @@
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">QToolButton{
-	border:none;
-	background-color:transparent;
-	font: 87 12pt &quot;Montserrat Black&quot;;
-	color:#78B3CE;
-	border-radius:15px;
-	padding:10;
-}
-QToolButton:hover{
-	background-color: rgb(255, 241, 206);
-
-}
-
-QToolButton:checked{
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:15px;
-    color: #78B3CE;    
-}</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>   HOME</string>
@@ -231,10 +230,16 @@ QToolButton:checked{
           </item>
           <item>
            <widget class="QToolButton" name="addPatientBtn">
-            <property name="minimumSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
              <size>
-              <width>240</width>
-              <height>0</height>
+              <width>16777215</width>
+              <height>70</height>
              </size>
             </property>
             <property name="cursor">
@@ -244,24 +249,7 @@ QToolButton:checked{
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">QToolButton{
-	border:none;
-	background-color:transparent;
-	font: 87 12pt &quot;Montserrat Black&quot;;
-	color:#78B3CE;
-	border-radius:15px;
-	padding:10;
-}
-QToolButton:hover{
-	background-color: rgb(255, 241, 206);
-
-}
-
-QToolButton:checked{
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:15px;
-    color: #78B3CE;    
-}</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>   ADD PATIENT</string>
@@ -292,10 +280,16 @@ QToolButton:checked{
           </item>
           <item>
            <widget class="QToolButton" name="petRecordsBtn">
-            <property name="minimumSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
              <size>
-              <width>240</width>
-              <height>0</height>
+              <width>16777215</width>
+              <height>70</height>
              </size>
             </property>
             <property name="cursor">
@@ -305,24 +299,7 @@ QToolButton:checked{
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">QToolButton{
-	border:none;
-	background-color:transparent;
-	font: 87 12pt &quot;Montserrat Black&quot;;
-	color:#78B3CE;
-	border-radius:15px;
-	padding:10;
-}
-QToolButton:hover{
-	background-color: rgb(255, 241, 206);
-
-}
-
-QToolButton:checked{
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:15px;
-    color: #78B3CE;    
-}</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>   RECORDS</string>
@@ -353,10 +330,16 @@ QToolButton:checked{
           </item>
           <item>
            <widget class="QToolButton" name="appointmentBtn">
-            <property name="minimumSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
              <size>
-              <width>240</width>
-              <height>0</height>
+              <width>16777215</width>
+              <height>70</height>
              </size>
             </property>
             <property name="cursor">
@@ -366,24 +349,7 @@ QToolButton:checked{
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">QToolButton{
-	border:none;
-	background-color:transparent;
-	font: 87 12pt &quot;Montserrat Black&quot;;
-	color:#78B3CE;
-	border-radius:15px;
-	padding:10;
-}
-QToolButton:hover{
-	background-color: rgb(255, 241, 206);
-
-}
-
-QToolButton:checked{
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:15px;
-    color: #78B3CE;    
-}</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>   APPOINTMENT</string>
@@ -414,10 +380,16 @@ QToolButton:checked{
           </item>
           <item>
            <widget class="QToolButton" name="schedVaxBtn">
-            <property name="minimumSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
              <size>
-              <width>240</width>
-              <height>0</height>
+              <width>16777215</width>
+              <height>70</height>
              </size>
             </property>
             <property name="cursor">
@@ -427,24 +399,7 @@ QToolButton:checked{
              <bool>false</bool>
             </property>
             <property name="styleSheet">
-             <string notr="true">QToolButton{
-	border:none;
-	background-color:transparent;
-	font: 87 12pt &quot;Montserrat Black&quot;;
-	color:#78B3CE;
-	border-radius:15px;
-	padding:10;
-}
-QToolButton:hover{
-	background-color: rgb(255, 241, 206);
-
-}
-
-QToolButton:checked{
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:15px;
-    color: #78B3CE;    
-}</string>
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>   SCHEDULED RETURNS</string>
@@ -933,8 +888,18 @@ Keeping tails wagging and hearts happy!</string>
            </item>
            <item alignment="Qt::AlignTop">
             <widget class="QFrame" name="frame_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">QLabel{
+	font-family:&quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+
+}</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -943,12 +908,28 @@ Keeping tails wagging and hearts happy!</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="pageHeader1">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true">font: 25pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);
-</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>PETMATE ANIMAL CLINIC</string>
@@ -956,10 +937,16 @@ color:rgb(39, 39, 39);
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="clinicIconP1">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="maximumSize">
                  <size>
-                  <width>140</width>
+                  <width>145</width>
                   <height>60</height>
                  </size>
                 </property>
@@ -984,7 +971,23 @@ color:rgb(39, 39, 39);
             </widget>
            </item>
            <item>
-            <widget class="QFrame" name="frame_3">
+            <spacer name="verticalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Maximum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QFrame" name="ownerDetailsFrame">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -998,7 +1001,12 @@ color:rgb(39, 39, 39);
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QLineEdit{
+              <string notr="true">QLabel{
+	font-family: &quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+}
+
+QLineEdit{
     border-radius: 10px;
 	font-family: &quot;Montserrat Medium&quot;;
 	font-weight: 57;
@@ -1014,13 +1022,15 @@ QLineEdit:focus{
 
 QComboBox {
     border-radius: 10px;
-	font: 63 12pt &quot;Montserrat SemiBold&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
 }
 QComboBox QLineEdit {
-	font: 63 12pt &quot;Montserrat SemiBold&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
     color: rgb(39, 39, 39);
     border: none; 
 }
@@ -1119,6 +1129,9 @@ QComboBox QLineEdit {
               <property name="rightMargin">
                <number>50</number>
               </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <spacer name="verticalSpacer_9">
                 <property name="orientation">
@@ -1144,8 +1157,7 @@ QComboBox QLineEdit {
                  </sizepolicy>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">font: 16pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>BASIC INFORMATION</string>
@@ -1199,12 +1211,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -1221,12 +1227,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -1242,12 +1242,6 @@ color:rgb(39, 39, 39);</string>
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
                    </property>
                    <property name="placeholderText">
                     <string>Middle Name (optional)</string>
@@ -1323,12 +1317,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>256</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -1345,12 +1333,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -1366,12 +1348,6 @@ color:rgb(39, 39, 39);</string>
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
@@ -1409,8 +1385,7 @@ color:rgb(39, 39, 39);</string>
                  </sizepolicy>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">font: 16pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>ADDRESS</string>
@@ -1480,12 +1455,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="cursor">
                     <cursorShape>IBeamCursor</cursorShape>
                    </property>
@@ -1517,12 +1486,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="cursor">
                     <cursorShape>IBeamCursor</cursorShape>
                    </property>
@@ -1550,12 +1513,6 @@ color:rgb(39, 39, 39);</string>
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
                    </property>
                    <property name="cursor">
                     <cursorShape>IBeamCursor</cursorShape>
@@ -1634,12 +1591,6 @@ color:rgb(39, 39, 39);</string>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
-                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -1664,13 +1615,26 @@ color:rgb(39, 39, 39);</string>
                 </property>
                </spacer>
               </item>
-              <item alignment="Qt::AlignHCenter">
+              <item>
                <widget class="QFrame" name="frame_12">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton{
+	font-family: &quot;Montserrat SemiBold&quot;;
+	font-weight: 63;
+	color:rgb(39, 39, 39);
+}</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -1679,18 +1643,37 @@ color:rgb(39, 39, 39);</string>
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_23">
-                 <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-                  <widget class="QPushButton" name="confirmButton">
-                   <property name="minimumSize">
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Maximum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
                     <size>
-                     <width>174</width>
-                     <height>45</height>
+                     <width>120</width>
+                     <height>20</height>
                     </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="confirmButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>174</width>
-                     <height>16777215</height>
+                     <width>450</width>
+                     <height>60</height>
                     </size>
                    </property>
                    <property name="cursor">
@@ -1698,8 +1681,6 @@ color:rgb(39, 39, 39);</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
-	font: 63 15pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
 	background-color:rgb(129, 191, 218);
 	border-radius: 5px;
 	border-right:1px solid rgb(200, 200, 200);
@@ -1716,18 +1697,18 @@ QPushButton:hover{
                    </property>
                   </widget>
                  </item>
-                 <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+                 <item>
                   <widget class="QPushButton" name="cancelButton">
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>174</width>
-                     <height>16777215</height>
+                     <width>450</width>
+                     <height>60</height>
                     </size>
                    </property>
                    <property name="cursor">
@@ -1735,8 +1716,6 @@ QPushButton:hover{
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
-	font: 63 15pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
 	background-color:	rgb(220, 90, 90);
 	border-radius: 5px;
 	border-right:1px solid rgb(200, 200, 200);
@@ -1753,18 +1732,18 @@ QPushButton:hover{
                    </property>
                   </widget>
                  </item>
-                 <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+                 <item>
                   <widget class="QPushButton" name="updateBasicInfo">
-                   <property name="minimumSize">
-                    <size>
-                     <width>174</width>
-                     <height>45</height>
-                    </size>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>174</width>
-                     <height>16777215</height>
+                     <width>450</width>
+                     <height>60</height>
                     </size>
                    </property>
                    <property name="cursor">
@@ -1772,8 +1751,6 @@ QPushButton:hover{
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
-	font: 63 15pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
 	background-color:rgb(129, 191, 218);
 	border-radius: 5px;
 	border-right:1px solid rgb(200, 200, 200);
@@ -1790,6 +1767,22 @@ QPushButton:hover{
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <spacer name="horizontalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Maximum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>120</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1797,9 +1790,10 @@ QPushButton:hover{
             </widget>
            </item>
           </layout>
-          <zorder>frame_3</zorder>
+          <zorder>ownerDetailsFrame</zorder>
           <zorder>frame_2</zorder>
           <zorder>addPatientBackBtn</zorder>
+          <zorder>verticalSpacer_11</zorder>
          </widget>
          <widget class="QWidget" name="PetRecords">
           <property name="styleSheet">
@@ -1820,13 +1814,23 @@ QPushButton:hover{
            <item alignment="Qt::AlignTop">
             <widget class="QFrame" name="PersonalRecords">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>150</height>
+              </size>
+             </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">QLabel{
+	font-family:&quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+
+}</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -1835,12 +1839,22 @@ QPushButton:hover{
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
-               <widget class="QLabel" name="label_12">
+               <widget class="QLabel" name="pageHeader2">
                 <property name="styleSheet">
-                 <string notr="true">font: 25pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);
-</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>PERSONAL RECORDS</string>
@@ -1848,10 +1862,10 @@ color:rgb(39, 39, 39);
                </widget>
               </item>
               <item alignment="Qt::AlignTop">
-               <widget class="QLabel" name="label_24">
+               <widget class="QLabel" name="clinicIconP2">
                 <property name="maximumSize">
                  <size>
-                  <width>140</width>
+                  <width>145</width>
                   <height>60</height>
                  </size>
                 </property>
@@ -1875,10 +1889,10 @@ color:rgb(39, 39, 39);
              </layout>
             </widget>
            </item>
-           <item alignment="Qt::AlignRight|Qt::AlignTop">
+           <item alignment="Qt::AlignTop">
             <widget class="QFrame" name="searchframe">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1894,18 +1908,25 @@ color:rgb(39, 39, 39);
                <enum>QLayout::SetDefaultConstraint</enum>
               </property>
               <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
                <widget class="QLineEdit" name="searchBar">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>234</width>
-                  <height>44</height>
-                 </size>
                 </property>
                 <property name="autoFillBackground">
                  <bool>false</bool>
@@ -2033,8 +2054,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>893</width>
-                <height>488</height>
+                <width>924</width>
+                <height>508</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -2081,6 +2102,26 @@ color:rgb(141, 141, 141);</string>
            <string notr="true">QWidget{
 	background:transparent;
 
+}
+QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+	font-family:&quot;Montserrat SemiBold&quot;;
+    font-weight: 63;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
 }</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -2095,10 +2136,26 @@ color:rgb(141, 141, 141);</string>
              </property>
             </widget>
            </item>
-           <item>
+           <item alignment="Qt::AlignTop">
             <widget class="QFrame" name="frame_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>150</height>
+              </size>
+             </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">QLabel{
+	font-family:&quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+
+}</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -2107,18 +2164,28 @@ color:rgb(141, 141, 141);</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
               <property name="topMargin">
-               <number>9</number>
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
               </property>
               <property name="bottomMargin">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_13">
+               <widget class="QLabel" name="pageHeader3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true">font:Bold 25pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);
-</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>PETMATE ANIMAL CLINIC</string>
@@ -2126,10 +2193,10 @@ color:rgb(39, 39, 39);
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_23">
+               <widget class="QLabel" name="clinicIconP3">
                 <property name="maximumSize">
                  <size>
-                  <width>140</width>
+                  <width>145</width>
                   <height>60</height>
                  </size>
                 </property>
@@ -2155,26 +2222,20 @@ color:rgb(39, 39, 39);
            </item>
            <item>
             <widget class="QFrame" name="frame_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>100</height>
+              </size>
+             </property>
              <property name="styleSheet">
-              <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(166, 166, 166);
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                         
-}</string>
+              <string notr="true"/>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -2197,6 +2258,12 @@ QPushButton:checked {
               </property>
               <item>
                <widget class="QFrame" name="frame_6">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2208,16 +2275,34 @@ QPushButton:checked {
                   <number>0</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>7</number>
                  </property>
                  <property name="rightMargin">
                   <number>0</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>7</number>
                  </property>
                  <item>
                   <widget class="QPushButton" name="walkInBtn">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>60</height>
+                    </size>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -2228,6 +2313,24 @@ QPushButton:checked {
                  </item>
                  <item>
                   <widget class="QPushButton" name="websiteBtn">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>45</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>60</height>
+                    </size>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -2239,7 +2342,7 @@ QPushButton:checked {
                 </layout>
                </widget>
               </item>
-              <item alignment="Qt::AlignTop">
+              <item>
                <widget class="QFrame" name="searchframe_2">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2271,6 +2374,12 @@ QPushButton:checked {
                      <height>44</height>
                     </size>
                    </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>50</height>
+                    </size>
+                   </property>
                    <property name="autoFillBackground">
                     <bool>false</bool>
                    </property>
@@ -2298,6 +2407,12 @@ QPushButton:checked {
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>50</height>
+                    </size>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">QFrame#searchButton_2{
@@ -2363,10 +2478,22 @@ border-bottom-right-radius:10px;
            <item>
             <widget class="QFrame" name="addWalkinButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>90</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>120</height>
+              </size>
              </property>
              <property name="styleSheet">
               <string notr="true">#addWalkinButton{
@@ -2419,14 +2546,15 @@ border-bottom-right-radius:10px;
               <item>
                <widget class="QToolButton" name="toolButton_2">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="styleSheet">
                  <string notr="true">QToolButton{
-	font: 81 25pt &quot;Montserrat ExtraBold&quot;;
+	font-family:&quot;Montserrat ExtraBold&quot;;
+	font-weight:81;
 	color: #4F4F4F;
 }</string>
                 </property>
@@ -2448,11 +2576,39 @@ border-bottom-right-radius:10px;
             </widget>
            </item>
            <item>
+            <spacer name="verticalSpacer_12">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Maximum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QStackedWidget" name="walkInOrWeb">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>450</height>
+              </size>
+             </property>
              <property name="currentIndex">
               <number>0</number>
              </property>
              <widget class="QWidget" name="walkIn">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <layout class="QVBoxLayout" name="verticalLayout_15">
                <property name="spacing">
                 <number>0</number>
@@ -2471,26 +2627,20 @@ border-bottom-right-radius:10px;
                </property>
                <item>
                 <widget class="QFrame" name="pendingCompletedBtn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>90</height>
+                  </size>
+                 </property>
                  <property name="styleSheet">
-                  <string notr="true">QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(166, 166, 166);
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                         
-}</string>
+                  <string notr="true"/>
                  </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
@@ -2516,6 +2666,18 @@ QPushButton:checked {
                   </property>
                   <item>
                    <widget class="QPushButton" name="pendingBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -2526,6 +2688,18 @@ QPushButton:checked {
                   </item>
                   <item>
                    <widget class="QPushButton" name="completedBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -2536,6 +2710,18 @@ QPushButton:checked {
                   </item>
                   <item>
                    <widget class="QPushButton" name="overdueBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -2546,6 +2732,18 @@ QPushButton:checked {
                   </item>
                   <item>
                    <widget class="QPushButton" name="cancelledBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
@@ -2559,6 +2757,18 @@ QPushButton:checked {
                </item>
                <item>
                 <widget class="QStackedWidget" name="statusStackedWidget">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>383</height>
+                  </size>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true">QScrollArea{
 	border:none;
@@ -2623,9 +2833,15 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                  </property>
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="pendingPage">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -2718,8 +2934,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>924</width>
+                        <height>383</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -2742,6 +2958,12 @@ QScrollArea QScrollBar::groove:horizontal {
                   </layout>
                  </widget>
                  <widget class="QWidget" name="completedPage">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <layout class="QVBoxLayout" name="verticalLayout_34">
                    <property name="spacing">
                     <number>0</number>
@@ -2768,8 +2990,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>893</width>
-                        <height>347</height>
+                        <width>100</width>
+                        <height>30</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -2790,6 +3012,12 @@ QScrollArea QScrollBar::groove:horizontal {
                        </property>
                        <item>
                         <widget class="QLabel" name="label_5">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="text">
                           <string>TextLabel</string>
                          </property>
@@ -2986,7 +3214,7 @@ QScrollArea QScrollBar::groove:horizontal {
                     <x>0</x>
                     <y>0</y>
                     <width>543</width>
-                    <height>540</height>
+                    <height>486</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -3912,10 +4140,21 @@ border-radius: 10px;
                 </property>
                </widget>
               </item>
-              <item>
+              <item alignment="Qt::AlignTop">
                <widget class="QFrame" name="frame_70">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true">background-color: transparent;</string>
+                 <string notr="true">
+QLabel{
+	font-family:&quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+
+}</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -3924,18 +4163,28 @@ border-radius: 10px;
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_65">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
-                  <widget class="QLabel" name="label_140">
+                  <widget class="QLabel" name="pageHeader4">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">font:Bold 25pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);
-</string>
+                    <string notr="true"/>
                    </property>
                    <property name="text">
                     <string>SCHEDULED RETURN VISIT</string>
@@ -3943,10 +4192,16 @@ color:rgb(39, 39, 39);
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_141">
+                  <widget class="QLabel" name="clinicIconP4">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="maximumSize">
                     <size>
-                     <width>140</width>
+                     <width>145</width>
                      <height>60</height>
                     </size>
                    </property>
@@ -3966,6 +4221,18 @@ color:rgb(39, 39, 39);
               </item>
               <item>
                <widget class="QFrame" name="frame_71">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>80</height>
+                 </size>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">background-color: transparent;
 </string>
@@ -3977,8 +4244,20 @@ color:rgb(39, 39, 39);
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_72">
-                 <item alignment="Qt::AlignLeft">
+                 <item>
                   <widget class="QFrame" name="frame_80">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>80</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -3989,31 +4268,45 @@ color:rgb(39, 39, 39);
                     <item>
                      <widget class="QComboBox" name="monthComboBox">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>234</width>
-                        <height>44</height>
+                        <width>174</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>80</height>
                        </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">QComboBox {
-    border-right: 2px solid #cccccc;
-    border-bottom: 2px solid #cccccc;
-    border-radius: 5px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
+    border-radius: 10px;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
-
+	background-color:rgb(245, 245, 245);
 }
-
+QComboBox QLineEdit {
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
+    color: rgb(39, 39, 39);
+    border: none; 
+}
+QComboBox:focus{
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
+}
 QComboBox::drop-down {
-    background-color: white;
-    border: none;
+    background-color: transparent;
+    border-radius: 10px;
 }
 
 QComboBox::down-arrow {
@@ -4025,8 +4318,8 @@ QComboBox::down-arrow {
 
 /* Dropdown list */
 QComboBox QAbstractItemView {
-    background-color: white;
-    selection-background-color: rgb(193, 193, 193); 
+    background-color: rgb(232, 232, 232);
+    selection-background-color: rgb(217, 217, 217); 
     selection-color: black;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
     outline: none;
@@ -4035,7 +4328,7 @@ QComboBox QAbstractItemView {
 
 /* List items */
 QComboBox QAbstractItemView::item {
-    background-color: white;
+    background-color:  rgb(232, 232, 232);
     color: black;
     height: 25px;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
@@ -4160,8 +4453,27 @@ QComboBox QLineEdit {
                    </layout>
                   </widget>
                  </item>
-                 <item alignment="Qt::AlignRight|Qt::AlignTop">
+                 <item>
+                  <spacer name="horizontalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
                   <widget class="QFrame" name="frame_78">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -4172,19 +4484,13 @@ QComboBox QLineEdit {
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <item alignment="Qt::AlignRight">
+                    <item>
                      <widget class="QLineEdit" name="lineEdit_9">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>234</width>
-                        <height>44</height>
-                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">#lineEdit_9 {
@@ -4207,7 +4513,7 @@ QComboBox QLineEdit {
                       </property>
                      </widget>
                     </item>
-                    <item alignment="Qt::AlignRight">
+                    <item>
                      <widget class="QFrame" name="frame_79">
                       <property name="styleSheet">
                        <string notr="true">QFrame#frame_79{
@@ -4495,8 +4801,8 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>891</width>
-                       <height>412</height>
+                       <width>93</width>
+                       <height>41</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_33">
@@ -4891,8 +5197,8 @@ color:rgb(58, 58, 58);</string>
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>893</width>
-                    <height>389</height>
+                    <width>401</width>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -5011,7 +5317,6 @@ color:#4F4F4F;</string>
     border-radius: 10px;
 	font-family: &quot;Montserrat Medium&quot;;
 	font-weight: 57;
-	font-size:12pt;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
@@ -5026,7 +5331,8 @@ QLineEdit:focus{
 QDateEdit {
 	background-color:rgb(245, 245, 245);
     border-radius: 10px;
-    font: 57 12pt &quot;Montserrat Medium&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
     color: rgb(39, 39, 39);
     padding-left: 10px;
 }
@@ -5047,13 +5353,15 @@ QDateEdit::down-arrow {
 
 QComboBox {
     border-radius: 10px;
-	font: 57 12pt &quot;Montserrat Medium&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
 	background-color:rgb(245, 245, 245);
 }
 QComboBox QLineEdit {
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
     color: rgb(39, 39, 39);
     border: none; 
 }
@@ -5185,8 +5493,8 @@ QComboBox QLineEdit {
                      </sizepolicy>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">font: 12pt &quot;Rubik Mono One&quot;;
-color:rgb(39, 39, 39);</string>
+                     <string notr="true">	font-family: &quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);</string>
                     </property>
                     <property name="text">
                      <string>PET DETAILS</string>

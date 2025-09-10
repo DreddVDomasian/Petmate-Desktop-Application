@@ -1,7 +1,7 @@
 import requests
 from toast import Toast
 from PyQt6.QtWidgets import QMessageBox,QComboBox
-from PyQt6.QtCore import Qt, QDate
+from PyQt6.QtCore import Qt, QDate, QTimer
 
 
 class Update:
@@ -22,16 +22,17 @@ class Update:
             combo.setCurrentIndex(0)
 
     def populate_patient_form(self, patient):
-        self.ui.firstNameEdit.setText(patient["firstName"])
-        self.ui.lastNameEdit.setText(patient["lastName"])
-        self.ui.phoneNumberEdit.setText(patient["phoneNumber"])
-        self.set_combobox_value(self.ui.provinceComboBox, patient["province"])
-        self.set_combobox_value(self.ui.cityComboBox, patient["city"])
-        self.set_combobox_value(self.ui.barangayComboBox, patient["barangay"])
-        self.ui.detailedAddressEdit.setText(patient["detailedAddress"])
-        self.ui.emailEdit.setText(patient["email"])
-        self.ui.emergencyNoEdit.setText(patient["emergencyNumber"])
-        self.ui.selected_patient_id = patient["id"]
+        self.ui.firstNameEdit.setText(patient.get("firstName"))
+        self.ui.lastNameEdit.setText(patient.get("lastName"))
+        self.ui.middleNameEdit.setText(patient.get("middleName") or None)
+        self.ui.phoneNumberEdit.setText(patient.get("phoneNumber"))
+        self.set_combobox_value(self.ui.provinceComboBox, patient.get("province"))
+        self.set_combobox_value(self.ui.cityComboBox, patient.get("city"))
+        self.set_combobox_value(self.ui.barangayComboBox, patient.get("barangay"))
+        self.ui.detailedAddressEdit.setText(patient.get("detailedAddress"))
+        self.ui.emailEdit.setText(patient.get("email"))
+        self.ui.emergencyNoEdit.setText(patient.get("emergencyNumber"))
+        self.ui.selected_patient_id = patient.get("id")
 
     def update_patient_info(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/patients/{owner_id}/")
@@ -43,49 +44,62 @@ class Update:
             Toast(self.ui, "Failed to load patient!", icon_path="Icons/warning.png").show_toast()
 
     def update_patient_to_api(self):
-        patient_id = self.ui.selected_patient_id
+        patient_id = getattr(self.ui, "selected_patient_id", None)
         if not patient_id:
+            Toast(self.ui, "No patient selected!", icon_path="Icons/warning.png").show_toast()
             return
 
+        # Collect data from widgets safely
         data = {
-            "firstName": self.ui.firstNameEdit.text(),
-            "lastName": self.ui.lastNameEdit.text(),
-            "email": self.ui.emailEdit.text(),
-            "phoneNumber": self.ui.phoneNumberEdit.text(),
+            "firstName": self.ui.firstNameEdit.text().strip(),
+            "lastName": self.ui.lastNameEdit.text().strip(),
+            "middleName": self.ui.middleNameEdit.text().strip() or None,  # send None if empty
+            "email": self.ui.emailEdit.text().strip() or None,
+            "phoneNumber": self.ui.phoneNumberEdit.text().strip(),
             "province": self.ui.provinceComboBox.currentText(),
             "city": self.ui.cityComboBox.currentText(),
             "barangay": self.ui.barangayComboBox.currentText(),
-            "detailedAddress": self.ui.detailedAddressEdit.text(),
-            "emergencyNumber": self.ui.emergencyNoEdit.text()
+            "detailedAddress": self.ui.detailedAddressEdit.text().strip() or None,
+            "emergencyNumber": self.ui.emergencyNoEdit.text().strip() or None
         }
 
-        province = self.ui.provinceComboBox
-        city = self.ui.cityComboBox
-        barangay = self.ui.barangayComboBox
+        # Validate combo boxes
+        for combo, name in [
+            (self.ui.provinceComboBox, "province"),
+            (self.ui.cityComboBox, "city"),
+            (self.ui.barangayComboBox, "barangay")
+        ]:
+            if combo.currentIndex() == 0 or combo.currentText().strip() == "":
+                Toast(self.ui, f"Invalid {name} selected!", icon_path="Icons/warning.png").show_toast()
+                return
 
-        if not is_valid_combobox_input(province):
-            Toast(self.ui, "Invalid province selected!", icon_path="Icons/warning.png").show_toast()
-            return
-
-        if not is_valid_combobox_input(city):
-            Toast(self.ui, "Invalid city selected!", icon_path="Icons/warning.png").show_toast()
-            return
-
-        if not is_valid_combobox_input(barangay):
-            Toast(self.ui, "Invalid barangay selected!", icon_path="Icons/warning.png").show_toast()
-            return
+        # Birthday / stored_age logic
+        sentinel = QDate(1900, 1, 1)
+        bday_qdate = self.ui.Bday.date()
+        if bday_qdate.isValid() and bday_qdate != sentinel:
+            data["birthDay"] = bday_qdate.toString("yyyy-MM-dd")
+            data["stored_age"] = None
+        else:
+            data["birthDay"] = None
+            data["stored_age"] = self.ui.age.text().strip() or None
 
         url = f"http://127.0.0.1:8000/api/patients/{patient_id}/"
-        response = requests.put(url, json=data)
 
+        try:
+            response = requests.put(url, json=data)
+            if response.status_code == 200:
+                # Defer UI updates to prevent crash
+                def post_update_ui():
+                    self.ui.load_patients()
+                    self.ui.clearInputs()
+                    self.ui.navigate_to_page(2)
+                    Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
 
-        if response.status_code == 200:
-            Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
-            self.ui.load_patients()
-            self.ui.load_walkInAppointments()
-            self.ui.navigate_to_page(2)
-        else:
-            Toast(self.ui, "Update failed!", icon_path="Icons/warning.png").show_toast()
+                QTimer.singleShot(0, post_update_ui)
+            else:
+                Toast(self.ui, f"Update failed! {response.text}", icon_path="Icons/warning.png").show_toast()
+        except Exception as e:
+            Toast(self.ui, f"Unexpected error: {str(e)}", icon_path="Icons/warning.png").show_toast()
 
     # UPDATE PET INFO
     def populate_pet_form(self, pet):
@@ -124,16 +138,36 @@ class Update:
             "petColor": self.ui.petColor.text(),
             "breed": self.ui.breed.text(),
             "species": self.ui.speciesComboBox.currentText(),
-            "age": self.ui.age.text(),
             "sex": self.ui.petSexComboBox.currentText(),
-            "owner_id": self.ui.selected_patient_id
+            "owner_id": self.ui.selected_patient_id,
+            "remarks": self.ui.petRemarks.text().strip() or None
         }
+
+        # --- Birthday / stored_age logic ---
+        sentinel = QDate(1900, 1, 1)
+        bday_qdate = self.ui.Bday.date()
+        has_birthday = (bday_qdate is not None) and (bday_qdate != sentinel)
+
+        if has_birthday:
+            data["birthDay"] = bday_qdate.toString("yyyy-MM-dd")
+            data["stored_age"] = None
+        else:
+            data["birthDay"] = None
+            typed_age = self.ui.age.text().strip()
+            data["stored_age"] = typed_age if typed_age else None
 
         url = f"http://127.0.0.1:8000/api/pets/{pet_id}/"
         response = requests.put(url, json=data)
 
         if response.status_code == 200:
             Toast(self.ui, "Pet updated successfully!", icon_path="Icons/check.png").show_toast()
+
+            # 🔄 Fetch updated pet so age recalculates
+            refreshed = requests.get(url)
+            if refreshed.status_code == 200:
+                pet = refreshed.json()
+                self.ui.show_pet_profile(pet)  # refresh profile page with new computed age
+
             self.ui.load_pets_for_owner(self.ui.selected_patient_id)
             self.ui.profileStackedWidget.setCurrentIndex(0)
         else:

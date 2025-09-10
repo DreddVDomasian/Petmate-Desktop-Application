@@ -1,13 +1,13 @@
 from PyQt6.QtWidgets import QDateEdit
 
 default_style = """
-           QLineEdit{
-            border: 2px solid rgb(229, 229, 229);
+        QLineEdit{
             border-radius: 10px;
-            font: 57 12pt "Montserrat Medium";
+            font-family: "Montserrat Medium";
+            font-weight: 57;
             color:rgb(39, 39, 39);
             padding-left: 10px;
-            background-color:rgb(229, 229, 229);
+            background-color:rgb(245, 245, 245);
         }
         
         QLineEdit:focus{
@@ -19,13 +19,15 @@ default_combobox_style = """
             QComboBox {
                 border: 2px solid rgb(229, 229, 229);
                 border-radius: 10px;
-                font: 57 12pt "Montserrat Medium";
+                font-family: "Montserrat Medium";
+                font-weight: 57;
                 color:rgb(39, 39, 39);
                 padding-left: 10px;
                 background-color:rgb(229, 229, 229);
             }
             QComboBox QLineEdit {
-                font: 63 12pt "Montserrat SemiBold";
+                font-family: "Montserrat Medium";
+                font-weight: 57;
                 color: rgb(39, 39, 39);
                 border: none; 
             }
@@ -117,13 +119,15 @@ error_combobox_style = """
                 QComboBox {
                     border: 2px solid rgb(249, 90, 100);
                     border-radius: 10px;
-                    font: 57 12pt "Montserrat Medium";
+                    font-family: "Montserrat Medium";
+                    font-weight: 57;
                     color:rgb(39, 39, 39);
                     padding-left: 10px;
                     background-color:rgb(229, 229, 229);
                 }
                 QComboBox QLineEdit {
-                    font: 63 12pt "Montserrat SemiBold";
+                    font-family: "Montserrat Medium";
+                    font-weight: 57;
                     color: rgb(39, 39, 39);
                     border: none; 
                 }
@@ -214,7 +218,8 @@ error_style = """
             QLineEdit{
                 border: 2px solid rgb(249, 90, 100);
                 border-radius: 10px;
-                font: 57 12pt "Montserrat Medium";
+                font-family: "Montserrat Medium";
+                font-weight: 57;
                 color:rgb(39, 39, 39);
                 padding-left: 10px;
                 background-color:rgb(229, 229, 229);
