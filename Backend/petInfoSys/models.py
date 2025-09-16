@@ -178,8 +178,8 @@ class AppointmentType(models.Model):
 
     STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('cancelled', 'Cancelled'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined'),
         ('completed', 'Completed'),
     ]
 

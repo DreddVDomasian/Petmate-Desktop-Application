@@ -41,6 +41,23 @@ class AddAppointmentCard(QWidget):
         self.cancelledLayout.setSpacing(10)
         self.cancelledLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+
+
+        #Web Appointment
+        self.pendingWebLayout = self.main_window.scrollAreaWebAppPending.layout()
+        self.pendingWebLayout.setSpacing(10)
+        self.pendingWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Accepted layout
+        self.acceptedWebLayout = self.main_window.scrollAreaWebAppAccepted.layout()
+        self.acceptedWebLayout.setSpacing(10)
+        self.acceptedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # declined layout
+        self.declinedWebLayout = self.main_window.scrollAreaWebAppDecined.layout()
+        self.declinedWebLayout.setSpacing(10)
+        self.declinedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
 
         self.addPopUPFrame.setGraphicsEffect(create_card_shadow())
@@ -61,6 +78,7 @@ class AddAppointmentCard(QWidget):
 
         # load data
         self.load_walkInAppointments()
+        self.web_Appointment()
 
         if parent:
             parent.installEventFilter(self)
@@ -260,6 +278,48 @@ class AddAppointmentCard(QWidget):
         for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
             if layout.count() == 0:
                 self.add_empty_label(layout)
+
+    def web_Appointment(self):
+        response = requests.get("http://127.0.0.1:8000/api/appointments/")
+        if response.status_code == 200:
+            data = response.json()
+            # handle both cases safely
+            if isinstance(data, dict) and "appointments" in data:
+                appointments = data["appointments"]
+            else:
+                appointments = data
+        else:
+            appointments = []
+
+        for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
+            while layout.count():
+                child = layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
+        for appoint in appointments:
+            card = uic.loadUi("webAppointmentCard.ui")
+            card.ownerName.setText(appoint["client_name"].title())
+            card.DateTime.setText(appoint["appointment_datetime"])
+
+            card.setGraphicsEffect(create_card_shadow())
+
+            status = appoint.get("status", "pending")
+
+            if status == "pending":
+                self.pendingWebLayout.addWidget(card)
+            elif status == "accepted":
+                card.AcceptButton.hide()
+                self.acceptedWebLayout.addWidget(card)
+            elif status == "declined":
+                self.declinedWebLayout.addWidget(card)
+
+            appointment_id = appoint["id"]
+
+            for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
+                if layout.count() == 0:
+                    self.add_empty_label(layout)
+
 
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")

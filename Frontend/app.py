@@ -159,8 +159,6 @@ class MainUI(QMainWindow):
         # toggle walk-in/website
         self.walkInBtn.setCheckable(True)
         self.websiteBtn.setCheckable(True)
-        self.walkInBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(True))
-        self.websiteBtn.clicked.connect(lambda: self.addWalkinButton.setVisible(False))
         self.walkInOrWeb.setCurrentIndex(0)
         self.sourceBtnGroup = QButtonGroup(self)
         self.sourceBtnGroup.setExclusive(True)
@@ -184,6 +182,20 @@ class MainUI(QMainWindow):
         self.completedBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(1))
         self.overdueBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(2))
         self.cancelledBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(3))
+
+        #Web Appointment status BTN
+        self.pendingWebBtn.setCheckable(True)
+        self.DeclinedBtn.setCheckable(True)
+        self.AcceptedBtn.setCheckable(True)
+        self.webAppointmentStackWidget.setCurrentIndex(0)
+        self.webStatusBtnGroup = QButtonGroup(self)
+        for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn]:
+            self.webStatusBtnGroup.addButton(btn)
+        self.pendingWebBtn.setChecked(True)
+        self.pendingWebBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(0))
+        self.DeclinedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(1))
+        self.AcceptedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(2))
+
 
         # toggle sched return status Btn
         self.pendingReturnBtn.setCheckable(True)
@@ -1149,6 +1161,8 @@ class MainUI(QMainWindow):
         self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        # pet details title
+        self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
         for submitBtns in self.findChildren(QPushButton):
             self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
         for navBtns in self.Buttons.findChildren(QToolButton):
