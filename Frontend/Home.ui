@@ -2054,8 +2054,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>150</width>
-                <height>33</height>
+                <width>924</width>
+                <height>508</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -3116,8 +3116,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>924</width>
-                        <height>383</height>
+                        <width>100</width>
+                        <height>30</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -3221,6 +3221,21 @@ QScrollArea QScrollBar::groove:horizontal {
                    <string notr="true"/>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_18">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QFrame" name="AcceptedDeclineBtns">
                      <property name="sizePolicy">
@@ -3340,7 +3355,7 @@ QScrollArea QScrollBar::groove:horizontal {
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
-                       <height>409</height>
+                       <height>440</height>
                       </size>
                      </property>
                      <property name="styleSheet">
@@ -3436,8 +3451,8 @@ QScrollArea QScrollBar::groove:horizontal {
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>906</width>
-                            <height>409</height>
+                            <width>924</width>
+                            <height>440</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_42">
@@ -3481,8 +3496,8 @@ QScrollArea QScrollBar::groove:horizontal {
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>90</width>
-                            <height>31</height>
+                            <width>924</width>
+                            <height>420</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3526,8 +3541,8 @@ QScrollArea QScrollBar::groove:horizontal {
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>90</width>
-                            <height>31</height>
+                            <width>924</width>
+                            <height>418</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4243,7 +4258,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="pendingReturn">
                  <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -4308,8 +4323,8 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>100</width>
-                       <height>30</height>
+                       <width>922</width>
+                       <height>435</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_67"/>
@@ -4351,7 +4366,7 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>100</width>
+                       <width>922</width>
                        <height>450</height>
                       </rect>
                      </property>
@@ -8079,8 +8094,84 @@ QPushButton:hover{
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="page">
-          <layout class="QVBoxLayout" name="verticalLayout_61"/>
+         <widget class="QWidget" name="webAppReview">
+          <layout class="QVBoxLayout" name="verticalLayout_61">
+           <item>
+            <widget class="QFrame" name="frame_3">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_45">
+              <item>
+               <widget class="QLabel" name="label_13">
+                <property name="styleSheet">
+                 <string notr="true">font: 18pt &quot;Rubik Mono One&quot;;
+color:rgb(56, 56, 56);</string>
+                </property>
+                <property name="text">
+                 <string>web appointment Review Page</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_22">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton{
+	font: 57 14pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	background-color: #81BFDA;
+	border-radius: 10px;
+	padding:10px 20px 10px 20px;
+}
+QPushButton:hover{
+	background-color: rgb(117, 173, 197);
+	border-radius: 10px;
+}</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_33">
+                 <item>
+                  <widget class="QPushButton" name="pushButton_2">
+                   <property name="text">
+                    <string>accept</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_3">
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton{
+	font: 57 14pt &quot;Montserrat Medium&quot;;
+	color:rgb(39, 39, 39);
+	background-color: #FCD597;
+	border-radius: 10px;
+	padding:10px 20px 10px 20px;
+}
+QPushButton:hover{
+background-color: rgb(223, 188, 134);
+border-radius: 10px;
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Decline</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>

@@ -118,26 +118,6 @@ color:rgb(57, 57, 57);</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="AcceptButton">
-        <property name="styleSheet">
-         <string notr="true">QPushButton{
-	font: 57 14pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
-	background-color: #81BFDA;
-	border-radius: 10px;
-	padding:10px 20px 10px 20px;
-}
-QPushButton:hover{
-	background-color: rgb(117, 173, 197);
-	border-radius: 10px;
-}</string>
-        </property>
-        <property name="text">
-         <string>Accept</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="ReviewButton">
         <property name="styleSheet">
          <string notr="true">QPushButton{

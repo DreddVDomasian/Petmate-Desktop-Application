@@ -300,7 +300,17 @@ class AddAppointmentCard(QWidget):
         for appoint in appointments:
             card = uic.loadUi("webAppointmentCard.ui")
             card.ownerName.setText(appoint["client_name"].title())
-            card.DateTime.setText(appoint["appointment_datetime"])
+            raw_datetime = appoint.get("appointment_datetime", "")
+            # Split into date and time parts
+            parts = raw_datetime.split(" ", 1)  # ["2025-09-18", "9:00 AM"]
+            date_only = parts[0]
+            time_only = parts[1] if len(parts) > 1 else ""
+            # Format the date
+            formatted_date = self.main_window.format_date(date_only)
+            #date + time
+            dateAndTime = f"{formatted_date}   {time_only}"
+
+            card.DateTime.setText(dateAndTime)
 
             card.setGraphicsEffect(create_card_shadow())
 
@@ -314,13 +324,17 @@ class AddAppointmentCard(QWidget):
             elif status == "declined":
                 self.declinedWebLayout.addWidget(card)
 
-            appointment_id = appoint["id"]
+            webAppointment_id = appoint["id"]
 
             for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
                 if layout.count() == 0:
                     self.add_empty_label(layout)
 
-
+    def open_appointment(self, webAppointment_id):
+        response = requests.get(f"http://127.0.0.1:8000/api/appointments/{webAppointment_id}/")
+        if response.status_code == 200:
+            data = response.json()
+            
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
         self.main_window.confirmCard.show_card()
