@@ -48,10 +48,7 @@
 	border-right:1px solid rgb(185, 185, 185);
 }
 
-
-#webAppointmentFrame:hover{
-	background-color:rgb(179, 179, 179);
-}</string>
+</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>

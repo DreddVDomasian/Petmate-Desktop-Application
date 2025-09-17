@@ -334,7 +334,7 @@ class AddAppointmentCard(QWidget):
         response = requests.get(f"http://127.0.0.1:8000/api/appointments/{webAppointment_id}/")
         if response.status_code == 200:
             data = response.json()
-            
+
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
         self.main_window.confirmCard.show_card()
