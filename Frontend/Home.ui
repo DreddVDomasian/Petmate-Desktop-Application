@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2103,26 +2103,7 @@ color:rgb(141, 141, 141);</string>
 	background:transparent;
 
 }
-QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(166, 166, 166);
-	font-family:&quot;Montserrat SemiBold&quot;;
-    font-weight: 63;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                         
-}</string>
+</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <property name="spacing">
@@ -2235,7 +2216,26 @@ QPushButton:checked {
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+	font-family:&quot;Montserrat SemiBold&quot;;
+    font-weight: 63;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
+}</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -2498,6 +2498,28 @@ border-bottom-right-radius:10px;
                <width>0</width>
                <height>492</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+	font-family:&quot;Montserrat SemiBold&quot;;
+    font-weight: 63;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
+}</string>
              </property>
              <property name="currentIndex">
               <number>1</number>
@@ -2934,7 +2956,7 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>924</width>
+                        <width>100</width>
                         <height>383</height>
                        </rect>
                       </property>
@@ -3214,7 +3236,7 @@ QScrollArea QScrollBar::groove:horizontal {
                     <x>0</x>
                     <y>0</y>
                     <width>924</width>
-                    <height>492</height>
+                    <height>504</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -3496,8 +3518,8 @@ QScrollArea QScrollBar::groove:horizontal {
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>924</width>
-                            <height>420</height>
+                            <width>90</width>
+                            <height>31</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3541,8 +3563,8 @@ QScrollArea QScrollBar::groove:horizontal {
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>924</width>
-                            <height>418</height>
+                            <width>90</width>
+                            <height>31</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -3585,26 +3607,7 @@ QFrame{
 
 }
 
-QPushButton {
-    border: none;
-    background-color: transparent;
-    color: rgb(166, 166, 166);
-	font-family:&quot;Montserrat SemiBold&quot;;
-    font-weight: 63;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-
-QPushButton:hover {
-    background-color:rgb(194, 194, 194);
-	border-radius:5px;
-}
-QPushButton:checked {
-    background-color:rgb(252, 213, 151);   /* Active bg color */
-	border-radius:5px;
-    color: rgb(40, 40, 40);                         
-}</string>
+</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -4105,7 +4108,26 @@ border-bottom-right-radius:10px;
                  </size>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true"/>
+                 <string notr="true">QPushButton {
+    border: none;
+    background-color: transparent;
+    color: rgb(166, 166, 166);
+	font-family:&quot;Montserrat SemiBold&quot;;
+    font-weight: 63;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+
+QPushButton:hover {
+    background-color:rgb(194, 194, 194);
+	border-radius:5px;
+}
+QPushButton:checked {
+    background-color:rgb(252, 213, 151);   /* Active bg color */
+	border-radius:5px;
+    color: rgb(40, 40, 40);                         
+}</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -4258,7 +4280,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="pendingReturn">
                  <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -4324,7 +4346,7 @@ QScrollArea QScrollBar::groove:horizontal {
                        <x>0</x>
                        <y>0</y>
                        <width>922</width>
-                       <height>435</height>
+                       <height>447</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_67"/>
@@ -4403,8 +4425,8 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>117</width>
-                       <height>55</height>
+                       <width>922</width>
+                       <height>447</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -8098,6 +8120,9 @@ QPushButton:hover{
           <layout class="QVBoxLayout" name="verticalLayout_61">
            <item>
             <widget class="QFrame" name="frame_3">
+             <property name="styleSheet">
+              <string notr="true">background:transparent;</string>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -8105,14 +8130,120 @@ QPushButton:hover{
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_45">
+              <property name="spacing">
+               <number>10</number>
+              </property>
               <item>
-               <widget class="QLabel" name="label_13">
-                <property name="styleSheet">
-                 <string notr="true">font: 18pt &quot;Rubik Mono One&quot;;
-color:rgb(56, 56, 56);</string>
+               <widget class="QPushButton" name="ReviewBackBtn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-                <property name="text">
-                 <string>web appointment Review Page</string>
+                <property name="icon">
+                 <iconset resource="resource.qrc">
+                  <normaloff>:/Icons/Icons/Profileback.png</normaloff>:/Icons/Icons/Profileback.png</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_23">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>150</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLabel{
+	font-family:&quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+
+}</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_34">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="pageHeader5">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string>PETMATE ANIMAL CLINIC</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="clinicIconP5">
+                   <property name="maximumSize">
+                    <size>
+                     <width>145</width>
+                     <height>60</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="pixmap">
+                    <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_24">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>450</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
                 </property>
                </widget>
               </item>
@@ -8141,7 +8272,7 @@ QPushButton:hover{
                  <item>
                   <widget class="QPushButton" name="pushButton_2">
                    <property name="text">
-                    <string>accept</string>
+                    <string>Accept</string>
                    </property>
                   </widget>
                  </item>
