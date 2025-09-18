@@ -326,9 +326,9 @@ class AddAppointmentCard(QWidget):
 
             webAppointment_id = appoint["id"]
 
-            for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
-                if layout.count() == 0:
-                    self.add_empty_label(layout)
+        for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
+            if layout.count() == 0:
+                self.add_empty_label(layout)
 
     def open_appointment(self, webAppointment_id):
         response = requests.get(f"http://127.0.0.1:8000/api/appointments/{webAppointment_id}/")
