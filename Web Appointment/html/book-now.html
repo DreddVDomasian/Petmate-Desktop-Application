@@ -202,40 +202,75 @@
 
         <!-- Confirmation Message / STEP 4 -->
         <section class="confirmation-message" style="display: none;">
-            <h2 class="form-title"></h2>
-            <p class="form-subtitle"></p>
+            <h2 class="form-title">Booking Confirmed!</h2>
+            <p class="form-subtitle">Your appointment request has been submitted successfully.</p>
 
             <div class="booking-confirmation-box">
-                <div class="confirmation-item">
-                    <label></label>
-                    <div class="info-box">
-                        <div><strong></strong></div>
-                        <div></div>
+
+                    <!-- Important Note -->
+                <div class="important-note">
+                    <p><strong>Important:</strong> Please save your Booking ID for future reference. You will need it to manage your appointment.</p>
+                </div>
+                <!-- Booking ID Display (NEW) -->
+                <div class="confirmation-item booking-id-highlight">
+                    <label>Booking ID:</label>
+                    <div class="info-box booking-id-box">
+                        <strong id="booking-id-display">-</strong>
+                        <button onclick="copyBookingId()" class="copy-btn">Copy</button>
                     </div>
                 </div>
 
                 <div class="confirmation-item">
-                    <label></label>
-                    <div class="info-box"></div>
-                </div>
-
-                <div class="confirmation-item">
-                    <label></label>
-                    <div class="info-box"></div>
-                </div>
-
-                <div class="confirmation-item">
-                    <label></label>
+                    <label>Location:</label>
                     <div class="info-box">
+                        <div><strong>PetMate Animal Clinic</strong></div>
+                        <div>NIA ROAD QUEL COMMERCIAL BUILDING, CARSADANG BAGO 2, IMUS, CAVITE</div>
+                    </div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label>Client Type:</label>
+                    <div class="info-box" id="client-type-display">-</div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label>Provider:</label>
+                    <div class="info-box" id="provider-display-final">-</div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label>Reason for visit:</label>
+                    <div class="info-box" id="reason-display-final">-</div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label>Appointment Date & Time:</label>
+                    <div class="info-box" id="datetime-display-final">
                         <i class="calendar-icon"></i> 
+                        <span>-</span>
                     </div>
                 </div>
+
+                <div class="confirmation-item">
+                    <label>Client Name:</label>
+                    <div class="info-box" id="client-name-display">-</div>
+                </div>
+
+                <div class="confirmation-item">
+                    <label>Pet Name:</label>
+                    <div class="info-box" id="pet-name-display">-</div>
+                </div>
+            </div>
+
+            <!-- Important Note -->
+            <div class="important-note">
+                <p><strong>Important:</strong> Please save your Booking ID for future reference. You will need it to manage your appointment.</p>
             </div>
 
             <!-- BACK BUTTON -->
             <div style="text-align: center; margin-top: 30px;">
                 <a href="index.html">
-                <button type="button" class="back-home-btn">Back to Homepage</button>
+                    <button type="button" class="back-home-btn">Back to Homepage</button>
                 </a>
             </div>
         </section>

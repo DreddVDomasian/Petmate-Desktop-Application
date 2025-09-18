@@ -244,6 +244,7 @@ def create_booking(request):
         return JsonResponse({
             'status': 'success',
             'message': 'Booking created successfully',
+            'booking_id': appointment.booking_id,  # Add this line
             'data': {
                 'client_id': client.id,
                 'pet_id': pet.id,

@@ -83,3 +83,15 @@ class WalkInSerializer(serializers.ModelSerializer):
 
     def get_petName(self, obj):
         return obj.pet.petName
+    
+
+
+
+
+# FOR BOOKING ID
+class WalkInAppointmentSerializer(serializers.ModelSerializer):
+    booking_id = serializers.CharField(read_only=True)  # Make it read-only
+    
+    class Meta:
+        model = WalkInAppointment
+        fields = '__all__'

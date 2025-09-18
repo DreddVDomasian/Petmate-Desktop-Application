@@ -35,6 +35,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Hide loading function
+  function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
   // Disable Continue buttons initially
   continueBtn.disabled = true;
   continueScheduleBtn.disabled = true;
@@ -64,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
   providerSelect.addEventListener('change', validateStep2);
   dateInput.addEventListener('input', validateStep2);
 
-  // Flatpickr setup
+  // Flatpickr setup DATA AND TIME PICKER
   flatpickr("#appointmentDate", {
     enableTime: true,
     dateFormat: "Y-m-d h:i K",
@@ -114,164 +119,119 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitBtn = document.querySelector('.submit-btn');
   const confirmationMessage = document.querySelector('.confirmation-message');
 
+  // Store booking ID globally
+  let currentBookingId = '';
+
   submitBtn.addEventListener('click', async function (e) {
     e.preventDefault();
 
-    // Capture client information from Step 3 form
-    const requiredFields = [
-      // Client Informations
-      document.getElementById('firstName'),
-      document.getElementById('lastName'),
-      document.getElementById('email'),
-      document.getElementById('phone'),
-      document.getElementById('emergencyContact'),
-      document.getElementById('province'),
-      document.getElementById('city'),
-      document.getElementById('barangay'),
-      document.getElementById('detailed_address'),
+    // Show loading
+    showLoading();
 
-      // For Pet Informations
-      document.getElementById('petName'),
-      document.getElementById('species'),
-      document.getElementById('breed'),
-      document.getElementById('color'),
-      document.getElementById('sex'),
-      
-    ];
-
-      let allValid = true;
-
-    requiredFields.forEach(field => {
-      if (!field.value.trim()) {
-        field.classList.add('invalid'); // Optional: Add visual cue
-        allValid = false;
-      } else {
-        field.classList.remove('invalid');
-      }
-    });
-
-    if (!allValid) {
-      alert('Please fill out all required fields.');
-      return; // Don't proceed to Step 4
-    }
-
-    // Show loading screen for 2 seconds before showing confirmation
-    await showLoading(2000);
-
-    // Capture client information
-    const firstName = requiredFields[0].value;
-    const lastName = requiredFields[1].value;
-    const email = requiredFields[2].value;
-    const phone = requiredFields[3].value;
-    const emergencyContact = requiredFields[4].value;
-    const province = requiredFields[5].value;
-    const city = requiredFields[6].value;
-    const barangay = requiredFields[7].value;
-    const detailedAddress = requiredFields[8].value;
-
-    // For Pet Information
-    const petName = requiredFields[9].value;
-    const species = requiredFields[10].value;
-    const breed = requiredFields[11].value;
-    const color = requiredFields[12].value;
-    const sex = requiredFields[13].value;
+    // Get all form data
+    const clientType = document.querySelector('input[name="clientType"]:checked')?.value;
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const emergencyContact = document.getElementById('emergencyContact').value;
+    const province = document.getElementById('province').value;
+    const city = document.getElementById('city').value;
+    const barangay = document.getElementById('barangay').value;
+    const detailedAddress = document.getElementById('detailed_address').value;
+    const petName = document.getElementById('petName').value;
+    const species = document.getElementById('species').value;
+    const breed = document.getElementById('breed').value;
+    const color = document.getElementById('color').value;
+    const sex = document.getElementById('sex').value;
     const comments = document.getElementById('comments').value;
+    const provider = document.getElementById('provider').value;
+    const reason = document.getElementById('reason').value;
+    const dateTime = document.getElementById('appointmentDate').value;
 
-    // Get previously selected appointment details
-    const selectedReason = reasonSelect.value;
-    const selectedProvider = providerSelect.options[providerSelect.selectedIndex].text;
-    const selectedDateTime = dateInput.value;
-    
-    // Get client type from Step 1
-    const selectedClientType = document.querySelector('input[name="clientType"]:checked');
-    const clientType = selectedClientType ? selectedClientType.value : '';
-
-    // Update the confirmation message with dynamic content
-    updateConfirmationMessage(clientType, firstName, lastName, selectedProvider, selectedReason, selectedDateTime);
-
-    // Hide all previous steps
-    formStep.style.display = 'none';
-    scheduleStep.style.display = 'none';
-    confirmationStep.style.display = 'none';
-
-    // --- SEND DATA TO DJANGO BACKEND ---
-    try {
-      // Get the form elements
-      const provinceElement = document.getElementById('province');
-      const cityElement = document.getElementById('city');
-      const barangayElement = document.getElementById('barangay');
-
-      // Check if selections exist and get names
-      let provinceName = '';
-      let cityName = '';
-      let barangayName = '';
-
-      if (provinceElement.selectedIndex > 0) {
-        provinceName = provinceElement.options[provinceElement.selectedIndex].text;
-      }
-
-      if (cityElement.selectedIndex > 0) {
-        cityName = cityElement.options[cityElement.selectedIndex].text;
-      }
-
-      if (barangayElement.selectedIndex > 0) {
-        barangayName = barangayElement.options[barangayElement.selectedIndex].text;
-      }
-
-      // Validate that all address fields are selected
-      if (!provinceName || !cityName || !barangayName) {
-        alert('Please select Province, City, and Barangay');
+    // Validate required fields
+    if (!clientType || !firstName || !lastName || !email || !phone || !petName) {
+        hideLoading();
+        alert('Please fill in all required fields.');
         return;
-      }
-
-      const response = await fetch("http://127.0.0.1:8000/api/bookings/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          client_type: clientType,
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-          phone: phone,
-          emergency_contact: emergencyContact,
-          
-          // Send NAMES instead of codes
-          province: provinceName,
-          city: cityName,
-          barangay: barangayName,
-          
-          detailed_address: detailedAddress,
-          pet_name: petName,
-          species: species,
-          breed: breed,
-          color: color,
-          sex: sex,
-          comments: comments,
-          appointment_reason: selectedReason,
-          provider: selectedProvider,
-          appointment_datetime: selectedDateTime,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Booking saved successfully:", data);
-      } else {
-        console.error("Error saving booking:", await response.text());
-        alert("Something went wrong while saving your booking.");
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-      alert("Could not connect to the server.");
     }
-    
-    // Show final confirmation
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/bookings/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                client_type: clientType,
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                phone: phone,
+                emergency_contact: emergencyContact,
+                
+
+                province: document.getElementById('province').options[document.getElementById('province').selectedIndex].text,
+                city: document.getElementById('city').options[document.getElementById('city').selectedIndex].text,
+                barangay: document.getElementById('barangay').options[document.getElementById('barangay').selectedIndex].text,
+                detailed_address: detailedAddress,
+                pet_name: petName,
+                species: species,
+                breed: breed,
+                color: color,
+                sex: sex,
+                comments: comments,
+
+
+                appointment_reason: reasonSelect.value,  
+                provider: providerSelect.options[providerSelect.selectedIndex].text, 
+                appointment_datetime: dateInput.value, 
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Booking saved successfully:", data);
+            
+            // Hide loading and show confirmation
+            hideLoading();
+            showConfirmation(data, clientType, firstName, lastName, 
+                            providerSelect.options[providerSelect.selectedIndex].text, 
+                            reasonSelect.value, 
+                            dateInput.value,
+                            petName); // sa showconfirmation function to
+        } else {
+            const errorData = await response.json();
+            console.error('Error response:', errorData);
+            alert('Failed to submit booking. Please check the console for details.');
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        hideLoading();
+        alert("Failed to submit booking. Please check your connection and try again.");
+    }
+  });
+
+  // Function to show confirmation with all details
+  function showConfirmation(data, clientType, firstName, lastName, provider, reason, dateTime, petName) {
+    // Hide confirmation step and show confirmation message
+    confirmationStep.style.display = 'none';
     confirmationMessage.style.display = 'block';
 
+    // Update booking ID
+    document.getElementById('booking-id-display').textContent = data.booking_id;
+
+    // Update all other fields
+    document.getElementById('client-type-display').textContent = capitalizeFirst(clientType) + ' Client';
+    document.getElementById('provider-display-final').textContent = provider;
+    document.getElementById('reason-display-final').textContent = capitalizeFirst(reason);
+    document.getElementById('datetime-display-final').querySelector('span').textContent = formatDateTime(dateTime);
+    document.getElementById('client-name-display').textContent = `${firstName} ${lastName}`;
+    document.getElementById('pet-name-display').textContent = petName;
+
+    // Scroll to top
     window.scrollTo(0, 0);
-  });
+  }
 
   // Function to update confirmation message with dynamic data
   function updateConfirmationMessage(clientType, firstName, lastName, provider, reason, dateTime) {
@@ -320,6 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <label>Client Name:</label>
         <div class="info-box">${firstName} ${lastName}</div>
       </div>
+
     `;
   }
 
@@ -535,6 +496,26 @@ function populateBarangays(cityCode) {
     }
   });
 });
+
+// Function to copy booking ID (global scope)
+function copyBookingId() {
+    const bookingId = document.getElementById('booking-id-display').textContent;
+    navigator.clipboard.writeText(bookingId).then(() => {
+        // Show success message
+        const copyBtn = document.querySelector('.copy-btn');
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        copyBtn.style.background = '#4CAF50';
+        
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.background = '#ff8c00';
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy booking ID');
+    });
+}
 
 
 

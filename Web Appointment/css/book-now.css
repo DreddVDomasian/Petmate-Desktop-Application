@@ -373,6 +373,54 @@ nav {
     margin-right: 8px;
 }
 
+/* Booking ID Highlight */
+.booking-id-highlight {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+}
+
+.booking-id-highlight label {
+    color: white !important;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.booking-id-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+.copy-btn {
+    background: #ff8c00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-left: 15px;
+}
+
+.copy-btn:hover {
+    background: #e67b00;
+    transform: translateY(-2px);
+}
+
 /* Back Button Step 4 */
 .back-home-btn {
     background-color: #4885CC;

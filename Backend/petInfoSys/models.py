@@ -1,6 +1,8 @@
 from datetime import date
+import uuid
 from django.db import models
 
+#-----------------------------------------DESKTOP WEBSITE MODELS------------------------------
 class basicInfo(models.Model):
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
@@ -57,6 +59,8 @@ class Pet(models.Model):
                 return f"{years} year{'s' if years != 1 else ''} old"
         return self.stored_age or "Unknown"
 
+
+
 class Service(models.Model):
     owner = models.ForeignKey(
         basicInfo,
@@ -78,6 +82,7 @@ class Service(models.Model):
         return f"Service: {self.service_type} for {self.pet.petName} ({self.date})"
 
 class WalkInAppointment(models.Model):
+    booking_id = models.CharField(max_length=20, unique=True, blank=True)
     owner = models.ForeignKey(basicInfo, on_delete=models.CASCADE)
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
     date = models.DateField()
@@ -86,8 +91,31 @@ class WalkInAppointment(models.Model):
     service_name = models.CharField(max_length=100, default='none')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if not self.booking_id:
+            self.booking_id = self.generate_booking_id()
+        super().save(*args, **kwargs)
+    
+    def generate_booking_id(self):
+        import random
+        import string
+        from datetime import datetime
+        
+        # Format: BK + YYMMDD + 4 random chars
+        date_part = datetime.now().strftime('%y%m%d')
+        random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+        booking_id = f"BK{date_part}{random_part}"
+        
+        # Ensure uniqueness
+        while WalkInAppointment.objects.filter(booking_id=booking_id).exists():
+            random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+            booking_id = f"BK{date_part}{random_part}"
+        
+        return booking_id
 
 #-----------------------------------------APPOINTMENT WEBSITE MODELS------------------------------
+
+#---------------------------PCLIENTS--------------------------
 class Client(models.Model):
     CLIENT_TYPE_CHOICES = [
         ('new', 'New Client'),
@@ -113,7 +141,7 @@ class Client(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'pclients'
+        db_table = 'pclients' # custom table name sa database
         ordering = ['-created_at']
 
     def __str__(self):
@@ -127,6 +155,9 @@ class Client(models.Model):
     def full_address(self):
         return f"{self.detailed_address}, {self.barangay}, {self.city}, {self.province}"
 
+
+
+#---------------------------PPETS--------------------------
 class PetWeb(models.Model):
     SPECIES_CHOICES = [
         ('dog', 'Dog'),
@@ -154,13 +185,17 @@ class PetWeb(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'ppets'
+        db_table = 'ppets'  # custom table name sa database
         ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.pet_name} ({self.client.full_name})"
 
+
+
+#---------------------------PAPPOINTMENTS--------------------------
 class AppointmentType(models.Model):
+    booking_id = models.CharField(max_length=20, unique=True, blank=True)
     REASON_CHOICES = [
         ('vaccination', 'Vaccination'),
         ('checkup', 'Check-up'),
@@ -200,8 +235,31 @@ class AppointmentType(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if not self.booking_id:
+            self.booking_id = self.generate_booking_id()
+        super().save(*args, **kwargs)
+    
+    def generate_booking_id(self):
+        import random
+        import string
+        from datetime import datetime
+        
+
+        # Format: BK + YYMMDD + 4 random chars
+        date_part = datetime.now().strftime('%y%m%d')
+        random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+        booking_id = f"BK{date_part}{random_part}"
+        
+        # Ensure uniqueness
+        while AppointmentType.objects.filter(booking_id=booking_id).exists():
+            random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+            booking_id = f"BK{date_part}{random_part}"
+        
+        return booking_id
+
     class Meta:
-        db_table = 'pappointment_types'
+        db_table = 'pappointment_types' # custom table name sa database
         ordering = ['-created_at']
 
     def __str__(self):
