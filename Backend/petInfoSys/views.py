@@ -75,6 +75,37 @@ def reminders(request):
     reminders = sorted(reminders, key=lambda x: x["date"])
     return Response(reminders)
 
+@api_view(["POST"])
+def check_duplicate_patient(request):
+    first = request.data.get("firstName", "").strip().lower()
+    last = request.data.get("lastName", "").strip().lower()
+    middle = request.data.get("middleName", "").strip().lower()
+
+    # Start with first + last filter
+    filters = {
+        "firstName__iexact": first,
+        "lastName__iexact": last,
+    }
+
+    # If middle name is provided, include it
+    if middle:
+        filters["middleName__iexact"] = middle
+
+    duplicates = basicInfo.objects.filter(**filters)
+
+    if duplicates.exists():
+        patients = []
+        for patient in duplicates:
+            pets = PetSerializer(patient.pets.all(), many=True).data
+            patients.append({
+                "patient": BasicInfoSerializer(patient).data,
+                "pets": pets
+            })
+
+        return Response({"duplicates": patients}, status=200)
+
+    return Response({"duplicates": []}, status=200)
+
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
     queryset = basicInfo.objects.all()

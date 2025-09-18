@@ -21,6 +21,7 @@ from functools import partial
 from datetime import datetime
 from shadowEffects import *
 from delete import Delete
+from duplicateDialog import DuplicateDialog
 from updateFunction import Update
 import requests
 import webbrowser
@@ -621,6 +622,14 @@ class MainUI(QMainWindow):
             toast.show_toast()
             return
 
+        duplicates = self.check_duplicate_patient(data)
+        if duplicates:
+            dialog = DuplicateDialog(duplicates, parent=self)  # pass self as parent
+            dialog.show_modal()
+            # Keep a reference so the dialog isn't destroyed by garbage collection
+            self._active_dialog = dialog
+            return
+
         # proceed to save patient
         if add_new_patient(data):
             self.navigate_to_page(2)
@@ -642,6 +651,19 @@ class MainUI(QMainWindow):
         else:
             toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
             toast.show_toast()
+
+    def check_duplicate_patient(self, data):
+        try:
+            response = requests.post(f"http://127.0.0.1:8000/api/check-duplicate/", json=data)
+            if response.status_code == 200:
+                result = response.json()
+                return result.get("duplicates", [])
+            else:
+                print("Error checking duplicates:", response.status_code, response.text)
+                return []
+        except Exception as e:
+            print("Error:", e)
+            return []
 
     def submit_pet_data(self):
         # Only fields that are always required go here:
