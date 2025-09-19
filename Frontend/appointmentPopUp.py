@@ -21,6 +21,7 @@ class AddAppointmentCard(QWidget):
         self.main_window = main_window  # keep reference
         uic.loadUi("addAppointmentCard.ui", self)
 
+        self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
         #pending layout
         self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
         self.pendingLayout.setSpacing(10)
