@@ -39,3 +39,6 @@ class ConfirmCard(QWidget):
                 y = (obj.height() - self.height()) // 2
                 self.move(x, y)
         return super().eventFilter(obj, event)
+
+    def reject_dialog(self):
+        self.close()

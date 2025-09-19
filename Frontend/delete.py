@@ -76,5 +76,5 @@ class Delete:
     def cancel_delete(self):
         self.delete_id = None
         self.delete_type = None
-        self.ui.confirmCard.hide()
+        self.ui.confirmCard.reject_dialog()
 

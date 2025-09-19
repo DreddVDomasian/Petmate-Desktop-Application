@@ -1,6 +1,7 @@
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget, QLabel,QVBoxLayout
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
+from shadowEffects import *
 
 
 class DuplicateDialog(QWidget):
@@ -16,7 +17,13 @@ class DuplicateDialog(QWidget):
 
         # Populate immediately if duplicates are passed
         self.populate_cards(duplicates)
+        self.duplicationDialogFrame.setGraphicsEffect(create_card_shadow())
 
+        #CancelBTN
+        self.CancelBtn.clicked.connect(self.reject_dialog)
+
+    def reject_dialog(self):
+        self.close()
     def show_modal(self):
         if self.parent():
             parent_widget = self.parent()
@@ -46,7 +53,7 @@ class DuplicateDialog(QWidget):
         # Add new cards
         for entry in duplicates:
             card = uic.loadUi("duplicateCard.ui")
-
+            card.setGraphicsEffect(create_card_shadow())
             patient = entry["patient"]
             pets = entry["pets"]
 

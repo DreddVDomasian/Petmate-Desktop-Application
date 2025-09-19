@@ -195,7 +195,7 @@ QScrollArea QScrollBar::groove:horizontal {
               <x>0</x>
               <y>0</y>
               <width>876</width>
-              <height>422</height>
+              <height>424</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -235,13 +235,11 @@ QScrollArea QScrollBar::groove:horizontal {
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="AddAnywayBtn">
            <property name="styleSheet">
             <string notr="true">QPushButton{
 	background-color:rgb(129, 191, 218);
 	border-radius: 5px;
-	border-right:1px solid rgb(200, 200, 200);
-	border-bottom:2px solid rgb(200, 200, 200);
 	padding:10px 20px 10px 20px;
 }
 
@@ -251,7 +249,37 @@ QPushButton:hover{
 }</string>
            </property>
            <property name="text">
-            <string>Add as New Record Anyway </string>
+            <string>Add Record Anyway </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="CancelBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>212</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	background-color: #FCD597;
+	border-radius: 5px;
+	padding:10px 20px 10px 20px;
+}
+QPushButton:hover{
+background-color: rgb(223, 188, 134);
+border-radius: 10px;
+}</string>
+           </property>
+           <property name="text">
+            <string>CANCEL</string>
            </property>
           </widget>
          </item>

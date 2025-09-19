@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from datetime import date
 from .models import *
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from .serializers import *
 
 
@@ -77,26 +78,31 @@ def reminders(request):
 
 @api_view(["POST"])
 def check_duplicate_patient(request):
-    first = request.data.get("firstName", "").strip().lower()
-    last = request.data.get("lastName", "").strip().lower()
-    middle = request.data.get("middleName", "").strip().lower()
+    try:
+        first = (request.data.get("firstName") or "").strip()
+        last = (request.data.get("lastName") or "").strip()
+        middle = (request.data.get("middleName") or "").strip()
 
-    # Start with first + last filter
-    filters = {
-        "firstName__iexact": first,
-        "lastName__iexact": last,
-    }
+        query = Q(firstName__iexact=first, lastName__iexact=last)
 
-    # If middle name is provided, include it
-    if middle:
-        filters["middleName__iexact"] = middle
+        if middle:
+            query &= (
+                Q(middleName__iexact=middle) |
+                Q(middleName__isnull=True) |
+                Q(middleName__exact="")
+            )
 
-    duplicates = basicInfo.objects.filter(**filters)
+        duplicates = basicInfo.objects.filter(query)
 
-    if duplicates.exists():
         patients = []
         for patient in duplicates:
-            pets = PetSerializer(patient.pets.all(), many=True).data
+            # ✅ handle related_name properly
+            try:
+                pets_qs = patient.pets.all()   # if you used related_name="pets"
+            except AttributeError:
+                pets_qs = patient.pet_set.all()  # fallback to default
+
+            pets = PetSerializer(pets_qs, many=True).data
             patients.append({
                 "patient": BasicInfoSerializer(patient).data,
                 "pets": pets
@@ -104,7 +110,10 @@ def check_duplicate_patient(request):
 
         return Response({"duplicates": patients}, status=200)
 
-    return Response({"duplicates": []}, status=200)
+    except Exception as e:
+        print("Error checking duplicates:", e)  # will show full error in console
+        return Response({"error": str(e)}, status=500)
+
 
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
