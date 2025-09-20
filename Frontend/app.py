@@ -1183,6 +1183,8 @@ class MainUI(QMainWindow):
         self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader5, base_size=25, min_size=12, max_size=35, family="Verdana")
+
         # pet details title
         self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
         for submitBtns in self.findChildren(QPushButton):
