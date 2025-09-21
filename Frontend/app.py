@@ -190,13 +190,13 @@ class MainUI(QMainWindow):
         self.AcceptedBtn.setCheckable(True)
         self.webAppointmentStackWidget.setCurrentIndex(0)
         self.webStatusBtnGroup = QButtonGroup(self)
-        for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn,self.ReviewButton]:
+        for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn]:
             self.webStatusBtnGroup.addButton(btn)
         self.pendingWebBtn.setChecked(True)
         self.pendingWebBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(0))
         self.DeclinedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(1))
         self.AcceptedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(2))
-        self.ReviewButton.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(7))
+
 
         # toggle sched return status Btn
         self.pendingReturnBtn.setCheckable(True)
