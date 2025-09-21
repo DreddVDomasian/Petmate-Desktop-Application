@@ -190,13 +190,13 @@ class MainUI(QMainWindow):
         self.AcceptedBtn.setCheckable(True)
         self.webAppointmentStackWidget.setCurrentIndex(0)
         self.webStatusBtnGroup = QButtonGroup(self)
-        for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn]:
+        for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn,self.ReviewButton]:
             self.webStatusBtnGroup.addButton(btn)
         self.pendingWebBtn.setChecked(True)
         self.pendingWebBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(0))
         self.DeclinedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(1))
         self.AcceptedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(2))
-
+        self.ReviewButton.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(7))
 
         # toggle sched return status Btn
         self.pendingReturnBtn.setCheckable(True)
@@ -210,7 +210,6 @@ class MainUI(QMainWindow):
         self.pendingReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(0))
         self.completeReurnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(1))
         self.overdueReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(2))
-
 
         #print btn
         self.printBtn.clicked.connect(self.handlePrintButton)
@@ -1155,8 +1154,6 @@ class MainUI(QMainWindow):
 
         label.setFixedSize(new_w, new_h)
         label.setScaledContents(True)
-
-
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
@@ -1206,6 +1203,7 @@ class MainUI(QMainWindow):
         for ownerDetail in self.frame_13.findChildren(QLabel):
             self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
         self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

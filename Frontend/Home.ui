@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>7</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -928,8 +928,13 @@ Keeping tails wagging and hearts happy!</string>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="whatsThis">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="styleSheet">
-                 <string notr="true"/>
+                 <string notr="true">#pageHeader1{
+font: 16pt &quot;Century Gothic&quot;
+}</string>
                 </property>
                 <property name="text">
                  <string>PETMATE ANIMAL CLINIC</string>
@@ -2522,7 +2527,7 @@ QPushButton:checked {
 }</string>
              </property>
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="walkIn">
               <property name="sizePolicy">
@@ -2956,7 +2961,7 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
+                        <width>916</width>
                         <height>383</height>
                        </rect>
                       </property>
@@ -8265,6 +8270,9 @@ QPushButton:hover{
                         <width>400</width>
                         <height>50</height>
                        </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
                       </property>
                       <property name="readOnly">
                        <bool>true</bool>
