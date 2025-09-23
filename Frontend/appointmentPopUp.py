@@ -324,7 +324,7 @@ class AddAppointmentCard(QWidget):
                 self.declinedWebLayout.addWidget(card)
 
             webAppointment_id = appoint["id"]
-            card.ReviewButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(7))
+            card.ReviewButton.clicked.connect(lambda: self.main_window.stackedWidget.setCurrentIndex(7))
 
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
