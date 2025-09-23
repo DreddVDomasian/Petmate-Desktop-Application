@@ -199,7 +199,6 @@ class MainUI(QMainWindow):
         self.DeclinedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(1))
         self.AcceptedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(2))
 
-
         # toggle sched return status Btn
         self.pendingReturnBtn.setCheckable(True)
         self.completeReurnBtn.setCheckable(True)
@@ -496,7 +495,8 @@ class MainUI(QMainWindow):
             self.appointmentBackBtn,
             self.ReturnBackBtn,
             self.profileBackbutton,
-            self.petProfileBackBtn
+            self.petProfileBackBtn,
+            self.ReviewBackBtn
         ]
         for btn in self.all_back_buttons:
             btn.clicked.connect(self.go_back)
