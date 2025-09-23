@@ -314,7 +314,6 @@ class AddAppointmentCard(QWidget):
             card.DateTime.setText(dateAndTime)
 
             card.setGraphicsEffect(create_card_shadow())
-
             status = appoint.get("status", "pending")
 
             if status == "pending":
@@ -326,6 +325,7 @@ class AddAppointmentCard(QWidget):
                 self.declinedWebLayout.addWidget(card)
 
             webAppointment_id = appoint["id"]
+            card.ReviewButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(7))
 
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
