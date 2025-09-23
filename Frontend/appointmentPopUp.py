@@ -20,8 +20,6 @@ class AddAppointmentCard(QWidget):
         super().__init__(parent)
         self.main_window = main_window  # keep reference
         uic.loadUi("addAppointmentCard.ui", self)
-
-        self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
         #pending layout
         self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
         self.pendingLayout.setSpacing(10)
@@ -80,6 +78,8 @@ class AddAppointmentCard(QWidget):
         # load data
         self.load_walkInAppointments()
         self.web_Appointment()
+
+        self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
 
         if parent:
             parent.installEventFilter(self)
@@ -319,7 +319,6 @@ class AddAppointmentCard(QWidget):
             if status == "pending":
                 self.pendingWebLayout.addWidget(card)
             elif status == "accepted":
-                card.AcceptButton.hide()
                 self.acceptedWebLayout.addWidget(card)
             elif status == "declined":
                 self.declinedWebLayout.addWidget(card)

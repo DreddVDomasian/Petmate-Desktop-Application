@@ -22,6 +22,8 @@ class DuplicateDialog(QWidget):
         #CancelBTN
         self.CancelBtn.clicked.connect(self.reject_dialog)
 
+        if parent:
+            parent.installEventFilter(self)
     def reject_dialog(self):
         self.close()
     def show_modal(self):
@@ -42,6 +44,15 @@ class DuplicateDialog(QWidget):
         anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         anim.start()
         self.anim = anim   # keep reference
+
+    def eventFilter(self, obj, event):
+        if obj == self.parent() and event.type() == event.Type.Resize:
+            if self.isVisible():
+                # re-center
+                x = (obj.width() - self.width()) // 2
+                y = (obj.height() - self.height()) // 2
+                self.move(x, y)
+        return super().eventFilter(obj, event)
 
     def populate_cards(self, duplicates):
         # Clear old cards

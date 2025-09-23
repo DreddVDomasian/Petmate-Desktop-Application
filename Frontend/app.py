@@ -68,6 +68,8 @@ class MainUI(QMainWindow):
         self.Bday.setMinimumDate(QDate(1900, 1, 1))
         self.Bday.setMaximumDate(QDate.currentDate())
 
+        self.duplicateDialog = None
+
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
         self.customCalendar.setParent(None)
@@ -623,10 +625,16 @@ class MainUI(QMainWindow):
 
         duplicates = self.check_duplicate_patient(data)
         if duplicates:
-            dialog = DuplicateDialog(duplicates, parent=self)  # pass self as parent
-            dialog.show_modal()
-            # Keep a reference so the dialog isn't destroyed by garbage collection
-            self._active_dialog = dialog
+            if self.duplicateDialog is None:
+                # create once
+                self.duplicateDialog = DuplicateDialog(duplicates, parent=self)
+                # reset reference when closed
+                self.duplicateDialog.destroyed.connect(lambda: setattr(self, "duplicateDialog", None))
+            else:
+                # just update contents if it already exists
+                self.duplicateDialog.populate_cards(duplicates)
+
+            self.duplicateDialog.show_modal()
             return
 
         # proceed to save patient
@@ -1186,8 +1194,9 @@ class MainUI(QMainWindow):
         self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
         for submitBtns in self.findChildren(QPushButton):
             self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
+        #for nav Btns
         for navBtns in self.Buttons.findChildren(QToolButton):
-            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=45, family="Montserrat Black")
+            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=55, family="Montserrat Black")
 
         #Appointment page
         for pushBtns in self.AppointmentPage.findChildren(QPushButton):
