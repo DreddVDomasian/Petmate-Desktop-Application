@@ -381,10 +381,22 @@ def get_appointments(request):
         for appointment in appointments:
             appointments_data.append({
                 'id': appointment.id,
+                'booking_id': appointment.booking_id,
                 'client_name': appointment.client.full_name,
+                'email': appointment.client.email,
+                'phone': appointment.client.phone,
+                'province': appointment.client.province,
+                'city': appointment.client.city,
+                'barangay': appointment.client.barangay,
+                'detailed_address': appointment.client.detailed_address,
+                #pet details
                 'pet_name': appointment.pet.pet_name,
-                'appointment_reason': appointment.appointment_reason,
+                'species': appointment.pet.species,
+                'breed': appointment.pet.breed,
+                'color': appointment.pet.color,
+                'sex': appointment.pet.sex,
                 'provider': appointment.provider,
+                'appointment_reason': appointment.appointment_reason,
                 'appointment_datetime': appointment.appointment_datetime,
                 'status': appointment.status,
                 'comments': appointment.comments,
@@ -402,3 +414,33 @@ def get_appointments(request):
             'status': 'error',
             'message': str(e)
         }, status=400)
+
+
+@csrf_exempt
+def get_appointment_detail(request, pk):
+    """Get a single appointment by ID"""
+    try:
+        appointment = AppointmentType.objects.select_related('client', 'pet').get(pk=pk)
+
+        data = {
+            'id': appointment.id,
+            'client_name': appointment.client.full_name,
+            'pet_name': appointment.pet.pet_name,
+            'appointment_reason': appointment.appointment_reason,
+            'provider': appointment.provider,
+            'appointment_datetime': appointment.appointment_datetime,
+            'status': appointment.status,
+            'comments': appointment.comments,
+            'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+        return JsonResponse({'status': 'success', 'appointment': data})
+
+    except AppointmentType.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Appointment with id {pk} not found.'
+        }, status=404)
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

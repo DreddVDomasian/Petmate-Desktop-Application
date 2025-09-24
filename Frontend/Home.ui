@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -8169,7 +8169,7 @@ QPushButton:hover{
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_36">
+                <layout class="QVBoxLayout" name="verticalLayout_18">
                  <property name="spacing">
                   <number>20</number>
                  </property>
@@ -8200,6 +8200,12 @@ QPushButton:hover{
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_46">
+                    <property name="topMargin">
+                     <number>17</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>17</number>
+                    </property>
                     <item>
                      <widget class="QFrame" name="frame_3">
                       <property name="frameShape">
@@ -8229,14 +8235,56 @@ QPushButton:hover{
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLabel" name="label_32">
+                        <widget class="QLabel" name="reviewFullname">
                          <property name="styleSheet">
-                          <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+                          <string notr="true">font: 87 14pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
                          </property>
                          <property name="text">
-                          <string>Owner Details</string>
+                          <string>FULL NAME</string>
                          </property>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignRight|Qt::AlignTop">
+                        <widget class="QFrame" name="frame_41">
+                         <property name="styleSheet">
+                          <string notr="true">background-color:rgb(242, 129, 32);
+border-radius:5px;</string>
+                         </property>
+                         <property name="frameShape">
+                          <enum>QFrame::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_66">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>20</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>5</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>20</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>5</number>
+                          </property>
+                          <item alignment="Qt::AlignTop">
+                           <widget class="QLabel" name="BookingId">
+                            <property name="styleSheet">
+                             <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(0, 0, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>Booking Id</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                       </layout>
@@ -8250,6 +8298,10 @@ color:rgb(0, 0, 0);</string>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="styleSheet">
+                       <string notr="true">font: 57 13pt &quot;Montserrat Medium&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::StyledPanel</enum>
                       </property>
@@ -8258,20 +8310,9 @@ color:rgb(0, 0, 0);</string>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_63">
                        <item>
-                        <widget class="QLabel" name="label_35">
-                         <property name="styleSheet">
-                          <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
-                         </property>
-                         <property name="text">
-                          <string>Booking Id</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
                         <widget class="QFrame" name="frame_38">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -8283,22 +8324,69 @@ color:rgb(0, 0, 0);</string>
                           <enum>QFrame::Raised</enum>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_55">
+                          <property name="spacing">
+                           <number>6</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item>
-                           <widget class="QLabel" name="label_36">
+                           <widget class="QLabel" name="label_2">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
                             <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                             <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
                             </property>
                             <property name="text">
-                             <string>Fullname</string>
+                             <string>EMAIL:</string>
                             </property>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="label_37">
+                           <widget class="QLabel" name="reviewEmail">
                             <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                             <string notr="true"/>
+                            </property>
+                            <property name="text">
+                             <string>Email Address</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="label_3">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>PHONE NO:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="reviewPhoneNo">
+                            <property name="styleSheet">
+                             <string notr="true"/>
                             </property>
                             <property name="text">
                              <string>Phone no.</string>
@@ -8311,7 +8399,7 @@ color:rgb(0, 0, 0);</string>
                        <item>
                         <widget class="QFrame" name="frame_39">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -8323,25 +8411,90 @@ color:rgb(0, 0, 0);</string>
                           <enum>QFrame::Raised</enum>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_56">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item>
-                           <widget class="QLabel" name="label_38">
+                           <widget class="QLabel" name="label_5">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
                             <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                             <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
                             </property>
                             <property name="text">
-                             <string>Email Address</string>
+                             <string>ADDRESS:</string>
                             </property>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="label_39">
+                           <widget class="QLabel" name="reviewAddress">
                             <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+                             <string notr="true"/>
                             </property>
                             <property name="text">
                              <string>Address</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QFrame" name="frame_40">
+                         <property name="frameShape">
+                          <enum>QFrame::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_36">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QLabel" name="label_12">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(0, 0, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>DETAILED ADD:</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="reviewDetailedAddress">
+                            <property name="text">
+                             <string>Detailed Address</string>
                             </property>
                            </widget>
                           </item>
@@ -8404,13 +8557,13 @@ color:rgb(0, 0, 0);</string>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLabel" name="label_34">
+                        <widget class="QLabel" name="reviewPetName">
                          <property name="styleSheet">
-                          <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+                          <string notr="true">font: 87 14pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
                          </property>
                          <property name="text">
-                          <string>Pet Details</string>
+                          <string>PET NAME</string>
                          </property>
                         </widget>
                        </item>
@@ -8425,133 +8578,471 @@ color:rgb(0, 0, 0);</string>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="styleSheet">
+                       <string notr="true">font: 57 13pt &quot;Montserrat Medium&quot;;
+color:rgb(0, 0, 0);</string>
+                      </property>
                       <property name="frameShape">
                        <enum>QFrame::StyledPanel</enum>
                       </property>
                       <property name="frameShadow">
                        <enum>QFrame::Raised</enum>
                       </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_48">
+                      <layout class="QHBoxLayout" name="horizontalLayout_70">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
                        <item>
-                        <widget class="QFrame" name="frame_25">
+                        <widget class="QFrame" name="frame_42">
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_34">
+                         <layout class="QVBoxLayout" name="verticalLayout_62">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item>
-                           <widget class="QLabel" name="label_21">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                           <widget class="QFrame" name="frame_43">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_68">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_21">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
-                            </property>
-                            <property name="text">
-                             <string>Petname</string>
-                            </property>
+                               </property>
+                               <property name="text">
+                                <string>SPECIES:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewSpecies">
+                               <property name="styleSheet">
+                                <string notr="true"/>
+                               </property>
+                               <property name="text">
+                                <string>Species</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="label_22">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                           <widget class="QFrame" name="frame_44">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_69">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_28">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
+                               </property>
+                               <property name="text">
+                                <string>SEX:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewSex">
+                               <property name="text">
+                                <string>SEX</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QFrame" name="frame_45">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
                             </property>
-                            <property name="text">
-                             <string>Species</string>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
                             </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_67">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_25">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(0, 0, 0);</string>
+                               </property>
+                               <property name="text">
+                                <string>SERVICE:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewService">
+                               <property name="styleSheet">
+                                <string notr="true"/>
+                               </property>
+                               <property name="text">
+                                <string>Service</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QFrame" name="frame_46">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_59">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_23">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(0, 0, 0);</string>
+                               </property>
+                               <property name="text">
+                                <string>DOCTOR:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewDoctor">
+                               <property name="styleSheet">
+                                <string notr="true"/>
+                               </property>
+                               <property name="text">
+                                <string>Provider/Doctor</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
                          </layout>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QFrame" name="frame_27">
+                        <widget class="QFrame" name="frame_47">
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_37">
+                         <layout class="QVBoxLayout" name="verticalLayout_64">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item>
-                           <widget class="QLabel" name="label_23">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                           <widget class="QFrame" name="frame_25">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_34">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_22">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
-                            </property>
-                            <property name="text">
-                             <string>Breed</string>
-                            </property>
+                               </property>
+                               <property name="text">
+                                <string>BREED:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewBreed">
+                               <property name="styleSheet">
+                                <string notr="true"/>
+                               </property>
+                               <property name="text">
+                                <string>Breed</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="label_24">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                           <widget class="QFrame" name="frame_27">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_37">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_24">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
-                            </property>
-                            <property name="text">
-                             <string>Color</string>
-                            </property>
+                               </property>
+                               <property name="text">
+                                <string>COLOR:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewColor">
+                               <property name="styleSheet">
+                                <string notr="true"/>
+                               </property>
+                               <property name="text">
+                                <string>Color</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="frame_28">
-                         <property name="frameShape">
-                          <enum>QFrame::StyledPanel</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_38">
                           <item>
-                           <widget class="QLabel" name="label_28">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                           <widget class="QFrame" name="frame_29">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_39">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_26">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
-                            </property>
-                            <property name="text">
-                             <string>Provider/Doctor</string>
-                            </property>
+                               </property>
+                               <property name="text">
+                                <string>DATE:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewDateTime">
+                               <property name="styleSheet">
+                                <string notr="true"/>
+                               </property>
+                               <property name="text">
+                                <string>Date and Time</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="label_31">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
+                           <widget class="QFrame" name="frame_28">
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_38">
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QLabel" name="label_32">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
 color:rgb(0, 0, 0);</string>
-                            </property>
-                            <property name="text">
-                             <string>Service</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="frame_29">
-                         <property name="frameShape">
-                          <enum>QFrame::StyledPanel</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_39">
-                          <item>
-                           <widget class="QLabel" name="label_33">
-                            <property name="styleSheet">
-                             <string notr="true">font: 87 10pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
-                            </property>
-                            <property name="text">
-                             <string>Date and Time</string>
-                            </property>
+                               </property>
+                               <property name="text">
+                                <string>COMMENTS:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QLabel" name="reviewComments">
+                               <property name="text">
+                                <string>COMMENTS</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
                            </widget>
                           </item>
                          </layout>
@@ -8566,7 +9057,7 @@ color:rgb(0, 0, 0);</string>
                 </layout>
                </widget>
               </item>
-              <item>
+              <item alignment="Qt::AlignHCenter">
                <widget class="QFrame" name="frame_22">
                 <property name="styleSheet">
                  <string notr="true">QPushButton{
@@ -8596,6 +9087,12 @@ QPushButton:hover{
                  </property>
                  <item>
                   <widget class="QPushButton" name="pushButton_2">
+                   <property name="minimumSize">
+                    <size>
+                     <width>260</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>Accept</string>
                    </property>
@@ -8603,6 +9100,12 @@ QPushButton:hover{
                  </item>
                  <item>
                   <widget class="QPushButton" name="pushButton_3">
+                   <property name="minimumSize">
+                    <size>
+                     <width>260</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
 	font: 57 14pt &quot;Montserrat Medium&quot;;

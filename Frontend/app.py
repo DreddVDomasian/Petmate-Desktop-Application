@@ -385,6 +385,7 @@ class MainUI(QMainWindow):
         self.petColor.clear()
         self.breed.clear()
         self.age.clear()
+        self.petRemarks.clear()
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
         # reset birthday → back to placeholder

@@ -27,5 +27,7 @@ urlpatterns = [
 
     path('clients/', views.get_clients, name='get_clients'),
     path('pets-web/', views.get_pets, name='get_pets'),
+
     path('appointments/', views.get_appointments, name='get_appointments'),
+    path('appointments/<int:pk>/', views.get_appointment_detail, name='appointment-detail'),
 ]

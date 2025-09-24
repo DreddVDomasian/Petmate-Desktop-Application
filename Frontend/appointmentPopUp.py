@@ -323,17 +323,33 @@ class AddAppointmentCard(QWidget):
             elif status == "declined":
                 self.declinedWebLayout.addWidget(card)
 
-            webAppointment_id = appoint["id"]
-            card.ReviewButton.clicked.connect(lambda: self.main_window.navigate_to_page(7))
+            card.ReviewButton.clicked.connect(lambda _, a=appoint, date=dateAndTime: self.show_review_page(a,date))
 
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
                 self.add_empty_label(layout)
 
-    def open_appointment(self, webAppointment_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/appointments/{webAppointment_id}/")
-        if response.status_code == 200:
-            data = response.json()
+    def show_review_page(self, appoint,date):
+        #Owner details
+        self.main_window.BookingId.setText(appoint["booking_id"])
+        self.main_window.reviewFullname.setText(appoint["client_name"].capitalize())
+        self.main_window.reviewPhoneNo.setText(appoint["phone"])
+        self.main_window.reviewEmail.setText(appoint["email"].capitalize())
+        address = f"{appoint['barangay']}, {appoint['city']}, {appoint['province']}"
+        self.main_window.reviewAddress.setText(address.capitalize())
+        self.main_window.reviewDetailedAddress.setText(appoint["detailed_address"].capitalize())
+
+        #Pet details
+        self.main_window.reviewPetName.setText(appoint["pet_name"].capitalize())
+        self.main_window.reviewSpecies.setText(appoint["species"].capitalize())
+        self.main_window.reviewBreed.setText(appoint["breed"].capitalize())
+        self.main_window.reviewSex.setText(appoint["sex"].capitalize())
+        self.main_window.reviewColor.setText(appoint["color"].capitalize())
+        self.main_window.reviewDoctor.setText(appoint["provider"].capitalize())
+        self.main_window.reviewService.setText(appoint["appointment_reason"].capitalize())
+        self.main_window.reviewComments.setText(appoint["comments"].capitalize())
+        self.main_window.reviewDateTime.setText(date)
+        self.main_window.navigate_to_page(7)
 
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
