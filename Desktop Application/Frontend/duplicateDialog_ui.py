@@ -152,7 +152,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 876, 422))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 876, 424))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -175,13 +175,11 @@ class Ui_Form(object):
         self.horizontalLayout_2 = QHBoxLayout(self.frame_3)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.pushButton = QPushButton(self.frame_3)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setStyleSheet(u"QPushButton{\n"
+        self.AddAnywayBtn = QPushButton(self.frame_3)
+        self.AddAnywayBtn.setObjectName(u"AddAnywayBtn")
+        self.AddAnywayBtn.setStyleSheet(u"QPushButton{\n"
 "	background-color:rgb(129, 191, 218);\n"
 "	border-radius: 5px;\n"
-"	border-right:1px solid rgb(200, 200, 200);\n"
-"	border-bottom:2px solid rgb(200, 200, 200);\n"
 "	padding:10px 20px 10px 20px;\n"
 "}\n"
 "\n"
@@ -190,7 +188,27 @@ class Ui_Form(object):
 "\n"
 "}")
 
-        self.horizontalLayout_2.addWidget(self.pushButton)
+        self.horizontalLayout_2.addWidget(self.AddAnywayBtn)
+
+        self.CancelBtn = QPushButton(self.frame_3)
+        self.CancelBtn.setObjectName(u"CancelBtn")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.CancelBtn.sizePolicy().hasHeightForWidth())
+        self.CancelBtn.setSizePolicy(sizePolicy2)
+        self.CancelBtn.setMinimumSize(QSize(212, 0))
+        self.CancelBtn.setStyleSheet(u"QPushButton{\n"
+"	background-color: #FCD597;\n"
+"	border-radius: 5px;\n"
+"	padding:10px 20px 10px 20px;\n"
+"}\n"
+"QPushButton:hover{\n"
+"background-color: rgb(223, 188, 134);\n"
+"border-radius: 10px;\n"
+"}")
+
+        self.horizontalLayout_2.addWidget(self.CancelBtn)
 
 
         self.verticalLayout_2.addWidget(self.frame_3, 0, Qt.AlignHCenter)
@@ -208,6 +226,7 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.label.setText("")
         self.label_2.setText(QCoreApplication.translate("Form", u"Possible Duplicate Records Found", None))
-        self.pushButton.setText(QCoreApplication.translate("Form", u"Add as New Record Anyway ", None))
+        self.AddAnywayBtn.setText(QCoreApplication.translate("Form", u"Add Record Anyway ", None))
+        self.CancelBtn.setText(QCoreApplication.translate("Form", u"CANCEL", None))
     # retranslateUi
 

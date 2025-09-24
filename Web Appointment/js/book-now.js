@@ -1,3 +1,8 @@
+
+// VANILA JS GINAMIT HERE HEHE
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
   // Buttons
   const continueBtn = document.querySelector('.continue-btn');
