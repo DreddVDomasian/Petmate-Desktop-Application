@@ -4202,10 +4202,10 @@ class Ui_MainWindow(object):
         self.reviewWeb.setStyleSheet(u"")
         self.reviewWeb.setFrameShape(QFrame.StyledPanel)
         self.reviewWeb.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_36 = QHBoxLayout(self.reviewWeb)
-        self.horizontalLayout_36.setSpacing(20)
-        self.horizontalLayout_36.setObjectName(u"horizontalLayout_36")
-        self.horizontalLayout_36.setContentsMargins(20, -1, 20, -1)
+        self.verticalLayout_18 = QVBoxLayout(self.reviewWeb)
+        self.verticalLayout_18.setSpacing(20)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.verticalLayout_18.setContentsMargins(20, -1, 20, -1)
         self.reviewClient = QFrame(self.reviewWeb)
         self.reviewClient.setObjectName(u"reviewClient")
         sizePolicy2.setHeightForWidth(self.reviewClient.sizePolicy().hasHeightForWidth())
@@ -4218,6 +4218,7 @@ class Ui_MainWindow(object):
         self.reviewClient.setFrameShadow(QFrame.Raised)
         self.verticalLayout_46 = QVBoxLayout(self.reviewClient)
         self.verticalLayout_46.setObjectName(u"verticalLayout_46")
+        self.verticalLayout_46.setContentsMargins(-1, 17, -1, 17)
         self.frame_3 = QFrame(self.reviewClient)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setFrameShape(QFrame.StyledPanel)
@@ -4232,12 +4233,32 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_53.addWidget(self.label_13)
 
-        self.label_32 = QLabel(self.frame_3)
-        self.label_32.setObjectName(u"label_32")
-        self.label_32.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+        self.reviewFullname = QLabel(self.frame_3)
+        self.reviewFullname.setObjectName(u"reviewFullname")
+        self.reviewFullname.setStyleSheet(u"font: 87 14pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
-        self.horizontalLayout_53.addWidget(self.label_32)
+        self.horizontalLayout_53.addWidget(self.reviewFullname)
+
+        self.frame_41 = QFrame(self.frame_3)
+        self.frame_41.setObjectName(u"frame_41")
+        self.frame_41.setStyleSheet(u"background-color:rgb(242, 129, 32);\n"
+"border-radius:5px;")
+        self.frame_41.setFrameShape(QFrame.StyledPanel)
+        self.frame_41.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_66 = QHBoxLayout(self.frame_41)
+        self.horizontalLayout_66.setSpacing(0)
+        self.horizontalLayout_66.setObjectName(u"horizontalLayout_66")
+        self.horizontalLayout_66.setContentsMargins(20, 5, 20, 5)
+        self.BookingId = QLabel(self.frame_41)
+        self.BookingId.setObjectName(u"BookingId")
+        self.BookingId.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_66.addWidget(self.BookingId, 0, Qt.AlignTop)
+
+
+        self.horizontalLayout_53.addWidget(self.frame_41, 0, Qt.AlignRight|Qt.AlignTop)
 
 
         self.verticalLayout_46.addWidget(self.frame_3)
@@ -4246,72 +4267,111 @@ class Ui_MainWindow(object):
         self.frame_23.setObjectName(u"frame_23")
         sizePolicy5.setHeightForWidth(self.frame_23.sizePolicy().hasHeightForWidth())
         self.frame_23.setSizePolicy(sizePolicy5)
+        self.frame_23.setStyleSheet(u"font: 57 13pt \"Montserrat Medium\";\n"
+"color:rgb(0, 0, 0);")
         self.frame_23.setFrameShape(QFrame.StyledPanel)
         self.frame_23.setFrameShadow(QFrame.Raised)
         self.verticalLayout_63 = QVBoxLayout(self.frame_23)
         self.verticalLayout_63.setObjectName(u"verticalLayout_63")
-        self.label_35 = QLabel(self.frame_23)
-        self.label_35.setObjectName(u"label_35")
-        self.label_35.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
-"color:rgb(0, 0, 0);")
-
-        self.verticalLayout_63.addWidget(self.label_35)
-
         self.frame_38 = QFrame(self.frame_23)
         self.frame_38.setObjectName(u"frame_38")
-        sizePolicy1.setHeightForWidth(self.frame_38.sizePolicy().hasHeightForWidth())
-        self.frame_38.setSizePolicy(sizePolicy1)
+        sizePolicy5.setHeightForWidth(self.frame_38.sizePolicy().hasHeightForWidth())
+        self.frame_38.setSizePolicy(sizePolicy5)
         self.frame_38.setFrameShape(QFrame.StyledPanel)
         self.frame_38.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_55 = QHBoxLayout(self.frame_38)
+        self.horizontalLayout_55.setSpacing(6)
         self.horizontalLayout_55.setObjectName(u"horizontalLayout_55")
-        self.label_36 = QLabel(self.frame_38)
-        self.label_36.setObjectName(u"label_36")
-        self.label_36.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
+        self.horizontalLayout_55.setContentsMargins(0, 0, 0, 0)
+        self.label_2 = QLabel(self.frame_38)
+        self.label_2.setObjectName(u"label_2")
+        sizePolicy12.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy12)
+        self.label_2.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
-        self.horizontalLayout_55.addWidget(self.label_36)
+        self.horizontalLayout_55.addWidget(self.label_2)
 
-        self.label_37 = QLabel(self.frame_38)
-        self.label_37.setObjectName(u"label_37")
-        self.label_37.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
+        self.reviewEmail = QLabel(self.frame_38)
+        self.reviewEmail.setObjectName(u"reviewEmail")
+        self.reviewEmail.setStyleSheet(u"")
+
+        self.horizontalLayout_55.addWidget(self.reviewEmail)
+
+        self.label_3 = QLabel(self.frame_38)
+        self.label_3.setObjectName(u"label_3")
+        sizePolicy12.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy12)
+        self.label_3.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
-        self.horizontalLayout_55.addWidget(self.label_37)
+        self.horizontalLayout_55.addWidget(self.label_3)
+
+        self.reviewPhoneNo = QLabel(self.frame_38)
+        self.reviewPhoneNo.setObjectName(u"reviewPhoneNo")
+        self.reviewPhoneNo.setStyleSheet(u"")
+
+        self.horizontalLayout_55.addWidget(self.reviewPhoneNo)
 
 
         self.verticalLayout_63.addWidget(self.frame_38)
 
         self.frame_39 = QFrame(self.frame_23)
         self.frame_39.setObjectName(u"frame_39")
-        sizePolicy1.setHeightForWidth(self.frame_39.sizePolicy().hasHeightForWidth())
-        self.frame_39.setSizePolicy(sizePolicy1)
+        sizePolicy5.setHeightForWidth(self.frame_39.sizePolicy().hasHeightForWidth())
+        self.frame_39.setSizePolicy(sizePolicy5)
         self.frame_39.setFrameShape(QFrame.StyledPanel)
         self.frame_39.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_56 = QHBoxLayout(self.frame_39)
         self.horizontalLayout_56.setObjectName(u"horizontalLayout_56")
-        self.label_38 = QLabel(self.frame_39)
-        self.label_38.setObjectName(u"label_38")
-        self.label_38.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
+        self.horizontalLayout_56.setContentsMargins(0, 0, 0, 0)
+        self.label_5 = QLabel(self.frame_39)
+        self.label_5.setObjectName(u"label_5")
+        sizePolicy12.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
+        self.label_5.setSizePolicy(sizePolicy12)
+        self.label_5.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
-        self.horizontalLayout_56.addWidget(self.label_38)
+        self.horizontalLayout_56.addWidget(self.label_5)
 
-        self.label_39 = QLabel(self.frame_39)
-        self.label_39.setObjectName(u"label_39")
-        self.label_39.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
-"color:rgb(0, 0, 0);")
+        self.reviewAddress = QLabel(self.frame_39)
+        self.reviewAddress.setObjectName(u"reviewAddress")
+        self.reviewAddress.setStyleSheet(u"")
 
-        self.horizontalLayout_56.addWidget(self.label_39)
+        self.horizontalLayout_56.addWidget(self.reviewAddress)
 
 
         self.verticalLayout_63.addWidget(self.frame_39)
+
+        self.frame_40 = QFrame(self.frame_23)
+        self.frame_40.setObjectName(u"frame_40")
+        self.frame_40.setFrameShape(QFrame.StyledPanel)
+        self.frame_40.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_36 = QHBoxLayout(self.frame_40)
+        self.horizontalLayout_36.setObjectName(u"horizontalLayout_36")
+        self.horizontalLayout_36.setContentsMargins(0, 0, 0, 0)
+        self.label_12 = QLabel(self.frame_40)
+        self.label_12.setObjectName(u"label_12")
+        sizePolicy12.setHeightForWidth(self.label_12.sizePolicy().hasHeightForWidth())
+        self.label_12.setSizePolicy(sizePolicy12)
+        self.label_12.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_36.addWidget(self.label_12)
+
+        self.reviewDetailedAddress = QLabel(self.frame_40)
+        self.reviewDetailedAddress.setObjectName(u"reviewDetailedAddress")
+
+        self.horizontalLayout_36.addWidget(self.reviewDetailedAddress)
+
+
+        self.verticalLayout_63.addWidget(self.frame_40)
 
 
         self.verticalLayout_46.addWidget(self.frame_23)
 
 
-        self.horizontalLayout_36.addWidget(self.reviewClient)
+        self.verticalLayout_18.addWidget(self.reviewClient)
 
         self.reviewPet = QFrame(self.reviewWeb)
         self.reviewPet.setObjectName(u"reviewPet")
@@ -4339,12 +4399,12 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_54.addWidget(self.label_29)
 
-        self.label_34 = QLabel(self.frame_37)
-        self.label_34.setObjectName(u"label_34")
-        self.label_34.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+        self.reviewPetName = QLabel(self.frame_37)
+        self.reviewPetName.setObjectName(u"reviewPetName")
+        self.reviewPetName.setStyleSheet(u"font: 87 14pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
-        self.horizontalLayout_54.addWidget(self.label_34)
+        self.horizontalLayout_54.addWidget(self.reviewPetName)
 
 
         self.verticalLayout_47.addWidget(self.frame_37)
@@ -4353,100 +4413,236 @@ class Ui_MainWindow(object):
         self.frame_26.setObjectName(u"frame_26")
         sizePolicy5.setHeightForWidth(self.frame_26.sizePolicy().hasHeightForWidth())
         self.frame_26.setSizePolicy(sizePolicy5)
+        self.frame_26.setStyleSheet(u"font: 57 13pt \"Montserrat Medium\";\n"
+"color:rgb(0, 0, 0);")
         self.frame_26.setFrameShape(QFrame.StyledPanel)
         self.frame_26.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_48 = QVBoxLayout(self.frame_26)
-        self.verticalLayout_48.setObjectName(u"verticalLayout_48")
-        self.frame_25 = QFrame(self.frame_26)
+        self.horizontalLayout_70 = QHBoxLayout(self.frame_26)
+        self.horizontalLayout_70.setObjectName(u"horizontalLayout_70")
+        self.horizontalLayout_70.setContentsMargins(0, 0, 0, 0)
+        self.frame_42 = QFrame(self.frame_26)
+        self.frame_42.setObjectName(u"frame_42")
+        self.frame_42.setFrameShape(QFrame.StyledPanel)
+        self.frame_42.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_62 = QVBoxLayout(self.frame_42)
+        self.verticalLayout_62.setObjectName(u"verticalLayout_62")
+        self.verticalLayout_62.setContentsMargins(0, 0, 0, 0)
+        self.frame_43 = QFrame(self.frame_42)
+        self.frame_43.setObjectName(u"frame_43")
+        self.frame_43.setFrameShape(QFrame.StyledPanel)
+        self.frame_43.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_68 = QHBoxLayout(self.frame_43)
+        self.horizontalLayout_68.setObjectName(u"horizontalLayout_68")
+        self.horizontalLayout_68.setContentsMargins(0, 0, 0, 0)
+        self.label_21 = QLabel(self.frame_43)
+        self.label_21.setObjectName(u"label_21")
+        sizePolicy12.setHeightForWidth(self.label_21.sizePolicy().hasHeightForWidth())
+        self.label_21.setSizePolicy(sizePolicy12)
+        self.label_21.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_68.addWidget(self.label_21)
+
+        self.reviewSpecies = QLabel(self.frame_43)
+        self.reviewSpecies.setObjectName(u"reviewSpecies")
+        self.reviewSpecies.setStyleSheet(u"")
+
+        self.horizontalLayout_68.addWidget(self.reviewSpecies)
+
+
+        self.verticalLayout_62.addWidget(self.frame_43)
+
+        self.frame_44 = QFrame(self.frame_42)
+        self.frame_44.setObjectName(u"frame_44")
+        self.frame_44.setFrameShape(QFrame.StyledPanel)
+        self.frame_44.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_69 = QHBoxLayout(self.frame_44)
+        self.horizontalLayout_69.setObjectName(u"horizontalLayout_69")
+        self.horizontalLayout_69.setContentsMargins(0, 0, -1, 0)
+        self.label_28 = QLabel(self.frame_44)
+        self.label_28.setObjectName(u"label_28")
+        sizePolicy12.setHeightForWidth(self.label_28.sizePolicy().hasHeightForWidth())
+        self.label_28.setSizePolicy(sizePolicy12)
+        self.label_28.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_69.addWidget(self.label_28)
+
+        self.reviewSex = QLabel(self.frame_44)
+        self.reviewSex.setObjectName(u"reviewSex")
+
+        self.horizontalLayout_69.addWidget(self.reviewSex)
+
+
+        self.verticalLayout_62.addWidget(self.frame_44)
+
+        self.frame_45 = QFrame(self.frame_42)
+        self.frame_45.setObjectName(u"frame_45")
+        self.frame_45.setFrameShape(QFrame.StyledPanel)
+        self.frame_45.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_67 = QHBoxLayout(self.frame_45)
+        self.horizontalLayout_67.setObjectName(u"horizontalLayout_67")
+        self.horizontalLayout_67.setContentsMargins(0, 0, 0, 0)
+        self.label_25 = QLabel(self.frame_45)
+        self.label_25.setObjectName(u"label_25")
+        sizePolicy12.setHeightForWidth(self.label_25.sizePolicy().hasHeightForWidth())
+        self.label_25.setSizePolicy(sizePolicy12)
+        self.label_25.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_67.addWidget(self.label_25)
+
+        self.reviewService = QLabel(self.frame_45)
+        self.reviewService.setObjectName(u"reviewService")
+        self.reviewService.setStyleSheet(u"")
+
+        self.horizontalLayout_67.addWidget(self.reviewService)
+
+
+        self.verticalLayout_62.addWidget(self.frame_45)
+
+        self.frame_46 = QFrame(self.frame_42)
+        self.frame_46.setObjectName(u"frame_46")
+        self.frame_46.setFrameShape(QFrame.StyledPanel)
+        self.frame_46.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_59 = QHBoxLayout(self.frame_46)
+        self.horizontalLayout_59.setObjectName(u"horizontalLayout_59")
+        self.horizontalLayout_59.setContentsMargins(0, 0, 0, 0)
+        self.label_23 = QLabel(self.frame_46)
+        self.label_23.setObjectName(u"label_23")
+        sizePolicy12.setHeightForWidth(self.label_23.sizePolicy().hasHeightForWidth())
+        self.label_23.setSizePolicy(sizePolicy12)
+        self.label_23.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_59.addWidget(self.label_23)
+
+        self.reviewDoctor = QLabel(self.frame_46)
+        self.reviewDoctor.setObjectName(u"reviewDoctor")
+        self.reviewDoctor.setStyleSheet(u"")
+
+        self.horizontalLayout_59.addWidget(self.reviewDoctor)
+
+
+        self.verticalLayout_62.addWidget(self.frame_46)
+
+
+        self.horizontalLayout_70.addWidget(self.frame_42)
+
+        self.frame_47 = QFrame(self.frame_26)
+        self.frame_47.setObjectName(u"frame_47")
+        self.frame_47.setFrameShape(QFrame.StyledPanel)
+        self.frame_47.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_64 = QVBoxLayout(self.frame_47)
+        self.verticalLayout_64.setObjectName(u"verticalLayout_64")
+        self.verticalLayout_64.setContentsMargins(0, 0, 0, 0)
+        self.frame_25 = QFrame(self.frame_47)
         self.frame_25.setObjectName(u"frame_25")
         self.frame_25.setFrameShape(QFrame.StyledPanel)
         self.frame_25.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_34 = QHBoxLayout(self.frame_25)
         self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
-        self.label_21 = QLabel(self.frame_25)
-        self.label_21.setObjectName(u"label_21")
-        self.label_21.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
-"color:rgb(0, 0, 0);")
-
-        self.horizontalLayout_34.addWidget(self.label_21)
-
+        self.horizontalLayout_34.setContentsMargins(0, 0, 0, 0)
         self.label_22 = QLabel(self.frame_25)
         self.label_22.setObjectName(u"label_22")
-        self.label_22.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
+        sizePolicy12.setHeightForWidth(self.label_22.sizePolicy().hasHeightForWidth())
+        self.label_22.setSizePolicy(sizePolicy12)
+        self.label_22.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
         self.horizontalLayout_34.addWidget(self.label_22)
 
+        self.reviewBreed = QLabel(self.frame_25)
+        self.reviewBreed.setObjectName(u"reviewBreed")
+        self.reviewBreed.setStyleSheet(u"")
 
-        self.verticalLayout_48.addWidget(self.frame_25)
+        self.horizontalLayout_34.addWidget(self.reviewBreed)
 
-        self.frame_27 = QFrame(self.frame_26)
+
+        self.verticalLayout_64.addWidget(self.frame_25)
+
+        self.frame_27 = QFrame(self.frame_47)
         self.frame_27.setObjectName(u"frame_27")
         self.frame_27.setFrameShape(QFrame.StyledPanel)
         self.frame_27.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_37 = QHBoxLayout(self.frame_27)
         self.horizontalLayout_37.setObjectName(u"horizontalLayout_37")
-        self.label_23 = QLabel(self.frame_27)
-        self.label_23.setObjectName(u"label_23")
-        self.label_23.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
-"color:rgb(0, 0, 0);")
-
-        self.horizontalLayout_37.addWidget(self.label_23)
-
+        self.horizontalLayout_37.setContentsMargins(0, 0, 0, 0)
         self.label_24 = QLabel(self.frame_27)
         self.label_24.setObjectName(u"label_24")
-        self.label_24.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
+        sizePolicy12.setHeightForWidth(self.label_24.sizePolicy().hasHeightForWidth())
+        self.label_24.setSizePolicy(sizePolicy12)
+        self.label_24.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
         self.horizontalLayout_37.addWidget(self.label_24)
 
+        self.reviewColor = QLabel(self.frame_27)
+        self.reviewColor.setObjectName(u"reviewColor")
+        self.reviewColor.setStyleSheet(u"")
 
-        self.verticalLayout_48.addWidget(self.frame_27)
-
-        self.frame_28 = QFrame(self.frame_26)
-        self.frame_28.setObjectName(u"frame_28")
-        self.frame_28.setFrameShape(QFrame.StyledPanel)
-        self.frame_28.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_38 = QHBoxLayout(self.frame_28)
-        self.horizontalLayout_38.setObjectName(u"horizontalLayout_38")
-        self.label_28 = QLabel(self.frame_28)
-        self.label_28.setObjectName(u"label_28")
-        self.label_28.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
-"color:rgb(0, 0, 0);")
-
-        self.horizontalLayout_38.addWidget(self.label_28)
-
-        self.label_31 = QLabel(self.frame_28)
-        self.label_31.setObjectName(u"label_31")
-        self.label_31.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
-"color:rgb(0, 0, 0);")
-
-        self.horizontalLayout_38.addWidget(self.label_31)
+        self.horizontalLayout_37.addWidget(self.reviewColor)
 
 
-        self.verticalLayout_48.addWidget(self.frame_28)
+        self.verticalLayout_64.addWidget(self.frame_27)
 
-        self.frame_29 = QFrame(self.frame_26)
+        self.frame_29 = QFrame(self.frame_47)
         self.frame_29.setObjectName(u"frame_29")
         self.frame_29.setFrameShape(QFrame.StyledPanel)
         self.frame_29.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_39 = QHBoxLayout(self.frame_29)
         self.horizontalLayout_39.setObjectName(u"horizontalLayout_39")
-        self.label_33 = QLabel(self.frame_29)
-        self.label_33.setObjectName(u"label_33")
-        self.label_33.setStyleSheet(u"font: 87 10pt \"Montserrat Black\";\n"
+        self.horizontalLayout_39.setContentsMargins(0, 0, 0, 0)
+        self.label_26 = QLabel(self.frame_29)
+        self.label_26.setObjectName(u"label_26")
+        sizePolicy12.setHeightForWidth(self.label_26.sizePolicy().hasHeightForWidth())
+        self.label_26.setSizePolicy(sizePolicy12)
+        self.label_26.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
 "color:rgb(0, 0, 0);")
 
-        self.horizontalLayout_39.addWidget(self.label_33)
+        self.horizontalLayout_39.addWidget(self.label_26)
+
+        self.reviewDateTime = QLabel(self.frame_29)
+        self.reviewDateTime.setObjectName(u"reviewDateTime")
+        self.reviewDateTime.setStyleSheet(u"")
+
+        self.horizontalLayout_39.addWidget(self.reviewDateTime)
 
 
-        self.verticalLayout_48.addWidget(self.frame_29)
+        self.verticalLayout_64.addWidget(self.frame_29)
+
+        self.frame_28 = QFrame(self.frame_47)
+        self.frame_28.setObjectName(u"frame_28")
+        self.frame_28.setFrameShape(QFrame.StyledPanel)
+        self.frame_28.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_38 = QHBoxLayout(self.frame_28)
+        self.horizontalLayout_38.setObjectName(u"horizontalLayout_38")
+        self.horizontalLayout_38.setContentsMargins(0, 0, 0, 0)
+        self.label_32 = QLabel(self.frame_28)
+        self.label_32.setObjectName(u"label_32")
+        sizePolicy12.setHeightForWidth(self.label_32.sizePolicy().hasHeightForWidth())
+        self.label_32.setSizePolicy(sizePolicy12)
+        self.label_32.setStyleSheet(u"font: 87 13pt \"Montserrat Black\";\n"
+"color:rgb(0, 0, 0);")
+
+        self.horizontalLayout_38.addWidget(self.label_32)
+
+        self.reviewComments = QLabel(self.frame_28)
+        self.reviewComments.setObjectName(u"reviewComments")
+
+        self.horizontalLayout_38.addWidget(self.reviewComments)
+
+
+        self.verticalLayout_64.addWidget(self.frame_28)
+
+
+        self.horizontalLayout_70.addWidget(self.frame_47)
 
 
         self.verticalLayout_47.addWidget(self.frame_26)
 
 
-        self.horizontalLayout_36.addWidget(self.reviewPet)
+        self.verticalLayout_18.addWidget(self.reviewPet)
 
 
         self.verticalLayout_45.addWidget(self.reviewWeb)
@@ -4471,11 +4667,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_33.setContentsMargins(20, -1, 20, -1)
         self.pushButton_2 = QPushButton(self.frame_22)
         self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setMinimumSize(QSize(260, 0))
 
         self.horizontalLayout_33.addWidget(self.pushButton_2)
 
         self.pushButton_3 = QPushButton(self.frame_22)
         self.pushButton_3.setObjectName(u"pushButton_3")
+        self.pushButton_3.setMinimumSize(QSize(260, 0))
         self.pushButton_3.setStyleSheet(u"QPushButton{\n"
 "	font: 57 14pt \"Montserrat Medium\";\n"
 "	color:rgb(39, 39, 39);\n"
@@ -4491,7 +4689,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_33.addWidget(self.pushButton_3)
 
 
-        self.verticalLayout_45.addWidget(self.frame_22)
+        self.verticalLayout_45.addWidget(self.frame_22, 0, Qt.AlignHCenter)
 
 
         self.verticalLayout_61.addWidget(self.reviewWebAppointment)
@@ -4507,7 +4705,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(7)
         self.cityComboBox.setCurrentIndex(-1)
         self.walkInOrWeb.setCurrentIndex(1)
         self.statusStackedWidget.setCurrentIndex(1)
@@ -4690,21 +4888,34 @@ class Ui_MainWindow(object):
         self.pageHeader5.setText(QCoreApplication.translate("MainWindow", u"PETMATE ANIMAL CLINIC", None))
         self.clinicIconP5.setText("")
         self.label_13.setText("")
-        self.label_32.setText(QCoreApplication.translate("MainWindow", u"Owner Details", None))
-        self.label_35.setText(QCoreApplication.translate("MainWindow", u"Booking Id", None))
-        self.label_36.setText(QCoreApplication.translate("MainWindow", u"Fullname", None))
-        self.label_37.setText(QCoreApplication.translate("MainWindow", u"Phone no.", None))
-        self.label_38.setText(QCoreApplication.translate("MainWindow", u"Email Address", None))
-        self.label_39.setText(QCoreApplication.translate("MainWindow", u"Address", None))
+        self.reviewFullname.setText(QCoreApplication.translate("MainWindow", u"FULL NAME", None))
+        self.BookingId.setText(QCoreApplication.translate("MainWindow", u"Booking Id", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"EMAIL:", None))
+        self.reviewEmail.setText(QCoreApplication.translate("MainWindow", u"Email Address", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"PHONE NO:", None))
+        self.reviewPhoneNo.setText(QCoreApplication.translate("MainWindow", u"Phone no.", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"ADDRESS:", None))
+        self.reviewAddress.setText(QCoreApplication.translate("MainWindow", u"Address", None))
+        self.label_12.setText(QCoreApplication.translate("MainWindow", u"DETAILED ADD:", None))
+        self.reviewDetailedAddress.setText(QCoreApplication.translate("MainWindow", u"Detailed Address", None))
         self.label_29.setText("")
-        self.label_34.setText(QCoreApplication.translate("MainWindow", u"Pet Details", None))
-        self.label_21.setText(QCoreApplication.translate("MainWindow", u"Petname", None))
-        self.label_22.setText(QCoreApplication.translate("MainWindow", u"Species", None))
-        self.label_23.setText(QCoreApplication.translate("MainWindow", u"Breed", None))
-        self.label_24.setText(QCoreApplication.translate("MainWindow", u"Color", None))
-        self.label_28.setText(QCoreApplication.translate("MainWindow", u"Provider/Doctor", None))
-        self.label_31.setText(QCoreApplication.translate("MainWindow", u"Service", None))
-        self.label_33.setText(QCoreApplication.translate("MainWindow", u"Date and Time", None))
+        self.reviewPetName.setText(QCoreApplication.translate("MainWindow", u"PET NAME", None))
+        self.label_21.setText(QCoreApplication.translate("MainWindow", u"SPECIES:", None))
+        self.reviewSpecies.setText(QCoreApplication.translate("MainWindow", u"Species", None))
+        self.label_28.setText(QCoreApplication.translate("MainWindow", u"SEX:", None))
+        self.reviewSex.setText(QCoreApplication.translate("MainWindow", u"SEX", None))
+        self.label_25.setText(QCoreApplication.translate("MainWindow", u"SERVICE:", None))
+        self.reviewService.setText(QCoreApplication.translate("MainWindow", u"Service", None))
+        self.label_23.setText(QCoreApplication.translate("MainWindow", u"DOCTOR:", None))
+        self.reviewDoctor.setText(QCoreApplication.translate("MainWindow", u"Provider/Doctor", None))
+        self.label_22.setText(QCoreApplication.translate("MainWindow", u"BREED:", None))
+        self.reviewBreed.setText(QCoreApplication.translate("MainWindow", u"Breed", None))
+        self.label_24.setText(QCoreApplication.translate("MainWindow", u"COLOR:", None))
+        self.reviewColor.setText(QCoreApplication.translate("MainWindow", u"Color", None))
+        self.label_26.setText(QCoreApplication.translate("MainWindow", u"DATE:", None))
+        self.reviewDateTime.setText(QCoreApplication.translate("MainWindow", u"Date and Time", None))
+        self.label_32.setText(QCoreApplication.translate("MainWindow", u"COMMENTS:", None))
+        self.reviewComments.setText(QCoreApplication.translate("MainWindow", u"COMMENTS", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Accept", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Decline", None))
     # retranslateUi
