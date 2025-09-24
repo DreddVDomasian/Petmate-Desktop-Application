@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2959,8 +2959,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>924</width>
+                        <height>383</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3015,8 +3015,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>924</width>
+                        <height>383</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -3035,19 +3035,6 @@ QScrollArea QScrollBar::groove:horizontal {
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QLabel" name="label_5">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string>TextLabel</string>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
                     </widget>
@@ -3081,8 +3068,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>924</width>
+                        <height>383</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -3101,13 +3088,6 @@ QScrollArea QScrollBar::groove:horizontal {
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QLabel" name="label_25">
-                         <property name="text">
-                          <string>TextLabel</string>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
                     </widget>
@@ -3141,8 +3121,8 @@ QScrollArea QScrollBar::groove:horizontal {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>100</width>
-                        <height>30</height>
+                        <width>924</width>
+                        <height>383</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -3158,13 +3138,6 @@ QScrollArea QScrollBar::groove:horizontal {
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QLabel" name="label_26">
-                         <property name="text">
-                          <string>TextLabel</string>
-                         </property>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
                     </widget>
@@ -3177,214 +3150,130 @@ QScrollArea QScrollBar::groove:horizontal {
              </widget>
              <widget class="QWidget" name="website">
               <layout class="QVBoxLayout" name="verticalLayout_16">
-               <property name="spacing">
-                <number>0</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
                <item>
-                <widget class="QScrollArea" name="webScrollArea">
+                <widget class="QFrame" name="AcceptedDeclineBtns">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>90</height>
+                  </size>
+                 </property>
                  <property name="styleSheet">
-                  <string notr="true">#webScrollArea{
-	border:none;
-
-}
-#webScrollArea QScrollBar:vertical {
-    background: transparent;
-    width: 10px;
-    margin: 0px;
-}
-
-#webScrollArea QScrollBar::handle:vertical {
-    background-color: rgb(129, 191, 218);
-    border-radius: 5px;
-    min-height: 120px;
-	min-height: 200px;
-}
-
-#webScrollArea QScrollBar::handle:vertical:hover {
-    background-color: rgb(86, 127, 145);
-}
-
-#webScrollArea QScrollBar::add-line:vertical,
-#webScrollArea QScrollBar::sub-line:vertical {
-    height: 0px;
-    background: none;
-    border: none;
-}
-
-#webScrollArea QScrollBar::groove:vertical {
-    background: transparent;
-    border: none;
-    border-radius: 0px;
-}
-</string>
+                  <string notr="true"/>
                  </property>
-                 <property name="widgetResizable">
-                  <bool>true</bool>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
                  </property>
-                 <widget class="QWidget" name="webScrollAreaWidgetContents">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>924</width>
-                    <height>504</height>
-                   </rect>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_32">
+                  <property name="spacing">
+                   <number>5</number>
                   </property>
-                  <property name="styleSheet">
-                   <string notr="true"/>
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_18">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QFrame" name="AcceptedDeclineBtns">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>90</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true"/>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_32">
-                      <property name="spacing">
-                       <number>5</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>5</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>5</number>
-                      </property>
-                      <item>
-                       <widget class="QPushButton" name="pendingWebBtn">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>60</height>
-                         </size>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true"/>
-                        </property>
-                        <property name="text">
-                         <string>Pending</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="AcceptedBtn">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>60</height>
-                         </size>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true"/>
-                        </property>
-                        <property name="text">
-                         <string>Accepted</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="DeclinedBtn">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>60</height>
-                         </size>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true"/>
-                        </property>
-                        <property name="text">
-                         <string>Declined</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QStackedWidget" name="webAppointmentStackWidget">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>440</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QScrollArea{
+                  <property name="topMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pendingWebBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Pending</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="AcceptedBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Accepted</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="DeclinedBtn">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>60</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="text">
+                     <string>Declined</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QStackedWidget" name="webAppointmentStackWidget">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>440</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">QScrollArea{
 	border:none;
 
 }
@@ -3445,15 +3334,51 @@ QScrollArea QScrollBar::groove:horizontal {
 }
 
 </string>
+                 </property>
+                 <property name="currentIndex">
+                  <number>2</number>
+                 </property>
+                 <widget class="QWidget" name="webAppPending">
+                  <layout class="QVBoxLayout" name="verticalLayout_28">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="scrollArea_7">
+                     <property name="widgetResizable">
+                      <bool>true</bool>
                      </property>
-                     <property name="currentIndex">
-                      <number>0</number>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                      </property>
-                     <widget class="QWidget" name="webAppPending">
-                      <layout class="QVBoxLayout" name="verticalLayout_28">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
+                     <widget class="QWidget" name="scrollAreaWebAppPending">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>906</width>
+                        <height>440</height>
+                       </rect>
+                      </property>
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_42">
                        <property name="leftMargin">
                         <number>0</number>
                        </property>
@@ -3466,45 +3391,47 @@ QScrollArea QScrollBar::groove:horizontal {
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QScrollArea" name="scrollArea_7">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>450</height>
-                          </size>
-                         </property>
-                         <property name="widgetResizable">
-                          <bool>true</bool>
-                         </property>
-                         <widget class="QWidget" name="scrollAreaWebAppPending">
-                          <property name="geometry">
-                           <rect>
-                            <x>0</x>
-                            <y>0</y>
-                            <width>924</width>
-                            <height>450</height>
-                           </rect>
-                          </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_42">
-                           <item>
-                            <widget class="QLabel" name="label_2">
-                             <property name="text">
-                              <string>TextLabel</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
-                     <widget class="QWidget" name="webAppAccepted">
-                      <layout class="QVBoxLayout" name="verticalLayout_40">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="webAppAccepted">
+                  <layout class="QVBoxLayout" name="verticalLayout_40">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="scrollArea_8">
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                     </property>
+                     <widget class="QWidget" name="scrollAreaWebAppAccepted">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>906</width>
+                        <height>440</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_43">
                        <property name="leftMargin">
                         <number>0</number>
                        </property>
@@ -3517,39 +3444,50 @@ QScrollArea QScrollBar::groove:horizontal {
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QScrollArea" name="scrollArea_8">
-                         <property name="widgetResizable">
-                          <bool>true</bool>
-                         </property>
-                         <widget class="QWidget" name="scrollAreaWebAppAccepted">
-                          <property name="geometry">
-                           <rect>
-                            <x>0</x>
-                            <y>0</y>
-                            <width>90</width>
-                            <height>31</height>
-                           </rect>
-                          </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_43">
-                           <item>
-                            <widget class="QLabel" name="label_3">
-                             <property name="text">
-                              <string>TextLabel</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
-                     <widget class="QWidget" name="webAppDeclined">
-                      <layout class="QVBoxLayout" name="verticalLayout_41">
-                       <property name="spacing">
-                        <number>0</number>
-                       </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="webAppDeclined">
+                  <layout class="QVBoxLayout" name="verticalLayout_41">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QScrollArea" name="scrollArea_9">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                     </property>
+                     <widget class="QWidget" name="scrollAreaWebAppDeclined">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>906</width>
+                        <height>440</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_44">
                        <property name="leftMargin">
                         <number>0</number>
                        </property>
@@ -3562,32 +3500,6 @@ QScrollArea QScrollBar::groove:horizontal {
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
-                       <item>
-                        <widget class="QScrollArea" name="scrollArea_9">
-                         <property name="widgetResizable">
-                          <bool>true</bool>
-                         </property>
-                         <widget class="QWidget" name="scrollAreaWebAppDecined">
-                          <property name="geometry">
-                           <rect>
-                            <x>0</x>
-                            <y>0</y>
-                            <width>90</width>
-                            <height>31</height>
-                           </rect>
-                          </property>
-                          <layout class="QVBoxLayout" name="verticalLayout_44">
-                           <item>
-                            <widget class="QLabel" name="label_12">
-                             <property name="text">
-                              <string>TextLabel</string>
-                             </property>
-                            </widget>
-                           </item>
-                          </layout>
-                         </widget>
-                        </widget>
-                       </item>
                       </layout>
                      </widget>
                     </widget>
