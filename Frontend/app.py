@@ -466,6 +466,9 @@ class MainUI(QMainWindow):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
         self.petProfileCard.setGraphicsEffect(create_card_shadow())
 
+        self.reviewClient.setGraphicsEffect(create_card_shadow())
+        self.reviewPet.setGraphicsEffect(create_card_shadow())
+
     def set_current_month_in_combobox(self):
         self.monthComboBox.setGraphicsEffect(create_card_shadow())
         current_month = datetime.now().strftime("%B")
@@ -1188,7 +1191,7 @@ class MainUI(QMainWindow):
         self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-        self.scale_widget_font(self.pageHeader5, base_size=25, min_size=12, max_size=35, family="Verdana")
+        self.scale_widget_font(self.pageHeader5, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
 
         # pet details title
         self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")

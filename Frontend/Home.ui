@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>7</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -932,9 +932,7 @@ Keeping tails wagging and hearts happy!</string>
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">#pageHeader1{
-font: 16pt &quot;Century Gothic&quot;
-}</string>
+                 <string notr="true"/>
                 </property>
                 <property name="text">
                  <string>PETMATE ANIMAL CLINIC</string>
@@ -2059,8 +2057,8 @@ border-bottom-right-radius:10px;
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>162</width>
-                <height>33</height>
+                <width>924</width>
+                <height>508</height>
                </rect>
               </property>
               <property name="styleSheet">
@@ -3240,8 +3238,8 @@ QScrollArea QScrollBar::groove:horizontal {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>247</width>
-                    <height>488</height>
+                    <width>924</width>
+                    <height>504</height>
                    </rect>
                   </property>
                   <property name="styleSheet">
@@ -3484,7 +3482,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>100</width>
+                            <width>924</width>
                             <height>450</height>
                            </rect>
                           </property>
@@ -3530,7 +3528,7 @@ QScrollArea QScrollBar::groove:horizontal {
                             <x>0</x>
                             <y>0</y>
                             <width>90</width>
-                            <height>38</height>
+                            <height>31</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3575,7 +3573,7 @@ QScrollArea QScrollBar::groove:horizontal {
                             <x>0</x>
                             <y>0</y>
                             <width>90</width>
-                            <height>38</height>
+                            <height>31</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4399,7 +4397,7 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>914</width>
+                       <width>922</width>
                        <height>450</height>
                       </rect>
                      </property>
@@ -4436,8 +4434,8 @@ QScrollArea QScrollBar::groove:horizontal {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>115</width>
-                       <height>50</height>
+                       <width>93</width>
+                       <height>41</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -4838,7 +4836,7 @@ color:rgb(0, 0, 0);</string>
                     <x>0</x>
                     <y>0</y>
                     <width>401</width>
-                    <height>111</height>
+                    <height>109</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_6">
@@ -8142,7 +8140,19 @@ QPushButton:hover{
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_45">
               <property name="spacing">
-               <number>10</number>
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
               </property>
               <item>
                <widget class="QPushButton" name="ReviewBackBtn">
@@ -8160,6 +8170,13 @@ QPushButton:hover{
               </item>
               <item>
                <widget class="QFrame" name="frame_24">
+                <property name="styleSheet">
+                 <string notr="true">QLabel{
+	font-family:&quot;Rubik Mono One&quot;;
+	color:rgb(39, 39, 39);
+
+}</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -8167,6 +8184,18 @@ QPushButton:hover{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_35">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
                  <item>
                   <widget class="QLabel" name="pageHeader5">
                    <property name="sizePolicy">
@@ -8229,6 +8258,15 @@ QPushButton:hover{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_36">
+                 <property name="spacing">
+                  <number>20</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>20</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>20</number>
+                 </property>
                  <item>
                   <widget class="QFrame" name="reviewClient">
                    <property name="sizePolicy">
@@ -8638,6 +8676,12 @@ QPushButton:hover{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_33">
+                 <property name="leftMargin">
+                  <number>20</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>20</number>
+                 </property>
                  <item>
                   <widget class="QPushButton" name="pushButton_2">
                    <property name="text">
