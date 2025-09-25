@@ -2,10 +2,13 @@ import os
 import sys
 
 # Get the Desktop_Application directory (one level up from frontend/)
-desktop_app_dir = os.path.dirname(os.path.abspath(__file__))  # frontend/
-desktop_app_dir = os.path.dirname(desktop_app_dir)  # Desktop_Application/
+current_file_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_file_dir)  # Go up from frontend to Desktop_Application
+project_root = os.path.dirname(project_root)      # Go up to the actual project root
 
-sys.path.insert(0, desktop_app_dir)
+# Add to path
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox

@@ -2,8 +2,13 @@ import os
 import sys
 
 # ETO ANG SAGGOT
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, project_root)
+current_file_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_file_dir)  # Go up from frontend to Desktop_Application
+project_root = os.path.dirname(project_root)      # Go up to the actual project root
+
+# Add to path
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit,QPushButton
 from PyQt6 import uic
