@@ -1,5 +1,6 @@
 import requests
 
+
 BASE_URL = "http://127.0.0.1:8000/api"   # later change to your real server url
 
 def add_new_patient(data):
