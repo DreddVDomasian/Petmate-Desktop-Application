@@ -74,6 +74,7 @@ class MainUI(QMainWindow):
         self.Bday.setMaximumDate(QDate.currentDate())
 
         self.duplicateDialog = None
+        self.ignore_duplicates = False
 
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
@@ -631,19 +632,19 @@ class MainUI(QMainWindow):
             toast.show_toast()
             return
 
-        duplicates = self.check_duplicate_patient(data)
-        if duplicates:
-            if self.duplicateDialog is None:
-                # create once
-                self.duplicateDialog = DuplicateDialog(duplicates, parent=self,main_window=self)
-                # reset reference when closed
-                self.duplicateDialog.destroyed.connect(lambda: setattr(self, "duplicateDialog", None))
-            else:
-                # just update contents if it already exists
-                self.duplicateDialog.populate_cards(duplicates)
+        if not self.ignore_duplicates:
+            duplicates = self.check_duplicate_patient(data)
+            if duplicates:
+                if self.duplicateDialog is None:
+                    self.duplicateDialog = DuplicateDialog(duplicates, parent=self, main_window=self)
+                    self.duplicateDialog.destroyed.connect(lambda: setattr(self, "duplicateDialog", None))
+                else:
+                    self.duplicateDialog.populate_cards(duplicates)
 
-            self.duplicateDialog.show_modal()
-            return
+                self.duplicateDialog.show_modal()
+                return
+
+        self.ignore_duplicates = False
 
         # proceed to save patient
         if add_new_patient(data):

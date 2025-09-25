@@ -22,7 +22,8 @@ class DuplicateDialog(QWidget):
 
         #CancelBTN
         self.CancelBtn.clicked.connect(self.reject_dialog)
-
+        #add anyway
+        self.AddAnywayBtn.clicked.connect(self.add_anyway)
         if parent:
             parent.installEventFilter(self)
     def reject_dialog(self):
@@ -109,6 +110,13 @@ class DuplicateDialog(QWidget):
     def update_duplicate(self, updateId):
         self.close()
         self.main_window.updateFunction.update_patient_info(updateId)
+
+    def add_anyway(self):
+        if self.main_window:
+            self.main_window.ignore_duplicates = True
+            self.close()
+            # re-run submit_data with the same form
+            self.main_window.submit_data()
 
 
     def populate_pets(self, layout, pets):
