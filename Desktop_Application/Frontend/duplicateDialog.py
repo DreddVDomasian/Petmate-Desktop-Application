@@ -5,8 +5,9 @@ from shadowEffects import *
 
 
 class DuplicateDialog(QWidget):
-    def __init__(self, duplicates, parent=None):
+    def __init__(self, duplicates, parent=None, main_window=None):
         super().__init__(parent)
+        self.main_window = main_window
         uic.loadUi("duplicateDialog.ui", self)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
 
@@ -83,6 +84,8 @@ class DuplicateDialog(QWidget):
             card.address.setText(full_address)
             card.contactNo.setText(contactNumbers)
 
+            card.duplicateUpdateBtn.clicked.connect(lambda _, updateId = patient['id']: self.update_duplicate(updateId))
+
             # ---- Handle pets scroll area ----
             # Get the container widget from your duplicateCard.ui
             pets_container = card.petsScrollAreaWidgetContents
@@ -102,6 +105,11 @@ class DuplicateDialog(QWidget):
 
         # Add stretch at the bottom (optional for spacing)
         self.duplicateListLayout.addStretch()
+
+    def update_duplicate(self, updateId):
+        self.close()
+        self.main_window.updateFunction.update_patient_info(updateId)
+
 
     def populate_pets(self, layout, pets):
         # Clear old labels

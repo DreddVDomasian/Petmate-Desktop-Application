@@ -23,7 +23,7 @@ default_combobox_style = """
                 font-weight: 57;
                 color:rgb(39, 39, 39);
                 padding-left: 10px;
-                background-color:rgb(229, 229, 229);
+                background-color:rgb(245, 245, 245);;
             }
             QComboBox QLineEdit {
                 font-family: "Montserrat Medium";

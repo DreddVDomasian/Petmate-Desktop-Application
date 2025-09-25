@@ -46,7 +46,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="duplicateUpdateBtn">
            <property name="styleSheet">
             <string notr="true">QPushButton{
 	font: 57 11pt &quot;Montserrat Medium&quot;;
@@ -231,8 +231,8 @@ QScrollArea QScrollBar::groove:horizontal {
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-22</y>
-                 <width>392</width>
+                 <y>0</y>
+                 <width>385</width>
                  <height>132</height>
                 </rect>
                </property>

@@ -467,7 +467,6 @@ class MainUI(QMainWindow):
                 inner_line_edit.setGraphicsEffect(None)  # remove shadow from text
             dateEdit.setGraphicsEffect(create_card_shadow())
 
-
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
         self.petProfileCard.setGraphicsEffect(create_card_shadow())
@@ -636,7 +635,7 @@ class MainUI(QMainWindow):
         if duplicates:
             if self.duplicateDialog is None:
                 # create once
-                self.duplicateDialog = DuplicateDialog(duplicates, parent=self)
+                self.duplicateDialog = DuplicateDialog(duplicates, parent=self,main_window=self)
                 # reset reference when closed
                 self.duplicateDialog.destroyed.connect(lambda: setattr(self, "duplicateDialog", None))
             else:
@@ -1171,6 +1170,7 @@ class MainUI(QMainWindow):
 
         label.setFixedSize(new_w, new_h)
         label.setScaledContents(True)
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)

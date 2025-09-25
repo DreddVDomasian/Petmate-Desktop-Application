@@ -23,7 +23,7 @@ import requests
 class AddAppointmentCard(QWidget):
     def __init__(self, parent=None, main_window=None):
         super().__init__(parent)
-        self.main_window = main_window  # keep reference
+        self.main_window = main_window
         uic.loadUi("addAppointmentCard.ui", self)
         #pending layout
         self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
