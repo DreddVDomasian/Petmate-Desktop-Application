@@ -475,6 +475,21 @@ class MainUI(QMainWindow):
         self.reviewClient.setGraphicsEffect(create_card_shadow())
         self.reviewPet.setGraphicsEffect(create_card_shadow())
 
+        self.reviewPet.setGraphicsEffect(create_card_shadow())
+
+        #PAGE HEADER
+        self.pageHeader1.setGraphicsEffect(create_card_shadow())
+        self.pageHeader2.setGraphicsEffect(create_card_shadow())
+        self.pageHeader3.setGraphicsEffect(create_card_shadow())
+        self.pageHeader4.setGraphicsEffect(create_card_shadow())
+        self.pageHeader5.setGraphicsEffect(create_card_shadow())
+        #ADD PATIENT PAGE
+        self.label_4.setGraphicsEffect(create_card_shadow())
+        self.label_15.setGraphicsEffect(create_card_shadow())
+        #APPOINTMENT PAGE
+        self.walkInBtn.setGraphicsEffect(create_card_shadow())
+        self.websiteBtn.setGraphicsEffect(create_card_shadow())
+
     def set_current_month_in_combobox(self):
         self.monthComboBox.setGraphicsEffect(create_card_shadow())
         current_month = datetime.now().strftime("%B")

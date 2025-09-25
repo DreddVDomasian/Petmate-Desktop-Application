@@ -17,7 +17,6 @@ default_style = """
 
 default_combobox_style = """
             QComboBox {
-                border: 2px solid rgb(229, 229, 229);
                 border-radius: 10px;
                 font-family: "Montserrat Medium";
                 font-weight: 57;
