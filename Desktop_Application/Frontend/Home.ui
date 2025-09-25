@@ -548,7 +548,7 @@ QToolButton:hover{
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="homepage">
           <property name="styleSheet">
@@ -2345,7 +2345,7 @@ QPushButton:checked {
                 </layout>
                </widget>
               </item>
-              <item>
+              <item alignment="Qt::AlignVCenter">
                <widget class="QFrame" name="searchframe_2">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2362,6 +2362,18 @@ QPushButton:checked {
                  </property>
                  <property name="sizeConstraint">
                   <enum>QLayout::SetDefaultConstraint</enum>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
                  </property>
                  <item>
                   <widget class="QLineEdit" name="searchBar_2">
@@ -3016,7 +3028,7 @@ QScrollArea QScrollBar::groove:horizontal {
                         <x>0</x>
                         <y>0</y>
                         <width>100</width>
-                        <height>383</height>
+                        <height>30</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -8528,6 +8540,15 @@ color:rgb(0, 0, 0);</string>
                     <enum>QFrame::Raised</enum>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_47">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>17</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>17</number>
+                    </property>
                     <item>
                      <widget class="QFrame" name="frame_37">
                       <property name="frameShape">
@@ -8589,6 +8610,9 @@ color:rgb(0, 0, 0);</string>
                        <enum>QFrame::Raised</enum>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_70">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
                        <property name="leftMargin">
                         <number>0</number>
                        </property>
@@ -8610,9 +8634,6 @@ color:rgb(0, 0, 0);</string>
                           <enum>QFrame::Raised</enum>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_62">
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
                           <property name="topMargin">
                            <number>0</number>
                           </property>
