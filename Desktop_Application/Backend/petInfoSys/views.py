@@ -444,3 +444,43 @@ def get_appointment_detail(request, pk):
 
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+@csrf_exempt
+def update_appointment_status(request, pk):
+    """Update only the status of an appointment"""
+    if request.method == "PATCH":
+        try:
+            appointment = AppointmentType.objects.get(pk=pk)
+            data = json.loads(request.body.decode("utf-8"))
+
+            new_status = data.get("status")
+            if not new_status:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Missing 'status' field"
+                }, status=400)
+
+            appointment.status = new_status
+            appointment.save()
+
+            return JsonResponse({
+                "status": "success",
+                "message": f"Appointment {pk} status updated to {new_status}"
+            })
+
+        except AppointmentType.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": f"Appointment with id {pk} not found."
+            }, status=404)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+    return JsonResponse({
+        "status": "error",
+        "message": "Only PATCH method is allowed"
+    }, status=405)

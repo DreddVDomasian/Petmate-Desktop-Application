@@ -624,7 +624,7 @@ QToolButton:hover{
           <bool>true</bool>
          </property>
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1165,7 +1165,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2674,7 +2674,7 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>848</width>
+                   <width>850</width>
                    <height>506</height>
                   </rect>
                  </property>
@@ -3644,7 +3644,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
+                           <width>850</width>
                            <height>383</height>
                           </rect>
                          </property>
@@ -4112,7 +4112,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>830</width>
+                           <width>832</width>
                            <height>440</height>
                           </rect>
                          </property>
@@ -4938,7 +4938,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>846</width>
+                          <width>848</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -9704,7 +9704,7 @@ color:rgb(0, 0, 0);</string>
                   </widget>
                  </item>
                  <item alignment="Qt::AlignHCenter">
-                  <widget class="QFrame" name="frame_22">
+                  <widget class="QFrame" name="AcceptDeclineFrame">
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
 	font: 57 14pt &quot;Montserrat Medium&quot;;
@@ -9732,7 +9732,7 @@ QPushButton:hover{
                      <number>20</number>
                     </property>
                     <item>
-                     <widget class="QPushButton" name="pushButton_2">
+                     <widget class="QPushButton" name="acceptAppointmentBtn">
                       <property name="minimumSize">
                        <size>
                         <width>260</width>
@@ -9745,7 +9745,7 @@ QPushButton:hover{
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton_3">
+                     <widget class="QPushButton" name="declineAppointmentBtn">
                       <property name="minimumSize">
                        <size>
                         <width>260</width>

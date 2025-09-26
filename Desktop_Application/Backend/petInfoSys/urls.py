@@ -30,4 +30,6 @@ urlpatterns = [
 
     path('appointments/', views.get_appointments, name='get_appointments'),
     path('appointments/<int:pk>/', views.get_appointment_detail, name='appointment-detail'),
+    path('appointments/<int:pk>/statusUpdate/', views.update_appointment_status, name='update_appointment_status'),
+
 ]

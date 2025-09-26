@@ -345,10 +345,14 @@ class AddAppointmentCard(QWidget):
                 self.pendingWebLayout.addWidget(card)
             elif status == "accepted":
                 self.acceptedWebLayout.addWidget(card)
+                self.main_window.AcceptDeclineFrame.setVisible(False)
             elif status == "declined":
                 self.declinedWebLayout.addWidget(card)
+                self.main_window.AcceptDeclineFrame.setVisible(False)
 
             card.ReviewButton.clicked.connect(lambda _, a=appoint, date=dateAndTime: self.show_review_page(a,date))
+
+
 
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
@@ -386,6 +390,39 @@ class AddAppointmentCard(QWidget):
         self.main_window.ReviewPetIcon.setPixmap(QPixmap(icon_path))
 
 
+        try:
+            self.main_window.acceptAppointmentBtn.clicked.disconnect()
+            self.main_window.declineAppointmentBtn.clicked.disconnect()
+        except TypeError:
+            pass
+
+
+        self.main_window.acceptAppointmentBtn.clicked.connect(lambda _, r_id=appoint['id']: self.accepted_booking(r_id))
+        self.main_window.declineAppointmentBtn.clicked.connect(lambda _, r_id=appoint['id']: self.declined_booking(r_id))
+
+    def accepted_booking(self, review_id):
+        url = f"http://127.0.0.1:8000/api/appointments/{review_id}/statusUpdate/"
+        response = requests.patch(url, json={"status": "accepted"})
+        if response.status_code in [200, 202]:
+            self.web_Appointment()
+            self.main_window.navigate_to_page(3)
+            self.main_window.walkInOrWeb.setCurrentIndex(1)
+            self.main_window.webAppointmentStackWidget.setCurrentIndex(1)
+            self.main_window.AcceptedBtn.setChecked(True)
+        else:
+            print("Failed:", response.text)
+
+    def declined_booking(self, review_id):
+        url = f"http://127.0.0.1:8000/api/appointments/{review_id}/statusUpdate/"
+        response = requests.patch(url, json={"status": "declined"})
+        if response.status_code in [200, 202]:
+            self.web_Appointment()
+            self.main_window.navigate_to_page(3)
+            self.main_window.walkInOrWeb.setCurrentIndex(1)
+            self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
+            self.main_window.DeclinedBtn.setChecked(True)
+        else:
+            print("Failed:", response.text)
 
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
