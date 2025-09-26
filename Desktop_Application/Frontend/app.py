@@ -256,7 +256,7 @@ class MainUI(QMainWindow):
     def slide_in_sideNav(self):
         # Animate MiniNav sliding out
         mini_anim = QPropertyAnimation(self.MiniNav, b"maximumWidth", self)
-        mini_anim.setDuration(600)
+        mini_anim.setDuration(500)
         mini_anim.setStartValue(self.MiniNav.width())
         mini_anim.setEndValue(0)
         mini_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
@@ -281,7 +281,7 @@ class MainUI(QMainWindow):
     def slide_out_sideNav(self):
         # Animate SideNav width 500 → 0
         anim = QPropertyAnimation(self.sideNav, b"maximumWidth", self)
-        anim.setDuration(600)
+        anim.setDuration(800)
         anim.setStartValue(self.sideNav.width())
         anim.setEndValue(0)
         anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
@@ -292,7 +292,7 @@ class MainUI(QMainWindow):
             # Animate MiniNav appearing (0 → 60 for example)
             self.MiniNav.setVisible(True)
             mini_anim = QPropertyAnimation(self.MiniNav, b"maximumWidth", self)
-            mini_anim.setDuration(600)
+            mini_anim.setDuration(500)
             mini_anim.setStartValue(0)
             mini_anim.setEndValue(100)  # adjust to your mini width
             mini_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
