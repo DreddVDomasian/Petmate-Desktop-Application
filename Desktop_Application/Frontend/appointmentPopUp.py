@@ -345,10 +345,8 @@ class AddAppointmentCard(QWidget):
                 self.pendingWebLayout.addWidget(card)
             elif status == "accepted":
                 self.acceptedWebLayout.addWidget(card)
-                self.main_window.AcceptDeclineFrame.setVisible(False)
             elif status == "declined":
                 self.declinedWebLayout.addWidget(card)
-                self.main_window.AcceptDeclineFrame.setVisible(False)
 
             card.ReviewButton.clicked.connect(lambda _, a=appoint, date=dateAndTime: self.show_review_page(a,date))
 
@@ -379,6 +377,12 @@ class AddAppointmentCard(QWidget):
         self.main_window.reviewComments.setText(appoint["comments"].capitalize())
         self.main_window.reviewDateTime.setText(date)
         self.main_window.navigate_to_page(7)
+
+        status = appoint.get("status", "pending")
+        if status == "pending":
+            self.main_window.AcceptDeclineFrame.setVisible(True)
+        else:
+            self.main_window.AcceptDeclineFrame.setVisible(False)
 
         species = appoint.get("species", "").lower()
         if species == "dog":

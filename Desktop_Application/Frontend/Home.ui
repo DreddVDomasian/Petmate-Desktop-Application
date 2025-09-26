@@ -1163,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2672,8 +2672,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>850</width>
-                   <height>506</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3642,8 +3642,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>850</width>
-                           <height>383</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -4110,8 +4110,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>832</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4936,7 +4936,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>848</width>
+                          <width>100</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -8875,10 +8875,10 @@ color:rgb(0, 0, 0);</string>
                           <item alignment="Qt::AlignRight|Qt::AlignTop">
                            <widget class="QFrame" name="frame_41">
                             <property name="styleSheet">
-                             <string notr="true">background-color:rgb(242, 129, 32);
+                             <string notr="true">background-color:rgb(128, 190, 217);
 border-radius:5px;
 font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(45, 45, 45);</string>
                             </property>
                             <property name="frameShape">
                              <enum>QFrame::StyledPanel</enum>
