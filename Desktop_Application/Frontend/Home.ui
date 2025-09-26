@@ -339,7 +339,7 @@ QToolButton:checked{
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>   ADD PATIENT</string>
+                <string>   ADD CLIENT</string>
                </property>
                <property name="icon">
                 <iconset resource="resource.qrc">
@@ -489,7 +489,7 @@ QToolButton:checked{
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>   SCHEDULED RETURNS</string>
+                <string>   FOLLOW-UPS</string>
                </property>
                <property name="icon">
                 <iconset resource="resource.qrc">
@@ -1163,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1550,7 +1550,7 @@ Keeping tails wagging and hearts happy!</string>
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>PETMATE ANIMAL CLINIC</string>
+                    <string>ADD New Client</string>
                    </property>
                   </widget>
                  </item>
@@ -2475,7 +2475,7 @@ QPushButton:hover{
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>PERSONAL RECORDS</string>
+                    <string>Client Records</string>
                    </property>
                   </widget>
                  </item>
@@ -2672,8 +2672,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>841</width>
+                   <height>506</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -2787,7 +2787,7 @@ color:rgb(141, 141, 141);</string>
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>PETMATE ANIMAL CLINIC</string>
+                    <string>Pending Appointments</string>
                    </property>
                   </widget>
                  </item>
@@ -3152,7 +3152,7 @@ QPushButton:checked {
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="walkIn">
                  <property name="sizePolicy">
@@ -3642,8 +3642,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>841</width>
+                           <height>383</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -4110,8 +4110,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>823</width>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4936,7 +4936,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
+                          <width>839</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -8747,7 +8747,7 @@ QPushButton:hover{
                        <string notr="true"/>
                       </property>
                       <property name="text">
-                       <string>PETMATE ANIMAL CLINIC</string>
+                       <string>Review Appointments</string>
                       </property>
                      </widget>
                     </item>
