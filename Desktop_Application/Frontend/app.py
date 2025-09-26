@@ -273,7 +273,7 @@ class MainUI(QMainWindow):
         # Animate full nav hiding
         self.slide_in(self.sideNav, self.sideNav.width(), 0)
         # Animate mini nav expanding
-        self.slide_in(self.MiniNav, 0, 85)
+        self.slide_in(self.MiniNav, 0, 90)
         self.sideNav.setVisible(False)
 
     def make_icon_pulse(self, button):
