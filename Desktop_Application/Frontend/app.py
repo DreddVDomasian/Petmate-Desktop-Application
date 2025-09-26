@@ -254,18 +254,29 @@ class MainUI(QMainWindow):
         self.fullNavBtn.clicked.connect(self.slide_out_sideNav)
 
     def slide_in_sideNav(self):
-        # Hide MiniNav instantly
-        self.MiniNav.setVisible(False)
+        # Animate MiniNav sliding out
+        mini_anim = QPropertyAnimation(self.MiniNav, b"maximumWidth", self)
+        mini_anim.setDuration(600)
+        mini_anim.setStartValue(self.MiniNav.width())
+        mini_anim.setEndValue(0)
+        mini_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
-        # Show SideNav and animate width 0 → 500
-        self.sideNav.setVisible(True)
-        anim = QPropertyAnimation(self.sideNav, b"maximumWidth", self)
-        anim.setDuration(800)
-        anim.setStartValue(0)
-        anim.setEndValue(500)
-        anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
-        anim.start()
-        self._anim = anim  # keep reference
+        # When MiniNav finished sliding out, hide it and slide in SideNav
+        def after_mini():
+            self.MiniNav.setVisible(False)
+            self.sideNav.setVisible(True)
+
+            side_anim = QPropertyAnimation(self.sideNav, b"maximumWidth", self)
+            side_anim.setDuration(800)
+            side_anim.setStartValue(0)
+            side_anim.setEndValue(500)  # full width
+            side_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
+            side_anim.start()
+            self._anim_side = side_anim  # keep reference
+
+        mini_anim.finished.connect(after_mini)
+        mini_anim.start()
+        self._anim_mini = mini_anim  # keep reference
 
     def slide_out_sideNav(self):
         # Animate SideNav width 500 → 0
@@ -538,6 +549,8 @@ class MainUI(QMainWindow):
         #nav
         self.sideNav.setGraphicsEffect(navShadow())
         self.MiniNav.setGraphicsEffect(navShadow())
+        #main content
+        self.MainContent.setGraphicsEffect(navShadow())
         #PAGE HEADER
         self.pageHeader1.setGraphicsEffect(create_card_shadow())
         self.pageHeader2.setGraphicsEffect(create_card_shadow())

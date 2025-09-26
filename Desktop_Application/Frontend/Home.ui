@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1289</width>
+    <width>1280</width>
     <height>720</height>
    </rect>
   </property>
@@ -65,7 +65,7 @@
      <number>15</number>
     </property>
     <property name="rightMargin">
-     <number>15</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
      <number>15</number>
@@ -74,7 +74,7 @@
      <widget class="QFrame" name="underFrame">
       <property name="styleSheet">
        <string notr="true">#underFrame{
-	background-color:rgb(255, 255, 255);
+	background-color:transparent;
 	border-radius:15px;
 }
 </string>
@@ -96,7 +96,7 @@
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>15</number>
        </property>
        <property name="bottomMargin">
         <number>2</number>
@@ -114,7 +114,7 @@
          </property>
          <property name="styleSheet">
           <string notr="true">#sideNav{
-	background-color:rgb(240, 240, 240);
+	background-color:rgb(255, 255, 255);
 	border:none;
     border-radius: 15px;
 
@@ -637,7 +637,7 @@ QToolButton:hover{
          </property>
          <property name="styleSheet">
           <string notr="true">#MiniNav{
-	background-color:rgb(240, 240, 240);
+	background-color:rgb(255, 255, 255);
 	border:none;
 	border-radius: 15px;
 }</string>
@@ -682,7 +682,7 @@ QToolButton:hover{
              <property name="bottomMargin">
               <number>20</number>
              </property>
-             <item>
+             <item alignment="Qt::AlignRight">
               <widget class="QPushButton" name="miniNavBtn">
                <property name="styleSheet">
                 <string notr="true">border:none;</string>
@@ -1140,10 +1140,8 @@ QToolButton:hover{
          <property name="styleSheet">
           <string notr="true">#MainContent{
 	background-color:white;
-	border-top-left-radius: 0px;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
-    border-bottom-left-radius: 0px;
+    border-radius: 15px;
+
 }</string>
          </property>
          <property name="frameShape">
@@ -1165,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
