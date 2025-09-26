@@ -39,7 +39,11 @@ class MainUI(QMainWindow):
         uic.loadUi("Home.ui", self)
         #to delete.py
         self.deleteFunction = Delete(self)
+
         self.updateFunction = Update(self)
+        #nav
+        self.sideNav.setVisible(False)
+
         self.setup_calendar()
         self.setup_comboboxes()
         self.setup_layouts()
@@ -143,6 +147,18 @@ class MainUI(QMainWindow):
 
         self.homeBtn.setChecked(True)
 
+        nav_2 = [
+            (self.homeBtn_2, 0), (self.addPatientBtn_2, 1), (self.petRecordsBtn_2, 2),
+            (self.appointmentBtn_2, 3), (self.schedVaxBtn_2, 4)
+        ]
+        self.navBtnGroup_2 = QButtonGroup(self)
+        self.navBtnGroup_2.setExclusive(True)
+        for btn_2, index in nav_2:
+            btn_2.setCheckable(True)
+            self.navBtnGroup_2.addButton(btn_2)
+
+        self.homeBtn_2.setChecked(True)
+
         self.page_to_nav_button = {
             0: self.homeBtn,
             1: self.addPatientBtn,
@@ -232,6 +248,33 @@ class MainUI(QMainWindow):
 
         #reminder pop up
         self.make_icon_pulse(self.reminderBtn)
+
+        #nav
+        self.miniNavBtn.clicked.connect(self.show_Sidenav)
+        self.fullNavBtn.clicked.connect(self.show_Mininav)
+
+    def slide_in(self, widget, start_width, end_width):
+        widget.setVisible(True)
+        anim = QPropertyAnimation(widget, b"maximumWidth")
+        anim.setDuration(300)
+        anim.setStartValue(start_width)
+        anim.setEndValue(end_width)
+        anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        anim.start()
+        self._anim = anim  # keep reference
+
+    def show_Sidenav(self):
+        # Animate mini nav hiding
+        # Animate full nav expanding
+        self.slide_in(self.sideNav, 0, 500)
+        self.MiniNav.setVisible(False)
+
+    def show_Mininav(self):
+        # Animate full nav hiding
+        self.slide_in(self.sideNav, self.sideNav.width(), 0)
+        # Animate mini nav expanding
+        self.slide_in(self.MiniNav, 0, 85)
+        self.sideNav.setVisible(False)
 
     def make_icon_pulse(self, button):
         # Lock button size so layout won’t move
@@ -476,7 +519,9 @@ class MainUI(QMainWindow):
         self.reviewPet.setGraphicsEffect(create_card_shadow())
 
         self.reviewPet.setGraphicsEffect(create_card_shadow())
-
+        #nav
+        self.sideNav.setGraphicsEffect(navShadow())
+        self.MiniNav.setGraphicsEffect(navShadow())
         #PAGE HEADER
         self.pageHeader1.setGraphicsEffect(create_card_shadow())
         self.pageHeader2.setGraphicsEffect(create_card_shadow())
@@ -566,7 +611,7 @@ class MainUI(QMainWindow):
             if index in self.page_to_nav_button:
                 self.page_to_nav_button[index].setChecked(True)
 
-            # Load page data if needed
+                # Load page data if needed
             if index == 5 and "owner_id" in params:
                 self.load_pets_for_owner(params["owner_id"])
             elif index == 8 and "pet_id" in params:
@@ -1095,10 +1140,9 @@ class MainUI(QMainWindow):
             icon_path = "Icons/catIcon.png"
         else:
             icon_path = "Icons/otherSpecies.png"
+        self.petProfileIcon.setPixmap(QPixmap(icon_path))
 
         self.reminderBtn.clicked.connect(lambda: self.open_reminderPopup())
-
-        self.petProfileIcon.setPixmap(QPixmap(icon_path))
         # Keep track of which pet is selected
         self.selected_pet_id = pet["id"]
         self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))

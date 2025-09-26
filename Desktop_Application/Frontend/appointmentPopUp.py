@@ -12,6 +12,7 @@ if project_root not in sys.path:
 
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox
+from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate
 from input_styles import *
 from  shadowEffects import *
@@ -285,6 +286,25 @@ class AddAppointmentCard(QWidget):
             if layout.count() == 0:
                 self.add_empty_label(layout)
 
+    def cancelled_appointment(self,appointment_id):
+        self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
+        self.main_window.confirmCard.show_card()
+        def clicked_yes():
+            url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+            if url:
+                response = requests.patch(url, json={"status": "cancelled"})
+                if response.status_code in [200, 202]:
+                    print("Reminder marked as cancelled")
+                    self.main_window.appointmentCard.load_walkInAppointments()
+                else:
+                    print("Failed:", response.text)
+            self.main_window.confirmCard.hide()
+        def clicked_no():
+            self.main_window.confirmCard.hide()
+
+        self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
+        self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
+
     def web_Appointment(self):
         response = requests.get("http://127.0.0.1:8000/api/appointments/")
         if response.status_code == 200:
@@ -356,24 +376,16 @@ class AddAppointmentCard(QWidget):
         self.main_window.reviewDateTime.setText(date)
         self.main_window.navigate_to_page(7)
 
-    def cancelled_appointment(self,appointment_id):
-        self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
-        self.main_window.confirmCard.show_card()
-        def clicked_yes():
-            url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
-            if url:
-                response = requests.patch(url, json={"status": "cancelled"})
-                if response.status_code in [200, 202]:
-                    print("Reminder marked as cancelled")
-                    self.main_window.appointmentCard.load_walkInAppointments()
-                else:
-                    print("Failed:", response.text)
-            self.main_window.confirmCard.hide()
-        def clicked_no():
-            self.main_window.confirmCard.hide()
+        species = appoint.get("species", "").lower()
+        if species == "dog":
+            icon_path = "Icons/dog.png"
+        elif species == "cat":
+            icon_path = "Icons/catIcon.png"
+        else:
+            icon_path = "Icons/otherSpecies.png"
+        self.main_window.ReviewPetIcon.setPixmap(QPixmap(icon_path))
 
-        self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
-        self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
+
 
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)

@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/hideNav.png</file>
+    <file>Icons/showNav.png</file>
+    <file>Icons/menu.png</file>
     <file>Icons/checklist.png</file>
     <file>Icons/cancel.png</file>
     <file>Icons/close.png</file>
@@ -13,14 +16,14 @@
     <file>Icons/Profileback.png</file>
     <file>Icons/AddIconAppointment.png</file>
     <file>Icons/delete.png</file>
-    <file>Icons/AddIcon.png</file>
-    <file>Icons/AppointmentIcon.png</file>
     <file>Icons/check.png</file>
     <file>Icons/downArrow.png</file>
-    <file>Icons/home.png</file>
     <file>Icons/logOutIcon.png</file>
-    <file>Icons/petDetailsIcon.png</file>
     <file>Icons/printIcon.png</file>
+    <file>Icons/AddAppointment.png</file>
+    <file>Icons/addPatient.png</file>
+    <file>Icons/home.png</file>
+    <file>Icons/Records.png</file>
     <file>Icons/RecordsIcon.png</file>
     <file>Icons/right-arrow.png</file>
     <file>Icons/schedVax.png</file>
@@ -32,6 +35,7 @@
     <file>Icons/warning.png</file>
   </qresource>
   <qresource prefix="/images">
+    <file>image/Dog.png</file>
     <file>image/desktopIcon.png</file>
     <file>image/image 1.png</file>
     <file>image/navImg.png</file>

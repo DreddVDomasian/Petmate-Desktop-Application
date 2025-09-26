@@ -9,7 +9,7 @@ def create_card_shadow(blur_radius=5, x_offset=3, y_offset=4, color=QColor(0, 0,
     shadow.setColor(color)
     return shadow
 
-
-
+def navShadow():
+    return  create_card_shadow(blur_radius=13, x_offset=7, y_offset=0, color=QColor(0, 0, 0, 40))
 def inputShadowEffect():
     return create_card_shadow(blur_radius=3, x_offset=2, y_offset=2, color=QColor(0, 0, 0, 60))
