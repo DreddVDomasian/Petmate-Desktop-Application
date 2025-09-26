@@ -12,7 +12,7 @@ if project_root not in sys.path:
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit,QPushButton
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize
+from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize,QParallelAnimationGroup
 from PyQt6.QtGui import QFontDatabase, QPixmap
 from uiLogic import UIHandler
 from input_styles import *
@@ -250,31 +250,47 @@ class MainUI(QMainWindow):
         self.make_icon_pulse(self.reminderBtn)
 
         #nav
-        self.miniNavBtn.clicked.connect(self.show_Sidenav)
-        self.fullNavBtn.clicked.connect(self.show_Mininav)
+        self.miniNavBtn.clicked.connect(self.slide_in_sideNav)
+        self.fullNavBtn.clicked.connect(self.slide_out_sideNav)
 
-    def slide_in(self, widget, start_width, end_width):
-        widget.setVisible(True)
-        anim = QPropertyAnimation(widget, b"maximumWidth")
-        anim.setDuration(300)
-        anim.setStartValue(start_width)
-        anim.setEndValue(end_width)
+    def slide_in_sideNav(self):
+        # Hide MiniNav instantly
+        self.MiniNav.setVisible(False)
+
+        # Show SideNav and animate width 0 → 500
+        self.sideNav.setVisible(True)
+        anim = QPropertyAnimation(self.sideNav, b"maximumWidth", self)
+        anim.setDuration(800)
+        anim.setStartValue(0)
+        anim.setEndValue(500)
         anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
         anim.start()
         self._anim = anim  # keep reference
 
-    def show_Sidenav(self):
-        # Animate mini nav hiding
-        # Animate full nav expanding
-        self.slide_in(self.sideNav, 0, 500)
-        self.MiniNav.setVisible(False)
+    def slide_out_sideNav(self):
+        # Animate SideNav width 500 → 0
+        anim = QPropertyAnimation(self.sideNav, b"maximumWidth", self)
+        anim.setDuration(600)
+        anim.setStartValue(self.sideNav.width())
+        anim.setEndValue(0)
+        anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
 
-    def show_Mininav(self):
-        # Animate full nav hiding
-        self.slide_in(self.sideNav, self.sideNav.width(), 0)
-        # Animate mini nav expanding
-        self.slide_in(self.MiniNav, 0, 90)
-        self.sideNav.setVisible(False)
+        def finish():
+            # Hide SideNav after animation
+            self.sideNav.setVisible(False)
+            # Animate MiniNav appearing (0 → 60 for example)
+            self.MiniNav.setVisible(True)
+            mini_anim = QPropertyAnimation(self.MiniNav, b"maximumWidth", self)
+            mini_anim.setDuration(600)
+            mini_anim.setStartValue(0)
+            mini_anim.setEndValue(100)  # adjust to your mini width
+            mini_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
+            mini_anim.start()
+            self._anim2 = mini_anim  # keep reference
+
+        anim.finished.connect(finish)
+        anim.start()
+        self._anim = anim  # keep reference
 
     def make_icon_pulse(self, button):
         # Lock button size so layout won’t move

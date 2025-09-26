@@ -629,12 +629,6 @@ QToolButton:hover{
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>85</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="maximumSize">
           <size>
            <width>100</width>
@@ -1171,7 +1165,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
