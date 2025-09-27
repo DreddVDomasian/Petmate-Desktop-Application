@@ -1311,6 +1311,55 @@ class MainUI(QMainWindow):
             self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
         self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
 
+    from datetime import datetime
+    import requests
+
+    def selected_sched_monthly(self):
+        selected_month = self.monthComboBox.currentText()
+        self.load_monthly_scheduled(selected_month)
+
+    def load_monthly_scheduled(self, month):
+            url = "http://127.0.0.1:8000/api/walkIn/"
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, dict) and "appointments" in data:
+                    appointments = data["appointments"]
+                else:
+                    appointments = data
+            else:
+                appointments = []
+
+            for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout]:
+                while layout.count():
+                        child = layout.takeAt(0)
+                        if child.widget():
+                            child.widget().deleteLater()
+            for appointment in appointments:
+                    card = uic.loadUi("returnCard.ui")
+                    card.ownerName.setText(appointment["client_name"].title())
+                    raw_datetime = appointment.get("appointment_datetime", "")
+                    parts = raw_datetime.split(" ", 1)  # ["2025-09-18", "9:00 AM"]
+                    date_only = parts[0]
+                    time_only = parts[1] if len(parts) > 1 else ""
+                    # Format the date
+                    formatted_date = self.format_date(date_only)
+                    # date + time
+                    dateAndTime = f"{formatted_date}   {time_only}"
+
+                    card.DateTime.setText(dateAndTime)
+
+                    card.setGraphicsEffect(create_card_shadow())
+                    status = appointment.get("status","pending")
+
+                    if status == "pending":
+                        self.pendingLayout.addWidget(card)
+                    elif status == "accepted":
+                        self.completedLayout.addWidget(card)
+                    elif status == "declined":
+                        self.overdueLayout.addWidget(card)
+    
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
