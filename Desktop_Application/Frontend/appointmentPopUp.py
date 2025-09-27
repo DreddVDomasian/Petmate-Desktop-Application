@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox
+from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox,QApplication
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate
 from input_styles import *
@@ -26,26 +26,39 @@ class AddAppointmentCard(QWidget):
         super().__init__(parent)
         self.main_window = main_window
         uic.loadUi("addAppointmentCard.ui", self)
+
+        self.is_loading_pending = False
         #pending layout
         self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
         self.pendingLayout.setSpacing(10)
         self.pendingLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        scroll = self.main_window.walkInScrollArea.verticalScrollBar()
+        scroll.valueChanged.connect(self.check_pending_scroll)
 
         # completed layout
         self.completedLayout = self.main_window.completedScrollAreaWidgetContents.layout()
         self.completedLayout.setSpacing(10)
         self.completedLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+        scrollComplete = self.main_window.scrollArea_4.verticalScrollBar()
+        scrollComplete.valueChanged.connect(self.check_pending_scroll)
+
         # overdue layout
         self.overdueLayout = self.main_window.overdueScrollAreaWidgetContents.layout()
         self.overdueLayout.setSpacing(10)
         self.overdueLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        scrollOverdue = self.main_window.scrollArea_5.verticalScrollBar()
+        scrollOverdue.valueChanged.connect(self.check_pending_scroll)
 
         # cancelled layout
         self.cancelledLayout = self.main_window.cancelledScrollAreaWidgetContents.layout()
         self.cancelledLayout.setSpacing(10)
         self.cancelledLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+        scrollCancelled = self.main_window.scrollArea_6.verticalScrollBar()
+        scrollCancelled.valueChanged.connect(self.check_pending_scroll)
 
 
         #Web Appointment
@@ -82,7 +95,7 @@ class AddAppointmentCard(QWidget):
         self.addAppointmentBtn.clicked.connect(self.submit_appointment_data)
 
         # load data
-        self.load_walkInAppointments()
+        self.load_walkInAppointments_pending(page=1, page_size=10)
         self.web_Appointment()
 
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
@@ -125,17 +138,17 @@ class AddAppointmentCard(QWidget):
                 self.move(x, y)
         return super().eventFilter(obj, event)
 
-    def load_patients_to_combobox(self):
-        response = requests.get("http://127.0.0.1:8000/api/patients/")
+    def load_patients_to_combobox(self, page_size=150):
+        response = requests.get(f"http://127.0.0.1:8000/api/patients/?page_size={page_size}")
         if response.status_code == 200:
-            patients = response.json()
+            data = response.json()
+            patients = data.get("results", [])
             self.selectPatientPopUp.clear()
             self.selectPatientPopUp.addItem("", None)
             for patient in patients:
-                parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
-                full_name = " ".join(p for p in parts if p)
+                full_name = " ".join(
+                    p for p in [patient['firstName'], patient.get('middleName'), patient['lastName']] if p)
                 self.selectPatientPopUp.addItem(full_name, patient['id'])
-
             self.set_dynamic_completer(self.selectPatientPopUp)
         else:
             print("Failed to load patients")
@@ -231,22 +244,42 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
 
-    def load_walkInAppointments(self):
-        response = requests.get("http://127.0.0.1:8000/api/walkIn/")
+    #PENDING LAZY LOADING
+    def load_walkInAppointments_pending(self, page=1, page_size=10):
+        url = f"http://127.0.0.1:8000/api/walkIn/?status=pending&page={page}&page_size={page_size}"
+        response = requests.get(url)
+
         if response.status_code == 200:
-            walkInAppointments = response.json()
+            data = response.json()
+            appts = data.get("results", [])
+            self.pending_total = data.get("count", 0)
+            self.pending_next_url = data.get("next")
+            self.pending_prev_url = data.get("previous")
         else:
-            walkInAppointments = []
+            appts = []
+            self.pending_total = 0
+            self.pending_next_url = None
+            self.pending_prev_url = None
 
-        # 🧹 clear all layouts before adding new cards
-        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
-            while layout.count():
-                child = layout.takeAt(0)
-                if child.widget():
-                    child.widget().deleteLater()
+        # 🧹 clear the pending layout before adding new ones
+        while self.pendingLayout.count():
+            item = self.pendingLayout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
 
+        # add loading label at the bottom
+        self.pending_loading_label = QLabel("Loading...")
+        self.pending_loading_label.setStyleSheet("font: 12pt 'Montserrat'; color: gray;")
+        self.pending_loading_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.pending_loading_label.setVisible(False)
+        self.pendingLayout.addWidget(self.pending_loading_label)
 
-        for appt in walkInAppointments:
+        if not appts:
+            self.add_empty_label(self.pendingLayout, "NO PENDING APPOINTMENTS")
+            return
+
+        # Add the first batch of cards
+        for appt in appts:
             card = uic.loadUi("appointmentCard.ui")
             card.ownerName.setText(appt["owner_full_name"].title())
             card.petNameApp.setText(appt["petName"].capitalize())
@@ -256,35 +289,116 @@ class AddAppointmentCard(QWidget):
             time_str = appt.get("prefTime")
             if time_str:
                 time_obj = datetime.strptime(time_str, "%H:%M:%S")
-                formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")
-                card.preferredTime.setText(formatted_time)
+                card.preferredTime.setText(time_obj.strftime("%I:%M %p").lstrip("0"))
             else:
                 card.preferredTime.setText("N/A")
 
             card.setGraphicsEffect(create_card_shadow())
-
-            # 👉 decide which layout
-            status = appt.get("status", "pending")
-            appt_date = datetime.strptime(appt["date"], "%Y-%m-%d").date()
-
-            if status == "completed":
-                card.deleteButton.hide()
-                self.completedLayout.addWidget(card)
-            elif status == "cancelled":
-                card.deleteButton.hide()
-                self.cancelledLayout.addWidget(card)
-            elif status == "pending":
-                self.pendingLayout.addWidget(card)
-            elif status == "overdue":
-                self.overdueLayout.addWidget(card)
-
-            appointment_id = appt["id"]
-            card.deleteButton.clicked.connect(lambda _, a_id=appointment_id: self.cancelled_appointment(a_id))
+            card.deleteButton.clicked.connect(lambda _, a_id=appt["id"]: self.cancelled_appointment(a_id))
             card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
 
-        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
-            if layout.count() == 0:
-                self.add_empty_label(layout)
+            # Insert before loading label
+            self.pendingLayout.insertWidget(self.pendingLayout.count() - 1, card)
+
+    def check_pending_scroll(self, value):
+        scroll = self.main_window.pendingScrollArea.verticalScrollBar()
+        if not self.is_loading_pending:
+            if value == scroll.maximum() and self.pending_next_url:
+                self.load_pending_next_page()
+            elif value == scroll.minimum() and self.pending_prev_url:
+                self.load_pending_previous_page()
+
+    def load_pending_next_page(self):
+        if not self.pending_next_url:
+            return
+        self.is_loading_pending = True
+        self.pending_loading_label.setVisible(True)
+
+        try:
+            response = requests.get(self.pending_next_url)
+            if response.status_code == 200:
+                data = response.json()
+                appts = data.get("results", [])
+                self.pending_next_url = data.get("next")
+                self.pending_prev_url = data.get("previous")
+
+                for appt in appts:
+                    card = uic.loadUi("appointmentCard.ui")
+                    card.ownerName.setText(appt["owner_full_name"].title())
+                    card.petNameApp.setText(appt["petName"].capitalize())
+                    card.serviceApp.setText(appt["service_name"].capitalize())
+                    card.appDate.setText(self.main_window.format_date(appt.get("date")))
+
+                    time_str = appt.get("prefTime")
+                    if time_str:
+                        time_obj = datetime.strptime(time_str, "%H:%M:%S")
+                        card.preferredTime.setText(time_obj.strftime("%I:%M %p").lstrip("0"))
+                    else:
+                        card.preferredTime.setText("N/A")
+
+                    card.setGraphicsEffect(create_card_shadow())
+                    card.deleteButton.clicked.connect(lambda _, a_id=appt["id"]: self.cancelled_appointment(a_id))
+                    card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
+
+                    # Insert above the loading label
+                    self.pendingLayout.insertWidget(self.pendingLayout.count() - 1, card)
+
+                # 🧹 Keep only the newest 20 cards (plus loading label)
+                while self.pendingLayout.count() > 21:
+                    item = self.pendingLayout.takeAt(0)
+                    if item.widget():
+                        item.widget().deleteLater()
+        finally:
+            self.pending_loading_label.setVisible(False)
+            self.is_loading_pending = False
+
+    def load_pending_previous_page(self):
+        if not self.pending_prev_url:
+            return
+
+        self.is_loading_pending = True
+        self.pending_loading_label.setVisible(True)
+        QApplication.processEvents()
+
+        try:
+            response = requests.get(self.pending_prev_url)
+            if response.status_code == 200:
+                data = response.json()
+                appts = data.get("results", [])
+                self.pending_total = data.get("count", 0)
+                self.pending_prev_url = data.get("previous")
+                self.pending_next_url = data.get("next")
+
+                for appt in reversed(appts):
+                    card = uic.loadUi("appointmentCard.ui")
+                    card.ownerName.setText(appt["owner_full_name"].title())
+                    card.petNameApp.setText(appt["petName"].capitalize())
+                    card.serviceApp.setText(appt["service_name"].capitalize())
+                    card.appDate.setText(self.main_window.format_date(appt.get("date")))
+
+                    time_str = appt.get("prefTime")
+                    if time_str:
+                        time_obj = datetime.strptime(time_str, "%H:%M:%S")
+                        card.preferredTime.setText(time_obj.strftime("%I:%M %p").lstrip("0"))
+                    else:
+                        card.preferredTime.setText("N/A")
+
+                    card.setGraphicsEffect(create_card_shadow())
+                    card.deleteButton.clicked.connect(lambda _, a_id=appt["id"]: self.cancelled_appointment(a_id))
+                    card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
+
+                    # Insert above the loading label
+                    self.pendingLayout.insertWidget(0, card)
+
+                    # 🧹 Keep only the newest 20 cards (plus loading label)
+                while self.pendingLayout.count() > 21:
+                    item = self.pendingLayout.takeAt(self.pendingLayout.count() - 2)
+                    if item.widget():
+                        item.widget().deleteLater()
+        finally:
+            self.pending_loading_label.setVisible(False)
+            self.is_loading_pending = False
+
 
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")

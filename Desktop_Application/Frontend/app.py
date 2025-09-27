@@ -43,6 +43,12 @@ class MainUI(QMainWindow):
         self.updateFunction = Update(self)
         #nav
         self.sideNav.setVisible(False)
+        #PAGINATION FOR LAZY LOADING
+        self.current_page = 1
+        self.page_size = 10
+        self.total_patients = 0
+        self.next_page_url = None
+        self.is_loading = False
 
         self.setup_calendar()
         self.setup_comboboxes()
@@ -59,7 +65,7 @@ class MainUI(QMainWindow):
         self.selected_service_id = None
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
-        self.load_patients()
+        self.load_patients(page=1, page_size=10)
         self.load_scheduled_services()
         self.setup_shadow()
         self.setup_all_back_buttons()
@@ -105,6 +111,15 @@ class MainUI(QMainWindow):
         self.patientListLayout = self.scrollAreaWidgetContents.layout()
         self.patientListLayout.setSpacing(10)
         self.patientListLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        #loading
+        self.loading_label = QLabel("Loading...")
+        self.loading_label.setStyleSheet("font: 10pt 'Montserrat'; color: gray;")
+        self.loading_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.loading_label.setVisible(False)  # hidden until needed
+        self.patientListLayout.addWidget(self.loading_label)
+
+        scroll = self.patientScrollArea.verticalScrollBar()
+        scroll.valueChanged.connect(self.check_scroll_position)
 
         # service list layout
         self.serviceListLayout = self.serviceHistoryScrollPage.layout()
@@ -892,49 +907,164 @@ class MainUI(QMainWindow):
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
 
-    def load_patients(self):
-        response = requests.get("http://127.0.0.1:8000/api/patients/")
-        if response.status_code == 200:
-            patients = response.json()
+    def load_patients(self, page=1, page_size=10):
+        url = f"http://127.0.0.1:8000/api/patients/?page={page}&page_size={page_size}"
+        response = requests.get(url)
 
+        if response.status_code == 200:
+            data = response.json()
+            patients = data.get("results", [])
+            self.total_patients = data.get("count", 0)
+            self.next_page_url = data.get("next")
+            self.prev_page_url = data.get("previous")
         else:
             patients = []
+            self.total_patients = 0
+            self.next_page_url = None
+            self.prev_page_url = None
 
-        # 🧹 Clear existing items before adding new ones
+        # 🧹 Clear layout and add loading label back
         while self.patientListLayout.count():
-            child = self.patientListLayout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
+            item = self.patientListLayout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        self.patientListLayout.addWidget(self.loading_label)
 
         if not patients:
             empty_label = QLabel("NO RECORDS")
             empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
-            self.patientListLayout.addStretch()
-            self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-            self.patientListLayout.addStretch()
+            self.patientListLayout.insertWidget(0, empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
             return
 
+        # Add first batch of cards above the loading label
         for patient in patients:
-            parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
-            full_name = " ".join(p for p in parts if p)
             card = uic.loadUi("PatientCard.ui")
+            full_name = " ".join(
+                p for p in [patient['firstName'], patient.get('middleName'), patient['lastName']] if p
+            )
             card.nameLabel.setText(full_name.title())
             card.emailLabel.setText(patient['email'])
 
-            # Connect delete button
-            card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.deleteFunction.set_delete_target("patient", p_id))
-            card.editBtn.clicked.connect(lambda _, p_id=patient['id']: self.updateFunction.update_patient_info(p_id))
-            # Connect the card click to open profile
-            def make_handler(patient, self):
-                def handler(event):
-                    self.show_patient_profile(patient)
-
-                return handler
-
-            card.mousePressEvent = make_handler(patient, self)
-
+            # connect actions
+            p_id = patient['id']
+            card.deleteButton.clicked.connect(lambda _, pid=p_id: self.deleteFunction.set_delete_target("patient", pid))
+            card.editBtn.clicked.connect(lambda _, pid=p_id: self.updateFunction.update_patient_info(pid))
+            card.mousePressEvent = lambda event, p=patient: self.show_patient_profile(p)
             card.setGraphicsEffect(create_card_shadow())
-            self.patientListLayout.insertWidget(0, card)
+
+            # Insert above loading label
+            self.patientListLayout.insertWidget(self.patientListLayout.count() - 1, card)
+
+    def check_scroll_position(self, value):
+        scroll = self.patientScrollArea.verticalScrollBar()
+        max_val = scroll.maximum()
+        min_val = scroll.minimum()
+
+        if not self.is_loading:
+            if value == max_val and self.next_page_url:
+                # reached bottom → load next
+                self.load_next_page()
+            elif value == min_val and self.prev_page_url:
+                # reached top → load previous
+                self.load_previous_page()
+
+    def load_next_page(self):
+        if not self.next_page_url or self.is_loading:
+            return
+
+        self.is_loading = True
+        self.loading_label.setVisible(True)
+        QApplication.processEvents()  # update UI immediately
+
+        try:
+            response = requests.get(self.next_page_url)
+            if response.status_code == 200:
+                data = response.json()
+                patients = data.get("results", [])
+                self.total_patients = data.get("count", 0)
+                self.next_page_url = data.get("next")
+
+                # Add patients to layout
+                for patient in patients:
+                    card = uic.loadUi("PatientCard.ui")
+                    full_name = " ".join(
+                        p for p in [patient['firstName'], patient.get('middleName'), patient['lastName']] if p
+                    )
+                    card.nameLabel.setText(full_name.title())
+                    card.emailLabel.setText(patient['email'])
+
+                    # connect actions
+                    p_id = patient['id']
+                    card.deleteButton.clicked.connect(
+                        lambda _, pid=p_id: self.deleteFunction.set_delete_target("patient", pid))
+                    card.editBtn.clicked.connect(lambda _, pid=p_id: self.updateFunction.update_patient_info(pid))
+                    card.mousePressEvent = lambda event, p=patient: self.show_patient_profile(p)
+                    card.setGraphicsEffect(create_card_shadow())
+
+                    # Insert above loading label
+                    self.patientListLayout.insertWidget(self.patientListLayout.count() - 1, card)
+
+                # Keep only last 20 cards + loading label
+                while self.patientListLayout.count() > 21:  # 20 cards + 1 loading label
+                    item = self.patientListLayout.takeAt(0)
+                    if item and item.widget():
+                        item.widget().deleteLater()
+
+        finally:
+            self.loading_label.setVisible(False)
+            self.is_loading = False
+
+    def load_previous_page(self):
+        if not self.prev_page_url or self.is_loading:
+            return
+
+        self.is_loading = True
+        self.loading_label.setVisible(True)
+        QApplication.processEvents()
+
+        try:
+            response = requests.get(self.prev_page_url)
+            if response.status_code == 200:
+                data = response.json()
+                patients = data.get("results", [])
+                self.total_patients = data.get("count", 0)
+                self.prev_page_url = data.get("previous")
+                self.next_page_url = data.get("next")  # keep sync
+
+                # Insert new patients at the top
+                for patient in reversed(patients):  # reverse to keep correct order
+                    card = uic.loadUi("PatientCard.ui")
+                    full_name = " ".join(
+                        p for p in [patient['firstName'], patient.get('middleName'), patient['lastName']] if p
+                    )
+                    card.nameLabel.setText(full_name.title())
+                    card.emailLabel.setText(patient['email'])
+
+                    # connect actions
+                    p_id = patient['id']
+                    card.deleteButton.clicked.connect(
+                        lambda _, pid=p_id: self.deleteFunction.set_delete_target("patient", pid))
+                    card.editBtn.clicked.connect(lambda _, pid=p_id: self.updateFunction.update_patient_info(pid))
+                    card.mousePressEvent = lambda event, p=patient: self.show_patient_profile(p)
+                    card.setGraphicsEffect(create_card_shadow())
+
+                    # Insert right before the first existing card
+                    self.patientListLayout.insertWidget(0, card)
+
+                # 🔄 Keep only 20 cards visible (+loading label)
+                while self.patientListLayout.count() > 21:
+                    # remove second-to-last item safely
+                    index = self.patientListLayout.count() - 2
+                    if index >= 0:
+                        item = self.patientListLayout.takeAt(index)
+                        if item and item.widget():
+                            item.widget().deleteLater()
+                    else:
+                        break
+        finally:
+            self.loading_label.setVisible(False)
+            self.is_loading = False
 
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")
@@ -981,8 +1111,8 @@ class MainUI(QMainWindow):
 
     def load_services_for_pet(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/services/?pet_id={pet_id}")
-        services = response.json() if response.status_code == 200 else []
-
+        data = response.json() if response.status_code == 200 else []
+        services = data.get("results", [])
         header = self.findChild(QWidget, "serviceTableHeader")
 
 
@@ -1043,8 +1173,8 @@ class MainUI(QMainWindow):
 
     def load_scheduled_services(self):
         response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
-        scheduled_services = response.json() if response.status_code == 200 else []
-
+        data = response.json() if response.status_code == 200 else []
+        scheduled_services = data.get("results", [])
         # get selected month from combobox
         selected_month = self.monthComboBox.currentText()  # e.g., 'August'
 

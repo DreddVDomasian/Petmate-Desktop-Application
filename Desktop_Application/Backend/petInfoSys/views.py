@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from datetime import date
 from .models import *
 from django.shortcuts import render, get_object_or_404
@@ -114,11 +115,16 @@ def check_duplicate_patient(request):
         print("Error checking duplicates:", e)  # will show full error in console
         return Response({"error": str(e)}, status=500)
 
+class SmallResultsSetPagination(PageNumberPagination):
+    page_size = 10                    # default items per page
+    page_size_query_param = 'page_size'  # allow ?page_size=...
+    max_page_size = 100
 
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
-    queryset = basicInfo.objects.all()
+    queryset = basicInfo.objects.all().order_by('-date_added')   # order for deterministic pages
     serializer_class = BasicInfoSerializer
+    pagination_class = SmallResultsSetPagination
 
 # GET / PUT / DELETE single patient by id
 class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -185,18 +191,36 @@ class ScheduledServiceListView(generics.ListAPIView):
 
 class WalkInListCreateView(generics.ListCreateAPIView):
     serializer_class = WalkInSerializer
+    pagination_class = SmallResultsSetPagination
 
     def get_queryset(self):
         today = date.today()
-        appointments = WalkInAppointment.objects.all()
 
-        for appt in appointments:
-            if appt.status not in ["completed", "cancelled"]:
-                if appt.date < today and appt.status != "overdue":
-                    appt.status = "overdue"
-                    appt.save(update_fields=["status"])
+        # Bulk-set 'overdue' for appointments that are past and not completed/cancelled/already-overdue.
+        WalkInAppointment.objects.filter(
+            ~Q(status__in=["completed", "cancelled", "overdue"]),
+            date__lt=today
+        ).update(status="overdue")
 
-        return appointments
+        # Start with all appointments, then apply filters if provided
+        queryset = WalkInAppointment.objects.all()
+
+        # Optional filters the frontend will find useful:
+        status = self.request.query_params.get("status")   # e.g. "pending"
+        owner_id = self.request.query_params.get("owner_id")
+        pet_id = self.request.query_params.get("pet_id")
+
+        if status:
+            queryset = queryset.filter(status=status)
+
+        if owner_id:
+            queryset = queryset.filter(owner_id=owner_id)
+
+        if pet_id:
+            queryset = queryset.filter(pet_id=pet_id)
+
+        # Make ordering deterministic (use ascending date so older items show first).
+        return queryset.order_by("date")
 
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
