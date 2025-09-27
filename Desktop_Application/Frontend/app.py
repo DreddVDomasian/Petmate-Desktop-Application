@@ -1311,13 +1311,6 @@ class MainUI(QMainWindow):
             self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
         self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
 
-    from datetime import datetime
-    import requests
-
-    
-
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 

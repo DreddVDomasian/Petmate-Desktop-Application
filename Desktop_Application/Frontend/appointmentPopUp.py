@@ -348,7 +348,7 @@ class AddAppointmentCard(QWidget):
             elif status == "declined":
                 self.declinedWebLayout.addWidget(card)
 
-            card.ReviewButton.clicked.connect(lambda _, a=appoint, date=dateAndTime: self.show_review_page(a,date))
+                card.ReviewButton.clicked.connect(lambda _, a=appoint, date=dateAndTime: self.show_review_page(a,date))
 
 
 
