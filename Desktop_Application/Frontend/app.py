@@ -10,7 +10,8 @@ project_root = os.path.dirname(project_root)      # Go up to the actual project 
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit,QPushButton
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget, QComboBox, QButtonGroup, QMessageBox, \
+    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame
 from PyQt6 import uic
 from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize,QParallelAnimationGroup
 from PyQt6.QtGui import QFontDatabase, QPixmap
@@ -503,10 +504,6 @@ class MainUI(QMainWindow):
             btn.clicked.connect(lambda: self.clearInputs())
             btn.clicked.connect(lambda: self.petUpdateButton.hide())
             btn.clicked.connect(lambda: self.petConfirmButton.show())
-        self.addPetButton.mousePressEvent = lambda event: self.profileStackedWidget.setCurrentIndex(1)
-        self.addPetButton.mousePressEvent = lambda event: self.clearInputs()
-        self.addPetButton.mousePressEvent = lambda event: self.petUpdateButton.hide()
-        self.addPetButton.mousePressEvent = lambda event: self.petConfirmButton.show()
 
     def setup_input_shadows(self):
         # owner info form
@@ -893,6 +890,7 @@ class MainUI(QMainWindow):
         self.petSexComboBox.setCurrentIndex(0)
 
     def load_patients(self):
+        self.patient_cards = []
         response = requests.get("http://127.0.0.1:8000/api/patients/")
         if response.status_code == 200:
             patients = response.json()
@@ -918,6 +916,7 @@ class MainUI(QMainWindow):
             parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
             full_name = " ".join(p for p in parts if p)
             card = uic.loadUi("PatientCard.ui")
+            self.scale_cards([card], base_h=81)
             card.nameLabel.setText(full_name.title())
             card.emailLabel.setText(patient['email'])
 
@@ -931,10 +930,16 @@ class MainUI(QMainWindow):
 
                 return handler
 
+            # --- Apply scaling to new card labels ---
+            self.scale_widget_font(card.nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+            self.scale_widget_font(card.emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
+
+
             card.mousePressEvent = make_handler(patient, self)
 
             card.setGraphicsEffect(create_card_shadow())
             self.patientListLayout.insertWidget(0, card)
+            self.patient_cards.append(card)
 
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")
@@ -1260,8 +1265,22 @@ class MainUI(QMainWindow):
         label.setFixedSize(new_w, new_h)
         label.setScaledContents(True)
 
+    def scale_cards(self, cards, base_h=90, design_height=720):
+        """Scale the height of a list of cards based on the main window size."""
+        if not cards:
+            return
+
+        h_scale = self.height() / design_height
+        new_h = int(base_h * h_scale)
+
+        for i, card in enumerate(cards, start=1):
+            card.setFixedHeight(new_h)
+            # Debug
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
+
+
         self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
         self.scale_label_pixmap(self.clinicIconP2, min_size=64, max_size=256)
         self.scale_label_pixmap(self.clinicIconP3, min_size=64, max_size=256)
@@ -1310,6 +1329,20 @@ class MainUI(QMainWindow):
         for ownerDetail in self.frame_13.findChildren(QLabel):
             self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
         self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
+
+        #patientCard
+        self.scale_cards(self.patient_cards, base_h=90)
+        for i, card in enumerate(getattr(self, "patient_cards", []), start=1):
+            for nameLabel in card.findChildren(QLabel, "nameLabel"):
+                self.scale_widget_font(nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+
+            for emailLabel in card.findChildren(QLabel, "emailLabel"):
+                self.scale_widget_font(emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
+
+            if card.profileIcon:
+                self.scale_label_pixmap(card.profileIcon, min_size=40, max_size=160)
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
