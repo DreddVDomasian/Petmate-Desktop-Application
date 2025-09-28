@@ -552,14 +552,14 @@ class MainUI(QMainWindow):
         #main content
         self.MainContent.setGraphicsEffect(navShadow())
         #PAGE HEADER
-        self.pageHeader1.setGraphicsEffect(create_card_shadow())
-        self.pageHeader2.setGraphicsEffect(create_card_shadow())
-        self.pageHeader3.setGraphicsEffect(create_card_shadow())
-        self.pageHeader4.setGraphicsEffect(create_card_shadow())
-        self.pageHeader5.setGraphicsEffect(create_card_shadow())
+        self.pageHeader1.setGraphicsEffect(create_card_shadow(3,2,2,))
+        self.pageHeader2.setGraphicsEffect(create_card_shadow(3,2,2,))
+        self.pageHeader3.setGraphicsEffect(create_card_shadow(3,2,2,))
+        self.pageHeader4.setGraphicsEffect(create_card_shadow(3,2,2,))
+        self.pageHeader5.setGraphicsEffect(create_card_shadow(3,2,2,))
         #ADD PATIENT PAGE
-        self.label_4.setGraphicsEffect(create_card_shadow())
-        self.label_15.setGraphicsEffect(create_card_shadow())
+        self.label_4.setGraphicsEffect(create_card_shadow(3,2,2,))
+        self.label_15.setGraphicsEffect(create_card_shadow(3,2,2,))
         #APPOINTMENT PAGE
         self.walkInBtn.setGraphicsEffect(create_card_shadow())
         self.websiteBtn.setGraphicsEffect(create_card_shadow())

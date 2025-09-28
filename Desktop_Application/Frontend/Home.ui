@@ -1163,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1220,6 +1220,10 @@ QToolButton:hover{
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="homeBackBtn">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;
+background-color:transparent;</string>
+                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -1495,6 +1499,10 @@ Keeping tails wagging and hearts happy!</string>
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="addPatientBackBtn">
+                <property name="styleSheet">
+                 <string notr="true">border:none;
+background-color:transparent;</string>
+                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -2423,6 +2431,10 @@ QPushButton:hover{
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="RecordsBackBtn">
+                <property name="styleSheet">
+                 <string notr="true">border:none;
+background-color:transparent;</string>
+                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -2673,7 +2685,7 @@ border-bottom-right-radius:10px;
                    <x>0</x>
                    <y>0</y>
                    <width>841</width>
-                   <height>506</height>
+                   <height>514</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -2729,6 +2741,10 @@ color:rgb(141, 141, 141);</string>
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="appointmentBackBtn">
+                <property name="styleSheet">
+                 <string notr="true">border:none;
+background-color:transparent;</string>
+                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -4110,8 +4126,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>823</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4181,6 +4197,10 @@ QFrame{
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="ReturnBackBtn">
+                   <property name="styleSheet">
+                    <string notr="true">border:none;
+background-color:transparent;</string>
+                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -5007,6 +5027,10 @@ QScrollArea QScrollBar::groove:horizontal {
                <widget class="QToolButton" name="profileBackbutton">
                 <property name="cursor">
                  <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">border:none;
+background-color:transparent;</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -6318,7 +6342,8 @@ QPushButton:hover{
                     <cursorShape>PointingHandCursor</cursorShape>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">background:transparent;</string>
+                    <string notr="true">border:none;
+background-color:transparent;</string>
                    </property>
                    <property name="text">
                     <string>...</string>
@@ -8700,6 +8725,10 @@ QPushButton:hover{
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">border:none;
+background-color:transparent;</string>
                    </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
