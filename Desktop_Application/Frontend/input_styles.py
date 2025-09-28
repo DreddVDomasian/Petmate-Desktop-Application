@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QDateEdit
+import string
 
 default_style = """
         QLineEdit{

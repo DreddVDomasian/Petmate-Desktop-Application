@@ -10,6 +10,7 @@ project_root = os.path.dirname(project_root)      # Go up to the actual project 
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
+import string
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox,QApplication
 from PyQt6.QtGui import QPixmap
@@ -343,11 +344,6 @@ class AddAppointmentCard(QWidget):
                     # Insert above the loading label
                     self.pendingLayout.insertWidget(self.pendingLayout.count() - 1, card)
 
-                # 🧹 Keep only the newest 20 cards (plus loading label)
-                while self.pendingLayout.count() > 21:
-                    item = self.pendingLayout.takeAt(0)
-                    if item.widget():
-                        item.widget().deleteLater()
         finally:
             self.pending_loading_label.setVisible(False)
             self.is_loading_pending = False
@@ -390,11 +386,6 @@ class AddAppointmentCard(QWidget):
                     # Insert above the loading label
                     self.pendingLayout.insertWidget(0, card)
 
-                    # 🧹 Keep only the newest 20 cards (plus loading label)
-                while self.pendingLayout.count() > 21:
-                    item = self.pendingLayout.takeAt(self.pendingLayout.count() - 2)
-                    if item.widget():
-                        item.widget().deleteLater()
         finally:
             self.pending_loading_label.setVisible(False)
             self.is_loading_pending = False

@@ -9,10 +9,10 @@ project_root = os.path.dirname(project_root)      # Go up to the actual project 
 # Add to path
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
-
+import string
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget,QComboBox,QButtonGroup,QMessageBox,QCalendarWidget,QToolButton,QTextEdit,QPushButton
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize,QParallelAnimationGroup
+from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize,QParallelAnimationGroup,QTimer
 from PyQt6.QtGui import QFontDatabase, QPixmap
 from uiLogic import UIHandler
 from input_styles import *
@@ -86,6 +86,11 @@ class MainUI(QMainWindow):
         self.duplicateDialog = None
         self.ignore_duplicates = False
 
+        self.scroll_timer = QTimer()
+        self.scroll_timer.setSingleShot(True)
+        self.scroll_timer.timeout.connect(self.handle_scroll_timeout)
+        self.pending_scroll_action = None
+
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
         self.customCalendar.setParent(None)
@@ -156,11 +161,13 @@ class MainUI(QMainWindow):
         self.navBtnGroup = QButtonGroup(self)
         self.navBtnGroup.setExclusive(True)
         for btn, index in nav:
-            btn.setCheckable(True)
-            self.navBtnGroup.addButton(btn)
-            btn.clicked.connect(lambda _, i=index: self.navigate_to_page(i))
+            if btn:  # guard against missing widget
+                btn.setCheckable(True)
+                self.navBtnGroup.addButton(btn)
+                btn.clicked.connect(lambda _, i=index: self.navigate_to_page(i))
 
-        self.homeBtn.setChecked(True)
+        if self.homeBtn:
+            self.homeBtn.setChecked(True)
 
         nav_2 = [
             (self.homeBtn_2, 0), (self.addPatientBtn_2, 1), (self.petRecordsBtn_2, 2),
@@ -169,10 +176,11 @@ class MainUI(QMainWindow):
         self.navBtnGroup_2 = QButtonGroup(self)
         self.navBtnGroup_2.setExclusive(True)
         for btn_2, index in nav_2:
-            btn_2.setCheckable(True)
-            self.navBtnGroup_2.addButton(btn_2)
-
-        self.homeBtn_2.setChecked(True)
+            if btn_2:
+                btn_2.setCheckable(True)
+                self.navBtnGroup_2.addButton(btn_2)
+        if self.homeBtn_2:
+            self.homeBtn_2.setChecked(True)
 
         self.page_to_nav_button = {
             0: self.homeBtn,
@@ -186,87 +194,114 @@ class MainUI(QMainWindow):
         }
 
         # send data
-        self.confirmButton.clicked.connect(self.submit_data)
-        self.petConfirmButton.clicked.connect(self.submit_pet_data)
-        self.addServiceBtn.clicked.connect(self.submit_service_data)
-
+        if self.confirmButton:
+            self.confirmButton.clicked.connect(self.submit_data)
+        if self.petConfirmButton:
+            self.petConfirmButton.clicked.connect(self.submit_pet_data)
+        if self.addServiceBtn:
+            self.addServiceBtn.clicked.connect(self.submit_service_data)
 
         # add appointment
         for tb in [self.toolButton_2, self.toolButton_3]:
-            tb.clicked.connect(lambda: self.open_addAppointment())
-        self.addWalkinButton.mousePressEvent = lambda event: self.open_addAppointment()
+            if tb:
+                tb.clicked.connect(lambda _, t=tb: self.open_addAppointment())
+        if self.addWalkinButton:
+            self.addWalkinButton.mousePressEvent = lambda event: self.open_addAppointment()
 
         # toggle walk-in/website
-        self.walkInBtn.setCheckable(True)
-        self.websiteBtn.setCheckable(True)
-        self.walkInOrWeb.setCurrentIndex(0)
-        self.sourceBtnGroup = QButtonGroup(self)
-        self.sourceBtnGroup.setExclusive(True)
-        for btn in [self.walkInBtn, self.websiteBtn]:
-            self.sourceBtnGroup.addButton(btn)
-        self.walkInBtn.setChecked(True)
-        self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
-        self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
+        if self.walkInBtn and self.websiteBtn:
+            self.walkInBtn.setCheckable(True)
+            self.websiteBtn.setCheckable(True)
+            self.walkInOrWeb.setCurrentIndex(0)
+            self.sourceBtnGroup = QButtonGroup(self)
+            self.sourceBtnGroup.setExclusive(True)
+            for btn in [self.walkInBtn, self.websiteBtn]:
+                self.sourceBtnGroup.addButton(btn)
+            self.walkInBtn.setChecked(True)
+            self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
+            self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
 
         # toggle walk-in status Btn
-        self.pendingBtn.setCheckable(True)
-        self.completedBtn.setCheckable(True)
-        self.overdueBtn.setCheckable(True)
-        self.cancelledBtn.setCheckable(True)
-        self.statusStackedWidget.setCurrentIndex(0)
+        for btn in [self.pendingBtn, self.completedBtn, self.overdueBtn, self.cancelledBtn]:
+            if btn:
+                btn.setCheckable(True)
+        if self.statusStackedWidget:
+            self.statusStackedWidget.setCurrentIndex(0)
         self.statusBtnGroup = QButtonGroup(self)
-        for btn in [self.pendingBtn, self.completedBtn, self.overdueBtn,self.cancelledBtn]:
-            self.statusBtnGroup.addButton(btn)
-        self.pendingBtn.setChecked(True)
-        self.pendingBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(0))
-        self.completedBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(1))
-        self.overdueBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(2))
-        self.cancelledBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(3))
+        for btn in [self.pendingBtn, self.completedBtn, self.overdueBtn, self.cancelledBtn]:
+            if btn:
+                self.statusBtnGroup.addButton(btn)
+        if self.pendingBtn:
+            self.pendingBtn.setChecked(True)
+            self.pendingBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(0))
+        if self.completedBtn:
+            self.completedBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(1))
+        if self.overdueBtn:
+            self.overdueBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(2))
+        if self.cancelledBtn:
+            self.cancelledBtn.clicked.connect(lambda: self.statusStackedWidget.setCurrentIndex(3))
 
-        #Web Appointment status BTN
-        self.pendingWebBtn.setCheckable(True)
-        self.DeclinedBtn.setCheckable(True)
-        self.AcceptedBtn.setCheckable(True)
-        self.webAppointmentStackWidget.setCurrentIndex(0)
+        # Web Appointment status BTN
+        for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn]:
+            if btn:
+                btn.setCheckable(True)
+        if self.webAppointmentStackWidget:
+            self.webAppointmentStackWidget.setCurrentIndex(0)
         self.webStatusBtnGroup = QButtonGroup(self)
         for btn in [self.pendingWebBtn, self.DeclinedBtn, self.AcceptedBtn]:
-            self.webStatusBtnGroup.addButton(btn)
-        self.pendingWebBtn.setChecked(True)
-        self.pendingWebBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(0))
-        self.AcceptedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(1))
-        self.DeclinedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(2))
+            if btn:
+                self.webStatusBtnGroup.addButton(btn)
+        if self.pendingWebBtn:
+            self.pendingWebBtn.setChecked(True)
+            self.pendingWebBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(0))
+        if self.AcceptedBtn:
+            self.AcceptedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(1))
+        if self.DeclinedBtn:
+            self.DeclinedBtn.clicked.connect(lambda: self.webAppointmentStackWidget.setCurrentIndex(2))
 
         # toggle sched return status Btn
-        self.pendingReturnBtn.setCheckable(True)
-        self.completeReurnBtn.setCheckable(True)
-        self.overdueReturnBtn.setCheckable(True)
-        self.returnStackedWidget.setCurrentIndex(0)
+        for btn in [self.pendingReturnBtn, self.completeReurnBtn, self.overdueReturnBtn]:
+            if btn:
+                btn.setCheckable(True)
+        if self.returnStackedWidget:
+            self.returnStackedWidget.setCurrentIndex(0)
         self.returnStatusBtnGroup = QButtonGroup(self)
         for btn in [self.pendingReturnBtn, self.completeReurnBtn, self.overdueReturnBtn]:
-            self.returnStatusBtnGroup.addButton(btn)
-        self.pendingReturnBtn.setChecked(True)
-        self.pendingReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(0))
-        self.completeReurnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(1))
-        self.overdueReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(2))
+            if btn:
+                self.returnStatusBtnGroup.addButton(btn)
+        if self.pendingReturnBtn:
+            self.pendingReturnBtn.setChecked(True)
+            self.pendingReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(0))
+        if self.completeReurnBtn:
+            self.completeReurnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(1))
+        if self.overdueReturnBtn:
+            self.overdueReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(2))
 
-        #print btn
-        self.printBtn.clicked.connect(self.handlePrintButton)
+        # print btn
+        if self.printBtn:
+            self.printBtn.clicked.connect(self.handlePrintButton)
 
         # cancel
-        self.backBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(0))
-        self.cancelButton.clicked.connect(lambda: self.navigate_to_page(2))
-        #update buttons
-        self.updateBasicInfo.hide()
-        self.cancelButton.hide()
-        self.petUpdateButton.hide()
-        self.updateServiceBtn.hide()
+        if self.backBtn:
+            self.backBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(0))
+        if self.cancelButton:
+            self.cancelButton.clicked.connect(lambda: self.navigate_to_page(2))
 
-        #reminder pop up
-        self.make_icon_pulse(self.reminderBtn)
+        # update buttons
+        if self.updateBasicInfo: self.updateBasicInfo.hide()
+        if self.cancelButton: self.cancelButton.hide()
+        if self.petUpdateButton: self.petUpdateButton.hide()
+        if self.updateServiceBtn: self.updateServiceBtn.hide()
 
-        #nav
-        self.miniNavBtn.clicked.connect(self.slide_in_sideNav)
-        self.fullNavBtn.clicked.connect(self.slide_out_sideNav)
+        # reminder pop up
+        if self.reminderBtn:
+            self.make_icon_pulse(self.reminderBtn)
+
+        # nav toggle
+        if self.miniNavBtn:
+            self.miniNavBtn.clicked.connect(self.slide_in_sideNav)
+        if self.fullNavBtn:
+            self.fullNavBtn.clicked.connect(self.slide_out_sideNav)
 
     def slide_in_sideNav(self):
         # Animate MiniNav sliding out
@@ -753,7 +788,7 @@ class MainUI(QMainWindow):
         # proceed to save patient
         if add_new_patient(data):
             self.navigate_to_page(2)
-            self.load_patients()
+            self.load_patients(page=1, page_size=10)
 
             self.clearInputs()
 
@@ -957,17 +992,27 @@ class MainUI(QMainWindow):
             self.patientListLayout.insertWidget(self.patientListLayout.count() - 1, card)
 
     def check_scroll_position(self, value):
+        if self.is_loading:
+            return
+
+        # Debounce scroll events
+        self.scroll_timer.stop()
+        self.pending_scroll_action = value
+        self.scroll_timer.start(200)  # Wait 200ms after last scroll
+
+    def handle_scroll_timeout(self):
+        if self.pending_scroll_action is None or self.is_loading:
+            return
+
+        value = self.pending_scroll_action
         scroll = self.patientScrollArea.verticalScrollBar()
         max_val = scroll.maximum()
-        min_val = scroll.minimum()
 
-        if not self.is_loading:
-            if value == max_val and self.next_page_url:
-                # reached bottom → load next
-                self.load_next_page()
-            elif value == min_val and self.prev_page_url:
-                # reached top → load previous
-                self.load_previous_page()
+        threshold = 0.8
+        if value >= max_val * threshold and self.next_page_url:
+            self.load_next_page()
+        elif value <= max_val * 0.2 and self.prev_page_url:
+            self.load_previous_page()
 
     def load_next_page(self):
         if not self.next_page_url or self.is_loading:
@@ -1004,16 +1049,13 @@ class MainUI(QMainWindow):
 
                     # Insert above loading label
                     self.patientListLayout.insertWidget(self.patientListLayout.count() - 1, card)
-
-                # Keep only last 20 cards + loading label
-                while self.patientListLayout.count() > 21:  # 20 cards + 1 loading label
-                    item = self.patientListLayout.takeAt(0)
-                    if item and item.widget():
-                        item.widget().deleteLater()
+        except Exception as e:
+            print("Error loading next page:", e)
 
         finally:
-            self.loading_label.setVisible(False)
+            # Ensure loading state is always reset
             self.is_loading = False
+            self.loading_label.setVisible(False)
 
     def load_previous_page(self):
         if not self.prev_page_url or self.is_loading:
@@ -1051,17 +1093,9 @@ class MainUI(QMainWindow):
 
                     # Insert right before the first existing card
                     self.patientListLayout.insertWidget(0, card)
+        except Exception as e:
+            print("Error loading next page:", e)
 
-                # 🔄 Keep only 20 cards visible (+loading label)
-                while self.patientListLayout.count() > 21:
-                    # remove second-to-last item safely
-                    index = self.patientListLayout.count() - 2
-                    if index >= 0:
-                        item = self.patientListLayout.takeAt(index)
-                        if item and item.widget():
-                            item.widget().deleteLater()
-                    else:
-                        break
         finally:
             self.loading_label.setVisible(False)
             self.is_loading = False

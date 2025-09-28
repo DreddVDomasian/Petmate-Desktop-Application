@@ -37,17 +37,23 @@ def add_new_pet(data):
         return False
 
 
-def get_all_patients():
+def get_all_patients(page=1, page_size=10):
     try:
-        response = requests.get(f"{BASE_URL}/patients/")
+        response = requests.get(f"{BASE_URL}/patients/?page={page}&page_size={page_size}")
         if response.status_code == 200:
-            return response.json()  # this will be a list of dicts
+            data = response.json()
+            return {
+                "patients": data.get("results", []),
+                "count": data.get("count", 0),
+                "next": data.get("next"),
+                "previous": data.get("previous")
+            }
         else:
             print("Failed to fetch patients:", response.status_code, response.text)
-            return []
+            return {"patients": [], "count": 0, "next": None, "previous": None}
     except Exception as e:
         print("Error:", e)
-        return []
+        return {"patients": [], "count": 0, "next": None, "previous": None}
 
 
 def add_new_service(data):
