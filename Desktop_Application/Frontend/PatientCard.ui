@@ -40,7 +40,7 @@
 	background-color:rgb(231, 231, 231);
 }
 #RecordList:hover{
-	background-color:rgb(179, 179, 179);
+	background-color:rgb(163, 210, 227)
 }</string>
      </property>
      <property name="frameShape">

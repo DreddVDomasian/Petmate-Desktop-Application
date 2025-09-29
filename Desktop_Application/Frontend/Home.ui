@@ -1163,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1220,10 +1220,6 @@ QToolButton:hover{
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="homeBackBtn">
-                   <property name="styleSheet">
-                    <string notr="true">border:none;
-background-color:transparent;</string>
-                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -1240,7 +1236,7 @@ background-color:transparent;</string>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>0</width>
+                     <width>816</width>
                      <height>250</height>
                     </size>
                    </property>
@@ -1261,138 +1257,43 @@ background-color:transparent;</string>
                    </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_7">
                     <property name="leftMargin">
-                     <number>45</number>
+                     <number>15</number>
                     </property>
-                    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-                     <widget class="QFrame" name="welcome">
-                      <property name="styleSheet">
-                       <string notr="true">QFrame{
-	background:transparent;
-
-}</string>
-                      </property>
+                    <property name="rightMargin">
+                     <number>15</number>
+                    </property>
+                    <item>
+                     <widget class="QFrame" name="frame_22">
                       <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
+                       <enum>QFrame::StyledPanel</enum>
                       </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_4">
-                       <property name="spacing">
-                        <number>20</number>
-                       </property>
-                       <property name="sizeConstraint">
-                        <enum>QLayout::SetDefaultConstraint</enum>
-                       </property>
-                       <property name="leftMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>0</number>
-                       </property>
-                       <item alignment="Qt::AlignTop">
-                        <widget class="QLabel" name="label_7">
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>100</height>
-                          </size>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">QLabel{
-	
-	font: 87 32pt &quot;Montserrat Black&quot;;
-	color: #272727;
-	text-align:left;
-}
-</string>
-                         </property>
-                         <property name="text">
-                          <string>Welcome to Petmate 
-Animal Clinic!
-</string>
-                         </property>
-                         <property name="textFormat">
-                          <enum>Qt::AutoText</enum>
-                         </property>
-                         <property name="scaledContents">
-                          <bool>true</bool>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                         </property>
-                         <property name="wordWrap">
-                          <bool>false</bool>
-                         </property>
-                         <property name="indent">
-                          <number>-1</number>
-                         </property>
-                        </widget>
-                       </item>
-                       <item alignment="Qt::AlignBottom">
-                        <widget class="QLabel" name="label_8">
-                         <property name="maximumSize">
-                          <size>
-                           <width>16777215</width>
-                           <height>80</height>
-                          </size>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">QLabel{
-	
-	font: 25 14pt &quot;Montserrat Light&quot;;
-	color: #2A2A2A;
-}
-
-</string>
-                         </property>
-                         <property name="text">
-                          <string>Expert care, advanced treatments, 
-and a loving touch for your pets. 
-Keeping tails wagging and hearts happy!</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_4"/>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QFrame" name="picture">
-                      <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
+                     <widget class="QFrame" name="frame_48">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>0</height>
+                       </size>
                       </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_5">
-                       <item alignment="Qt::AlignRight">
-                        <widget class="QLabel" name="label_9">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="minimumSize">
-                          <size>
-                           <width>285</width>
-                           <height>285</height>
-                          </size>
-                         </property>
-                         <property name="maximumSize">
-                          <size>
-                           <width>285</width>
-                           <height>285</height>
-                          </size>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                         <property name="pixmap">
-                          <pixmap resource="resource.qrc">:/images/image/image 1.png</pixmap>
-                         </property>
-                         <property name="scaledContents">
-                          <bool>true</bool>
-                         </property>
-                        </widget>
-                       </item>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_79">
+                       <property name="leftMargin">
+                        <number>15</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>15</number>
+                       </property>
                       </layout>
                      </widget>
                     </item>
@@ -1422,57 +1323,41 @@ Keeping tails wagging and hearts happy!</string>
                    <property name="frameShape">
                     <enum>QFrame::NoFrame</enum>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_6">
+                   <layout class="QHBoxLayout" name="horizontalLayout_78">
                     <property name="spacing">
-                     <number>10</number>
+                     <number>7</number>
                     </property>
-                    <item alignment="Qt::AlignHCenter">
-                     <widget class="QFrame" name="appointment_date">
+                    <property name="leftMargin">
+                     <number>15</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>15</number>
+                    </property>
+                    <item>
+                     <widget class="QFrame" name="frame_53">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>735</width>
-                        <height>62</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>735</width>
-                        <height>62</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">QFrame{
-	border:none;
-	border-radius:10px;
-	background-color: #81BFDA;
-
-}</string>
-                      </property>
                       <property name="frameShape">
-                       <enum>QFrame::NoFrame</enum>
+                       <enum>QFrame::StyledPanel</enum>
                       </property>
-                      <layout class="QGridLayout" name="gridLayout">
-                       <item row="0" column="0" alignment="Qt::AlignHCenter">
-                        <widget class="QLabel" name="label_10">
-                         <property name="styleSheet">
-                          <string notr="true">QLabel{
-	color:black;
-	font: 81 26pt &quot;Montserrat ExtraBold&quot;;
-	qproperty-alignment: AlignCenter;
-}</string>
-                         </property>
-                         <property name="text">
-                          <string>APPOINTMENT TODAY - DATE</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_54">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_5"/>
                      </widget>
                     </item>
                    </layout>
@@ -1499,10 +1384,6 @@ Keeping tails wagging and hearts happy!</string>
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="addPatientBackBtn">
-                <property name="styleSheet">
-                 <string notr="true">border:none;
-background-color:transparent;</string>
-                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -2431,10 +2312,6 @@ QPushButton:hover{
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="RecordsBackBtn">
-                <property name="styleSheet">
-                 <string notr="true">border:none;
-background-color:transparent;</string>
-                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -2684,8 +2561,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>841</width>
-                   <height>514</height>
+                   <width>806</width>
+                   <height>489</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -2741,10 +2618,6 @@ color:rgb(141, 141, 141);</string>
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="appointmentBackBtn">
-                <property name="styleSheet">
-                 <string notr="true">border:none;
-background-color:transparent;</string>
-                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -3246,10 +3119,6 @@ QPushButton:checked {
                      </property>
                      <item>
                       <widget class="QToolButton" name="toolButton_3">
-                       <property name="styleSheet">
-                        <string notr="true">	border:none;
-	background-color:transparent;</string>
-                       </property>
                        <property name="text">
                         <string>...</string>
                        </property>
@@ -3278,8 +3147,6 @@ QPushButton:checked {
 	font-family:&quot;Montserrat ExtraBold&quot;;
 	font-weight:81;
 	color: #4F4F4F;
-	border:none;
-	background-color:transparent;
 }</string>
                        </property>
                        <property name="text">
@@ -3507,7 +3374,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                     </property>
                     <property name="currentIndex">
-                     <number>0</number>
+                     <number>1</number>
                     </property>
                     <widget class="QWidget" name="pendingPage">
                      <property name="sizePolicy">
@@ -3608,8 +3475,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>841</width>
-                           <height>383</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3664,7 +3531,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>841</width>
+                           <width>806</width>
                            <height>383</height>
                           </rect>
                          </property>
@@ -3717,8 +3584,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>841</width>
-                           <height>383</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -3770,8 +3637,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>841</width>
-                           <height>383</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -4132,7 +3999,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>823</width>
+                           <width>78</width>
                            <height>440</height>
                           </rect>
                          </property>
@@ -4203,10 +4070,6 @@ QFrame{
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="ReturnBackBtn">
-                   <property name="styleSheet">
-                    <string notr="true">border:none;
-background-color:transparent;</string>
-                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -4962,7 +4825,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>839</width>
+                          <width>804</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -4999,8 +4862,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>93</width>
-                          <height>41</height>
+                          <width>115</width>
+                          <height>50</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -5033,10 +4896,6 @@ QScrollArea QScrollBar::groove:horizontal {
                <widget class="QToolButton" name="profileBackbutton">
                 <property name="cursor">
                  <cursorShape>PointingHandCursor</cursorShape>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">border:none;
-background-color:transparent;</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -5253,8 +5112,7 @@ color:rgb(0, 0, 0);</string>
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">	border:none;
-	background-color:transparent;</string>
+                             <string notr="true">background:transparent;</string>
                             </property>
                             <property name="text">
                              <string>...</string>
@@ -5277,8 +5135,7 @@ color:rgb(0, 0, 0);</string>
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">	border:none;
-	background-color:transparent;</string>
+                             <string notr="true">background:transparent;</string>
                             </property>
                             <property name="text">
                              <string>...</string>
@@ -5341,7 +5198,7 @@ color:rgb(0, 0, 0);</string>
               <item>
                <widget class="QStackedWidget" name="profileStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="petCardsPage">
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5406,8 +5263,8 @@ color:rgb(0, 0, 0);</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>841</width>
-                       <height>414</height>
+                       <width>401</width>
+                       <height>111</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -5460,7 +5317,7 @@ color:rgb(0, 0, 0);</string>
                           <number>0</number>
                          </property>
                          <property name="leftMargin">
-                          <number>0</number>
+                          <number>30</number>
                          </property>
                          <property name="topMargin">
                           <number>0</number>
@@ -5471,21 +5328,10 @@ color:rgb(0, 0, 0);</string>
                          <property name="bottomMargin">
                           <number>0</number>
                          </property>
-                         <item alignment="Qt::AlignLeft">
+                         <item>
                           <widget class="QToolButton" name="plusSignBtn">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
                            <property name="cursor">
                             <cursorShape>PointingHandCursor</cursorShape>
-                           </property>
-                           <property name="styleSheet">
-                            <string notr="true">	border:none;
-	background-color:transparent;
-	padding-left:30px;</string>
                            </property>
                            <property name="text">
                             <string>...</string>
@@ -5505,7 +5351,7 @@ color:rgb(0, 0, 0);</string>
                          <item>
                           <widget class="QToolButton" name="addpetQtoolBtn">
                            <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                              <horstretch>0</horstretch>
                              <verstretch>0</verstretch>
                             </sizepolicy>
@@ -5515,9 +5361,7 @@ color:rgb(0, 0, 0);</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">font: 81 30pt &quot;Montserrat ExtraBold&quot;;
-color:#4F4F4F;
-	border:none;
-	background-color:transparent;</string>
+color:#4F4F4F;</string>
                            </property>
                            <property name="text">
                             <string>ADD PET</string>
@@ -6363,8 +6207,7 @@ QPushButton:hover{
                     <cursorShape>PointingHandCursor</cursorShape>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">border:none;
-background-color:transparent;</string>
+                    <string notr="true">background:transparent;</string>
                    </property>
                    <property name="text">
                     <string>...</string>
@@ -6644,8 +6487,7 @@ border:none;</string>
                                 <item>
                                  <widget class="QToolButton" name="petProfileEditBtn">
                                   <property name="styleSheet">
-                                   <string notr="true">	border:none;
-	background-color:transparent;</string>
+                                   <string notr="true">background:transparent;</string>
                                   </property>
                                   <property name="text">
                                    <string>...</string>
@@ -6665,8 +6507,7 @@ border:none;</string>
                                 <item>
                                  <widget class="QToolButton" name="petProfileDeleteBtn">
                                   <property name="styleSheet">
-                                   <string notr="true">	border:none;
-	background-color:transparent;</string>
+                                   <string notr="true">background:transparent;</string>
                                   </property>
                                   <property name="text">
                                    <string>...</string>
@@ -8749,10 +8590,6 @@ QPushButton:hover{
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">border:none;
-background-color:transparent;</string>
-                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -9886,8 +9723,8 @@ border-radius: 10px;
      <y>320</y>
     </hint>
     <hint type="destinationlabel">
-     <x>233</x>
-     <y>335</y>
+     <x>236</x>
+     <y>306</y>
     </hint>
    </hints>
   </connection>
@@ -9898,12 +9735,12 @@ border-radius: 10px;
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>362</x>
-     <y>371</y>
+     <x>319</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
-     <x>233</x>
-     <y>382</y>
+     <x>239</x>
+     <y>349</y>
     </hint>
    </hints>
   </connection>
@@ -9950,8 +9787,8 @@ border-radius: 10px;
      <y>277</y>
     </hint>
     <hint type="destinationlabel">
-     <x>362</x>
-     <y>281</y>
+     <x>318</x>
+     <y>286</y>
     </hint>
    </hints>
   </connection>
@@ -9966,8 +9803,8 @@ border-radius: 10px;
      <y>325</y>
     </hint>
     <hint type="destinationlabel">
-     <x>362</x>
-     <y>326</y>
+     <x>322</x>
+     <y>337</y>
     </hint>
    </hints>
   </connection>
@@ -9982,8 +9819,8 @@ border-radius: 10px;
      <y>362</y>
     </hint>
     <hint type="destinationlabel">
-     <x>362</x>
-     <y>371</y>
+     <x>321</x>
+     <y>377</y>
     </hint>
    </hints>
   </connection>
