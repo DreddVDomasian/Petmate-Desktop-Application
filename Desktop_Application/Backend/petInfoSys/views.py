@@ -1,4 +1,5 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from django.db import transaction
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from datetime import date
@@ -213,103 +214,103 @@ class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return obj
 
 
-#------------------------------WEB APPOINTMENT VIEWS----------------------------------------------------
 
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-from django.db import transaction
-import json
-from .models import Client, Pet, AppointmentType
+# ------------------------------WEB APPOINTMENT VIEWS----------------------------------------------------
 
 
-@csrf_exempt
-@require_http_methods(["POST"])
-def create_booking(request):
-    try:
-        # Parse JSON data from request
-        data = json.loads(request.body)
 
-        # Use database transaction to ensure data integrity
-        with transaction.atomic():
-            # 1. Create or get client
-            client_data = {
-                'client_type': data.get('client_type'),
-                'first_name': data.get('first_name'),
-                'last_name': data.get('last_name'),
-                'email': data.get('email'),
-                'phone': data.get('phone'),
-                'emergency_contact': data.get('emergency_contact'),
-                'province': data.get('province'),
-                'city': data.get('city'),
-                'barangay': data.get('barangay'),
-                'detailed_address': data.get('detailed_address'),
-            }
+# REPLACE create_booking with DRF version
+class BookingCreateView(generics.CreateAPIView):
+    queryset = AppointmentType.objects.all()
+    serializer_class = AppointmentTypeSerializer
 
-            # Check if client already exists by email
-            client, created = Client.objects.get_or_create(
-                email=client_data['email'],
-                defaults=client_data
-            )
+    def create(self, request, *args, **kwargs):
+        try:
+            data = request.data
 
-            # If client exists, update their information
-            if not created:
-                for key, value in client_data.items():
-                    if key != 'email':  # Don't update email
-                        setattr(client, key, value)
-                client.save()
+            # Use database transaction to ensure data integrity
+            with transaction.atomic():
+                # 1. Create or get client
+                client_data = {
+                    'client_type': data.get('client_type'),
+                    'first_name': data.get('first_name'),
+                    'last_name': data.get('last_name'),
+                    'email': data.get('email'),
+                    'phone': data.get('phone'),
+                    'emergency_contact': data.get('emergency_contact'),
+                    'province': data.get('province'),
+                    'city': data.get('city'),
+                    'barangay': data.get('barangay'),
+                    'detailed_address': data.get('detailed_address'),
+                }
 
-            # 2. Create pet
-            pet = PetWeb.objects.create(
-                client=client,
-                pet_name=data.get('pet_name'),
-                species=data.get('species'),
-                breed=data.get('breed'),
-                color=data.get('color'),
-                sex=data.get('sex'),
-            )
+                # Check if client already exists by email
+                client, created = Client.objects.get_or_create(
+                    email=client_data['email'],
+                    defaults=client_data
+                )
 
-            # 3. Create appointment
-            appointment = AppointmentType.objects.create(
-                client=client,
-                pet=pet,
-                appointment_reason=data.get('appointment_reason'),
-                provider=data.get('provider'),
-                appointment_datetime=data.get('appointment_datetime'),
-                comments=data.get('comments', ''),
-                status='pending'
-            )
+                # If client exists, update their information
+                if not created:
+                    for key, value in client_data.items():
+                        if key != 'email':  # Don't update email
+                            setattr(client, key, value)
+                    client.save()
 
-        return JsonResponse({
-            'status': 'success',
-            'message': 'Booking created successfully',
-            'booking_id': appointment.booking_id,  # Add this line
-            'data': {
-                'client_id': client.id,
-                'pet_id': pet.id,
-                'appointment_id': appointment.id,
-                'client_name': client.full_name,
-                'pet_name': pet.pet_name,
-                'appointment_datetime': appointment.appointment_datetime,
-                'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
-            }
-        })
+                # 2. Create pet
+                pet = PetWeb.objects.create(
+                    client=client,
+                    pet_name=data.get('pet_name'),
+                    species=data.get('species'),
+                    breed=data.get('breed'),
+                    color=data.get('color'),
+                    sex=data.get('sex'),
+                )
 
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=400)
+                # 3. Create appointment
+                appointment = AppointmentType.objects.create(
+                    client=client,
+                    pet=pet,
+                    appointment_reason=data.get('appointment_reason'),
+                    provider=data.get('provider'),
+                    appointment_datetime=data.get('appointment_datetime'),
+                    comments=data.get('comments', ''),
+                    status='pending'
+                )
+
+            return Response({
+                'status': 'success',
+                'message': 'Booking created successfully',
+                'booking_id': appointment.booking_id,
+                'data': {
+                    'client_id': client.id,
+                    'pet_id': pet.id,
+                    'appointment_id': appointment.id,
+                    'client_name': client.full_name,
+                    'pet_name': pet.pet_name,
+                    'appointment_datetime': appointment.appointment_datetime,
+                    'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def get_clients(request):
-    """Get all clients"""
-    try:
-        clients = Client.objects.all().order_by('-created_at')
+# CONVERT get_clients to DRF
+class ClientListView(generics.ListAPIView):
+    queryset = Client.objects.all().order_by('-created_at')
+    serializer_class = ClientSerializer
+
+    def list(self, request, *args, **kwargs):
+        clients = self.get_queryset()
+        serializer = self.get_serializer(clients, many=True)
+
+        # Add your custom response format
         clients_data = []
-
         for client in clients:
             clients_data.append({
                 'id': client.id,
@@ -324,26 +325,22 @@ def get_clients(request):
                 'created_at': client.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
 
-        return JsonResponse({
+        return Response({
             'status': 'success',
             'clients': clients_data,
             'total': len(clients_data)
         })
 
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=400)
 
+# CONVERT get_pets to DRF
+class PetWebListView(generics.ListAPIView):
+    queryset = PetWeb.objects.select_related('client').all().order_by('-created_at')
+    serializer_class = PetWebSerializer
 
-@csrf_exempt
-def get_pets(request):
-    """Get all pets"""
-    try:
-        pets = PetWeb.objects.select_related('client').all().order_by('-created_at')
+    def list(self, request, *args, **kwargs):
+        pets = self.get_queryset()
+
         pets_data = []
-
         for pet in pets:
             pets_data.append({
                 'id': pet.id,
@@ -358,26 +355,22 @@ def get_pets(request):
                 'created_at': pet.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
 
-        return JsonResponse({
+        return Response({
             'status': 'success',
             'pets': pets_data,
             'total': len(pets_data)
         })
 
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=400)
 
+# CONVERT get_appointments to DRF
+class AppointmentListView(generics.ListAPIView):
+    queryset = AppointmentType.objects.select_related('client', 'pet').all().order_by('-created_at')
+    serializer_class = AppointmentTypeSerializer
 
-@csrf_exempt
-def get_appointments(request):
-    """Get all appointments"""
-    try:
-        appointments = AppointmentType.objects.select_related('client', 'pet').all().order_by('-created_at')
+    def list(self, request, *args, **kwargs):
+        appointments = self.get_queryset()
+
         appointments_data = []
-
         for appointment in appointments:
             appointments_data.append({
                 'id': appointment.id,
@@ -389,7 +382,6 @@ def get_appointments(request):
                 'city': appointment.client.city,
                 'barangay': appointment.client.barangay,
                 'detailed_address': appointment.client.detailed_address,
-                #pet details
                 'pet_name': appointment.pet.pet_name,
                 'species': appointment.pet.species,
                 'breed': appointment.pet.breed,
@@ -403,84 +395,70 @@ def get_appointments(request):
                 'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
 
-        return JsonResponse({
+        return Response({
             'status': 'success',
             'appointments': appointments_data,
             'total': len(appointments_data)
         })
 
-    except Exception as e:
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e)
-        }, status=400)
+
+# CONVERT get_appointment_detail to DRF
+class AppointmentDetailView(generics.RetrieveAPIView):
+    queryset = AppointmentType.objects.select_related('client', 'pet').all()
+    serializer_class = AppointmentTypeSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            appointment = self.get_object()
+            data = {
+                'id': appointment.id,
+                'client_name': appointment.client.full_name,
+                'pet_name': appointment.pet.pet_name,
+                'appointment_reason': appointment.appointment_reason,
+                'provider': appointment.provider,
+                'appointment_datetime': appointment.appointment_datetime,
+                'status': appointment.status,
+                'comments': appointment.comments,
+                'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            return Response({'status': 'success', 'appointment': data})
+        except AppointmentType.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': f'Appointment with id {kwargs["pk"]} not found.'
+            }, status=status.HTTP_404_NOT_FOUND)
 
 
-@csrf_exempt
-def get_appointment_detail(request, pk):
-    """Get a single appointment by ID"""
-    try:
-        appointment = AppointmentType.objects.select_related('client', 'pet').get(pk=pk)
-
-        data = {
-            'id': appointment.id,
-            'client_name': appointment.client.full_name,
-            'pet_name': appointment.pet.pet_name,
-            'appointment_reason': appointment.appointment_reason,
-            'provider': appointment.provider,
-            'appointment_datetime': appointment.appointment_datetime,
-            'status': appointment.status,
-            'comments': appointment.comments,
-            'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
-        }
-
-        return JsonResponse({'status': 'success', 'appointment': data})
-
-    except AppointmentType.DoesNotExist:
-        return JsonResponse({
-            'status': 'error',
-            'message': f'Appointment with id {pk} not found.'
-        }, status=404)
-
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
-@csrf_exempt
+# CONVERT update_appointment_status to DRF
+@api_view(['PATCH'])
 def update_appointment_status(request, pk):
     """Update only the status of an appointment"""
-    if request.method == "PATCH":
-        try:
-            appointment = AppointmentType.objects.get(pk=pk)
-            data = json.loads(request.body.decode("utf-8"))
+    try:
+        appointment = AppointmentType.objects.get(pk=pk)
+        new_status = request.data.get("status")
 
-            new_status = data.get("status")
-            if not new_status:
-                return JsonResponse({
-                    "status": "error",
-                    "message": "Missing 'status' field"
-                }, status=400)
-
-            appointment.status = new_status
-            appointment.save()
-
-            return JsonResponse({
-                "status": "success",
-                "message": f"Appointment {pk} status updated to {new_status}"
-            })
-
-        except AppointmentType.DoesNotExist:
-            return JsonResponse({
+        if not new_status:
+            return Response({
                 "status": "error",
-                "message": f"Appointment with id {pk} not found."
-            }, status=404)
+                "message": "Missing 'status' field"
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            return JsonResponse({
-                "status": "error",
-                "message": str(e)
-            }, status=400)
+        appointment.status = new_status
+        appointment.save()
 
-    return JsonResponse({
-        "status": "error",
-        "message": "Only PATCH method is allowed"
-    }, status=405)
+        return Response({
+            "status": "success",
+            "message": f"Appointment {pk} status updated to {new_status}"
+        })
+
+    except AppointmentType.DoesNotExist:
+        return Response({
+            "status": "error",
+            "message": f"Appointment with id {pk} not found."
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "message": str(e)
+        }, status=status.HTTP_400_BAD_REQUEST)

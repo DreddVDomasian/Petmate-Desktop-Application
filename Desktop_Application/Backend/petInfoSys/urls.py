@@ -22,14 +22,11 @@ urlpatterns = [
     path("reminders/", views.reminders, name="reminders"),
     # WEB APP URlS
     # Main booking endpoint for your HTML form
-    path('bookings/', views.create_booking, name='create_booking'),
-
-
-    path('clients/', views.get_clients, name='get_clients'),
-    path('pets-web/', views.get_pets, name='get_pets'),
-
-    path('appointments/', views.get_appointments, name='get_appointments'),
-    path('appointments/<int:pk>/', views.get_appointment_detail, name='appointment-detail'),
-    path('appointments/<int:pk>/statusUpdate/', views.update_appointment_status, name='update_appointment_status'),
+    path('bookings/', BookingCreateView.as_view(), name='create_booking'),
+    path('clients/', ClientListView.as_view(), name='get_clients'),
+    path('pets-web/', PetWebListView.as_view(), name='get_pets'),
+    path('appointments/', AppointmentListView.as_view(), name='get_appointments'),
+    path('appointments/<int:pk>/', AppointmentDetailView.as_view(), name='appointment-detail'),
+    path('appointments/<int:pk>/statusUpdate/', update_appointment_status, name='update_appointment_status'),
 
 ]

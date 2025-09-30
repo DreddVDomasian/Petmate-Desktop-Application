@@ -95,3 +95,25 @@ class WalkInAppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = WalkInAppointment
         fields = '__all__'
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = '__all__'
+
+
+class PetWebSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PetWeb
+        fields = '__all__'
+
+
+class AppointmentTypeSerializer(serializers.ModelSerializer):
+    client = ClientSerializer(read_only=True)
+    pet = PetWebSerializer(read_only=True)
+    booking_id = serializers.CharField(read_only=True)  # Add this line
+
+    class Meta:
+        model = AppointmentType
+        fields = '__all__'
