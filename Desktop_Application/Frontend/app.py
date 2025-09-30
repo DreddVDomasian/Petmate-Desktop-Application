@@ -1036,6 +1036,7 @@ class MainUI(QMainWindow):
 
             service_card.serviceDeleteBtn.clicked.connect(lambda _, service_id=service['id']: self.deleteFunction.set_delete_target("service", service_id))
             service_card.updateServiceCardBtn.clicked.connect(lambda _, service_id=service["id"]: self.updateFunction.update_service_info(service_id))
+
             # Connect buttons safely
             if open_btn and close_btn and lower_frame:
                 open_btn.setVisible(True)
@@ -1340,7 +1341,7 @@ class MainUI(QMainWindow):
                 self.scale_widget_font(emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
 
             if card.profileIcon:
-                self.scale_label_pixmap(card.profileIcon, min_size=40, max_size=160)
+                self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
 
 
 

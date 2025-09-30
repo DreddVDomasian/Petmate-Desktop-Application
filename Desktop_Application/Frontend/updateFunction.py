@@ -205,6 +205,7 @@ class Update:
             self.ui.updateServiceBtn.show()
             self.ui.addNewServiceBtn.setChecked(True)
             self.ui.addNewServiceBtn.setText("Update service")
+            self.ui.dateEdit.setEnabled(False)
             self.ui.serviceHistoryStackedWidget.setCurrentIndex(1)
         else:
             Toast(self.ui, "Failed to load patient!", icon_path="Icons/warning.png").show_toast()

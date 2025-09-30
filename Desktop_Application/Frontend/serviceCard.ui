@@ -435,7 +435,7 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="icon">
                   <iconset resource="resource.qrc">
-                   <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
+                   <normaloff>:/Icons/Icons/editPeDetails.png</normaloff>:/Icons/Icons/editPeDetails.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -461,7 +461,7 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <property name="icon">
                   <iconset resource="resource.qrc">
-                   <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
+                   <normaloff>:/Icons/Icons/deleteBlack.png</normaloff>:/Icons/Icons/deleteBlack.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>

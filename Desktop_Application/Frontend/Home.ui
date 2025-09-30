@@ -1163,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1220,6 +1220,10 @@ QToolButton:hover{
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="homeBackBtn">
+                   <property name="styleSheet">
+                    <string notr="true">background-color:transparent;
+border:none;</string>
+                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -1384,6 +1388,10 @@ QToolButton:hover{
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="addPatientBackBtn">
+                <property name="styleSheet">
+                 <string notr="true">background-color:transparent;
+border:none;</string>
+                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -2312,6 +2320,10 @@ QPushButton:hover{
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="RecordsBackBtn">
+                <property name="styleSheet">
+                 <string notr="true">background-color:transparent;
+border:none;</string>
+                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -2561,8 +2573,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>806</width>
-                   <height>489</height>
+                   <width>814</width>
+                   <height>514</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -2618,6 +2630,10 @@ color:rgb(141, 141, 141);</string>
               </property>
               <item alignment="Qt::AlignLeft">
                <widget class="QPushButton" name="appointmentBackBtn">
+                <property name="styleSheet">
+                 <string notr="true">background-color:transparent;
+border:none;</string>
+                </property>
                 <property name="icon">
                  <iconset resource="resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -3119,6 +3135,10 @@ QPushButton:checked {
                      </property>
                      <item>
                       <widget class="QToolButton" name="toolButton_3">
+                       <property name="styleSheet">
+                        <string notr="true">background-color:transparent;
+border:none;</string>
+                       </property>
                        <property name="text">
                         <string>...</string>
                        </property>
@@ -3144,6 +3164,8 @@ QPushButton:checked {
                        </property>
                        <property name="styleSheet">
                         <string notr="true">QToolButton{
+background-color:transparent;
+border:none;
 	font-family:&quot;Montserrat ExtraBold&quot;;
 	font-weight:81;
 	color: #4F4F4F;
@@ -3531,7 +3553,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>806</width>
+                           <width>814</width>
                            <height>383</height>
                           </rect>
                          </property>
@@ -3999,8 +4021,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>78</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4070,6 +4092,10 @@ QFrame{
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="ReturnBackBtn">
+                   <property name="styleSheet">
+                    <string notr="true">background-color:transparent;
+border:none;</string>
+                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -4825,7 +4851,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>804</width>
+                          <width>812</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -4862,8 +4888,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>115</width>
-                          <height>50</height>
+                          <width>93</width>
+                          <height>41</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -4896,6 +4922,10 @@ QScrollArea QScrollBar::groove:horizontal {
                <widget class="QToolButton" name="profileBackbutton">
                 <property name="cursor">
                  <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color:transparent;
+border:none;</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -4960,7 +4990,7 @@ QScrollArea QScrollBar::groove:horizontal {
                      <number>20</number>
                     </property>
                     <property name="bottomMargin">
-                     <number>20</number>
+                     <number>40</number>
                     </property>
                     <item row="1" column="2">
                      <widget class="QFrame" name="frame_8">
@@ -5112,14 +5142,15 @@ color:rgb(0, 0, 0);</string>
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">background:transparent;</string>
+                             <string notr="true">background-color:transparent;
+border:none;</string>
                             </property>
                             <property name="text">
                              <string>...</string>
                             </property>
                             <property name="icon">
                              <iconset resource="resource.qrc">
-                              <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
+                              <normaloff>:/Icons/Icons/EditProfile.png</normaloff>:/Icons/Icons/EditProfile.png</iconset>
                             </property>
                             <property name="iconSize">
                              <size>
@@ -5135,7 +5166,8 @@ color:rgb(0, 0, 0);</string>
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">background:transparent;</string>
+                             <string notr="true">background-color:transparent;
+border:none;</string>
                             </property>
                             <property name="text">
                              <string>...</string>
@@ -5198,7 +5230,7 @@ color:rgb(0, 0, 0);</string>
               <item>
                <widget class="QStackedWidget" name="profileStackedWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="petCardsPage">
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5263,8 +5295,8 @@ color:rgb(0, 0, 0);</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>111</height>
+                       <width>814</width>
+                       <height>394</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -5333,6 +5365,10 @@ color:rgb(0, 0, 0);</string>
                            <property name="cursor">
                             <cursorShape>PointingHandCursor</cursorShape>
                            </property>
+                           <property name="styleSheet">
+                            <string notr="true">background-color:transparent;
+border:none;</string>
+                           </property>
                            <property name="text">
                             <string>...</string>
                            </property>
@@ -5360,7 +5396,9 @@ color:rgb(0, 0, 0);</string>
                             <cursorShape>PointingHandCursor</cursorShape>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">font: 81 30pt &quot;Montserrat ExtraBold&quot;;
+                            <string notr="true">background-color:transparent;
+border:none;
+font: 81 30pt &quot;Montserrat ExtraBold&quot;;
 color:#4F4F4F;</string>
                            </property>
                            <property name="text">
@@ -6207,7 +6245,8 @@ QPushButton:hover{
                     <cursorShape>PointingHandCursor</cursorShape>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">background:transparent;</string>
+                    <string notr="true">background-color:transparent;
+border:none;</string>
                    </property>
                    <property name="text">
                     <string>...</string>
@@ -6279,7 +6318,7 @@ QPushButton:hover{
                            <number>0</number>
                           </property>
                           <property name="bottomMargin">
-                           <number>10</number>
+                           <number>50</number>
                           </property>
                           <item alignment="Qt::AlignTop">
                            <widget class="QFrame" name="frame_17">
@@ -6358,6 +6397,21 @@ QPushButton:hover{
                              <enum>QFrame::Raised</enum>
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_26">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
                              <item>
                               <widget class="QLabel" name="petProfileIcon">
                                <property name="maximumSize">
@@ -6409,7 +6463,7 @@ border:none;</string>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_25">
                           <property name="spacing">
-                           <number>40</number>
+                           <number>0</number>
                           </property>
                           <property name="leftMargin">
                            <number>0</number>
@@ -6457,76 +6511,6 @@ border:none;</string>
                              <property name="bottomMargin">
                               <number>0</number>
                              </property>
-                             <item alignment="Qt::AlignRight">
-                              <widget class="QFrame" name="frame_57">
-                               <property name="styleSheet">
-                                <string notr="true">background:transparent;</string>
-                               </property>
-                               <property name="frameShape">
-                                <enum>QFrame::StyledPanel</enum>
-                               </property>
-                               <property name="frameShadow">
-                                <enum>QFrame::Raised</enum>
-                               </property>
-                               <layout class="QHBoxLayout" name="horizontalLayout_58">
-                                <property name="spacing">
-                                 <number>0</number>
-                                </property>
-                                <property name="leftMargin">
-                                 <number>0</number>
-                                </property>
-                                <property name="topMargin">
-                                 <number>0</number>
-                                </property>
-                                <property name="rightMargin">
-                                 <number>0</number>
-                                </property>
-                                <property name="bottomMargin">
-                                 <number>0</number>
-                                </property>
-                                <item>
-                                 <widget class="QToolButton" name="petProfileEditBtn">
-                                  <property name="styleSheet">
-                                   <string notr="true">background:transparent;</string>
-                                  </property>
-                                  <property name="text">
-                                   <string>...</string>
-                                  </property>
-                                  <property name="icon">
-                                   <iconset resource="resource.qrc">
-                                    <normaloff>:/Icons/Icons/UpdateIcon.png</normaloff>:/Icons/Icons/UpdateIcon.png</iconset>
-                                  </property>
-                                  <property name="iconSize">
-                                   <size>
-                                    <width>25</width>
-                                    <height>25</height>
-                                   </size>
-                                  </property>
-                                 </widget>
-                                </item>
-                                <item>
-                                 <widget class="QToolButton" name="petProfileDeleteBtn">
-                                  <property name="styleSheet">
-                                   <string notr="true">background:transparent;</string>
-                                  </property>
-                                  <property name="text">
-                                   <string>...</string>
-                                  </property>
-                                  <property name="icon">
-                                   <iconset resource="resource.qrc">
-                                    <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
-                                  </property>
-                                  <property name="iconSize">
-                                   <size>
-                                    <width>25</width>
-                                    <height>25</height>
-                                   </size>
-                                  </property>
-                                 </widget>
-                                </item>
-                               </layout>
-                              </widget>
-                             </item>
                             </layout>
                            </widget>
                           </item>
@@ -6549,13 +6533,13 @@ border:none;</string>
                               <number>0</number>
                              </property>
                              <property name="topMargin">
-                              <number>0</number>
+                              <number>15</number>
                              </property>
                              <property name="rightMargin">
                               <number>0</number>
                              </property>
                              <property name="bottomMargin">
-                              <number>0</number>
+                              <number>15</number>
                              </property>
                              <item>
                               <widget class="QFrame" name="frame_11">
@@ -6784,9 +6768,6 @@ color:rgb(0, 0, 0);</string>
                                      <property name="text">
                                       <string>REMARKS</string>
                                      </property>
-                                     <property name="alignment">
-                                      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                                     </property>
                                      <property name="wordWrap">
                                       <bool>true</bool>
                                      </property>
@@ -6849,6 +6830,58 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="text">
                                       <string>AUG 26, 2025</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item alignment="Qt::AlignLeft">
+                                 <widget class="QFrame" name="frame_56">
+                                  <property name="frameShape">
+                                   <enum>QFrame::StyledPanel</enum>
+                                  </property>
+                                  <property name="frameShadow">
+                                   <enum>QFrame::Raised</enum>
+                                  </property>
+                                  <layout class="QHBoxLayout" name="horizontalLayout_80">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="leftMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="topMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="rightMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="bottomMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QToolButton" name="petProfileEditBtn">
+                                     <property name="styleSheet">
+                                      <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(0, 0, 0);
+background:transparent;</string>
+                                     </property>
+                                     <property name="text">
+                                      <string>EDIT DETAILS</string>
+                                     </property>
+                                     <property name="icon">
+                                      <iconset resource="resource.qrc">
+                                       <normaloff>:/Icons/Icons/editPeDetails.png</normaloff>:/Icons/Icons/editPeDetails.png</iconset>
+                                     </property>
+                                     <property name="iconSize">
+                                      <size>
+                                       <width>25</width>
+                                       <height>25</height>
+                                      </size>
+                                     </property>
+                                     <property name="toolButtonStyle">
+                                      <enum>Qt::ToolButtonTextBesideIcon</enum>
                                      </property>
                                     </widget>
                                    </item>
@@ -7171,9 +7204,91 @@ color:rgb(0, 0, 0);</string>
                                   </layout>
                                  </widget>
                                 </item>
+                                <item alignment="Qt::AlignLeft">
+                                 <widget class="QFrame" name="frame_58">
+                                  <property name="frameShape">
+                                   <enum>QFrame::StyledPanel</enum>
+                                  </property>
+                                  <property name="frameShadow">
+                                   <enum>QFrame::Raised</enum>
+                                  </property>
+                                  <layout class="QHBoxLayout" name="horizontalLayout_81">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="leftMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="topMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="rightMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="bottomMargin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QToolButton" name="petProfileDeleteBtn">
+                                     <property name="styleSheet">
+                                      <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(0, 0, 0);
+background:transparent;</string>
+                                     </property>
+                                     <property name="text">
+                                      <string>DELETE PET</string>
+                                     </property>
+                                     <property name="icon">
+                                      <iconset resource="resource.qrc">
+                                       <normaloff>:/Icons/Icons/deleteBlack.png</normaloff>:/Icons/Icons/deleteBlack.png</iconset>
+                                     </property>
+                                     <property name="iconSize">
+                                      <size>
+                                       <width>30</width>
+                                       <height>30</height>
+                                      </size>
+                                     </property>
+                                     <property name="toolButtonStyle">
+                                      <enum>Qt::ToolButtonTextBesideIcon</enum>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
                                </layout>
                               </widget>
                              </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QFrame" name="frame_57">
+                            <property name="styleSheet">
+                             <string notr="true">background:transparent;</string>
+                            </property>
+                            <property name="frameShape">
+                             <enum>QFrame::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_58">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
+                             <property name="leftMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="topMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="rightMargin">
+                              <number>0</number>
+                             </property>
+                             <property name="bottomMargin">
+                              <number>0</number>
+                             </property>
                             </layout>
                            </widget>
                           </item>
@@ -8590,6 +8705,10 @@ QPushButton:hover{
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color:transparent;
+border:none;</string>
+                   </property>
                    <property name="icon">
                     <iconset resource="resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
@@ -8733,6 +8852,12 @@ QPushButton:hover{
                          <layout class="QHBoxLayout" name="horizontalLayout_53">
                           <item>
                            <widget class="QLabel" name="label_13">
+                            <property name="minimumSize">
+                             <size>
+                              <width>80</width>
+                              <height>80</height>
+                             </size>
+                            </property>
                             <property name="maximumSize">
                              <size>
                               <width>80</width>
