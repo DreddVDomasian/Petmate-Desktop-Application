@@ -80,7 +80,7 @@ class MainUI(QMainWindow):
 
         self.duplicateDialog = None
         self.ignore_duplicates = False
-
+        self.clientPageBtns.setVisible(False)
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
         self.customCalendar.setParent(None)

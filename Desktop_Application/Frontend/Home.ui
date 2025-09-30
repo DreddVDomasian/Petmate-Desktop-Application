@@ -1163,7 +1163,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2610,6 +2610,72 @@ color:rgb(141, 141, 141);</string>
                     </property>
                    </widget>
                   </item>
+                  <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
+                   <widget class="QFrame" name="frame_59">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_82">
+                     <property name="spacing">
+                      <number>40</number>
+                     </property>
+                     <property name="leftMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <widget class="QPushButton" name="PrevPage">
+                       <property name="styleSheet">
+                        <string notr="true">border:none;
+backgrouond-color:transparent;</string>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="resource.qrc">
+                         <normaloff>:/Icons/Icons/prevPage.png</normaloff>:/Icons/Icons/prevPage.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>35</width>
+                         <height>35</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="NextPage">
+                       <property name="styleSheet">
+                        <string notr="true">border:none;
+backgrouond-color:transparent;</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="resource.qrc">
+                         <normaloff>:/Icons/Icons/NextPage.png</normaloff>:/Icons/Icons/NextPage.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>35</width>
+                         <height>35</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
                  </layout>
                 </widget>
                </widget>
@@ -4021,8 +4087,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>82</width>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">

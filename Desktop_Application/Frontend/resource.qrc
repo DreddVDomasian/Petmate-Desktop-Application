@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/NextPage.png</file>
+    <file>Icons/prevPage.png</file>
     <file>Icons/deleteBlack.png</file>
     <file>Icons/UserIcon2.png</file>
     <file>Icons/editPeDetails.png</file>

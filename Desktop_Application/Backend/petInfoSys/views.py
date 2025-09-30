@@ -307,7 +307,7 @@ class ClientListView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         clients = self.get_queryset()
-        serializer = self.get_serializer(clients, many=True)
+
 
         # Add your custom response format
         clients_data = []
