@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetMate Animal Clinic</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/login.js" defer></script>
 </head>
 <body>
     <header>
@@ -19,10 +20,93 @@
                 <li><a href="#about">ABOUT</a></li>
                 <li><a href="#services">SERVICES</a></li>
                 <li><a href="#contact">CONTACT US</a></li>
+
+                <li><a href="#" class="login-btn" onclick="openLoginModal()">LOG IN</a></li>
             </ul>
         </nav>
     </header>
     
+
+    <!-- LOGIN MODAL   -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <div class="login-container">
+                <h2>Login to PetMate</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-submit-btn">LOGIN</button>
+                    
+                    <div class="signup-link">
+                        <p>Don't have an account? <a href="#" onclick="openSignupModal()">Sign up here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal  -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSignupModal()">&times;</span>
+            <div class="login-container">
+                <h2>Create Account</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" name="password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    
+                    <button type="submit" class="login-submit-btn">CREATE ACCOUNT</button>
+                    
+                    <div class="signup-link">
+                        <p>Already have an account? <a href="#" onclick="openLoginModal()">Login here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
     <!-- HOME PAGE -->
     <section class="home section" id="home">
         <div class="home-container">
