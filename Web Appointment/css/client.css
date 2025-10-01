@@ -1,0 +1,96 @@
+body{
+    margin: 0; 
+    font-family: Arial, sans-serif;
+    color: #272727;
+}
+.frame {
+    display: flex;
+    height: 100vh; 
+}
+.leftside{
+    background-color: #60AED0;
+    color: #272727;
+    display: flex;
+    flex-direction: column;  
+    align-items: flex-start;
+    padding: 30px;
+    min-height: 100vh;
+
+}
+.leftside h1 {
+    margin-bottom: 40px;    
+    text-align: left;
+    width: 100%;
+}
+.buttons{
+    display: flex;
+    flex-direction: column;  
+    gap: 15px;              
+    width: 100%;
+    max-width: 200px;
+}
+
+.buttons button {
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
+    transition: background 0.3s;
+}
+.buttons button:hover {
+    background-color: #e0e0e0;
+}
+.rightside {
+    flex: 8;
+    background-color: #fcfcfc;
+    display: flex;
+    justify-content: center;
+    align-items: center;       
+    padding: 40px;
+    position: relative;
+}
+.client-form {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 700px;
+
+}
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.confirmbtn {
+    width: 610px;     
+    height: 35px; 
+    font-weight: bold;     
+    font-size: 16px;   
+    color: #272727;
+    padding: 10px;
+    border: none;
+    border-radius: 6px; 
+    cursor: pointer; 
+    margin: 0 auto;
+    background-color: #60AED0;  
+}
+img{
+    width: 170px;
+    height: auto;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Petmate Animal Clinic</title>
+  <link rel="stylesheet" href="../css/client.css"> 
+</head>
+<body>
+  <div class="frame">
+    <div class="leftside">
+        <h1>Welcome to
+            <br>Petmate Animal Clinic
+        </h1>
+        <div class="buttons">
+            <button id="add">ADD PETS</button>
+            <button id="edit">SETTINGS</button>
+            <button id="logout">LOG OUT</button>
+        </div>
+    </div>
+    <div class="rightside">
+        <img src="../assets/PETMATE LOGO.png" alt="Petmate Logo">
+        <form class="client-form">
+            <h2>Customer Details</h2>
+
+            <h3>Basic Information</h3>
+            <div class="form-row">
+            <input type="text" placeholder="First name">
+            <input type="text" placeholder="Last name">
+            <input type="text" placeholder="Middle name (Optional)">
+            </div>
+
+            <div class="form-row">
+            <input type="email" placeholder="Email" required>
+            <input type="text" placeholder="Phone number" required>
+            <input type="text" placeholder="Emergency no. (Optional)">
+            </div>
+
+            <h3>Address</h3>
+            <div class="form-row">
+                <input type="text" placeholder="Province" required>
+                <input type="text" placeholder="City" required>
+                <input type="text" placeholder="Barangay" required>
+            </div>
+            <div class="form-row">
+                <input type="text" placeholder="Street address" required>
+            </div>
+            <div>
+            <button type="submit" class="confirmbtn">CONFIRM</button>
+            </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
