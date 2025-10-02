@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from django.db import transaction
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from datetime import date
 from .models import *
@@ -9,6 +10,20 @@ from django.db.models import Q
 from .serializers import *
 
 
+class StandardPagination(PageNumberPagination):
+    page_size = 16
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data
+        })
 
 def print_record(request, owner_id, pet_id):
     owner = get_object_or_404(basicInfo, id=owner_id)
@@ -118,8 +133,32 @@ def check_duplicate_patient(request):
 
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
-    queryset = basicInfo.objects.all()
+    queryset = basicInfo.objects.all().order_by('-id')
     serializer_class = BasicInfoSerializer
+    pagination_class = StandardPagination
+
+
+@api_view(['GET'])
+def patient_search(request):
+    """
+    Global patient search - function based version
+    """
+    search_term = request.query_params.get('search', '').strip()
+    print(f"🔍 Global search for: '{search_term}'")
+
+    if len(search_term) < 2:
+        return Response([])
+
+    patients = basicInfo.objects.filter(
+        Q(firstName__icontains=search_term) |
+        Q(lastName__icontains=search_term) |
+        Q(email__icontains=search_term) |
+        Q(middleName__icontains=search_term)
+    ).order_by('firstName', 'lastName')[:50]
+
+    serializer = BasicInfoSerializer(patients, many=True)
+    print(f"✅ Found {len(patients)} patients globally")
+    return Response(serializer.data)
 
 # GET / PUT / DELETE single patient by id
 class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

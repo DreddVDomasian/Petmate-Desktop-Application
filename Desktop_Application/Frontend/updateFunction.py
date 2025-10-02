@@ -90,7 +90,7 @@ class Update:
             if response.status_code == 200:
                 # Defer UI updates to prevent crash
                 def post_update_ui():
-                    self.ui.load_patients()
+                    self.ui.load_patients(1)
                     self.ui.clearInputs()
                     self.ui.navigate_to_page(2)
                     Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
@@ -242,6 +242,7 @@ class Update:
             self.ui.load_services_for_pet(self.ui.selected_pet_id)  # refresh list
             self.ui.service_stackedWidget(0) # go back to history
             self.ui.updateServiceBtn.hide()
+            self.ui.dateEdit.setEnabled(True)
             self.ui.addServiceBtn.show()
         else:
             Toast(self.ui, "Failed to update service!", icon_path="Icons/warning.png").show_toast()

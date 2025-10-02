@@ -13,7 +13,7 @@ if project_root not in sys.path:
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate
+from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer
 from input_styles import *
 from  shadowEffects import *
 from toast import Toast
@@ -126,9 +126,11 @@ class AddAppointmentCard(QWidget):
         return super().eventFilter(obj, event)
 
     def load_patients_to_combobox(self):
-        response = requests.get("http://127.0.0.1:8000/api/patients/")
+        # Load first 500 patients for fast initial search
+        response = requests.get("http://127.0.0.1:8000/api/patients/?page_size=500")
         if response.status_code == 200:
-            patients = response.json()
+            data = response.json()
+            patients = data.get('results', [])  # Get from 'results' now
             self.selectPatientPopUp.clear()
             self.selectPatientPopUp.addItem("", None)
             for patient in patients:
@@ -137,10 +139,87 @@ class AddAppointmentCard(QWidget):
                 self.selectPatientPopUp.addItem(full_name, patient['id'])
 
             self.set_dynamic_completer(self.selectPatientPopUp)
+            print(f"Loaded {len(patients)} patients for fast search")
+
+            # Setup fallback search for patients not in initial 500
+            self.setup_fallback_search()
         else:
             print("Failed to load patients")
 
+    def setup_fallback_search(self):
+        """Setup search for patients not in the initial 500"""
+        # Disconnect any existing connections to avoid duplicates
+        try:
+            self.selectPatientPopUp.lineEdit().textEdited.disconnect()
+        except:
+            pass
+        self.selectPatientPopUp.lineEdit().textEdited.connect(self.check_fallback_search)
+
+    def check_fallback_search(self, search_text):
+        if len(search_text) < 3:  # Only search globally after 3 characters
+            return
+
+        # Check if current text matches any loaded patient
+        current_text = search_text.lower()
+        found_in_loaded = False
+
+        for i in range(self.selectPatientPopUp.count()):
+            item_text = self.selectPatientPopUp.itemText(i).lower()
+            if current_text in item_text:
+                found_in_loaded = True
+                break
+
+        # If not found in loaded patients, search globally
+        if not found_in_loaded:
+            self.perform_global_search(search_text)
+
+    def perform_global_search(self, search_text):
+        """Search entire database for patients not in initial 500"""
+        if hasattr(self, '_global_search_timer'):
+            self._global_search_timer.stop()
+
+        self._global_search_timer = QTimer()
+        self._global_search_timer.setSingleShot(True)
+        self._global_search_timer.timeout.connect(lambda: self.do_global_search(search_text))
+        self._global_search_timer.start(500)
+
+    def do_global_search(self, search_text):
+        try:
+            response = requests.get(f"http://127.0.0.1:8000/api/patient-search/?search={search_text}")
+
+            if response.status_code == 200:
+                global_patients = response.json()
+
+                if global_patients:
+                    # Add global results to combobox temporarily
+                    self.selectPatientPopUp.blockSignals(True)
+                    current_text = self.selectPatientPopUp.lineEdit().text()
+
+                    # Clear and add global results
+                    self.selectPatientPopUp.clear()
+                    self.selectPatientPopUp.addItem("", None)
+
+                    for patient in global_patients:
+                        parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+                        full_name = " ".join(p for p in parts if p)
+                        self.selectPatientPopUp.addItem(full_name, patient['id'])
+
+                    # Restore text and show dropdown
+                    self.selectPatientPopUp.lineEdit().setText(current_text)
+                    self.selectPatientPopUp.blockSignals(False)
+                    self.selectPatientPopUp.showPopup()
+
+                    print(f"Found {len(global_patients)} patients globally")
+
+        except Exception as e:
+            print(f"Global search error: {e}")
+
     def on_patient_selected(self, index):
+        # Reload initial patients after selection to reset the combobox
+        if index > 0:  # If a patient was selected (not the empty item)
+            # Small delay to ensure selection is processed
+            QTimer.singleShot(100, self.load_patients_to_combobox)
+
         patient_id = self.selectPatientPopUp.itemData(index)
         if not patient_id:
             self.selectPetPopUp.clear()
@@ -178,7 +257,7 @@ class AddAppointmentCard(QWidget):
         completer = QCompleter(comboBox.model())
         completer.setCompletionColumn(0)
         completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        completer.setFilterMode(Qt.MatchFlag.MatchStartsWith)
+        completer.setFilterMode(Qt.MatchFlag.MatchContains)  # Change to MatchContains
         completer.popup().setStyleSheet(completer_popup_style)
         comboBox.setCompleter(completer)
 

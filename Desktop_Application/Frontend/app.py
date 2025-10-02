@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget, QComboBox, QButtonGroup, QMessageBox, \
-    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame
+    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout
 from PyQt6 import uic
 from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize,QParallelAnimationGroup
 from PyQt6.QtGui import QFontDatabase, QPixmap
@@ -60,7 +60,7 @@ class MainUI(QMainWindow):
         self.selected_service_id = None
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
-        self.load_patients()
+        self.load_patients(1)
         self.load_scheduled_services()
         self.setup_shadow()
         self.setup_all_back_buttons()
@@ -80,7 +80,8 @@ class MainUI(QMainWindow):
 
         self.duplicateDialog = None
         self.ignore_duplicates = False
-        self.clientPageBtns.setVisible(False)
+
+
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("customCalendar.ui")
         self.customCalendar.setParent(None)
@@ -735,7 +736,7 @@ class MainUI(QMainWindow):
         # proceed to save patient
         if add_new_patient(data):
             self.navigate_to_page(2)
-            self.load_patients()
+            self.load_patients(1)
 
             self.clearInputs()
 
@@ -889,20 +890,31 @@ class MainUI(QMainWindow):
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
 
-    def load_patients(self):
+    def load_patients(self, page=1):
         self.patient_cards = []
-        response = requests.get("http://127.0.0.1:8000/api/patients/")
-        if response.status_code == 200:
-            patients = response.json()
-
-        else:
-            patients = []
 
         # 🧹 Clear existing items before adding new ones
         while self.patientListLayout.count():
             child = self.patientListLayout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
+
+        response = requests.get(f"http://127.0.0.1:8000/api/patients/?page={page}")
+        if response.status_code == 200:
+            data = response.json()
+            # Get patients from 'results' key instead of direct list
+            patients = data.get('results', [])
+
+            # Store pagination info
+            self.current_patient_page = page
+            self.total_patient_pages = data.get('total_pages', 1)
+            self.total_patient_count = data.get('count', 0)
+
+        else:
+            patients = []
+            self.current_patient_page = 1
+            self.total_patient_pages = 1
+            self.total_patient_count = 0
 
         if not patients:
             empty_label = QLabel("NO RECORDS")
@@ -938,8 +950,43 @@ class MainUI(QMainWindow):
             card.mousePressEvent = make_handler(patient, self)
 
             card.setGraphicsEffect(create_card_shadow())
-            self.patientListLayout.insertWidget(0, card)
+            self.patientListLayout.addWidget(card)
             self.patient_cards.append(card)
+        self.add_patient_pagination_controls()
+
+    def add_patient_pagination_controls(self):
+        """Add pagination buttons below the patient cards using custom UI"""
+        if hasattr(self, 'patient_pagination_widget'):
+            self.patient_pagination_widget.deleteLater()
+
+        if self.total_patient_pages <= 1:
+            return
+
+        # Load custom pagination UI
+        self.patient_pagination_widget = uic.loadUi("paginationUi.ui")
+
+        # Update page label
+        self.patient_pagination_widget.pageLabel.setText(
+            f"Page {self.current_patient_page} of {self.total_patient_pages}")
+
+        # Connect buttons
+        self.patient_pagination_widget.PrevPage.clicked.connect(
+            lambda: self.load_patients(self.current_patient_page - 1)
+        )
+        self.patient_pagination_widget.NextPage.clicked.connect(
+            lambda: self.load_patients(self.current_patient_page + 1)
+        )
+
+        # Set button states
+        self.patient_pagination_widget.PrevPage.setEnabled(self.current_patient_page > 1)
+        self.patient_pagination_widget.NextPage.setEnabled(self.current_patient_page < self.total_patient_pages)
+
+        # Add shadow effect
+        self.patient_pagination_widget.NextPage.setGraphicsEffect(create_card_shadow())
+        self.patient_pagination_widget.PrevPage.setGraphicsEffect(create_card_shadow())
+
+        # Add to main layout
+        self.patientListLayout.addWidget(self.patient_pagination_widget)
 
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")

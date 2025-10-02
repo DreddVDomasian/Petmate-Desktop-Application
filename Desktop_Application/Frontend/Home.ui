@@ -35,6 +35,10 @@
   <property name="styleSheet">
    <string notr="true">QMainWindow{
 	border:none;
+}
+QToolButton{
+border:none
+
 }</string>
   </property>
   <property name="iconSize">
@@ -1163,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -4087,8 +4091,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>82</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -6359,11 +6363,11 @@ border:none;</string>
                        <enum>QFrame::Raised</enum>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_42">
-                       <property name="leftMargin">
-                        <number>20</number>
+                       <property name="spacing">
+                        <number>40</number>
                        </property>
-                       <property name="bottomMargin">
-                        <number>20</number>
+                       <property name="leftMargin">
+                        <number>30</number>
                        </property>
                        <item alignment="Qt::AlignLeft">
                         <widget class="QFrame" name="frame_19">
@@ -6678,7 +6682,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>NAME:</string>
@@ -6747,7 +6751,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>BREED:</string>
@@ -6816,7 +6820,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>REMARKS:</string>
@@ -6879,7 +6883,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>BIRTHDAY:</string>
@@ -6929,9 +6933,18 @@ color:rgb(0, 0, 0);</string>
                                    <item>
                                     <widget class="QToolButton" name="petProfileEditBtn">
                                      <property name="styleSheet">
-                                      <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);
-background:transparent;</string>
+                                      <string notr="true">
+
+#petProfileEditBtn{
+font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(52, 52, 52);
+background:transparent;
+}
+#petProfileEditBtn:hover{
+color:rgb(98, 98, 98);
+
+
+}</string>
                                      </property>
                                      <property name="text">
                                       <string>EDIT DETAILS</string>
@@ -7028,7 +7041,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>COLOR:</string>
@@ -7097,7 +7110,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>SPECIES:</string>
@@ -7169,7 +7182,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>SEX:</string>
@@ -7238,7 +7251,7 @@ color:rgb(0, 0, 0);</string>
                                      </property>
                                      <property name="styleSheet">
                                       <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);</string>
+color:rgb(52, 52, 52);</string>
                                      </property>
                                      <property name="text">
                                       <string>AGE:</string>
@@ -7297,9 +7310,16 @@ color:rgb(0, 0, 0);</string>
                                    <item>
                                     <widget class="QToolButton" name="petProfileDeleteBtn">
                                      <property name="styleSheet">
-                                      <string notr="true">font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(0, 0, 0);
-background:transparent;</string>
+                                      <string notr="true">
+#petProfileDeleteBtn{
+font: 87 13pt &quot;Montserrat Black&quot;;
+color:rgb(52, 52, 52);
+background:transparent;
+}
+#petProfileDeleteBtn:hover{
+color:rgb(98, 98, 98);
+
+}</string>
                                      </property>
                                      <property name="text">
                                       <string>DELETE PET</string>
