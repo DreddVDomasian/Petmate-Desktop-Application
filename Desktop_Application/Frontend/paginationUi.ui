@@ -6,16 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>229</width>
-    <height>60</height>
+    <width>787</width>
+    <height>65</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
-    <widget class="QFrame" name="frame_60">
+   <item>
+    <widget class="QFrame" name="frame_59">
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+font: 11pt &quot;Rubik Mono One&quot;;
+color:rgb(56, 56, 56);
+}
+</string>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -24,13 +31,13 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_82">
       <property name="spacing">
-       <number>20</number>
+       <number>10</number>
       </property>
       <property name="leftMargin">
        <number>10</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
        <number>10</number>
@@ -56,17 +63,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="pageLabel">
-        <property name="styleSheet">
-         <string notr="true">font: 81 10pt &quot;Montserrat ExtraBold&quot;;
-color:rgb(124, 181, 208);</string>
-        </property>
-        <property name="text">
-         <string>Page 1 of 1</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
+       <widget class="QWidget" name="pageButtonsContainer" native="true">
+        <layout class="QHBoxLayout" name="pageButtonsLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+        </layout>
        </widget>
       </item>
       <item>

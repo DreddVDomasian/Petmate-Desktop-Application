@@ -955,7 +955,7 @@ class MainUI(QMainWindow):
         self.add_patient_pagination_controls()
 
     def add_patient_pagination_controls(self):
-        """Add pagination buttons below the patient cards using custom UI"""
+        """Add pagination with page number buttons"""
         if hasattr(self, 'patient_pagination_widget'):
             self.patient_pagination_widget.deleteLater()
 
@@ -965,11 +965,7 @@ class MainUI(QMainWindow):
         # Load custom pagination UI
         self.patient_pagination_widget = uic.loadUi("paginationUi.ui")
 
-        # Update page label
-        self.patient_pagination_widget.pageLabel.setText(
-            f"Page {self.current_patient_page} of {self.total_patient_pages}")
-
-        # Connect buttons
+        # Connect prev/next buttons
         self.patient_pagination_widget.PrevPage.clicked.connect(
             lambda: self.load_patients(self.current_patient_page - 1)
         )
@@ -981,12 +977,110 @@ class MainUI(QMainWindow):
         self.patient_pagination_widget.PrevPage.setEnabled(self.current_patient_page > 1)
         self.patient_pagination_widget.NextPage.setEnabled(self.current_patient_page < self.total_patient_pages)
 
+        # Create page number buttons
+        self.create_page_buttons()
+
         # Add shadow effect
-        self.patient_pagination_widget.NextPage.setGraphicsEffect(create_card_shadow())
-        self.patient_pagination_widget.PrevPage.setGraphicsEffect(create_card_shadow())
+        self.patient_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
 
         # Add to main layout
         self.patientListLayout.addWidget(self.patient_pagination_widget)
+
+    def create_page_buttons(self):
+        """Create dynamic page number buttons with consistent 7 buttons"""
+        page_layout = self.patient_pagination_widget.pageButtonsLayout
+
+        # Clear existing page buttons
+        while page_layout.count():
+            child = page_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        current_page = self.current_patient_page
+        total_pages = self.total_patient_pages
+
+        # Always show exactly 7 buttons
+        max_visible_pages = 7
+
+        if total_pages <= max_visible_pages:
+            # Show all pages if total pages is 7 or less
+            start_page = 1
+            end_page = total_pages
+            show_start_dots = False
+            show_end_dots = False
+        else:
+            # Calculate which 7 pages to show
+            if current_page <= 4:
+                # Near the beginning: show pages 1-7
+                start_page = 1
+                end_page = 7
+                show_start_dots = False
+                show_end_dots = True
+            elif current_page >= total_pages - 3:
+                # Near the end: show last 7 pages
+                start_page = total_pages - 6
+                end_page = total_pages
+                show_start_dots = True
+                show_end_dots = False
+            else:
+                # In the middle: show 3 pages before and after current
+                start_page = current_page - 3
+                end_page = current_page + 3
+                show_start_dots = True
+                show_end_dots = True
+
+
+        # Add page number buttons
+        for page in range(start_page, end_page + 1):
+            page_btn = QPushButton(str(page))
+            page_btn.setFixedSize(35, 35)
+
+            # Set font explicitly to prevent loss
+            font = page_btn.font()
+            font.setPointSize(10)
+            font.setBold(True)
+            page_btn.setFont(font)
+
+            if page == current_page:
+                # Current page style
+                page_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #FCD597;
+                        border: none;
+                        border-radius: 5px;
+                        font-weight: bold;
+                        color:#80B8D1;
+                    }
+                    QPushButton:hover {
+                        background-color: #C9AA79;
+                    }
+                    QPushButton:pressed {
+                        background-color: #C2B297;
+                    }
+                """)
+            else:
+                # Other pages style
+                page_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #80B8D1;
+                        border-radius: 5px;
+                        color:#FCD597;
+
+                    }
+                    QPushButton:hover {
+                        background-color: #5494B1;
+                    }
+                    QPushButton:pressed {
+                        background-color: #86AEC0;
+                    }
+                """)
+
+            # Connect button to load that page
+            if page != current_page:
+                page_btn.clicked.connect(lambda checked, p=page: self.load_patients(p))
+
+            page_layout.addWidget(page_btn)
+
 
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")
