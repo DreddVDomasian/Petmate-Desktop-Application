@@ -138,27 +138,33 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
     pagination_class = StandardPagination
 
 
-@api_view(['GET'])
-def patient_search(request):
-    """
-    Global patient search - function based version
-    """
-    search_term = request.query_params.get('search', '').strip()
-    print(f"🔍 Global search for: '{search_term}'")
+class PatientSearchView(generics.ListAPIView):
+    serializer_class = BasicInfoSerializer
+    pagination_class = StandardPagination
 
-    if len(search_term) < 2:
-        return Response([])
+    def get_queryset(self):
+        search_term = self.request.query_params.get('search', '').strip()
 
-    patients = basicInfo.objects.filter(
-        Q(firstName__icontains=search_term) |
-        Q(lastName__icontains=search_term) |
-        Q(email__icontains=search_term) |
-        Q(middleName__icontains=search_term)
-    ).order_by('firstName', 'lastName')[:50]
+        queryset = basicInfo.objects.all().order_by('firstName')
 
-    serializer = BasicInfoSerializer(patients, many=True)
-    print(f"✅ Found {len(patients)} patients globally")
-    return Response(serializer.data)
+        if search_term:
+            # Remove extra spaces and split
+            search_terms = ' '.join(search_term.split()).split()
+
+            if search_terms:
+                query = Q()
+                for term in search_terms:
+                    # Search each term in all name fields
+                    term_query = (
+                            Q(firstName__icontains=term) |
+                            Q(lastName__icontains=term) |
+                            Q(middleName__icontains=term)
+                    )
+                    query &= term_query
+
+                queryset = queryset.filter(query)
+
+        return queryset
 
 # GET / PUT / DELETE single patient by id
 class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

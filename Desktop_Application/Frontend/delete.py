@@ -52,7 +52,7 @@ class Delete:
                   icon_path="Icons/check.png").show_toast()
 
             if self.delete_type == "patient":
-                self.ui.load_patients(1)
+                self.ui.load_patients(self.ui.patient_currentPage,search_term=None)
                 self.ui.load_scheduled_services()
                 self.ui.appointmentCard.load_walkInAppointments()
                 self.ui.stackedWidget.setCurrentIndex(2)

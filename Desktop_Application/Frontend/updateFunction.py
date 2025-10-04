@@ -90,7 +90,7 @@ class Update:
             if response.status_code == 200:
                 # Defer UI updates to prevent crash
                 def post_update_ui():
-                    self.ui.load_patients(1)
+                    self.ui.load_patients(self.ui.patient_currentPage,search_term=None)
                     self.ui.clearInputs()
                     self.ui.navigate_to_page(2)
                     Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()

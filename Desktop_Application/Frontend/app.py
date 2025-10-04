@@ -13,7 +13,8 @@ if project_root not in sys.path:
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget, QComboBox, QButtonGroup, QMessageBox, \
     QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout
 from PyQt6 import uic
-from PyQt6.QtCore import Qt,QDate,QPoint,QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize,QParallelAnimationGroup
+from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
+    QParallelAnimationGroup, QTimer
 from PyQt6.QtGui import QFontDatabase, QPixmap
 from uiLogic import UIHandler
 from input_styles import *
@@ -60,12 +61,15 @@ class MainUI(QMainWindow):
         self.selected_service_id = None
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
-        self.load_patients(1)
+        self.load_patients(1,search_term=None)
         self.load_scheduled_services()
         self.setup_shadow()
         self.setup_all_back_buttons()
         self.setup_input_shadows()
         self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
+
+        #patients search bar
+        self.setup_search()
 
         #page history
         self.page_history = []  # stores (index, params)
@@ -80,6 +84,8 @@ class MainUI(QMainWindow):
 
         self.duplicateDialog = None
         self.ignore_duplicates = False
+
+        self.patient_currentPage = None
 
 
     def setup_calendar(self):
@@ -736,7 +742,7 @@ class MainUI(QMainWindow):
         # proceed to save patient
         if add_new_patient(data):
             self.navigate_to_page(2)
-            self.load_patients(1)
+            self.load_patients(1,search_term=None)
 
             self.clearInputs()
 
@@ -890,107 +896,164 @@ class MainUI(QMainWindow):
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
 
-    def load_patients(self, page=1):
+    def load_patients(self, page=1, search_term=None):
+
+        try:
+            # Clear existing patient cards safely
+            try:
+                while self.patientListLayout.count():
+                    child = self.patientListLayout.takeAt(0)
+                    if child and child.widget():
+                        # Check if widget still exists before deleting
+                        if child.widget().isWidgetType():
+                            child.widget().deleteLater()
+            except RuntimeError as e:
+                print(f"Error clearing layout: {e}")
+                # Continue anyway
+
+            # Build API URL based on search or normal load
+            if search_term and search_term.strip():
+                import urllib.parse
+                encoded_term = urllib.parse.quote(search_term.strip())
+                url = f"http://127.0.0.1:8000/api/patient-search/?page={page}&search={encoded_term}"
+
+            else:
+                url = f"http://127.0.0.1:8000/api/patients/?page={page}"
+
+
+            # Make API request with timeout
+            try:
+                response = requests.get(url, timeout=10)
+                response.raise_for_status()
+
+                data = response.json()
+                patients = data.get('results', [])
+
+                # Update pagination info
+                self.patient_currentPage = page
+                self.current_patient_page = page
+                self.total_patient_pages = data.get('total_pages', 1)
+                self.total_patient_count = data.get('count', 0)
+
+            except requests.exceptions.RequestException as e:
+                self.show_empty_state(search_term is not None, error=True)
+                return
+            except ValueError as e:
+                self.show_empty_state(search_term is not None, error=True)
+                return
+
+            # Handle empty results
+            if not patients:
+                self.show_empty_state(search_term is not None)
+                return
+
+            # Create patient cards
+            self.create_patient_cards(patients)
+
+            # Add pagination controls
+            self.add_patient_pagination_controls(search_term)
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.show_empty_state(False, error=True)
+
+    def show_empty_state(self, is_search, error=False):
+        """Show appropriate empty state message"""
+        empty_label = QLabel()
+
+        if error:
+            empty_label.setText("Error loading patients")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(255, 100, 100);")
+        elif is_search:
+            empty_label.setText("No patients found")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(168, 168, 168);")
+        else:
+            empty_label.setText("NO RECORDS")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(168, 168, 168);")
+
+        self.patientListLayout.addStretch()
+        self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.patientListLayout.addStretch()
+
+    def create_patient_cards(self, patients):
+        """Create patient cards from patient data"""
         self.patient_cards = []
 
-        # 🧹 Clear existing items before adding new ones
-        while self.patientListLayout.count():
-            child = self.patientListLayout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
-        response = requests.get(f"http://127.0.0.1:8000/api/patients/?page={page}")
-        if response.status_code == 200:
-            data = response.json()
-            # Get patients from 'results' key instead of direct list
-            patients = data.get('results', [])
-
-            # Store pagination info
-            self.current_patient_page = page
-            self.total_patient_pages = data.get('total_pages', 1)
-            self.total_patient_count = data.get('count', 0)
-
-        else:
-            patients = []
-            self.current_patient_page = 1
-            self.total_patient_pages = 1
-            self.total_patient_count = 0
-
-        if not patients:
-            empty_label = QLabel("NO RECORDS")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
-            self.patientListLayout.addStretch()
-            self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-            self.patientListLayout.addStretch()
-            return
-
         for patient in patients:
-            parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
-            full_name = " ".join(p for p in parts if p)
             card = uic.loadUi("PatientCard.ui")
             self.scale_cards([card], base_h=81)
+
+            # Set patient information
+            parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+            full_name = " ".join(p for p in parts if p)
             card.nameLabel.setText(full_name.title())
             card.emailLabel.setText(patient['email'])
 
-            # Connect delete button
-            card.deleteButton.clicked.connect(lambda _, p_id=patient['id']: self.deleteFunction.set_delete_target("patient", p_id))
-            card.editBtn.clicked.connect(lambda _, p_id=patient['id']: self.updateFunction.update_patient_info(p_id))
-            # Connect the card click to open profile
-            def make_handler(patient, self):
-                def handler(event):
-                    self.show_patient_profile(patient)
-
-                return handler
-
-            # --- Apply scaling to new card labels ---
+            # Scale fonts
             self.scale_widget_font(card.nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
             self.scale_widget_font(card.emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
 
+            # Connect buttons
+            card.deleteButton.clicked.connect(
+                lambda _, p_id=patient['id']: self.deleteFunction.set_delete_target("patient", p_id))
+            card.editBtn.clicked.connect(lambda _, p_id=patient['id']: self.updateFunction.update_patient_info(p_id))
 
-            card.mousePressEvent = make_handler(patient, self)
+            # Connect card click
+            card.mousePressEvent = lambda event, p=patient: self.show_patient_profile(p)
 
             card.setGraphicsEffect(create_card_shadow())
             self.patientListLayout.addWidget(card)
             self.patient_cards.append(card)
-        self.add_patient_pagination_controls()
 
-    def add_patient_pagination_controls(self):
-        """Add pagination with page number buttons"""
+    def add_patient_pagination_controls(self, search_term=None):
+        """Add pagination controls that work with search"""
+        # Safely check and delete existing pagination widget
         if hasattr(self, 'patient_pagination_widget'):
-            self.patient_pagination_widget.deleteLater()
+            try:
+                # Check if widget still exists before deleting
+                if self.patient_pagination_widget and self.patient_pagination_widget.isWidgetType():
+                    self.patient_pagination_widget.deleteLater()
+            except RuntimeError:
+                # Widget already deleted, just remove the reference
+                pass
+            finally:
+                # Always remove the reference
+                if hasattr(self, 'patient_pagination_widget'):
+                    delattr(self, 'patient_pagination_widget')
 
         if self.total_patient_pages <= 1:
             return
 
-        # Load custom pagination UI
-        self.patient_pagination_widget = uic.loadUi("paginationUi.ui")
+        try:
+            self.patient_pagination_widget = uic.loadUi("paginationUi.ui")
 
-        # Connect prev/next buttons
-        self.patient_pagination_widget.PrevPage.clicked.connect(
-            lambda: self.load_patients(self.current_patient_page - 1)
-        )
-        self.patient_pagination_widget.NextPage.clicked.connect(
-            lambda: self.load_patients(self.current_patient_page + 1)
-        )
+            # Connect prev/next buttons with search term
+            self.patient_pagination_widget.PrevPage.clicked.connect(
+                lambda: self.load_patients(self.current_patient_page - 1, search_term)
+            )
+            self.patient_pagination_widget.NextPage.clicked.connect(
+                lambda: self.load_patients(self.current_patient_page + 1, search_term)
+            )
 
-        # Set button states
-        self.patient_pagination_widget.PrevPage.setEnabled(self.current_patient_page > 1)
-        self.patient_pagination_widget.NextPage.setEnabled(self.current_patient_page < self.total_patient_pages)
+            # Set button states
+            self.patient_pagination_widget.PrevPage.setEnabled(self.current_patient_page > 1)
+            self.patient_pagination_widget.NextPage.setEnabled(self.current_patient_page < self.total_patient_pages)
 
-        # Create page number buttons
-        self.create_page_buttons()
+            # Create page buttons with search support
+            self.create_page_buttons(search_term)
 
-        # Add shadow effect
-        self.patient_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
+            self.patient_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
+            self.patientListLayout.addWidget(self.patient_pagination_widget)
 
-        # Add to main layout
-        self.patientListLayout.addWidget(self.patient_pagination_widget)
+        except Exception as e:
+            print(f"Error creating pagination: {e}")
 
-    def create_page_buttons(self):
-        """Create dynamic page number buttons with consistent 7 buttons"""
+    def create_page_buttons(self, search_term=None):
+
         page_layout = self.patient_pagination_widget.pageButtonsLayout
 
-        # Clear existing page buttons
+        # Clear existing buttons
         while page_layout.count():
             child = page_layout.takeAt(0)
             if child.widget():
@@ -998,88 +1061,67 @@ class MainUI(QMainWindow):
 
         current_page = self.current_patient_page
         total_pages = self.total_patient_pages
-
-        # Always show exactly 7 buttons
         max_visible_pages = 7
 
         if total_pages <= max_visible_pages:
-            # Show all pages if total pages is 7 or less
             start_page = 1
             end_page = total_pages
-            show_start_dots = False
-            show_end_dots = False
         else:
-            # Calculate which 7 pages to show
             if current_page <= 4:
-                # Near the beginning: show pages 1-7
                 start_page = 1
                 end_page = 7
-                show_start_dots = False
-                show_end_dots = True
             elif current_page >= total_pages - 3:
-                # Near the end: show last 7 pages
                 start_page = total_pages - 6
                 end_page = total_pages
-                show_start_dots = True
-                show_end_dots = False
             else:
-                # In the middle: show 3 pages before and after current
                 start_page = current_page - 3
                 end_page = current_page + 3
-                show_start_dots = True
-                show_end_dots = True
-
 
         # Add page number buttons
         for page in range(start_page, end_page + 1):
             page_btn = QPushButton(str(page))
             page_btn.setFixedSize(35, 35)
 
-            # Set font explicitly to prevent loss
             font = page_btn.font()
             font.setPointSize(10)
             font.setBold(True)
             page_btn.setFont(font)
 
             if page == current_page:
-                # Current page style
-                page_btn.setStyleSheet("""
-                    QPushButton {
-                        background-color: #FCD597;
-                        border: none;
-                        border-radius: 5px;
-                        font-weight: bold;
-                        color:#80B8D1;
-                    }
-                    QPushButton:hover {
-                        background-color: #C9AA79;
-                    }
-                    QPushButton:pressed {
-                        background-color: #C2B297;
-                    }
-                """)
+                page_btn.setStyleSheet(current_pageBtn)
             else:
-                # Other pages style
-                page_btn.setStyleSheet("""
-                    QPushButton {
-                        background-color: #80B8D1;
-                        border-radius: 5px;
-                        color:#FCD597;
-
-                    }
-                    QPushButton:hover {
-                        background-color: #5494B1;
-                    }
-                    QPushButton:pressed {
-                        background-color: #86AEC0;
-                    }
-                """)
-
-            # Connect button to load that page
-            if page != current_page:
-                page_btn.clicked.connect(lambda checked, p=page: self.load_patients(p))
+                page_btn.setStyleSheet(other_pageBtn)
+                # Pass search term when loading different pages
+                page_btn.clicked.connect(lambda checked, p=page: self.load_patients(p, search_term))
 
             page_layout.addWidget(page_btn)
+
+    def setup_search(self):
+        # Connect search bar to search handler
+        self.searchBar.textEdited.connect(self.handle_search_input)
+
+        # Setup search timer for debouncing
+        self._search_timer = QTimer()
+        self._search_timer.setSingleShot(True)
+        self._search_timer.timeout.connect(self.perform_search)
+
+        # Search state variables
+        self.current_search_term = ""
+        self.is_searching = False
+        self.searchBar.clear()
+
+    def handle_search_input(self, text):
+        self.current_search_term = text.strip()
+        self._search_timer.start(500)
+
+    def perform_search(self):
+        if self.current_search_term:
+            self.is_searching = True
+            self.load_patients(page=1, search_term=self.current_search_term)
+        else:
+            # If search is empty, load normal patient list
+            self.is_searching = False
+            self.load_patients(page=1)
 
 
     def load_pets_for_owner(self, owner_id):

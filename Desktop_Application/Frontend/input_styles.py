@@ -310,3 +310,34 @@ upper_Frame_Noborrad = """
     }
 
 """
+
+current_pageBtn = """
+    QPushButton {
+        background-color: #FCD597;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        color:#80B8D1;
+    }
+    QPushButton:hover {
+        background-color: #C9AA79;
+    }
+    QPushButton:pressed {
+        background-color: #C2B297;
+    }
+"""
+
+other_pageBtn = """
+    QPushButton {
+        background-color: #80B8D1;
+        border-radius: 5px;
+        color:#FCD597;
+
+    }
+    QPushButton:hover {
+        background-color: #5494B1;
+    }
+    QPushButton:pressed {
+        background-color: #86AEC0;
+    }
+"""
