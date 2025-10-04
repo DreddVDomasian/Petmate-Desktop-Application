@@ -1,54 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+  
 <head>
   <meta charset="UTF-8">
   <title>Petmate Animal Clinic</title>
   <link rel="stylesheet" href="../css/client.css"> 
+  <script src="../js/client.js"></script>
 </head>
+
 <body>
   <div class="frame">
+    <!-- Left Side Navigation -->
     <div class="leftside">
         <h1>Welcome to
             <br>Petmate Animal Clinic
         </h1>
-        <div class="buttons">
-            <button id="add">ADD PETS</button>
-            <button id="edit">SETTINGS</button>
-            <button id="logout">LOG OUT</button>
+        <div class="buttons"> 
+            <button id="addpets">ADD PETS</button>
+            <button id="viewpets">VIEW PETS</button> <!-- PARA SA VIEW PETS / DITO MAGUPDATE NG DETAILS NI PET-->
+            <button id="addclient">SET APPOINTMENT</button> <!-- SET APPOINTMENT FOR THE CLIENTS-->
+            <button id="settings">SETTINGS</button>
+            <button id="logout">LOGOUT</button>
         </div>
     </div>
+
+    <!-- Right Side Forms -->
     <div class="rightside">
-        <img src="../assets/PETMATE LOGO.png" alt="Petmate Logo">
+        <img src="../assets/PETMATE LOGO.png" alt="Petmate Logo" id="logo">
+        
+        <!-- Customer Form -->
         <form class="client-form">
-            <h2>Customer Details</h2>
+            <div class="form-header">
+              <h2>Customer Details</h2>
+              <div class="icons">
+                <img src="../assets/icons/edit.png" alt="Edit" id="edit">
+                <img src="../assets/icons/delete.png" alt="Delete" id="delete">
+              </div>
+            </div>
 
             <h3>Basic Information</h3>
             <div class="form-row">
-            <input type="text" placeholder="First name">
-            <input type="text" placeholder="Last name">
-            <input type="text" placeholder="Middle name (Optional)">
+              <input type="text" placeholder="First name" required>
+              <input type="text" placeholder="Last name" required>
+              <input type="text" placeholder="Middle name (Optional)">
             </div>
 
             <div class="form-row">
-            <input type="email" placeholder="Email" required>
-            <input type="text" placeholder="Phone number" required>
-            <input type="text" placeholder="Emergency no. (Optional)">
+              <input type="email" placeholder="Email" required>
+              <input type="text" placeholder="Phone number" required>
+              <input type="text" placeholder="Emergency no. (Optional)">
             </div>
 
             <h3>Address</h3>
             <div class="form-row">
-                <input type="text" placeholder="Province" required>
-                <input type="text" placeholder="City" required>
-                <input type="text" placeholder="Barangay" required>
+              <input type="text" placeholder="Province" required>
+              <input type="text" placeholder="City" required>
+              <input type="text" placeholder="Barangay" required>
             </div>
             <div class="form-row">
-                <input type="text" placeholder="Street address" required>
+              <input type="text" placeholder="Street address" required>
             </div>
+
             <div>
-            <button type="submit" class="confirmbtn">CONFIRM</button>
+              <button type="submit" class="confirmbtn">CONFIRM</button>
             </div>
-      </form>
+        </form>
+      
+        <!-- Pet Form (hidden by default) -->
+        <form class="pet-form">
+          <div class="form-header">
+            <h2>Pet Details</h2>
+            <div class="icons">
+              <img src="../assets/icons/edit.png" alt="Edit Pet" id="editPet">
+              <img src="../assets/icons/delete.png" alt="Delete Pet" id="deletePet">
+            </div>
+          </div>
+
+          <h3>Basic Information</h3>
+          <div class="form-row">
+            <input type="text" placeholder="Pet name" required>
+            <input type="text" placeholder="Color" required>
+          </div>
+
+          <div class="form-row">
+            <input type="text" placeholder="Breed" required>
+            <select required>
+              <option value="" disabled selected>Species</option>
+              <option value="dog">Dog</option>
+              <option value="cat">Cat</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+
+          <h3>Other Information</h3>
+          <div class="form-row">
+            <input type="text" placeholder="Birthday (MM/DD/YYYY)" required>
+            <input type="text" placeholder="Age (Estimated)" required>
+            <select required>
+              <option value="" disabled selected>Sex</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            <input type="text" placeholder="Remarks (Optional)">
+          </div>
+
+          <div>
+            <button type="submit" class="confirmbtn">CONFIRM</button>
+          </div>
+        </form> 
+
     </div>
   </div>
+
+  <script src="../js/pages.js"></script>
 </body>
 </html>
