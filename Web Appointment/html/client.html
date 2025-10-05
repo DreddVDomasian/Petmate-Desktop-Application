@@ -150,9 +150,40 @@
           </div>
         </form> 
 
+       <form class="appointment-form">
+          <div class="form-header">
+            <h2>Set Appointment</h2>
+          </div>
+
+          <h3>Appointment Details</h3>
+          <div class="form-row">
+            <input type="text" placeholder="Preferred Date (MM/DD/YYYY)" required>
+            <input type="text" placeholder="Preferred Time" required>
+          </div>
+
+          <div class="form-row">
+            <select>
+              <option value="" disabled selected >Service</option >
+              <option value="consultation" required>Consultation</option>
+              <option value="vaccination" required>Vaccination</option>
+              <option value="grooming"required>Deworming</option>
+              <option value="surgery"required>Surgery</option>
+              <option value="others"required>Checkups</option>
+            </select>
+            <input type="text" placeholder="Dr. Gonzalez" disabled>
+          </div>
+
+          <div class="form-row">
+            <input type="text" placeholder="Additional (Optional)">
+          </div>
+
+          <div>
+            <button type="submit" class="confirmbtn">CONFIRM</button>
+          </div>
+        </div>
     </div>
   </div>
 
-  <script src="../js/pages.js"></script>
+  <script src="../js/client.js"></script>
 </body>
 </html>

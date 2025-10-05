@@ -155,7 +155,14 @@ body {
     padding: 40px;
     overflow-y: auto;
 }
-
+#logo{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
 /* Remove old button styles */
 .buttons {
     display: none;
@@ -163,7 +170,8 @@ body {
 
 /* Shared form styling */
 .client-form, 
-.pet-form {
+.pet-form,
+.appointment-form {
     background: white;
     padding: 30px 40px;
     border-radius: 8px;
