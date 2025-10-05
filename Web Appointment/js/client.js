@@ -3,42 +3,140 @@ document.addEventListener("DOMContentLoaded", () => {
   const petForm = document.querySelector(".pet-form");
   const appointmentForm = document.querySelector(".appointment-form");
 
+  // Navigation buttons
   const addPetsBtn = document.getElementById("addpets");
+  const viewPetsBtn = document.getElementById("viewpets");
+  const addClientBtn = document.getElementById("addclient");
+  const appointmentsBtn = document.getElementById("appointments");
   const settingsBtn = document.getElementById("settings");
   const logoutBtn = document.getElementById("logout");
-  const appointmentBtn = document.getElementById("addclient");
-  
 
-  // Hide appointment form by default
-  appointmentForm.style.display = "none";
+  // Navigation items for active state
+  const navItems = document.querySelectorAll(".nav-item");
 
-  // Hide pet form by default
-  petForm.style.display = "none";
+  // Hide all forms initially
+  function hideAllForms() {
+    if (clientForm) clientForm.style.display = "none";
+    if (petForm) petForm.style.display = "none";
+    if (appointmentForm) appointmentForm.style.display = "none";
+  }
+
+  // Remove active class from all nav items
+  function removeActiveClass() {
+    navItems.forEach(item => item.classList.remove("active"));
+  }
+
+  // Set active navigation item
+  function setActiveNav(activeBtn) {
+    removeActiveClass();
+    if (activeBtn) {
+      activeBtn.closest(".nav-item").classList.add("active");
+    }
+  }
+
+  // Initialize - show client form by default
+  hideAllForms();
+  if (clientForm) {
+    clientForm.style.display = "block";
+  }
+  if (addClientBtn) {
+    setActiveNav(addClientBtn);
+  }
 
   // Show Pet form
-  addPetsBtn.addEventListener("click", () => {
-    clientForm.style.display = "none";
-    petForm.style.display = "block";
-  });
+  if (addPetsBtn) {
+    addPetsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideAllForms();
+      if (petForm) {
+        petForm.style.display = "block";
+      }
+      setActiveNav(addPetsBtn);
+    });
+  }
 
   // Show Client form (Customer Details)
-  settingsBtn.addEventListener("click", () => {
-    petForm.style.display = "none";
-    clientForm.style.display = "block";
-  });
-  // Show Appointment form
-  appointmentBtn.addEventListener("click", () => {
-    clientForm.style.display = "none";
-    petForm.style.display = "none";
-    appointmentForm.style.display = "block";
-  });
+  if (addClientBtn) {
+    addClientBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideAllForms();
+      if (clientForm) {
+        clientForm.style.display = "block";
+      }
+      setActiveNav(addClientBtn);
+    });
+  }
 
-  // Logout (for now just alert)
-  logoutBtn.addEventListener("click", () => {
-    alert("You have logged out.");
-    // You can redirect to login page later:
-    // window.location.href = "login.html";
-  
-  
-  });
+  // View Pets (placeholder)
+  if (viewPetsBtn) {
+    viewPetsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideAllForms();
+      // TODO: Create and show pets list view
+      alert("View Pets feature coming soon!");
+      setActiveNav(viewPetsBtn);
+    });
+  }
+
+  // View Appointments (placeholder)
+  if (appointmentsBtn) {
+    appointmentsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideAllForms();
+      // TODO: Create and show appointments view
+      alert("View Appointments feature coming soon!");
+      setActiveNav(appointmentsBtn);
+    });
+  }
+
+  // Settings (placeholder)
+  if (settingsBtn) {
+    settingsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      hideAllForms();
+      // TODO: Create and show settings form
+      alert("Settings feature coming soon!");
+      setActiveNav(settingsBtn);
+    });
+  }
+
+  // Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (confirm("Are you sure you want to logout?")) {
+        // Clear any stored data
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Redirect to login/home page
+        window.location.href = "index.html";
+      }
+    });
+  }
+
+  // Form submissions
+  if (clientForm) {
+    clientForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      // TODO: Handle client form submission
+      alert("Customer details saved successfully!");
+    });
+  }
+
+  if (petForm) {
+    petForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      // TODO: Handle pet form submission
+      alert("Pet details saved successfully!");
+    });
+  }
+
+  if (appointmentForm) {
+    appointmentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      // TODO: Handle appointment form submission
+      alert("Appointment saved successfully!");
+    });
+  }
 });

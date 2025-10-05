@@ -4,8 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Petmate Animal Clinic</title>
-  <link rel="stylesheet" href="../css/client.css"> 
-  <script src="../js/client.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- CSS LINKS -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+      <link rel="stylesheet" href="../css/client.css"> 
+
+      <!-- JAVASCRIPT LINKS -->
+      <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>  <!--ETO BERT GAMITIN MO FLATPICKR-->
+      <script src="../js/client.js" defer></script>
 </head>
 
 <body>
@@ -67,90 +73,114 @@
 
     <!-- Right Side Forms -->
     <div class="rightside">
-        <img src="../assets/PETMATE LOGO.png" alt="Petmate Logo" id="logo">
-        
-        <!-- Customer Form -->
-        <form class="client-form">
-            <div class="form-header">
-              <h2>Customer Details</h2>
-              <div class="icons">
-                <img src="../assets/icons/edit.png" alt="Edit" id="edit">
-                <img src="../assets/icons/delete.png" alt="Delete" id="delete">
-              </div>
-            </div>
-
-            <h3>Basic Information</h3>
-            <div class="form-row">
-              <input type="text" placeholder="First name" required>
-              <input type="text" placeholder="Last name" required>
-              <input type="text" placeholder="Middle name (Optional)">
-            </div>
-
-            <div class="form-row">
-              <input type="email" placeholder="Email" required>
-              <input type="text" placeholder="Phone number" required>
-              <input type="text" placeholder="Emergency no. (Optional)">
-            </div>
-
-            <h3>Address</h3>
-            <div class="form-row">
-              <input type="text" placeholder="Province" required>
-              <input type="text" placeholder="City" required>
-              <input type="text" placeholder="Barangay" required>
-            </div>
-            <div class="form-row">
-              <input type="text" placeholder="Street address" required>
-            </div>
-
-            <div>
-              <button type="submit" class="confirmbtn">CONFIRM</button>
-            </div>
-        </form>
+      <div class="content-header">
+          <img src="../assets/PETMATE LOGO.png" alt="Petmate Logo" class="logo">
+      </div>
       
-        <!-- Pet Form (hidden by default) -->
+      
+      <div class="form-container">
+        <!-- ADD Pet Form -->
         <form class="pet-form">
-          <div class="form-header">
-            <h2>Pet Details</h2>
-            <div class="icons">
-              <img src="../assets/icons/edit.png" alt="Edit Pet" id="editPet">
-              <img src="../assets/icons/delete.png" alt="Delete Pet" id="deletePet">
-            </div>
-          </div>
+              <div class="form-header">
+                <h2>Pet Details</h2>
+                <div class="icons">
+                  <img src="../assets/icons/edit.png" alt="Edit Pet" id="editPet">
+                  <img src="../assets/icons/delete.png" alt="Delete Pet" id="deletePet">
+                </div>
+              </div>
 
-          <h3>Basic Information</h3>
-          <div class="form-row">
-            <input type="text" placeholder="Pet name" required>
-            <input type="text" placeholder="Color" required>
-          </div>
+              <h3>Basic Information</h3>
+              <div class="form-row">
+                <input type="text" placeholder="Pet name" required>
+                <input type="text" placeholder="Color" required>
+              </div>
 
-          <div class="form-row">
-            <input type="text" placeholder="Breed" required>
-            <select required>
-              <option value="" disabled selected>Species</option>
-              <option value="dog">Dog</option>
-              <option value="cat">Cat</option>
-              <option value="others">Others</option>
-            </select>
-          </div>
+              <div class="form-row">
+                <input type="text" placeholder="Breed" required>
+                <select required>
+                  <option value="" disabled selected>Species</option>
+                  <option value="dog">Dog</option>
+                  <option value="cat">Cat</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
 
-          <h3>Other Information</h3>
-          <div class="form-row">
-            <input type="text" placeholder="Birthday (MM/DD/YYYY)" required>
-            <input type="text" placeholder="Age (Estimated)" required>
-            <select required>
-              <option value="" disabled selected>Sex</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            <input type="text" placeholder="Remarks (Optional)">
-          </div>
+              <h3>Other Information</h3>
+              <div class="form-row">
+                <input type="text" placeholder="Birthday (MM/DD/YYYY)" required>
+                <input type="text" placeholder="Age (Estimated)" required>
 
-          <div>
-            <button type="submit" class="confirmbtn">CONFIRM</button>
-          </div>
+                <select required>
+                  <option value="" disabled selected>Sex</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+
+                <input type="text" placeholder="Remarks (Optional)">
+              </div>
+
+              <div>
+                <button type="submit" class="confirmbtn">CONFIRM</button>
+              </div>
         </form> 
+    
+          <!-- VIEW PET FORM -->
 
-       <form class="appointment-form">
+
+        
+          <!-- SET APPOINTMENT FORM -->
+          <form class="client-form">  <!-- possible maging settings FORM or pwede tong maging karugtong sa appointment-form-->
+              <div class="form-header">
+                <h2>Customer Details</h2>
+                <div class="icons">
+                  <img src="../assets/icons/edit.png" alt="Edit" id="edit">
+                  <img src="../assets/icons/delete.png" alt="Delete" id="delete">
+                </div>
+              </div>
+
+              <h3>Basic Information</h3>
+              <div class="form-row">
+                <input type="text" placeholder="First name" required>
+                <input type="text" placeholder="Last name" required>
+                <input type="text" placeholder="Middle name (Optional)">
+              </div>
+
+              <div class="form-row">
+                <input type="email" placeholder="Email" required>
+                <input type="text" placeholder="Phone number" required>
+                <input type="text" placeholder="Emergency no. (Optional)">
+              </div>
+
+              <h3>Address</h3>
+              <div class="form-row">
+                <input type="text" placeholder="Province" required>
+                <input type="text" placeholder="City" required>
+                <input type="text" placeholder="Barangay" required>
+              </div>
+              <div class="form-row">
+                <input type="text" placeholder="Street address" required>
+              </div>
+
+              <div>
+                <button type="submit" class="confirmbtn">CONFIRM</button>
+              </div>
+          </form>
+
+
+          <!-- VIEW APPOINTMENTS FORM -->
+
+
+
+
+
+          <!-- SETTINGS FORM -->
+
+
+
+      </div>
+
+
+      <form class="appointment-form">  <!-- SET APPOINTMENT FORM -->
           <div class="form-header">
             <h2>Set Appointment</h2>
           </div>
@@ -180,10 +210,15 @@
           <div>
             <button type="submit" class="confirmbtn">CONFIRM</button>
           </div>
-        </div>
+        </form>
+      </div>
+
     </div>
+
+
+
+    
   </div>
 
-  <script src="../js/client.js"></script>
 </body>
 </html>

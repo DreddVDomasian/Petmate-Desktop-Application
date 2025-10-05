@@ -26,9 +26,10 @@ body {
     flex-direction: column;
     width: 280px;
     min-height: 100vh;
+    overflow: hidden;
     box-shadow: 4px 0 20px rgba(0,0,0,0.15);
     position: relative;
-    overflow: hidden;
+
 }
 
 
@@ -79,7 +80,7 @@ body {
 
 .nav-menu.secondary {
     margin-top: auto;
-    margin-bottom: 1000px;
+    margin-bottom: 20px;
 }
 
 .nav-item {
@@ -155,18 +156,13 @@ body {
     padding: 40px;
     overflow-y: auto;
 }
-#logo{
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
+
 /* Remove old button styles */
 .buttons {
     display: none;
 }
+
+
 
 /* Shared form styling */
 .client-form, 
@@ -177,19 +173,11 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 650px;
     box-sizing: border-box;
     border: 1px solid #e0e0e0;
-    margin-top: 20px;
 }
 
-/* Form header with icons aligned right */
-.form-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+
 
 .icons {
     display: flex;
