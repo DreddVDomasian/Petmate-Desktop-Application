@@ -26,50 +26,13 @@ class AddAppointmentCard(QWidget):
         super().__init__(parent)
         self.main_window = main_window
         uic.loadUi("addAppointmentCard.ui", self)
-        #pending layout
-        self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
-        self.pendingLayout.setSpacing(10)
-        self.pendingLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        # completed layout
-        self.completedLayout = self.main_window.completedScrollAreaWidgetContents.layout()
-        self.completedLayout.setSpacing(10)
-        self.completedLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        #layouts
+        self.setup_stackLayout()
 
-        # overdue layout
-        self.overdueLayout = self.main_window.overdueScrollAreaWidgetContents.layout()
-        self.overdueLayout.setSpacing(10)
-        self.overdueLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-        # cancelled layout
-        self.cancelledLayout = self.main_window.cancelledScrollAreaWidgetContents.layout()
-        self.cancelledLayout.setSpacing(10)
-        self.cancelledLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-
-
-        #Web Appointment
-        self.pendingWebLayout = self.main_window.scrollAreaWebAppPending.layout()
-        self.pendingWebLayout.setSpacing(10)
-        self.pendingWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-        # Accepted layout
-        self.acceptedWebLayout = self.main_window.scrollAreaWebAppAccepted.layout()
-        self.acceptedWebLayout.setSpacing(10)
-        self.acceptedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
-        # declined layout
-        self.declinedWebLayout = self.main_window.scrollAreaWebAppDeclined.layout()
-        self.declinedWebLayout.setSpacing(10)
-        self.declinedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
+        #for frameless pop up
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
 
-        self.addPopUPFrame.setGraphicsEffect(create_card_shadow())
-        self.cancelAddAppointment.setGraphicsEffect(create_card_shadow())
-        self.addAppointmentBtn.setGraphicsEffect(create_card_shadow())
-
-        self.selectPatientPopUp.currentIndexChanged.connect(self.on_patient_selected)
         # shaadow
         self.setup_input_shadow()
 
@@ -90,12 +53,55 @@ class AddAppointmentCard(QWidget):
         if parent:
             parent.installEventFilter(self)
 
+    def setup_stackLayout(self):
+        # pending layout
+        self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
+        self.pendingLayout.setSpacing(10)
+        self.pendingLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # completed layout
+        self.completedLayout = self.main_window.completedScrollAreaWidgetContents.layout()
+        self.completedLayout.setSpacing(10)
+        self.completedLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # overdue layout
+        self.overdueLayout = self.main_window.overdueScrollAreaWidgetContents.layout()
+        self.overdueLayout.setSpacing(10)
+        self.overdueLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # cancelled layout
+        self.cancelledLayout = self.main_window.cancelledScrollAreaWidgetContents.layout()
+        self.cancelledLayout.setSpacing(10)
+        self.cancelledLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Web Appointment
+        self.pendingWebLayout = self.main_window.scrollAreaWebAppPending.layout()
+        self.pendingWebLayout.setSpacing(10)
+        self.pendingWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Accepted layout
+        self.acceptedWebLayout = self.main_window.scrollAreaWebAppAccepted.layout()
+        self.acceptedWebLayout.setSpacing(10)
+        self.acceptedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # declined layout
+        self.declinedWebLayout = self.main_window.scrollAreaWebAppDeclined.layout()
+        self.declinedWebLayout.setSpacing(10)
+        self.declinedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
     def setup_input_shadow(self):
         for comboBox in self.addPopUPFrame.findChildren(QComboBox):
             comboBox.setGraphicsEffect(create_card_shadow())
 
         self.popUpDateEdit.setGraphicsEffect(create_card_shadow())
         self.timeEdit.setGraphicsEffect(create_card_shadow())
+
+        #other Shadows
+        self.addPopUPFrame.setGraphicsEffect(create_card_shadow())
+        self.cancelAddAppointment.setGraphicsEffect(create_card_shadow())
+        self.addAppointmentBtn.setGraphicsEffect(create_card_shadow())
+
+        self.selectPatientPopUp.currentIndexChanged.connect(self.on_patient_selected)
 
     def show_card(self):
         if self.parent():
@@ -126,103 +132,31 @@ class AddAppointmentCard(QWidget):
         return super().eventFilter(obj, event)
 
     def load_patients_to_combobox(self):
-        # Load first 500 patients for fast initial search
-        response = requests.get("http://127.0.0.1:8000/api/patients/?page_size=500")
-        if response.status_code == 200:
-            data = response.json()
-            patients = data.get('results', [])  # Get from 'results' now
-            self.selectPatientPopUp.clear()
-            self.selectPatientPopUp.addItem("", None)
-            for patient in patients:
-                parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
-                full_name = " ".join(p for p in parts if p)
-                self.selectPatientPopUp.addItem(full_name, patient['id'])
-
-            self.set_dynamic_completer(self.selectPatientPopUp)
-            print(f"Loaded {len(patients)} patients for fast search")
-
-            # Setup fallback search for patients not in initial 500
-            self.setup_fallback_search()
-        else:
-            print("Failed to load patients")
-
-    def setup_fallback_search(self):
-        """Setup search for patients not in the initial 500"""
-        # Disconnect any existing connections to avoid duplicates
+        """Load ALL patients for the combobox without pagination"""
         try:
-            self.selectPatientPopUp.lineEdit().textEdited.disconnect()
-        except:
-            pass
-        self.selectPatientPopUp.lineEdit().textEdited.connect(self.check_fallback_search)
-
-    def check_fallback_search(self, search_text):
-        if len(search_text) < 3:  # Only search globally after 3 characters
-            return
-
-        # Check if current text matches any loaded patient
-        current_text = search_text.lower()
-        found_in_loaded = False
-
-        for i in range(self.selectPatientPopUp.count()):
-            item_text = self.selectPatientPopUp.itemText(i).lower()
-            if current_text in item_text:
-                found_in_loaded = True
-                break
-
-        # If not found in loaded patients, search globally
-        if not found_in_loaded:
-            self.perform_global_search(search_text)
-
-    def perform_global_search(self, search_text):
-        """Search entire database for patients not in initial 500"""
-        if hasattr(self, '_global_search_timer'):
-            self._global_search_timer.stop()
-
-        self._global_search_timer = QTimer()
-        self._global_search_timer.setSingleShot(True)
-        self._global_search_timer.timeout.connect(lambda: self.do_global_search(search_text))
-        self._global_search_timer.start(500)
-
-    def do_global_search(self, search_text):
-        try:
-            response = requests.get(f"http://127.0.0.1:8000/api/patient-search/?search={search_text}")
-
+            response = requests.get("http://127.0.0.1:8000/api/patient-combobox-data/")
             if response.status_code == 200:
-                global_patients = response.json()
+                patients = response.json()  # This will be the direct list, no pagination
 
-                if global_patients:
-                    # Add global results to combobox temporarily
-                    self.selectPatientPopUp.blockSignals(True)
-                    current_text = self.selectPatientPopUp.lineEdit().text()
+                self.selectPatientPopUp.clear()
+                self.selectPatientPopUp.addItem("", None)
 
-                    # Clear and add global results
-                    self.selectPatientPopUp.clear()
-                    self.selectPatientPopUp.addItem("", None)
+                for patient in patients:
+                    self.selectPatientPopUp.addItem(patient['full_name'], patient['id'])
 
-                    for patient in global_patients:
-                        parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
-                        full_name = " ".join(p for p in parts if p)
-                        self.selectPatientPopUp.addItem(full_name, patient['id'])
+                self.set_dynamic_completer(self.selectPatientPopUp)
 
-                    # Restore text and show dropdown
-                    self.selectPatientPopUp.lineEdit().setText(current_text)
-                    self.selectPatientPopUp.blockSignals(False)
-                    self.selectPatientPopUp.showPopup()
-
-                    print(f"Found {len(global_patients)} patients globally")
+            else:
+                print("Failed to load patients for combobox")
 
         except Exception as e:
-            print(f"Global search error: {e}")
+            print(f"Error loading patients for combobox: {e}")
 
     def on_patient_selected(self, index):
-        # Reload initial patients after selection to reset the combobox
-        if index > 0:  # If a patient was selected (not the empty item)
-            # Small delay to ensure selection is processed
-            QTimer.singleShot(100, self.load_patients_to_combobox)
-
         patient_id = self.selectPatientPopUp.itemData(index)
         if not patient_id:
             self.selectPetPopUp.clear()
+            self.selectPetPopUp.addItem("", None)
             return
 
         url = f"http://127.0.0.1:8000/api/pets/?owner_id={patient_id}"
@@ -237,6 +171,8 @@ class AddAppointmentCard(QWidget):
             self.set_dynamic_completer(self.selectPetPopUp)
         else:
             print("Failed to load pets")
+            self.selectPetPopUp.clear()
+            self.selectPetPopUp.addItem("", None)
 
     def on_date_field_clicked(self, dateEdit):
         if self.main_window:
@@ -365,6 +301,12 @@ class AddAppointmentCard(QWidget):
             if layout.count() == 0:
                 self.add_empty_label(layout)
 
+    def open_pet_from_appointment(self, pet_id):
+        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
+        if response.status_code == 200:
+            pet = response.json()
+            self.main_window.show_pet_profile(pet)
+
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
         self.main_window.confirmCard.show_card()
@@ -383,6 +325,9 @@ class AddAppointmentCard(QWidget):
 
         self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
+
+
+    #-------------------------------------------WEB APPOINTMENT---------------------------------------
 
     def web_Appointment(self):
         response = requests.get("http://127.0.0.1:8000/api/appointments/")
@@ -514,10 +459,6 @@ class AddAppointmentCard(QWidget):
         layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         layout.addStretch()
 
-    def open_pet_from_appointment(self, pet_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
-        if response.status_code == 200:
-            pet = response.json()
-            self.main_window.show_pet_profile(pet)
+
 
 

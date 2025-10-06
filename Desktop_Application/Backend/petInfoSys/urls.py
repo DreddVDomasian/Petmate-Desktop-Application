@@ -15,6 +15,7 @@ urlpatterns = [
     path('services/<int:pk>/', ServiceRetrieveUpdateDestroyView.as_view(), name='services-detail'),
     path('scheduled-services/', ScheduledServiceListView.as_view(), name='scheduled-services'),
 
+    path('patient-combobox-data/', views.patient_combobox_data, name='patient-combobox-data'),
     path('walkIn/', WalkInListCreateView.as_view(), name='walk-in'),
     path('walkIn/<int:pk>/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
 

@@ -137,6 +137,16 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
     serializer_class = BasicInfoSerializer
     pagination_class = StandardPagination
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Check if client wants to disable pagination (for combobox)
+        disable_pagination = self.request.query_params.get('no_pagination')
+        if disable_pagination:
+            self.pagination_class = None
+
+        return queryset
+
 
 class PatientSearchView(generics.ListAPIView):
     serializer_class = BasicInfoSerializer
@@ -171,6 +181,24 @@ class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = basicInfo.objects.all()
     serializer_class = BasicInfoSerializer
 
+
+@api_view(['GET'])
+def patient_combobox_data(request):
+    patients = basicInfo.objects.all().order_by('firstName', 'lastName')
+
+    patient_data = []
+    for patient in patients:
+        parts = [patient.firstName, patient.middleName, patient.lastName]
+        full_name = " ".join(p for p in parts if p)
+        patient_data.append({
+            'id': patient.id,
+            'full_name': full_name,
+            'firstName': patient.firstName,
+            'lastName': patient.lastName
+        })
+
+    return Response(patient_data)
+
 class PetListCreateView(generics.ListCreateAPIView):
     serializer_class = PetSerializer
 
@@ -180,11 +208,9 @@ class PetListCreateView(generics.ListCreateAPIView):
             return Pet.objects.filter(owner_id=owner_id)
         return Pet.objects.all()
 
-
 class PetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pet.objects.all()
     serializer_class = PetSerializer
-
 
 class ServiceListCreateView(generics.ListCreateAPIView):
     serializer_class = ServiceSerializer
@@ -208,12 +234,9 @@ class ServiceListCreateView(generics.ListCreateAPIView):
 
         return services.order_by("date")
 
-
-
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-
 
 class ScheduledServiceListView(generics.ListAPIView):
     serializer_class = ServiceSerializer
@@ -227,7 +250,6 @@ class ScheduledServiceListView(generics.ListAPIView):
         if owner_id:
             queryset = queryset.filter(owner_id=owner_id)
         return queryset
-
 
 class WalkInListCreateView(generics.ListCreateAPIView):
     serializer_class = WalkInSerializer
@@ -243,7 +265,6 @@ class WalkInListCreateView(generics.ListCreateAPIView):
                     appt.save(update_fields=["status"])
 
         return appointments
-
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WalkInSerializer
