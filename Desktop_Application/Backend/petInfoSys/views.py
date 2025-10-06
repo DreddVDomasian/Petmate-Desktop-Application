@@ -184,7 +184,7 @@ class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['GET'])
 def patient_combobox_data(request):
-    patients = basicInfo.objects.all().order_by('firstName', 'lastName')
+    patients = basicInfo.objects.all().order_by('-id')
 
     patient_data = []
     for patient in patients:
