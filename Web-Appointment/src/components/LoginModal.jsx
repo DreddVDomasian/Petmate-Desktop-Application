@@ -1,0 +1,68 @@
+import React from "react";
+
+function LoginModal({ onClose, onOpenSignup, visible }) {
+  if (!visible) return null; // Hides modal when not active
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    if (email && password) {
+      alert("Login successful!");
+      onClose();
+    } else {
+      alert("Please fill in all fields");
+    }
+  };
+
+  return (
+    <div className="modal" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <span className="close" onClick={onClose}>
+          &times;
+        </span>
+        <div className="login-container">
+          <h2>Login to PetMate</h2>
+          <form id="loginForm" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="loginEmail">Email</label>
+              <input type="email" id="loginEmail" name="email" required />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="loginPassword">Password</label>
+              <input type="password" id="loginPassword" name="password" required />
+            </div>
+
+            <div className="form-options">
+              <label className="checkbox-container">
+                <input type="checkbox" id="rememberMe" />
+                <span className="checkmark"></span>
+                Remember me
+              </label>
+              <a href="#" className="forgot-password">
+                Forgot Password?
+              </a>
+            </div>
+
+            <button type="submit" className="login-submit-btn">
+              LOGIN
+            </button>
+
+            <div className="signup-link">
+              <p>
+                Don't have an account?{" "}
+                <a href="#" onClick={onOpenSignup}>
+                Sign up here
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default LoginModal;
