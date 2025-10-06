@@ -55,13 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Show Client form (Customer Details)
+ //Set appointment form
   if (addClientBtn) {
     addClientBtn.addEventListener("click", (e) => {
       e.preventDefault();
       hideAllForms();
-      if (clientForm) {
-        clientForm.style.display = "block";
+      if (appointmentForm) {
+        appointmentForm.style.display = "block";
       }
       setActiveNav(addClientBtn);
     });

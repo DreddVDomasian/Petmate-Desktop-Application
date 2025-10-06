@@ -157,17 +157,19 @@ body {
     overflow-y: auto;
 }
 
+.logo{
+    width: 150px;
+    height: auto;  
+}
 /* Remove old button styles */
 .buttons {
     display: none;
 }
-
-
-
 /* Shared form styling */
 .client-form, 
 .pet-form,
-.appointment-form {
+.appointment-form 
+{
     background: white;
     padding: 30px 40px;
     border-radius: 8px;
@@ -176,9 +178,6 @@ body {
     box-sizing: border-box;
     border: 1px solid #e0e0e0;
 }
-
-
-
 .icons {
     display: flex;
     gap: 12px;
@@ -216,9 +215,38 @@ input, select {
     border-radius: 5px;
     font-size: 14px;
 }
-
+/* FOR MODALS (EDIT & DELETE) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0; 
+  top: 0;
+  width: 100%; 
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+.modal-content { 
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.close-btn {
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close-btn:hover {
+  color: red;
+}
 /* Buttons */
-.confirmbtn {
+.confirmbtn,
+.savebtn{
     width: 100%; 
     height: 45px; 
     font-weight: bold;     
@@ -234,7 +262,23 @@ input, select {
 .confirmbtn:hover {
     background-color: #4a9bbc;
 }
-
+.cancelDelete{
+    width: 100%; 
+    height: 45px; 
+    font-weight: bold;     
+    font-size: 16px;   
+    color: #fff;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px; 
+    cursor: pointer; 
+    background-color: #ed5252;  
+    transition: background 0.3s;
+}
+.cancelDelete:hover {
+    background-color: #d44141;
+}
 /* Hide Pet form by default */
 .pet-form {
     display: none;
