@@ -27,7 +27,7 @@ body {
     align-items: center;
     padding: 10px 50px;
     background-color: #4885CC;
-    background-image: url('assets/dumi.png');
+    background-image: url('/assets/images/background/dumi.png');
 }
 
 .index-page .logo img {
@@ -84,7 +84,7 @@ body {
     height: calc(100vh - 70px);
     position: relative;
     background-color: #4885CC;
-    background-image: url("assets/dumi.png");
+    background-image: url("/assets/images/background/dumi.png");
 }
 
 .home-container {
@@ -220,7 +220,7 @@ body {
 .about {
     padding: 50px 100px;
     background: #ffffff;
-    background-image: url("assets/dumi.png");
+    background-image: url("/assets/images/background/dumi.png");
 
 }
 
@@ -271,7 +271,7 @@ body {
 .services {
     padding-top: 100px;
     background-color: #4885CC;
-    background-image: url("assets/dumi.png");
+    background-image: url("/assets/images/background/dumi.png");
 }
 
 .services h1 {
@@ -443,7 +443,7 @@ body {
 
 /*  OFFICE HOURS */
 .office-hours {
-    background-image: url("assets/background/Office-hoursbg.jpeg");
+    background-image: url("/assets/images/background/Office-hoursbg.jpeg");
     background-size: cover;
     background-position: center;
     position: relative; /* Needed for overlay positioning */
@@ -536,7 +536,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("assets/background/Office-hoursbg.jpeg");
+    background-image: url("/assets/images/background/Office-hoursbg.jpeg");
     opacity: 0.1;
     z-index: 0;
 }
@@ -725,7 +725,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("assets/GIF/Homepage\ Brenda_Desktop_23062025.gif");
+    background-image: url("/assets/images/background/footer.gif");
     opacity: 0.05;
     z-index: 0;
 }

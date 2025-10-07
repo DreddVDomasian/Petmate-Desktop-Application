@@ -8,7 +8,7 @@ function ContactSection() {
         <div className="contact-container">
             <div className="contact-info">
             <div className="dog-image-container">
-                <img src="/assets/dog1.png" alt="Dog" />
+                <img src="/assets/images/pets/dog1.png" alt="Dog" />
             </div>
             
             <div className="contact-details">

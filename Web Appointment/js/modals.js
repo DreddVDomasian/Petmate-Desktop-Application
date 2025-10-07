@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     enableTime: true,
     noCalendar: true,
     dateFormat: "h:i K" 
-   });
+    });
 
   // ==========================
   // EDIT PET MODAL

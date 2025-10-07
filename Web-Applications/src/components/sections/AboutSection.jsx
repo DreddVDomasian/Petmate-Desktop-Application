@@ -15,7 +15,7 @@ function AboutSection() {
                 your pet's well-being is our top priority.</p>
             </div>
             <div className="about-image">
-            <img src="/assets/dog3.png" alt="Dog" />
+            <img src="/assets/images/pets/dog3.png" alt="Dog" />
             </div>
         </div>
         </section>

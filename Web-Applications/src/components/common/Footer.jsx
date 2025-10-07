@@ -5,7 +5,7 @@ function Footer() {
         <footer className="footer">
         <div className="footer-content">
             <div className="footer-left">
-            <img src="/assets/PETMATE LOGO.png" alt="PetMate Logo" className="footer-logo" />
+            <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" className="footer-logo" />
             <p className="footer-description">Providing exceptional veterinary care with compassion and expertise for your beloved pets.</p>
             </div>
             

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import LoginModal from "./LoginModal";
-import SignupModal from "./SignupModal";
+import LoginModal from "../modals/LoginModal";
+import SignupModal from "../modals/SignupModal";
 
 function Navigation() {
 
@@ -11,7 +11,7 @@ function Navigation() {
     <>
       <nav>
         <div className="logo">
-          <img src="/assets/PETMATE LOGO.png" alt="PetMate Logo" />
+          <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
         </div>
         <ul>
           <li><a href="#home">HOME</a></li>
