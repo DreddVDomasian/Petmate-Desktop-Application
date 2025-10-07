@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const clientForm = document.querySelector(".client-form");
   const petForm = document.querySelector(".pet-form");
   const appointmentForm = document.querySelector(".appointment-form");
+  const settingsForm = document.querySelector(".settings-form");
 
   // Navigation buttons
   const addPetsBtn = document.getElementById("addpets");
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (clientForm) clientForm.style.display = "none";
     if (petForm) petForm.style.display = "none";
     if (appointmentForm) appointmentForm.style.display = "none";
+    if (settingsForm) settingsForm.style.display = "none";
   }
 
   // Remove active class from all nav items
@@ -67,7 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // View Pets (placeholder)
+  
+  
+      // View Pets (placeholder)
   if (viewPetsBtn) {
     viewPetsBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -94,8 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsBtn.addEventListener("click", (e) => {
       e.preventDefault();
       hideAllForms();
-      // TODO: Create and show settings form
-      alert("Settings feature coming soon!");
+      if (settingsForm) {
+        settingsForm.style.display = "block";
+      }
       setActiveNav(settingsBtn);
     });
   }

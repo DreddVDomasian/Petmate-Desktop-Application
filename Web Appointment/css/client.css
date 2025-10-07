@@ -168,7 +168,8 @@ body {
 /* Shared form styling */
 .client-form, 
 .pet-form,
-.appointment-form 
+.appointment-form,
+.settings-form
 {
     background: white;
     padding: 30px 40px;
@@ -246,7 +247,8 @@ input, select {
 }
 /* Buttons */
 .confirmbtn,
-.savebtn{
+.savebtn
+{
     width: 100%; 
     height: 45px; 
     font-weight: bold;     
@@ -259,9 +261,55 @@ input, select {
     background-color: #60AED0;  
     transition: background 0.3s;
 }
-.confirmbtn:hover {
+.savebtn:hover,.confirmbtn:hover {
     background-color: #4a9bbc;
 }
+
+
+/* Settings Form */
+.settings-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;      
+}
+.settings-form h2 {
+    align-self: flex-start; 
+    margin-bottom: 10px;
+    flex-direction: column;
+    color: #272727;
+}
+.settingsedit {
+    width: 70%;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #60AED0;
+    padding: 15px 25px;
+    border-radius: 10px;
+    margin: 5px;
+}
+.form-edit{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form-edit h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #272727;
+    margin-bottom: 10px;
+}
+.form-edit input {
+    margin: 8px;
+    padding: 10px;
+    width: 379px;  
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
 .cancelDelete{
     width: 100%; 
     height: 45px; 
