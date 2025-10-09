@@ -46,6 +46,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const showAccount = document.getElementById("accountModal");
   const closeAccount = document.getElementById("closeViewAccount");
 
+  // EDIT PET IN CARD (VIEW PETS)
+  const petCard = document.getElementById("editPetCard");
+  const petCardModal = document.getElementById("petCardModal");
+  const closePetCard = document.getElementById("closeEditCard");
+  const savePetCard = document.getElementById("savePetCard");
+
+
+  const deletePetCard = document.getElementById("deletePetCard");
+  const deletePetCardModal = document.getElementById("deletePetCardModal");
+  const closeDeleteCard = document.getElementById("closeDeleteCard"); 
+  const confirmPetCard = document.getElementById("confirmPetCard");
+  const cancelPetCard = document.getElementById("cancelPetCard");
+  
 
   flatpickr(".bday", {
     dateFormat: "m/d/Y",  // MM/DD/YYYY
@@ -224,6 +237,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     });
 
+    // =====================
+    // ACCOUNT POP UP (VIEW)
+    // =====================
     account.addEventListener("click", () => {
       showAccount.style.display = "block";
     });
@@ -236,6 +252,48 @@ document.addEventListener("DOMContentLoaded", () => {
       showAccount.style.display = "none";
     }
     });
+
+    petCard.addEventListener("click", () => {
+      petCardModal.style.display = "block";
+    });
+    
+    savePetCard.addEventListener("click", () => {
+      alert("Changes saved!");
+      petCardModal.style.display = "none";
+    });
+
+    closePetCard.addEventListener("click", () => {
+      petCardModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+      if (event.target === petCardModal) {
+      petCardModal.style.display = "none";
+    }
+    });
+
+  deletePetCard.addEventListener("click", () => {
+    deletePetCardModal.style.display = "block";
+    });
+
+  closeDeleteCard.addEventListener("click", () => {
+    deletePetCardModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === deletePetCardModal) {
+      deletePetCardModal.style.display = "none";
+    }
+  });
+
+  confirmPetCard.addEventListener("click", () => {
+    alert("Pet deleted!");
+    deletePetCardModal.style.display = "none";
+  });
+
+  cancelPetCard.addEventListener("click", () => {
+    deletePetCardModal.style.display = "none";
+  });
 });
 
 

@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const petForm = document.querySelector(".pet-form");
   const appointmentForm = document.querySelector(".appointment-form");
   const settingsForm = document.querySelector(".settings-form");
+  const viewForm = document.querySelector(".view-form");
 
   // Navigation buttons
   const addPetsBtn = document.getElementById("addpets");
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (petForm) petForm.style.display = "none";
     if (appointmentForm) appointmentForm.style.display = "none";
     if (settingsForm) settingsForm.style.display = "none";
+    if (viewForm) viewForm.style.display = "none";
   }
 
   // Remove active class from all nav items
@@ -76,8 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     viewPetsBtn.addEventListener("click", (e) => {
       e.preventDefault();
       hideAllForms();
-      // TODO: Create and show pets list view
-      alert("View Pets feature coming soon!");
+      if (viewForm){
+        viewForm.style.display = "block";
+      }
       setActiveNav(viewPetsBtn);
     });
   }
