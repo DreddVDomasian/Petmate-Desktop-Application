@@ -29,7 +29,7 @@ function LandingPage() {
             
             <div className="action-buttons">
                 <button type="button" className="btn btn-primary" onClick={() => setShowLogin(true)}>BOOK NOW</button>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowLogin(true)}>MANAGE BOOKING</button>
+                <Link to="/manage-booking" className="btn btn-secondary">MANAGE BOOKING</Link>  /* hindi pa tapos ung html file */
             </div>
             </div>
         </div>
