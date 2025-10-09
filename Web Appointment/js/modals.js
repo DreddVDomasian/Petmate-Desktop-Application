@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // EDIT AND DELETE CUSTOMER'S ACCOUNT
   const editAccount = document.getElementById("editAccount");
   const accountModal = document.getElementById("clientAccount");
-  const closeAccountModal = document.getElementById("closeAccount");
+  const closeAccountModal = document.getElementById("closeEditAccount");
   const saveAccountBtn = document.getElementById("saveAccount");
 
   const deleteAccount = document.getElementById("deleteAccount");
@@ -35,6 +35,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeAccountDeleteModal = document.getElementById("closeAccountClient");
   const yesAccountBtn = document.getElementById("confirmAccount");
   const cancelAccountBtn = document.getElementById("cancelAccount");
+
+  // PROFILE POP UP
+  const profile = document.getElementById("profile");
+  const showProfile = document.getElementById("profileModal");
+  const closeProfile = document.getElementById("closeProfile");
+
+  // ACCOUNT POP UP
+  const account = document.getElementById("account");
+  const showAccount = document.getElementById("accountModal");
+  const closeAccount = document.getElementById("closeViewAccount");
+
 
   flatpickr(".bday", {
     dateFormat: "m/d/Y",  // MM/DD/YYYY
@@ -195,6 +206,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cancelAccountBtn.addEventListener("click", () => {
         deleteAccountModal.style.display = "none";
+    });
+
+    // =====================
+    // PROFILE POP UP (VIEW)
+    // =====================
+    profile.addEventListener("click", () => {
+      showProfile.style.display = "block";
+    });
+
+    closeProfile.addEventListener("click", () => {
+      showProfile.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target === showProfile) {
+      showProfile.style.display = "none";
+    }
+    });
+
+    account.addEventListener("click", () => {
+      showAccount.style.display = "block";
+    });
+
+    closeAccount.addEventListener("click", () => {
+      showAccount.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target === showAccount) {
+      showAccount.style.display = "none";
+    }
     });
 });
 
