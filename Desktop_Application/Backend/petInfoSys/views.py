@@ -251,20 +251,51 @@ class ScheduledServiceListView(generics.ListAPIView):
             queryset = queryset.filter(owner_id=owner_id)
         return queryset
 
+
 class WalkInListCreateView(generics.ListCreateAPIView):
     serializer_class = WalkInSerializer
+    pagination_class = StandardPagination
 
     def get_queryset(self):
         today = date.today()
-        appointments = WalkInAppointment.objects.all()
 
-        for appt in appointments:
-            if appt.status not in ["completed", "cancelled"]:
-                if appt.date < today and appt.status != "overdue":
+        # Start with a base queryset, ordered by date
+        queryset = WalkInAppointment.objects.all().order_by('-date', '-prefTime')
+
+        # Filter by status if the 'status' query parameter is provided
+        status_filter = self.request.query_params.get('status', None)
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+
+        # Auto-update status to overdue if needed
+        for appt in queryset:
+            if appt.status not in ["completed", "cancelled", "overdue"]:
+                if appt.date < today:
                     appt.status = "overdue"
                     appt.save(update_fields=["status"])
 
-        return appointments
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        # Get the filtered queryset
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Check if client wants to disable pagination
+        disable_pagination = request.query_params.get('no_pagination')
+        if disable_pagination:
+            self.pagination_class = None
+
+        # Paginate the queryset if pagination is enabled
+        if self.pagination_class is None:
+            page = queryset
+        else:
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WalkInSerializer

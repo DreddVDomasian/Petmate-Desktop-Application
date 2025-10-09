@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget,QCompleter,QLabel,QComboBox
+from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer
 from input_styles import *
@@ -26,6 +26,7 @@ class AddAppointmentCard(QWidget):
         super().__init__(parent)
         self.main_window = main_window
         uic.loadUi("addAppointmentCard.ui", self)
+        self.card_manager = AppointmentCardManager(self)
 
         #layouts
         self.setup_stackLayout()
@@ -45,7 +46,8 @@ class AddAppointmentCard(QWidget):
         self.addAppointmentBtn.clicked.connect(self.submit_appointment_data)
 
         # load data
-        self.load_walkInAppointments()
+        self.load_appointments(1)
+        self.setup_status_filters()
         self.web_Appointment()
 
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
@@ -53,6 +55,7 @@ class AddAppointmentCard(QWidget):
         if parent:
             parent.installEventFilter(self)
 
+    #SET UP LAYOUT/SHADOW FOR MODAL
     def setup_stackLayout(self):
         # pending layout
         self.pendingLayout = self.main_window.walkInScrollAreaWidgetContents.layout()
@@ -88,7 +91,6 @@ class AddAppointmentCard(QWidget):
         self.declinedWebLayout = self.main_window.scrollAreaWebAppDeclined.layout()
         self.declinedWebLayout.setSpacing(10)
         self.declinedWebLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-
     def setup_input_shadow(self):
         for comboBox in self.addPopUPFrame.findChildren(QComboBox):
             comboBox.setGraphicsEffect(create_card_shadow())
@@ -103,6 +105,7 @@ class AddAppointmentCard(QWidget):
 
         self.selectPatientPopUp.currentIndexChanged.connect(self.on_patient_selected)
 
+    #CARD POSITION LOGIC
     def show_card(self):
         if self.parent():
             parent_widget = self.parent()
@@ -121,7 +124,7 @@ class AddAppointmentCard(QWidget):
         anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         anim.start()
         self.anim = anim  # Keep reference para di ma-garbage collect
-
+        self.load_appointments(1)
     def eventFilter(self, obj, event):
         if obj == self.parent() and event.type() == event.Type.Resize:
             if self.isVisible():
@@ -131,6 +134,7 @@ class AddAppointmentCard(QWidget):
                 self.move(x, y)
         return super().eventFilter(obj, event)
 
+    #SET UP COMBO BOXES AND DATA SUBMITTING
     def load_patients_to_combobox(self):
         """Load ALL patients for the combobox without pagination"""
         try:
@@ -151,7 +155,6 @@ class AddAppointmentCard(QWidget):
 
         except Exception as e:
             print(f"Error loading patients for combobox: {e}")
-
     def on_patient_selected(self, index):
         patient_id = self.selectPatientPopUp.itemData(index)
         if not patient_id:
@@ -173,11 +176,9 @@ class AddAppointmentCard(QWidget):
             print("Failed to load pets")
             self.selectPetPopUp.clear()
             self.selectPetPopUp.addItem("", None)
-
     def on_date_field_clicked(self, dateEdit):
         if self.main_window:
             self.main_window.show_custom_calendar(dateEdit)
-
     def setup_comboboxes(self):
         self.selectPetPopUp, self.selectPatientPopUp
         self.load_patients_to_combobox()
@@ -188,7 +189,6 @@ class AddAppointmentCard(QWidget):
             cb.lineEdit().setReadOnly(False)
             cb.lineEdit().setPlaceholderText(text)
             cb.lineEdit().setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-
     def set_dynamic_completer(self, comboBox):
         completer = QCompleter(comboBox.model())
         completer.setCompletionColumn(0)
@@ -196,7 +196,6 @@ class AddAppointmentCard(QWidget):
         completer.setFilterMode(Qt.MatchFlag.MatchContains)  # Change to MatchContains
         completer.popup().setStyleSheet(completer_popup_style)
         comboBox.setCompleter(completer)
-
     def submit_appointment_data(self):
         # get values from UI
         patient_index = self.selectPatientPopUp.currentIndex()
@@ -241,72 +240,111 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
             toast.show_toast()
             self.close()
-            self.load_walkInAppointments()
+            self.load_appointments(1)  # Refresh with first page
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
 
-    def load_walkInAppointments(self):
-        response = requests.get("http://127.0.0.1:8000/api/walkIn/")
-        if response.status_code == 200:
-            walkInAppointments = response.json()
-        else:
-            walkInAppointments = []
+    #LOADING WALK IN APPOINTMENTS AND CARD LOGIC
+    def setup_status_filters(self):
+        """Connect status buttons to filter appointments"""
+        status_buttons = {
+            "pending": self.main_window.pendingBtn,
+            "completed": self.main_window.completedBtn,
+            "overdue": self.main_window.overdueBtn,
+            "cancelled": self.main_window.cancelledBtn
+        }
 
-        # 🧹 clear all layouts before adding new cards
-        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
-            while layout.count():
-                child = layout.takeAt(0)
-                if child.widget():
-                    child.widget().deleteLater()
+        for status, button in status_buttons.items():
+            button.clicked.connect(lambda checked, s=status: self.load_appointments(1, s))
+    def load_appointments(self, page=1, status_filter=None):
+        """Load appointments with pagination and filtering"""
+        try:
+            # Clear existing appointment cards
+            self.card_manager.clear_layouts()
 
+            # Build API URL with pagination and filtering
+            url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
+            if status_filter:
+                url += f"&status={status_filter}"
 
-        for appt in walkInAppointments:
-            card = uic.loadUi("appointmentCard.ui")
-            card.ownerName.setText(appt["owner_full_name"].title())
-            card.petNameApp.setText(appt["petName"].capitalize())
-            card.serviceApp.setText(appt["service_name"].capitalize())
-            card.appDate.setText(self.main_window.format_date(appt.get("date")))
+            # Make API request
+            response = requests.get(url, timeout=10)
 
-            time_str = appt.get("prefTime")
-            if time_str:
-                time_obj = datetime.strptime(time_str, "%H:%M:%S")
-                formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")
-                card.preferredTime.setText(formatted_time)
+            if response.status_code == 200:
+                data = response.json()
+                appointments = data.get('results', [])
+
+                # Update pagination info
+                self.card_manager.current_appointment_page = page
+                self.card_manager.total_appointment_pages = data.get('total_pages', 1)
+                self.card_manager.total_appointment_count = data.get('count', 0)
+                self.card_manager.current_status_filter = status_filter
+
             else:
-                card.preferredTime.setText("N/A")
+                appointments = []
+                print(f"Failed to load appointments: {response.status_code}")
 
-            card.setGraphicsEffect(create_card_shadow())
+            # Handle empty results
+            if not appointments:
+                self.show_empty_all_layouts()
+                return
 
-            # 👉 decide which layout
-            status = appt.get("status", "pending")
-            appt_date = datetime.strptime(appt["date"], "%Y-%m-%d").date()
+            # Create and distribute appointment cards to appropriate layouts
+            self.distribute_appointment_cards(appointments)
 
-            if status == "completed":
-                card.deleteButton.hide()
-                self.completedLayout.addWidget(card)
-            elif status == "cancelled":
-                card.deleteButton.hide()
-                self.cancelledLayout.addWidget(card)
-            elif status == "pending":
-                self.pendingLayout.addWidget(card)
-            elif status == "overdue":
-                self.overdueLayout.addWidget(card)
+            # Add pagination to the current active layout
+            current_layout = self.get_current_active_layout()
+            if current_layout:
+                self.card_manager.add_appointment_pagination_controls(current_layout, status_filter)
 
-            appointment_id = appt["id"]
-            card.deleteButton.clicked.connect(lambda _, a_id=appointment_id: self.cancelled_appointment(a_id))
-            card.mousePressEvent = lambda event, pid=appt["pet"]: self.open_pet_from_appointment(pid)
+        except Exception as e:
+            print(f"Error loading appointments: {e}")
+            self.show_empty_all_layouts()
+    def distribute_appointment_cards(self, appointments):
+        """Distribute appointment cards to their respective status layouts"""
+        status_layouts = {
+            "pending": self.pendingLayout,  # Access directly
+            "completed": self.completedLayout,
+            "overdue": self.overdueLayout,
+            "cancelled": self.cancelledLayout
+        }
 
-        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout, self.cancelledLayout]:
-            if layout.count() == 0:
-                self.add_empty_label(layout)
+        # Group appointments by status
+        appointments_by_status = {status: [] for status in status_layouts.keys()}
+        for appointment in appointments:
+            status = appointment.get("status", "pending")
+            if status in appointments_by_status:
+                appointments_by_status[status].append(appointment)
 
+        # Create cards for each status group
+        for status, layout in status_layouts.items():
+            status_appointments = appointments_by_status[status]
+
+            if not status_appointments:
+                self.card_manager.show_empty_state(layout)
+                continue
+
+            for appointment in status_appointments:
+                card = self.card_manager.create_appointment_card(appointment)
+                layout.addWidget(card)
+                self.card_manager.appointment_cards.append(card)
+    def get_current_active_layout(self):
+        """Get the currently active layout based on status filter"""
+        status_layout_map = {
+            "pending": self.pendingLayout,  # Access directly
+            "completed": self.completedLayout,
+            "overdue": self.overdueLayout,
+            "cancelled": self.cancelledLayout,
+            None: self.pendingLayout  # Default to pending if no filter
+        }
+
+        return status_layout_map.get(self.card_manager.current_status_filter)
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
             self.main_window.show_pet_profile(pet)
-
     def cancelled_appointment(self,appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
         self.main_window.confirmCard.show_card()
@@ -325,7 +363,17 @@ class AddAppointmentCard(QWidget):
 
         self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
+    def show_empty_all_layouts(self):
+        """Show empty state in all layouts"""
+        layouts = [
+            self.pendingLayout,  # Access directly, not through main_window
+            self.completedLayout,
+            self.overdueLayout,
+            self.cancelledLayout
+        ]
 
+        for layout in layouts:
+            self.card_manager.show_empty_state(layout)
 
     #-------------------------------------------WEB APPOINTMENT---------------------------------------
 
@@ -460,5 +508,154 @@ class AddAppointmentCard(QWidget):
         layout.addStretch()
 
 
+class AppointmentCardManager:
+    def __init__(self, appointment_card_instance):
+        self.appointment_card = appointment_card_instance  # Reference to AddAppointmentCard instance
+        self.main_window = appointment_card_instance.main_window
+        self.appointment_cards = []
+        self.current_appointment_page = 1
+        self.total_appointment_pages = 1
+        self.total_appointment_count = 0
+        self.current_status_filter = None
 
+    def clear_layouts(self):
+        """Clear all appointment layouts"""
+        layouts = [
+            self.appointment_card.pendingLayout,  # Access through appointment_card, not main_window
+            self.appointment_card.completedLayout,
+            self.appointment_card.overdueLayout,
+            self.appointment_card.cancelledLayout
+        ]
 
+        for layout in layouts:
+            while layout.count():
+                child = layout.takeAt(0)
+                if child and child.widget():
+                    child.widget().deleteLater()
+
+    def show_empty_state(self, layout, message="EMPTY"):
+        """Show empty state message in a layout"""
+        empty_label = QLabel(message)
+        empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+        layout.addStretch()
+        layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addStretch()
+
+    def create_appointment_card(self, appointment):
+        """Create and configure an appointment card"""
+        card = uic.loadUi("appointmentCard.ui")
+
+        # Set appointment information
+        card.ownerName.setText(appointment["owner_full_name"].title())
+        card.petNameApp.setText(appointment["petName"].capitalize())
+        card.serviceApp.setText(appointment["service_name"].capitalize())
+        card.appDate.setText(self.main_window.format_date(appointment.get("date")))
+
+        # Format time
+        time_str = appointment.get("prefTime")
+        if time_str:
+            try:
+                time_obj = datetime.strptime(time_str, "%H:%M:%S")
+                formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")
+                card.preferredTime.setText(formatted_time)
+            except ValueError:
+                card.preferredTime.setText("N/A")
+        else:
+            card.preferredTime.setText("N/A")
+
+        # Connect buttons
+        appointment_id = appointment["id"]
+        card.deleteButton.clicked.connect(lambda _, a_id=appointment_id: self.appointment_card.cancelled_appointment(a_id))
+        card.mousePressEvent = lambda event, pid=appointment["pet"]: self.appointment_card.open_pet_from_appointment(pid)
+
+        card.setGraphicsEffect(create_card_shadow())
+        return card
+
+    def add_appointment_pagination_controls(self, layout, status_filter=None):
+        """Add pagination controls for appointments"""
+        # Safely remove existing pagination widget
+        if hasattr(self, 'appointment_pagination_widget'):
+            try:
+                if self.appointment_pagination_widget and self.appointment_pagination_widget.isWidgetType():
+                    self.appointment_pagination_widget.deleteLater()
+            except RuntimeError:
+                pass
+            finally:
+                if hasattr(self, 'appointment_pagination_widget'):
+                    delattr(self, 'appointment_pagination_widget')
+
+        if self.total_appointment_pages <= 1:
+            return
+
+        try:
+            self.appointment_pagination_widget = uic.loadUi("paginationUi.ui")
+
+            # Connect prev/next buttons with status filter
+            self.appointment_pagination_widget.PrevPage.clicked.connect(
+                lambda: self.appointment_card.load_appointments(self.current_appointment_page - 1, status_filter)
+            )
+            self.appointment_pagination_widget.NextPage.clicked.connect(
+                lambda: self.appointment_card.load_appointments(self.current_appointment_page + 1, status_filter)
+            )
+
+            # Set button states
+            self.appointment_pagination_widget.PrevPage.setEnabled(self.current_appointment_page > 1)
+            self.appointment_pagination_widget.NextPage.setEnabled(
+                self.current_appointment_page < self.total_appointment_pages)
+
+            # Create page buttons with status filter support
+            self.create_appointment_page_buttons(status_filter)
+
+            self.appointment_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
+            layout.addWidget(self.appointment_pagination_widget)
+
+        except Exception as e:
+            print(f"Error creating appointment pagination: {e}")
+
+    def create_appointment_page_buttons(self, status_filter=None):
+        """Create page buttons for appointment pagination"""
+        page_layout = self.appointment_pagination_widget.pageButtonsLayout
+
+        # Clear existing buttons
+        while page_layout.count():
+            child = page_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        current_page = self.current_appointment_page
+        total_pages = self.total_appointment_pages
+        max_visible_pages = 7
+
+        if total_pages <= max_visible_pages:
+            start_page = 1
+            end_page = total_pages
+        else:
+            if current_page <= 4:
+                start_page = 1
+                end_page = 7
+            elif current_page >= total_pages - 3:
+                start_page = total_pages - 6
+                end_page = total_pages
+            else:
+                start_page = current_page - 3
+                end_page = current_page + 3
+
+        # Add page number buttons
+        for page in range(start_page, end_page + 1):
+            page_btn = QPushButton(str(page))
+            page_btn.setFixedSize(40, 40)
+            if current_page > 99:
+                page_btn.setFixedSize(45, 45)
+            font = page_btn.font()
+            font.setPointSize(10)
+            font.setBold(True)
+            page_btn.setFont(font)
+
+            if page == current_page:
+                page_btn.setStyleSheet(current_pageBtn)
+            else:
+                page_btn.setStyleSheet(other_pageBtn)
+                # Pass status filter when loading different pages
+                page_btn.clicked.connect(lambda checked, p=page: self.appointment_card.load_appointments(p, status_filter))
+
+            page_layout.addWidget(page_btn)

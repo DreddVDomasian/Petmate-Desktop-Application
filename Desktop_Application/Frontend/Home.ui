@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -3070,7 +3070,7 @@ QPushButton:checked {
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_15">
+                 <layout class="QVBoxLayout" name="verticalLayout_6">
                   <property name="spacing">
                    <number>0</number>
                   </property>
@@ -3086,10 +3086,10 @@ QPushButton:checked {
                   <property name="bottomMargin">
                    <number>0</number>
                   </property>
-                  <item>
+                  <item alignment="Qt::AlignTop">
                    <widget class="QFrame" name="addWalkinButton">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -3192,19 +3192,13 @@ border:none;
                     </layout>
                    </widget>
                   </item>
-                  <item>
+                  <item alignment="Qt::AlignTop">
                    <widget class="QFrame" name="pendingCompletedBtn">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>16777215</width>
-                      <height>90</height>
-                     </size>
                     </property>
                     <property name="styleSheet">
                      <string notr="true"/>
@@ -3329,12 +3323,6 @@ border:none;
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>383</height>
-                     </size>
                     </property>
                     <property name="styleSheet">
                      <string notr="true">QScrollArea{
@@ -3501,8 +3489,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>796</width>
+                           <height>362</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3558,7 +3546,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>814</width>
-                           <height>383</height>
+                           <height>353</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -3610,8 +3598,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -3663,8 +3651,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -3910,8 +3898,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -3969,8 +3957,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -4025,8 +4013,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>796</width>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4812,8 +4800,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
-                          <height>28</height>
+                          <width>100</width>
+                          <height>30</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_67"/>
@@ -4892,7 +4880,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
+                          <width>93</width>
                           <height>41</height>
                          </rect>
                         </property>
@@ -7513,7 +7501,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -7822,8 +7810,8 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
-                          <height>33</height>
+                          <width>812</width>
+                          <height>195</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">

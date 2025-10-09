@@ -80,9 +80,9 @@ class DuplicateDialog(QWidget):
             contacts = [patient.get("phoneNumber"), patient.get("emergencyNumber")]
             contactNumbers = " / ".join([c for c in contacts if c])
 
-            card.fullnameLabel.setText(full_name)
-            card.emailLabel.setText(patient.get("email", "N/A"))
-            card.address.setText(full_address)
+            card.fullnameLabel.setText(full_name.title())
+            card.emailLabel.setText(patient.get("email", "N/A").title())
+            card.address.setText(full_address.title())
             card.contactNo.setText(contactNumbers)
 
             card.duplicateUpdateBtn.clicked.connect(lambda _, updateId = patient['id']: self.update_duplicate(updateId))

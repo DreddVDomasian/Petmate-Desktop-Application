@@ -87,27 +87,7 @@ class MainUI(QMainWindow):
 
         self.patient_currentPage = None
 
-
-    def setup_calendar(self):
-        self.customCalendar = uic.loadUi("customCalendar.ui")
-        self.customCalendar.setParent(None)
-        self.customCalendar.setWindowFlags(Qt.WindowType.Popup)
-        self.calendarWidget = self.customCalendar.findChild(QCalendarWidget, "calendarWidget")
-        self.calendarWidget.clicked.connect(self.set_date_from_calendar)
-        self.calendarWidget.setSelectedDate(QDate.currentDate())
-        self.setStyleSheet(QframeStyle)
-
-    def setup_comboboxes(self):
-        self.ui_handler = UIHandler(self.provinceComboBox, self.cityComboBox, self.barangayComboBox)
-        self.ui_handler.load_provinces()
-        combo_boxes = [self.provinceComboBox, self.cityComboBox, self.barangayComboBox]
-        placeholders = ["Select Province", "Select City", "Select Barangay"]
-        for cb, text in zip(combo_boxes, placeholders):
-            cb.setEditable(True)
-            cb.lineEdit().setReadOnly(False)
-            cb.lineEdit().setPlaceholderText(text)
-            cb.lineEdit().setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-
+    #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
         # patient list layout
         self.patientListLayout = self.scrollAreaWidgetContents.layout()
@@ -140,6 +120,7 @@ class MainUI(QMainWindow):
         self.overdueLayout.setSpacing(10)
         self.overdueLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+    #BUTTONS FUNCTIONS
     def setup_buttons(self):
         # page navigation
         nav = [
@@ -248,6 +229,8 @@ class MainUI(QMainWindow):
         # cancel
         self.backBtn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(0))
         self.cancelButton.clicked.connect(lambda: self.navigate_to_page(2))
+        self.cancelAddServiceBtn.clicked.connect(lambda: self.service_stackedWidget(0))
+
         #update buttons
         self.updateBasicInfo.hide()
         self.cancelButton.hide()
@@ -260,7 +243,65 @@ class MainUI(QMainWindow):
         #nav
         self.miniNavBtn.clicked.connect(self.slide_in_sideNav)
         self.fullNavBtn.clicked.connect(self.slide_out_sideNav)
+    def setup_all_back_buttons(self):
+        self.all_back_buttons = [
+            self.homeBackBtn,
+            self.addPatientBackBtn,
+            self.RecordsBackBtn,
+            self.appointmentBackBtn,
+            self.ReturnBackBtn,
+            self.profileBackbutton,
+            self.petProfileBackBtn,
+            self.ReviewBackBtn
+        ]
+        for btn in self.all_back_buttons:
+            btn.clicked.connect(self.go_back)
+    def go_back(self):
+        if self.page_history:
+            index, params = self.page_history.pop()
 
+            self.current_page_index = index
+            self.current_params = params
+            self.update_back_button_visibility()
+            self.stackedWidget.setCurrentIndex(index)
+            if index in self.page_to_nav_button:
+                self.page_to_nav_button[index].setChecked(True)
+
+                # Load page data if needed
+            if index == 5 and "owner_id" in params:
+                self.load_pets_for_owner(params["owner_id"])
+            elif index == 8 and "pet_id" in params:
+                self.load_services_for_pet(params["pet_id"])
+    def update_back_button_visibility(self):
+        visible = bool(self.page_history)
+        for btn in self.all_back_buttons:
+            btn.setVisible(visible)
+    def navigate_to_page(self, index, is_update=False, **kwargs):
+        # Save current page & parameters
+        self.page_history.append((self.current_page_index, self.current_params))
+
+
+        self.current_page_index = index
+        self.current_params = kwargs
+
+        self.update_back_button_visibility()
+        self.stackedWidget.setCurrentIndex(index)
+        self.profileStackedWidget.setCurrentIndex(0)
+        if index in self.page_to_nav_button:
+            self.page_to_nav_button[index].setChecked(True)
+        # Your existing Add Patient logic
+        if index == 1:
+            if is_update:
+                self.updateBasicInfo.show()
+                self.cancelButton.show()
+                self.confirmButton.hide()
+            else:
+                self.clearInputs()
+                self.updateBasicInfo.hide()
+                self.cancelButton.hide()
+                self.confirmButton.show()
+
+    #SIDE NAV ANIMATIONS
     def slide_in_sideNav(self):
         # Animate MiniNav sliding out
         mini_anim = QPropertyAnimation(self.MiniNav, b"maximumWidth", self)
@@ -285,7 +326,6 @@ class MainUI(QMainWindow):
         mini_anim.finished.connect(after_mini)
         mini_anim.start()
         self._anim_mini = mini_anim  # keep reference
-
     def slide_out_sideNav(self):
         # Animate SideNav width 500 → 0
         anim = QPropertyAnimation(self.sideNav, b"maximumWidth", self)
@@ -311,135 +351,7 @@ class MainUI(QMainWindow):
         anim.start()
         self._anim = anim  # keep reference
 
-    def make_icon_pulse(self, button):
-        # Lock button size so layout won’t move
-        button.setFixedSize(button.size())
-
-        rect = button.iconSize()
-
-        grow = QPropertyAnimation(button, b"iconSize")
-        grow.setDuration(500)
-        grow.setStartValue(rect)
-        grow.setEndValue(rect + QSize(4, 4))
-        grow.setEasingCurve(QEasingCurve.Type.OutCubic)
-
-        shrink = QPropertyAnimation(button, b"iconSize")
-        shrink.setDuration(500)
-        shrink.setStartValue(rect + QSize(4, 4))
-        shrink.setEndValue(rect)
-        shrink.setEasingCurve(QEasingCurve.Type.InCubic)
-
-        self.pulse_anim = QSequentialAnimationGroup(self)
-        self.pulse_anim.addAnimation(grow)
-        self.pulse_anim.addAnimation(shrink)
-        self.pulse_anim.setLoopCount(-1)
-        self.pulse_anim.start()
-
-    def setup_service_tab(self):
-        # toggle service history / add new
-        self.addNewServiceBtn.setCheckable(True)
-        self.serviceHistoryBtn.setCheckable(True)
-        self.serviceShadow.setGraphicsEffect(create_card_shadow())
-        self.addServiceShadow.setGraphicsEffect(create_card_shadow())
-        self.searchServiceFrame.setGraphicsEffect(create_card_shadow())
-        self.serviceHistoryStackedWidget.setCurrentIndex(0)
-        self.sourceBtnGroup = QButtonGroup(self)
-        self.sourceBtnGroup.setExclusive(True)
-        for btn in [self.addNewServiceBtn, self.serviceHistoryBtn]:
-            self.sourceBtnGroup.addButton(btn)
-        self.serviceHistoryBtn.setChecked(True)
-        self.serviceHistoryBtn.clicked.connect(lambda: self.service_stackedWidget(0))
-        self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
-
-    def service_stackedWidget(self,index):
-        self.serviceHistoryBtn.setChecked(True)
-        self.serviceHistoryStackedWidget.setCurrentIndex(index)
-        self.addNewServiceBtn.setText("Add New service")
-        self.clearInputs()
-        self.addServiceBtn.show()
-        self.updateServiceBtn.hide()
-
-    def setup_dates(self):
-        self.activeDateEdit = None
-        self.dateEdit.mousePressEvent = lambda event: self.show_custom_calendar(self.dateEdit)
-        self.returnDateEdit.mousePressEvent = lambda event: self.show_custom_calendar(self.returnDateEdit)
-        self.dateEdit.setDate(QDate.currentDate())
-
-        # return date checkbox
-        self.returnDatePlaceholder.setReadOnly(True)
-        self.returnDateEdit.hide()
-        self.returnCheckBox.toggled.connect(self.toggle_return_date)
-
-        # --- Pet birthday setup ---
-        sentinel = QDate(1900, 1, 1)
-        self.Bday.setSpecialValueText("Birthday (optional)")
-        self.Bday.setDisplayFormat(" ")  # start blank
-        self.Bday.setDate(sentinel)  # sentinel means "no birthday"
-        self.Bday.setMinimumDate(sentinel)
-        self.Bday.setMaximumDate(QDate.currentDate())  # no future birthdays
-
-        # open your custom calendar
-        self.Bday.mousePressEvent = lambda event: self.show_custom_calendar(self.Bday)
-
-        # recompute age when birthday changes
-        self.Bday.dateChanged.connect(self.update_bday_display)
-
-        # make sure age is editable only when no birthday
-        self.age.setReadOnly(True)  # will be flipped in update_bday_display
-
-    def update_bday_display(self, date: QDate):
-        sentinel = QDate(1900, 1, 1)
-
-        if date == sentinel:
-            # No birthday selected → show placeholder and allow manual age
-            self.Bday.setDisplayFormat(" ")
-            # avoid emitting textChanged if you have handlers
-            self.age.blockSignals(True)
-            self.age.clear()
-            self.age.blockSignals(False)
-            self.age.setReadOnly(False)  # user can type stored_age
-            return
-
-        # Birthday selected → compute age and lock the field
-        self.Bday.setDisplayFormat("MMM d, yyyy")
-        today = QDate.currentDate()
-        days = date.daysTo(today)
-
-        if days < 0:
-            # just in case — shouldn't happen with maxDate set
-            days = 0
-
-        if days < 7:
-            age_str = f"{days} day{'s' if days != 1 else ''} old"
-        elif days < 30:
-            weeks = days // 7
-            age_str = f"{weeks} week{'s' if weeks != 1 else ''} old"
-        elif days < 365:
-            months = days // 30
-            age_str = f"{months} month{'s' if months != 1 else ''} old"
-        else:
-            years = days // 365
-            age_str = f"{years} year{'s' if years != 1 else ''} old"
-
-        self.age.blockSignals(True)
-        self.age.setText(age_str)
-        self.age.blockSignals(False)
-        self.age.setReadOnly(True)  # computed only
-
-    def setup_confirm_card(self):
-        self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
-        self.confirmCard.hide()
-        self.confirmCard.setGraphicsEffect(create_card_shadow())
-        self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete)
-        self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
-        self.confirmCard.yesButton.setGraphicsEffect(create_card_shadow())
-        self.confirmCard.noButton.setGraphicsEffect(create_card_shadow())
-        self.patientToDelete = None
-
-        # delete buttons sa profile patient/pet
-        self.profileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_patient)
-        self.petProfileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_pet)
-
+    #FOR CLEARING FORMS
     def clearInputs(self):
         # clear fields
         self.firstNameEdit.clear()
@@ -477,41 +389,7 @@ class MainUI(QMainWindow):
         self.Bday.setDate(sentinel)
         self.update_bday_display(sentinel)
 
-    def setup_add_appintmentPopUp(self):
-        self.appointmentCard = AddAppointmentCard(
-            parent=self.findChild(QWidget, "MainContent"),
-            main_window=self  # pass the MainUI instance
-        )
-        self.appointmentCard.hide()
-        self.appointmentCard.closePopUpBtn.clicked.connect(self.cancel_appointment)
-        self.appointmentCard.cancelAddAppointment.clicked.connect(self.cancel_appointment)
-
-    def cancel_appointment(self):
-        self.appointmentCard.hide()
-
-    def open_addAppointment(self):
-        self.appointmentCard.load_patients_to_combobox()
-        self.appointmentCard.show_card()
-
-    def open_reminderPopup(self):
-        if not hasattr(self, "reminderPopup") or self.reminderPopup is None:
-            self.reminderPopup = ReminderPopup(
-                parent=self.findChild(QWidget, "MainContent"),
-                main_window=self
-            )
-        self.reminderPopup.show_reminder()
-
-    def done_reminder(self):
-        self.reminderPopup.hide()
-
-    def setup_pet_buttons(self):
-        self.profileStackedWidget.setCurrentIndex(0)
-        for btn in [self.addpetQtoolBtn, self.plusSignBtn]:
-            btn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(1))
-            btn.clicked.connect(lambda: self.clearInputs())
-            btn.clicked.connect(lambda: self.petUpdateButton.hide())
-            btn.clicked.connect(lambda: self.petConfirmButton.show())
-
+    # SET UP SHADOWS
     def setup_input_shadows(self):
         # owner info form
         for line_edit in self.ownerDetailsFrame.findChildren(QLineEdit):
@@ -541,7 +419,6 @@ class MainUI(QMainWindow):
             if inner_line_edit:
                 inner_line_edit.setGraphicsEffect(None)  # remove shadow from text
             dateEdit.setGraphicsEffect(create_card_shadow())
-
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
         self.petProfileCard.setGraphicsEffect(create_card_shadow())
@@ -568,88 +445,7 @@ class MainUI(QMainWindow):
         self.walkInBtn.setGraphicsEffect(create_card_shadow())
         self.websiteBtn.setGraphicsEffect(create_card_shadow())
 
-    def set_current_month_in_combobox(self):
-        self.monthComboBox.setGraphicsEffect(create_card_shadow())
-        current_month = datetime.now().strftime("%B")
-        index = self.monthComboBox.findText(current_month)
-        if index >= 0:
-            self.monthComboBox.setCurrentIndex(index)
-
-    # check/uncheck return date
-    def toggle_return_date(self, checked):
-        if checked:
-            self.returnDateEdit.show()
-            min_date = self.dateEdit.date().addDays(1)
-            today_plus_1 = QDate.currentDate().addDays(1)
-            # piliin ang mas malayo sa dalawa
-            default_date = min_date if min_date > today_plus_1 else today_plus_1
-            self.returnDateEdit.setDate(default_date)
-            self.returnDatePlaceholder.hide()
-        else:
-            self.returnDateEdit.hide()
-            self.returnDatePlaceholder.show()
-
-    def setup_all_back_buttons(self):
-        self.all_back_buttons = [
-            self.homeBackBtn,
-            self.addPatientBackBtn,
-            self.RecordsBackBtn,
-            self.appointmentBackBtn,
-            self.ReturnBackBtn,
-            self.profileBackbutton,
-            self.petProfileBackBtn,
-            self.ReviewBackBtn
-        ]
-        for btn in self.all_back_buttons:
-            btn.clicked.connect(self.go_back)
-
-    def update_back_button_visibility(self):
-        visible = bool(self.page_history)
-        for btn in self.all_back_buttons:
-            btn.setVisible(visible)
-
-    def navigate_to_page(self, index, is_update=False, **kwargs):
-        # Save current page & parameters
-        self.page_history.append((self.current_page_index, self.current_params))
-
-
-        self.current_page_index = index
-        self.current_params = kwargs
-
-        self.update_back_button_visibility()
-        self.stackedWidget.setCurrentIndex(index)
-        self.profileStackedWidget.setCurrentIndex(0)
-        if index in self.page_to_nav_button:
-            self.page_to_nav_button[index].setChecked(True)
-        # Your existing Add Patient logic
-        if index == 1:
-            if is_update:
-                self.updateBasicInfo.show()
-                self.cancelButton.show()
-                self.confirmButton.hide()
-            else:
-                self.clearInputs()
-                self.updateBasicInfo.hide()
-                self.cancelButton.hide()
-                self.confirmButton.show()
-
-    def go_back(self):
-        if self.page_history:
-            index, params = self.page_history.pop()
-
-            self.current_page_index = index
-            self.current_params = params
-            self.update_back_button_visibility()
-            self.stackedWidget.setCurrentIndex(index)
-            if index in self.page_to_nav_button:
-                self.page_to_nav_button[index].setChecked(True)
-
-                # Load page data if needed
-            if index == 5 and "owner_id" in params:
-                self.load_pets_for_owner(params["owner_id"])
-            elif index == 8 and "pet_id" in params:
-                self.load_services_for_pet(params["pet_id"])
-
+    #FORM INPUT CHECKER
     def collect_and_validate_fields(self, required_fields):
         missing = []
 
@@ -704,6 +500,17 @@ class MainUI(QMainWindow):
 
         return data, missing
 
+    #PATIEN INFO SUBMIT/CHECK DUPLICATE
+    def setup_comboboxes(self):
+        self.ui_handler = UIHandler(self.provinceComboBox, self.cityComboBox, self.barangayComboBox)
+        self.ui_handler.load_provinces()
+        combo_boxes = [self.provinceComboBox, self.cityComboBox, self.barangayComboBox]
+        placeholders = ["Select Province", "Select City", "Select Barangay"]
+        for cb, text in zip(combo_boxes, placeholders):
+            cb.setEditable(True)
+            cb.lineEdit().setReadOnly(False)
+            cb.lineEdit().setPlaceholderText(text)
+            cb.lineEdit().setFocusPolicy(Qt.FocusPolicy.StrongFocus)
     def submit_data(self):
         required_fields = {
             "firstName": self.firstNameEdit,
@@ -760,7 +567,6 @@ class MainUI(QMainWindow):
         else:
             toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
             toast.show_toast()
-
     def check_duplicate_patient(self, data):
         try:
             response = requests.post(f"http://127.0.0.1:8000/api/check-duplicate/", json=data)
@@ -774,128 +580,7 @@ class MainUI(QMainWindow):
             print("Error:", e)
             return []
 
-    def submit_pet_data(self):
-        # Only fields that are always required go here:
-        required_fields = {
-            "petName": self.petName,
-            "petColor": self.petColor,
-            "breed": self.breed,
-            "species": self.speciesComboBox,
-            "sex": self.petSexComboBox,
-        }
-
-        data, missing = self.collect_and_validate_fields(required_fields)
-
-        # optional remarks
-        data["remarks"] = self.petRemarks.text().strip() or None
-
-        # ---- Birthday / stored_age logic (exclusive) ----
-        sentinel = QDate(1900, 1, 1)
-        bday_qdate = self.Bday.date()
-        has_birthday = (bday_qdate is not None) and (bday_qdate != sentinel)
-
-        if has_birthday:
-            data["birthDay"] = bday_qdate.toString("yyyy-MM-dd")
-            data["stored_age"] = None
-        else:
-            data["birthDay"] = None
-            typed_age = self.age.text().strip()
-            data["stored_age"] = typed_age if typed_age else None
-
-        # Enforce: at least one of them must be present
-        if not has_birthday and not data["stored_age"]:
-            toast = Toast(self, "Please provide either Birthday or Age.", icon_path="Icons/warning.png")
-            toast.show_toast()
-            return
-
-        # owner
-        data["owner_id"] = self.selected_patient_id
-
-        # (Optional) Debug: confirm payload is clean
-        # print("Submitting data:", data)
-
-        if add_new_pet(data):
-            self.profileStackedWidget.setCurrentIndex(0)
-            self.load_pets_for_owner(self.selected_patient_id)
-
-            self.clearInputs()
-
-            # reset styles for required widgets
-            for widget in required_fields.values():
-                if isinstance(widget, QLineEdit):
-                    widget.setStyleSheet(default_style)
-                elif isinstance(widget, QComboBox):
-                    widget.setStyleSheet(default_combobox_style)
-
-            toast = Toast(self, icon_path="Icons/check.png")
-            toast.show_toast()
-        else:
-            toast = Toast(self, "Failed to add pet!", icon_path="Icons/warning.png")
-            toast.show_toast()
-
-    def submit_service_data(self):
-        service_type = self.serviceTypeComboBox.currentText().strip()
-        date = self.dateEdit.date().toString("yyyy-MM-dd")
-
-        if self.returnCheckBox.isChecked():
-            return_date = self.returnDateEdit.date().toString("yyyy-MM-dd")
-        else:
-            return_date = None
-
-        notes = self.addNoteLineEdit.toPlainText().strip()
-
-        required_fields = {
-            "service_type": self.serviceTypeComboBox
-        }
-
-        # Basic validation lang para sa service type
-        data, missing = self.collect_and_validate_fields(required_fields)
-
-        if missing:
-            message = "The following fields are required:\n• " + "\n• ".join(missing)
-            toast = Toast(self, message, icon_path="Icons/warning.png")
-            toast.show_toast()
-            return
-
-        if not self.selected_patient_id or not self.selected_pet_id:
-            toast = Toast(self, "No selected owner or pet!", icon_path="Icons/warning.png")
-            toast.show_toast()
-            return
-
-        # Prepare data to send
-        service_data = {
-            "owner": self.selected_patient_id,
-            "pet": self.selected_pet_id,
-            "service_type": service_type,
-            "date": date,
-            "return_date": return_date,
-            "notes": notes
-        }
-
-        if add_new_service(service_data):
-            toast = Toast(self, "Service added!", icon_path="Icons/check.png")
-            toast.show_toast()
-
-            self.serviceHistoryBtn.setChecked(True)
-            self.serviceHistoryStackedWidget.setCurrentIndex(0)
-            self.load_services_for_pet(self.selected_pet_id)
-            self.load_scheduled_services()
-            # Clear fields or reset
-            self.clearInputs()
-
-        else:
-            toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
-            toast.show_toast()
-
-    def cancelBtn(self):
-        self.profileStackedWidget.setCurrentIndex(0)
-        self.petName.clear()
-        self.petColor.clear()
-        self.breed.clear()
-        self.age.clear()
-        self.speciesComboBox.setCurrentIndex(0)
-        self.petSexComboBox.setCurrentIndex(0)
-
+    #CLIENT RECORD PAGE
     def load_patients(self, page=1, search_term=None):
 
         try:
@@ -957,7 +642,6 @@ class MainUI(QMainWindow):
             import traceback
             traceback.print_exc()
             self.show_empty_state(False, error=True)
-
     def show_empty_state(self, is_search, error=False):
         """Show appropriate empty state message"""
         empty_label = QLabel()
@@ -975,7 +659,6 @@ class MainUI(QMainWindow):
         self.patientListLayout.addStretch()
         self.patientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.patientListLayout.addStretch()
-
     def create_patient_cards(self, patients):
         """Create patient cards from patient data"""
         self.patient_cards = []
@@ -1005,7 +688,6 @@ class MainUI(QMainWindow):
             card.setGraphicsEffect(create_card_shadow())
             self.patientListLayout.addWidget(card)
             self.patient_cards.append(card)
-
     def add_patient_pagination_controls(self, search_term=None):
         """Add pagination controls that work with search"""
         # Safely check and delete existing pagination widget
@@ -1048,7 +730,6 @@ class MainUI(QMainWindow):
 
         except Exception as e:
             print(f"Error creating pagination: {e}")
-
     def create_page_buttons(self, search_term=None):
 
         page_layout = self.patient_pagination_widget.pageButtonsLayout
@@ -1096,7 +777,6 @@ class MainUI(QMainWindow):
                 page_btn.clicked.connect(lambda checked, p=page: self.load_patients(p, search_term))
 
             page_layout.addWidget(page_btn)
-
     def setup_search(self):
         # Connect search bar to search handler
         self.searchBar.textEdited.connect(self.handle_search_input)
@@ -1110,11 +790,9 @@ class MainUI(QMainWindow):
         self.current_search_term = ""
         self.is_searching = False
         self.searchBar.clear()
-
     def handle_search_input(self, text):
         self.current_search_term = text.strip()
         self._search_timer.start(500)
-
     def perform_search(self):
         if self.current_search_term:
             self.is_searching = True
@@ -1124,7 +802,147 @@ class MainUI(QMainWindow):
             self.is_searching = False
             self.load_patients(page=1)
 
+    #DELETE CONFIRMATION MODAL FOR PET/PATIENT PROFILE
+    def setup_confirm_card(self):
+        self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
+        self.confirmCard.hide()
+        self.confirmCard.setGraphicsEffect(create_card_shadow())
+        self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete)
+        self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
+        self.confirmCard.yesButton.setGraphicsEffect(create_card_shadow())
+        self.confirmCard.noButton.setGraphicsEffect(create_card_shadow())
+        self.patientToDelete = None
 
+        # delete buttons sa profile patient/pet
+        self.profileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_patient)
+        self.petProfileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_pet)
+
+    #PATIENT PROFILE PAGE
+    def show_patient_profile(self, patient):
+        parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+        full_name = " ".join(p for p in parts if p)
+        self.profileNameLabel.setText(full_name)
+        self.profileEmailLabel.setText(patient['email'])
+
+        # Combine address parts
+        address = f"{patient['barangay']}, {patient['city']}, {patient['province']}"
+        contactNumbers = f"{patient['phoneNumber']}  / {patient['emergencyNumber']}"
+        self.addressLabel.setText(address)
+        self.detailedAddressLabel.setText(patient['detailedAddress'])
+        self.phoneLabel.setText(contactNumbers)
+
+        self.selected_patient_id = patient['id']
+        self.profileEditBtn.clicked.connect(lambda: self.updateFunction.update_patient_info(self.selected_patient_id))
+        self.load_pets_for_owner(self.selected_patient_id)
+        # Navigate to the profile page
+        self.navigate_to_page(5, owner_id=patient['id'])
+
+    #PET INFO DATA SUBMIT
+    def submit_pet_data(self):
+        # Only fields that are always required go here:
+        required_fields = {
+            "petName": self.petName,
+            "petColor": self.petColor,
+            "breed": self.breed,
+            "species": self.speciesComboBox,
+            "sex": self.petSexComboBox,
+        }
+
+        data, missing = self.collect_and_validate_fields(required_fields)
+
+        # optional remarks
+        data["remarks"] = self.petRemarks.text().strip() or None
+
+        # ---- Birthday / stored_age logic (exclusive) ----
+        sentinel = QDate(1900, 1, 1)
+        bday_qdate = self.Bday.date()
+        has_birthday = (bday_qdate is not None) and (bday_qdate != sentinel)
+
+        if has_birthday:
+            data["birthDay"] = bday_qdate.toString("yyyy-MM-dd")
+            data["stored_age"] = None
+        else:
+            data["birthDay"] = None
+            typed_age = self.age.text().strip()
+            data["stored_age"] = typed_age if typed_age else None
+
+        # Enforce: at least one of them must be present
+        if not has_birthday and not data["stored_age"]:
+            toast = Toast(self, "Please provide either Birthday or Age.", icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
+        # owner
+        data["owner_id"] = self.selected_patient_id
+
+        # (Optional) Debug: confirm payload is clean
+        # print("Submitting data:", data)
+
+        if add_new_pet(data):
+            self.profileStackedWidget.setCurrentIndex(0)
+            self.load_pets_for_owner(self.selected_patient_id)
+
+            self.clearInputs()
+
+            # reset styles for required widgets
+            for widget in required_fields.values():
+                if isinstance(widget, QLineEdit):
+                    widget.setStyleSheet(default_style)
+                elif isinstance(widget, QComboBox):
+                    widget.setStyleSheet(default_combobox_style)
+
+            toast = Toast(self, icon_path="Icons/check.png")
+            toast.show_toast()
+        else:
+            toast = Toast(self, "Failed to add pet!", icon_path="Icons/warning.png")
+            toast.show_toast()
+    def setup_pet_buttons(self):
+        self.profileStackedWidget.setCurrentIndex(0)
+        for btn in [self.addpetQtoolBtn, self.plusSignBtn]:
+            btn.clicked.connect(lambda: self.profileStackedWidget.setCurrentIndex(1))
+            btn.clicked.connect(lambda: self.clearInputs())
+            btn.clicked.connect(lambda: self.petUpdateButton.hide())
+            btn.clicked.connect(lambda: self.petConfirmButton.show())
+    def update_bday_display(self, date: QDate):
+        sentinel = QDate(1900, 1, 1)
+
+        if date == sentinel:
+            # No birthday selected → show placeholder and allow manual age
+            self.Bday.setDisplayFormat(" ")
+            # avoid emitting textChanged if you have handlers
+            self.age.blockSignals(True)
+            self.age.clear()
+            self.age.blockSignals(False)
+            self.age.setReadOnly(False)  # user can type stored_age
+            return
+
+        # Birthday selected → compute age and lock the field
+        self.Bday.setDisplayFormat("MMM d, yyyy")
+        today = QDate.currentDate()
+        days = date.daysTo(today)
+
+        if days < 0:
+            # just in case — shouldn't happen with maxDate set
+            days = 0
+
+        if days < 7:
+            age_str = f"{days} day{'s' if days != 1 else ''} old"
+        elif days < 30:
+            weeks = days // 7
+            age_str = f"{weeks} week{'s' if weeks != 1 else ''} old"
+        elif days < 365:
+            months = days // 30
+            age_str = f"{months} month{'s' if months != 1 else ''} old"
+        else:
+            years = days // 365
+            age_str = f"{years} year{'s' if years != 1 else ''} old"
+
+        self.age.blockSignals(True)
+        self.age.setText(age_str)
+        self.age.blockSignals(False)
+        self.age.setReadOnly(True)  # computed only
+
+    #PET CARD LOADING IN PATIENT PROFILE
     def load_pets_for_owner(self, owner_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")
         pets = response.json() if response.status_code == 200 else []
@@ -1168,6 +986,66 @@ class MainUI(QMainWindow):
                 col = 0
                 row += 1
 
+    #PET PROFILE PAGE
+    def show_pet_profile(self, pet):
+        self.petProfileNameLabel.setText((pet.get('petName') or "").title())
+        self.petColorLabel.setText((pet.get('petColor') or "").title())
+        self.petRemarksLabel.setText((pet.get('remarks') or "None"))  # no .capitalize() if None
+        self.breedLabel.setText((pet.get('breed') or "").title())
+        self.speciesLabel.setText((pet.get('species') or "").title())
+        self.petSexLabel.setText((pet.get('sex') or "").title())
+
+        birthday = self.format_date(pet.get("birthDay"))
+        self.petBirthdayOptional.setText((birthday or "None"))
+
+        # Show stored/dynamic age, or "Unknown" if missing
+        self.petAgeLabel.setText((pet.get('age') or "Unknown"))
+
+        if pet.get("has_reminder", False):
+            self.reminderBtn.show()
+        else:
+            self.reminderBtn.hide()
+
+        species = pet.get("species", "").lower()
+        if species == "dog":
+            icon_path = "Icons/dog.png"
+        elif species == "cat":
+            icon_path = "Icons/catIcon.png"
+        else:
+            icon_path = "Icons/otherSpecies.png"
+        self.petProfileIcon.setPixmap(QPixmap(icon_path))
+
+        self.reminderBtn.clicked.connect(lambda: self.open_reminderPopup())
+        # Keep track of which pet is selected
+        self.selected_pet_id = pet["id"]
+        self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))
+        # Navigate to pet profile page (adjust index if needed)
+        self.navigate_to_page(6, pet_id=pet["id"])
+        self.load_services_for_pet(pet["id"])
+    def open_reminderPopup(self):
+        if not hasattr(self, "reminderPopup") or self.reminderPopup is None:
+            self.reminderPopup = ReminderPopup(
+                parent=self.findChild(QWidget, "MainContent"),
+                main_window=self
+            )
+        self.reminderPopup.show_reminder()
+    def done_reminder(self):
+        self.reminderPopup.hide()
+    def setup_service_tab(self):
+        # toggle service history / add new
+        self.addNewServiceBtn.setCheckable(True)
+        self.serviceHistoryBtn.setCheckable(True)
+        self.serviceShadow.setGraphicsEffect(create_card_shadow())
+        self.addServiceShadow.setGraphicsEffect(create_card_shadow())
+        self.searchServiceFrame.setGraphicsEffect(create_card_shadow())
+        self.serviceHistoryStackedWidget.setCurrentIndex(0)
+        self.sourceBtnGroup = QButtonGroup(self)
+        self.sourceBtnGroup.setExclusive(True)
+        for btn in [self.addNewServiceBtn, self.serviceHistoryBtn]:
+            self.sourceBtnGroup.addButton(btn)
+        self.serviceHistoryBtn.setChecked(True)
+        self.serviceHistoryBtn.clicked.connect(lambda: self.service_stackedWidget(0))
+        self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
     def load_services_for_pet(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/services/?pet_id={pet_id}")
         services = response.json() if response.status_code == 200 else []
@@ -1230,7 +1108,143 @@ class MainUI(QMainWindow):
                 close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False,upper_frame))
 
             self.serviceListLayout.addWidget(service_card)
+    def make_icon_pulse(self, button):
+        # Lock button size so layout won’t move
+        button.setFixedSize(button.size())
 
+        rect = button.iconSize()
+
+        grow = QPropertyAnimation(button, b"iconSize")
+        grow.setDuration(500)
+        grow.setStartValue(rect)
+        grow.setEndValue(rect + QSize(4, 4))
+        grow.setEasingCurve(QEasingCurve.Type.OutCubic)
+
+        shrink = QPropertyAnimation(button, b"iconSize")
+        shrink.setDuration(500)
+        shrink.setStartValue(rect + QSize(4, 4))
+        shrink.setEndValue(rect)
+        shrink.setEasingCurve(QEasingCurve.Type.InCubic)
+
+        self.pulse_anim = QSequentialAnimationGroup(self)
+        self.pulse_anim.addAnimation(grow)
+        self.pulse_anim.addAnimation(shrink)
+        self.pulse_anim.setLoopCount(-1)
+        self.pulse_anim.start()
+    def toggle_note(self, frame, open_btn, close_btn, show, upper_frame=None):
+        frame.setVisible(show)
+        open_btn.setVisible(not show)
+        close_btn.setVisible(show)
+        if upper_frame:
+            if show:
+                # remove bottom radius para magmukhang dikit sa lower_frame
+                upper_frame.setStyleSheet(upper_Frame_Noborrad)
+            else:
+                # ibalik original radius
+                upper_frame.setStyleSheet(upper_Frame_borrad)
+    def handlePrintButton(self):
+        if self.selected_patient_id and self.selected_pet_id:
+            print_url = f"http://127.0.0.1:8000/api/print/{self.selected_patient_id}/{self.selected_pet_id}/"
+            webbrowser.open(print_url)
+        else:
+            QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
+
+    #PET SERVICE SUBMIT/EDIT
+    def submit_service_data(self):
+        service_type = self.serviceTypeComboBox.currentText().strip()
+        date = self.dateEdit.date().toString("yyyy-MM-dd")
+
+        if self.returnCheckBox.isChecked():
+            return_date = self.returnDateEdit.date().toString("yyyy-MM-dd")
+        else:
+            return_date = None
+
+        notes = self.addNoteLineEdit.toPlainText().strip()
+
+        required_fields = {
+            "service_type": self.serviceTypeComboBox
+        }
+
+        # Basic validation lang para sa service type
+        data, missing = self.collect_and_validate_fields(required_fields)
+
+        if missing:
+            message = "The following fields are required:\n• " + "\n• ".join(missing)
+            toast = Toast(self, message, icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
+        if not self.selected_patient_id or not self.selected_pet_id:
+            toast = Toast(self, "No selected owner or pet!", icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
+        # Prepare data to send
+        service_data = {
+            "owner": self.selected_patient_id,
+            "pet": self.selected_pet_id,
+            "service_type": service_type,
+            "date": date,
+            "return_date": return_date,
+            "notes": notes
+        }
+
+        if add_new_service(service_data):
+            toast = Toast(self, "Service added!", icon_path="Icons/check.png")
+            toast.show_toast()
+
+            self.serviceHistoryBtn.setChecked(True)
+            self.serviceHistoryStackedWidget.setCurrentIndex(0)
+            self.load_services_for_pet(self.selected_pet_id)
+            self.load_scheduled_services()
+            # Clear fields or reset
+            self.clearInputs()
+
+        else:
+            toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
+            toast.show_toast()
+    def service_stackedWidget(self,index):
+        self.serviceHistoryBtn.setChecked(True)
+        self.serviceHistoryStackedWidget.setCurrentIndex(index)
+        self.addNewServiceBtn.setText("Add New service")
+        self.clearInputs()
+        self.addServiceBtn.show()
+        self.updateServiceBtn.hide()
+    def toggle_return_date(self, checked):
+        if checked:
+            self.returnDateEdit.show()
+            min_date = self.dateEdit.date().addDays(1)
+            today_plus_1 = QDate.currentDate().addDays(1)
+            # piliin ang mas malayo sa dalawa
+            default_date = min_date if min_date > today_plus_1 else today_plus_1
+            self.returnDateEdit.setDate(default_date)
+            self.returnDatePlaceholder.hide()
+        else:
+            self.returnDateEdit.hide()
+            self.returnDatePlaceholder.show()
+
+    #WALKIN PAGE
+    def setup_add_appintmentPopUp(self):
+        self.appointmentCard = AddAppointmentCard(
+            parent=self.findChild(QWidget, "MainContent"),
+            main_window=self  # pass the MainUI instance
+        )
+        self.appointmentCard.hide()
+        self.appointmentCard.closePopUpBtn.clicked.connect(self.cancel_appointment)
+        self.appointmentCard.cancelAddAppointment.clicked.connect(self.cancel_appointment)
+    def cancel_appointment(self):
+        self.appointmentCard.hide()
+    def open_addAppointment(self):
+        self.appointmentCard.load_patients_to_combobox()
+        self.appointmentCard.show_card()
+
+    #SCHEDULED RETURN VIST PAGE
+    def set_current_month_in_combobox(self):
+        self.monthComboBox.setGraphicsEffect(create_card_shadow())
+        current_month = datetime.now().strftime("%B")
+        index = self.monthComboBox.findText(current_month)
+        if index >= 0:
+            self.monthComboBox.setCurrentIndex(index)
     def load_scheduled_services(self):
         response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
         scheduled_services = response.json() if response.status_code == 200 else []
@@ -1286,13 +1300,40 @@ class MainUI(QMainWindow):
             elif status == "overdue":
                 self.overdueLayout.addWidget(card)
             card.mousePressEvent = lambda event, pid=service["pet"]: self.open_pet_from_service(pid)
-
     def open_pet_from_service(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
             self.show_pet_profile(pet)
 
+    #DATE PICK AND DATE FORMATING LOGIC
+    def setup_dates(self):
+        self.activeDateEdit = None
+        self.dateEdit.mousePressEvent = lambda event: self.show_custom_calendar(self.dateEdit)
+        self.returnDateEdit.mousePressEvent = lambda event: self.show_custom_calendar(self.returnDateEdit)
+        self.dateEdit.setDate(QDate.currentDate())
+
+        # return date checkbox
+        self.returnDatePlaceholder.setReadOnly(True)
+        self.returnDateEdit.hide()
+        self.returnCheckBox.toggled.connect(self.toggle_return_date)
+
+        # --- Pet birthday setup ---
+        sentinel = QDate(1900, 1, 1)
+        self.Bday.setSpecialValueText("Birthday (optional)")
+        self.Bday.setDisplayFormat(" ")  # start blank
+        self.Bday.setDate(sentinel)  # sentinel means "no birthday"
+        self.Bday.setMinimumDate(sentinel)
+        self.Bday.setMaximumDate(QDate.currentDate())  # no future birthdays
+
+        # open your custom calendar
+        self.Bday.mousePressEvent = lambda event: self.show_custom_calendar(self.Bday)
+
+        # recompute age when birthday changes
+        self.Bday.dateChanged.connect(self.update_bday_display)
+
+        # make sure age is editable only when no birthday
+        self.age.setReadOnly(True)  # will be flipped in update_bday_display
     def format_date(self, raw):
         if raw:
             try:
@@ -1301,74 +1342,14 @@ class MainUI(QMainWindow):
             except Exception:
                 return raw
         return None
-
-    def toggle_note(self, frame, open_btn, close_btn, show, upper_frame=None):
-        frame.setVisible(show)
-        open_btn.setVisible(not show)
-        close_btn.setVisible(show)
-        if upper_frame:
-            if show:
-                # remove bottom radius para magmukhang dikit sa lower_frame
-                upper_frame.setStyleSheet(upper_Frame_Noborrad)
-            else:
-                # ibalik original radius
-                upper_frame.setStyleSheet(upper_Frame_borrad)
-
-    def show_patient_profile(self, patient):
-        parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
-        full_name = " ".join(p for p in parts if p)
-        self.profileNameLabel.setText(full_name)
-        self.profileEmailLabel.setText(patient['email'])
-
-        # Combine address parts
-        address = f"{patient['barangay']}, {patient['city']}, {patient['province']}"
-        contactNumbers = f"{patient['phoneNumber']}  / {patient['emergencyNumber']}"
-        self.addressLabel.setText(address)
-        self.detailedAddressLabel.setText(patient['detailedAddress'])
-        self.phoneLabel.setText(contactNumbers)
-
-        self.selected_patient_id = patient['id']
-        self.profileEditBtn.clicked.connect(lambda: self.updateFunction.update_patient_info(self.selected_patient_id))
-        self.load_pets_for_owner(self.selected_patient_id)
-        # Navigate to the profile page
-        self.navigate_to_page(5, owner_id=patient['id'])
-
-    def show_pet_profile(self, pet):
-        self.petProfileNameLabel.setText((pet.get('petName') or "").title())
-        self.petColorLabel.setText((pet.get('petColor') or "").title())
-        self.petRemarksLabel.setText((pet.get('remarks') or "None"))  # no .capitalize() if None
-        self.breedLabel.setText((pet.get('breed') or "").title())
-        self.speciesLabel.setText((pet.get('species') or "").title())
-        self.petSexLabel.setText((pet.get('sex') or "").title())
-
-        birthday = self.format_date(pet.get("birthDay"))
-        self.petBirthdayOptional.setText((birthday or "None"))
-
-        # Show stored/dynamic age, or "Unknown" if missing
-        self.petAgeLabel.setText((pet.get('age') or "Unknown"))
-
-        if pet.get("has_reminder", False):
-            self.reminderBtn.show()
-        else:
-            self.reminderBtn.hide()
-
-        species = pet.get("species", "").lower()
-        if species == "dog":
-            icon_path = "Icons/dog.png"
-        elif species == "cat":
-            icon_path = "Icons/catIcon.png"
-        else:
-            icon_path = "Icons/otherSpecies.png"
-        self.petProfileIcon.setPixmap(QPixmap(icon_path))
-
-        self.reminderBtn.clicked.connect(lambda: self.open_reminderPopup())
-        # Keep track of which pet is selected
-        self.selected_pet_id = pet["id"]
-        self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))
-        # Navigate to pet profile page (adjust index if needed)
-        self.navigate_to_page(6, pet_id=pet["id"])
-        self.load_services_for_pet(pet["id"])
-
+    def setup_calendar(self):
+        self.customCalendar = uic.loadUi("customCalendar.ui")
+        self.customCalendar.setParent(None)
+        self.customCalendar.setWindowFlags(Qt.WindowType.Popup)
+        self.calendarWidget = self.customCalendar.findChild(QCalendarWidget, "calendarWidget")
+        self.calendarWidget.clicked.connect(self.set_date_from_calendar)
+        self.calendarWidget.setSelectedDate(QDate.currentDate())
+        self.setStyleSheet(QframeStyle)
     def show_custom_calendar(self, dateEdit):
         self.activeDateEdit = dateEdit
         pos = dateEdit.mapToGlobal(QPoint(0, dateEdit.height()))
@@ -1395,19 +1376,12 @@ class MainUI(QMainWindow):
         self.customCalendar.show()
         QApplication.processEvents()
         self.calendarWidget.repaint()
-
     def set_date_from_calendar(self, date):
         if self.activeDateEdit:
             self.activeDateEdit.setDate(date)
         self.customCalendar.hide()
 
-    def handlePrintButton(self):
-        if self.selected_patient_id and self.selected_pet_id:
-            print_url = f"http://127.0.0.1:8000/api/print/{self.selected_patient_id}/{self.selected_pet_id}/"
-            webbrowser.open(print_url)
-        else:
-            QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
-
+    #WIDGET AND FONT SCALING FOR RESPONSIVENESS
     def scale_widget_font(self, widget, base_size, min_size=8, max_size=20, family=None):
         w_scale = self.width() / 1280
         h_scale = self.height() / 720
@@ -1421,7 +1395,6 @@ class MainUI(QMainWindow):
             f.setFamily(family)
         f.setPointSize(final_size)
         widget.setFont(f)
-
     def scale_label_pixmap(self, label, min_size=32, max_size=256):
         """
         Scale a QLabel pixmap relative to window size.
@@ -1449,7 +1422,6 @@ class MainUI(QMainWindow):
 
         label.setFixedSize(new_w, new_h)
         label.setScaledContents(True)
-
     def scale_cards(self, cards, base_h=90, design_height=720):
         """Scale the height of a list of cards based on the main window size."""
         if not cards:
@@ -1461,7 +1433,6 @@ class MainUI(QMainWindow):
         for i, card in enumerate(cards, start=1):
             card.setFixedHeight(new_h)
             # Debug
-
     def resizeEvent(self, event):
         super().resizeEvent(event)
 

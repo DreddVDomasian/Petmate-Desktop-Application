@@ -55,6 +55,15 @@ class Command(BaseCommand):
                         status=random.choice(["pending", "completed", "overdue", "cancelled"]),
                     )
 
+                for _ in range(random.randint(0, 2)):
+                    WalkInAppointment.objects.create(
+                        owner=owner,
+                        pet=random.choice(owner.pets.all()),
+                        date=fake.date_this_year(),
+                        prefTime=fake.time(),
+                        service_name=random.choice(["Consultation", "Surgery"]),
+                        status=random.choice(["pending", "accepted", "declined"]),
+                    )
 
         self.stdout.write(self.style.SUCCESS(f"Successfully created {num_records} owners with pets & appointments!"))
 
