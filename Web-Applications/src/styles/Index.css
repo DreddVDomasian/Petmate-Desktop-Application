@@ -75,6 +75,84 @@ body {
     transform: translate(0em, 0.2em);
 }
 
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px 0 18px;
+    flex-wrap: wrap;
+}
+
+.checkbox-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    font-size: 14px;
+    color: #333;
+}
+
+/* hide native checkbox but keep it accessible */
+.checkbox-container input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    left: 0;
+}
+
+/* visual box */
+.checkbox-container .checkmark {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #cfcfcf;
+    background: #fff;
+    display: inline-block;
+    box-sizing: border-box;
+    flex: 0 0 18px;
+}
+
+/* checked state */
+.checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background: linear-gradient(135deg, #ff6b00, #ff8c00);
+    border-color: #ff8c00;
+}
+
+/* check mark */
+.checkbox-container .checkmark::after {
+    content: "";
+    display: none;
+    width: 6px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-top: 0;
+    border-left: 0;
+    transform: rotate(40deg);
+    position: relative;
+    left: 3px;
+    top: -1px;
+}
+.checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+    display: block;
+}
+
+/* forgot link */
+.forgot-password {
+    color: #4885CC;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+
 /* Home Section */
 .home-link {
     color: #ff6b00;

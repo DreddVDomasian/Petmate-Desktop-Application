@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
-import './SideNav.css';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function SideNav({ defaultActive = 'addclient', onNavigate = () => {} }) {
-   const [active, setActive] = useState(defaultActive);
+  const [active, setActive] = useState(defaultActive);
+  const navigate = useNavigate();
 
   const items = [
-    { id: 'addpets', label: 'Add Pets', icon: '/assets/icons/add.png' },
-    { id: 'viewpets', label: 'View Pets', icon: '/assets/icons/view.png' },
-    { id: 'addclient', label: 'Set Appointment', icon: '/assets/icons/appointment.png' },
-    { id: 'appointments', label: 'View Appointments', icon: '/assets/icons/view.png' },
+    { id: 'addpets', label: 'Add Pets', icon: '/assets/icons/add.png', to: '#' }, /*waala pa, */ 
+    { id: 'viewpets', label: 'View Pets', icon: '/assets/icons/view.png', to: '#' }, /* yung # dyan ilalagay kung saan gusto mo papuntahin */
+    { id: 'addclient', label: 'Set Appointment', icon: '/assets/icons/appointment.png', to: '#' },
+    { id: 'appointments', label: 'View Appointments', icon: '/assets/icons/view.png', to: '#' },
   ];
 
-  const secondary = [
-    { id: 'settings', label: 'Settings', icon: '/assets/icons/settings.png' },
-    { id: 'logout', label: 'Logout', icon: '/assets/icons/logout.png' },
-  ];
-
-  function handleClick(id) {
+  function handleAction(id, to) {
     setActive(id);
     onNavigate(id);
+    if (to) {
+      navigate(to);
+    }
+  }
+
+  function handleLogout() {
+    if (!window.confirm('Are you sure you want to logout?')) return;
+    // clear storage and redirect to login/home
+    localStorage.clear();
+    sessionStorage.clear();
+    onNavigate('logout');
+    navigate('/');
   }
 
   return (
@@ -32,17 +40,16 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
       <nav className="main-nav" aria-label="Main navigation">
         <ul className="nav-menu">
           {items.map(i => (
-            <li key={i.id} className={`nav-item ${active === i.id ? 'active' : ''}`}>
-              <button
-                type="button"
-                id={i.id}
-                className="nav-link"
-                onClick={() => handleClick(i.id)}
+            <li key={i.id} className="nav-item">
+              <NavLink
+                to={i.to}
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => handleAction(i.id, i.to)}
                 aria-current={active === i.id ? 'page' : undefined}
               >
-                <img src={i.icon} alt="" className="nav-icon" aria-hidden="true" />
+                <img src={i.icon} alt="" className="nav-icon" />
                 <span className="nav-text">{i.label}</span>
-              </button>
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -50,20 +57,28 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
         <div className="nav-divider" />
 
         <ul className="nav-menu secondary">
-          {secondary.map(i => (
-            <li key={i.id} className={`nav-item ${active === i.id ? 'active' : ''}`}>
-              <button
-                type="button"
-                id={i.id}
-                className={`nav-link ${i.id === 'logout' ? 'logout' : ''}`}
-                onClick={() => handleClick(i.id)}
-                aria-current={active === i.id ? 'page' : undefined}
-              >
-                <img src={i.icon} alt="" className="nav-icon" aria-hidden="true" />
-                <span className="nav-text">{i.label}</span>
-              </button>
-            </li>
-          ))}
+          <li className={`nav-item ${active === 'settings' ? 'active' : ''}`}>
+            <NavLink
+              to="#" /*dito ang link palitan hehe, */
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              onClick={() => handleAction('settings', '/settings')}
+              aria-current={active === 'settings' ? 'page' : undefined}
+            >
+              <img src="/assets/icons/settings.png" alt="" className="nav-icon" />
+              <span className="nav-text">Settings</span>
+            </NavLink>
+          </li>
+
+          <li className="nav-item">
+            <button
+              type="button"
+              className="nav-link logout"
+              onClick={handleLogout}
+            >
+              <img src="/assets/icons/logout.png" alt="" className="nav-icon" />
+              <span className="nav-text">Logout</span>
+            </button>
+          </li>
         </ul>
       </nav>
     </aside>
