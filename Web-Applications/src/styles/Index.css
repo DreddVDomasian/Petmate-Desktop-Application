@@ -141,6 +141,17 @@ body {
     display: block;
 }
 
+/* forgot link */
+.forgot-password {
+    color: #4885CC;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
 
 /* Home Section */
 .home-link {
