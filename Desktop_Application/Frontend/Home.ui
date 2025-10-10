@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2577,8 +2577,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>814</width>
-                   <height>514</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3045,7 +3045,7 @@ QPushButton:checked {
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="walkIn">
                  <property name="sizePolicy">
@@ -3473,8 +3473,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>796</width>
-                           <height>362</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -3850,7 +3850,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                     </property>
                     <property name="currentIndex">
-                     <number>2</number>
+                     <number>1</number>
                     </property>
                     <widget class="QWidget" name="webAppPending">
                      <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -3941,8 +3941,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>796</width>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -5206,7 +5206,7 @@ border:none;</string>
               <item>
                <widget class="QStackedWidget" name="profileStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="petCardsPage">
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5875,6 +5875,9 @@ QComboBox QLineEdit {
                          <width>174</width>
                          <height>45</height>
                         </size>
+                       </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
                        </property>
                        <property name="specialValueText">
                         <string>Birthday (optional)</string>
@@ -7485,7 +7488,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8235,6 +8238,9 @@ color:rgb(39, 39, 39);</string>
                                 <property name="styleSheet">
                                  <string notr="true"/>
                                 </property>
+                                <property name="readOnly">
+                                 <bool>true</bool>
+                                </property>
                                 <property name="accelerated">
                                  <bool>false</bool>
                                 </property>
@@ -8463,6 +8469,9 @@ QCheckBox::indicator:hover {
                                    </property>
                                    <property name="styleSheet">
                                     <string notr="true"/>
+                                   </property>
+                                   <property name="readOnly">
+                                    <bool>true</bool>
                                    </property>
                                    <property name="displayFormat">
                                     <string>MMM d, yyyy</string>
