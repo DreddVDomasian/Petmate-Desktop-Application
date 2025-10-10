@@ -59,6 +59,7 @@ class MainUI(QMainWindow):
         # Initial page and data
         self.selected_patient_id = None
         self.selected_service_id = None
+        self.patient_currentPage = 1
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
         self.load_patients(1,search_term=None)
@@ -582,48 +583,48 @@ class MainUI(QMainWindow):
 
     #CLIENT RECORD PAGE
     def load_patients(self, page=1, search_term=None):
-
         try:
-            # Clear existing patient cards safely
-            try:
-                while self.patientListLayout.count():
-                    child = self.patientListLayout.takeAt(0)
-                    if child and child.widget():
-                        # Check if widget still exists before deleting
-                        if child.widget().isWidgetType():
-                            child.widget().deleteLater()
-            except RuntimeError as e:
-                print(f"Error clearing layout: {e}")
-                # Continue anyway
+            # ✅ Safe layout clearing - avoid crashes on empty layouts
+            items_to_delete = []
+            while self.patientListLayout.count():
+                child = self.patientListLayout.takeAt(0)
+                if child and child.widget():
+                    items_to_delete.append(child.widget())
+
+            # Delete after removing from layout
+            for widget in items_to_delete:
+                try:
+                    widget.deleteLater()
+                except RuntimeError:
+                    pass  # Already deleted
 
             # Build API URL based on search or normal load
             if search_term and search_term.strip():
                 import urllib.parse
                 encoded_term = urllib.parse.quote(search_term.strip())
                 url = f"http://127.0.0.1:8000/api/patient-search/?page={page}&search={encoded_term}"
-
             else:
                 url = f"http://127.0.0.1:8000/api/patients/?page={page}"
-
 
             # Make API request with timeout
             try:
                 response = requests.get(url, timeout=10)
                 response.raise_for_status()
-
                 data = response.json()
                 patients = data.get('results', [])
 
-                # Update pagination info
-                self.patient_currentPage = page
-                self.current_patient_page = page
+                # ✅ Update pagination info - ensure valid page number
+                self.patient_currentPage = max(1, page)
+                self.current_patient_page = self.patient_currentPage
                 self.total_patient_pages = data.get('total_pages', 1)
                 self.total_patient_count = data.get('count', 0)
 
             except requests.exceptions.RequestException as e:
+                print(f"Request error: {e}")
                 self.show_empty_state(search_term is not None, error=True)
                 return
             except ValueError as e:
+                print(f"JSON decode error: {e}")
                 self.show_empty_state(search_term is not None, error=True)
                 return
 

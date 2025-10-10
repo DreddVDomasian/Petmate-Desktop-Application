@@ -1,6 +1,7 @@
 import requests
 from toast import Toast
 from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import QTimer
 
 
 class Delete:
@@ -52,19 +53,20 @@ class Delete:
                   icon_path="Icons/check.png").show_toast()
 
             if self.delete_type == "patient":
-                self.ui.load_patients(self.ui.patient_currentPage,search_term=None)
+                # ✅ Use safe page - fallback to 1 if invalid
+                safe_page = getattr(self.ui, 'patient_currentPage', None) or 1
+                self.ui.load_patients(safe_page, search_term=None)
                 self.ui.load_scheduled_services()
-                self.ui.appointmentCard.load_walkInAppointments()
+                self.ui.appointmentCard.load_appointments(1)
                 self.ui.stackedWidget.setCurrentIndex(2)
             elif self.delete_type == "pet":
                 self.ui.load_scheduled_services()
-                self.ui.appointmentCard.load_walkInAppointments()
-                self.ui.load_pets_for_owner(self.ui.selected_patient_id)  # use existing patient id
+                self.ui.appointmentCard.load_appointments(1)
+                self.ui.load_pets_for_owner(self.ui.selected_patient_id)
                 self.ui.stackedWidget.setCurrentIndex(5)
             elif self.delete_type == "service":
                 self.ui.load_scheduled_services()
                 self.ui.load_services_for_pet(self.ui.selected_pet_id)
-
 
         else:
             Toast(self.ui, f"Failed to delete {self.delete_type}.", icon_path="Icons/warning.png").show_toast()
@@ -73,8 +75,49 @@ class Delete:
         self.delete_id = None
         self.ui.confirmCard.hide()
 
+    def _refresh_after_patient_delete(self):
+        """Safely refresh UI after patient deletion"""
+        try:
+            # Use current page or fall back to page 1 if it doesn't exist
+            current_page = getattr(self.ui, 'patient_currentPage', 1) or 1
+            self.ui.load_patients(current_page, search_term=None)
+            self.ui.load_scheduled_services()
+
+            # ✅ Fixed: Use correct method name
+            if hasattr(self.ui, 'appointmentCard'):
+                self.ui.appointmentCard.load_appointments(1)
+
+            self.ui.stackedWidget.setCurrentIndex(2)
+        except Exception as e:
+            print(f"Error refreshing after patient delete: {e}")
+
+    def _refresh_after_pet_delete(self):
+        """Safely refresh UI after pet deletion"""
+        try:
+            self.ui.load_scheduled_services()
+
+            # ✅ Fixed: Use correct method name
+            if hasattr(self.ui, 'appointmentCard'):
+                self.ui.appointmentCard.load_appointments(1)
+
+            if hasattr(self.ui, 'selected_patient_id') and self.ui.selected_patient_id:
+                self.ui.load_pets_for_owner(self.ui.selected_patient_id)
+
+            self.ui.stackedWidget.setCurrentIndex(5)
+        except Exception as e:
+            print(f"Error refreshing after pet delete: {e}")
+
+    def _refresh_after_service_delete(self):
+        """Safely refresh UI after service deletion"""
+        try:
+            self.ui.load_scheduled_services()
+
+            if hasattr(self.ui, 'selected_pet_id') and self.ui.selected_pet_id:
+                self.ui.load_services_for_pet(self.ui.selected_pet_id)
+        except Exception as e:
+            print(f"Error refreshing after service delete: {e}")
+
     def cancel_delete(self):
         self.delete_id = None
         self.delete_type = None
         self.ui.confirmCard.reject_dialog()
-

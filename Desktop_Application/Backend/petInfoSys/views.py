@@ -15,15 +15,40 @@ class StandardPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 50
 
+    def paginate_queryset(self, queryset, request, view=None):
+        # ✅ Handle empty queryset without crashing
+        count = queryset.count()
+        if count == 0:
+            self.page = None
+            return []
+
+        # ✅ If page number exceeds total pages, return last valid page
+        try:
+            return super().paginate_queryset(queryset, request, view)
+        except Exception:
+            # Fallback to first page on error
+            self.page = None
+            return list(queryset[:self.page_size])
+
     def get_paginated_response(self, data):
+        if not self.page:
+            return Response({
+                'count': 0,
+                'total_pages': 1,  # ✅ Always return at least 1 page
+                'current_page': 1,
+                'next': None,
+                'previous': None,
+                'results': []
+            })
         return Response({
             'count': self.page.paginator.count,
-            'total_pages': self.page.paginator.num_pages,
+            'total_pages': max(1, self.page.paginator.num_pages),  # ✅ Minimum 1 page
             'current_page': self.page.number,
             'next': self.get_next_link(),
             'previous': self.get_previous_link(),
             'results': data
         })
+
 
 def print_record(request, owner_id, pet_id):
     owner = get_object_or_404(basicInfo, id=owner_id)

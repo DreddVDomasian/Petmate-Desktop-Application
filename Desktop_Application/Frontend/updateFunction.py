@@ -53,7 +53,7 @@ class Update:
         data = {
             "firstName": self.ui.firstNameEdit.text().strip(),
             "lastName": self.ui.lastNameEdit.text().strip(),
-            "middleName": self.ui.middleNameEdit.text().strip() or None,  # send None if empty
+            "middleName": self.ui.middleNameEdit.text().strip() or None,
             "email": self.ui.emailEdit.text().strip() or None,
             "phoneNumber": self.ui.phoneNumberEdit.text().strip(),
             "province": self.ui.provinceComboBox.currentText(),
@@ -73,29 +73,22 @@ class Update:
                 Toast(self.ui, f"Invalid {name} selected!", icon_path="Icons/warning.png").show_toast()
                 return
 
-        # Birthday / stored_age logic
-        sentinel = QDate(1900, 1, 1)
-        bday_qdate = self.ui.Bday.date()
-        if bday_qdate.isValid() and bday_qdate != sentinel:
-            data["birthDay"] = bday_qdate.toString("yyyy-MM-dd")
-            data["stored_age"] = None
-        else:
-            data["birthDay"] = None
-            data["stored_age"] = self.ui.age.text().strip() or None
-
         url = f"http://127.0.0.1:8000/api/patients/{patient_id}/"
 
         try:
             response = requests.put(url, json=data)
             if response.status_code == 200:
-                # Defer UI updates to prevent crash
+                # ✅ Use safe page number - fallback to page 1 if invalid
+                safe_page = getattr(self.ui, 'patient_currentPage', None) or 1
+
                 def post_update_ui():
-                    self.ui.load_patients(self.ui.patient_currentPage,search_term=None)
                     self.ui.clearInputs()
                     self.ui.navigate_to_page(2)
+                    # ✅ Reload with safe page number
+                    self.ui.load_patients(safe_page, search_term=None)
                     Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
 
-                QTimer.singleShot(0, post_update_ui)
+                QTimer.singleShot(100, post_update_ui)  # ✅ Increased delay for safety
             else:
                 Toast(self.ui, f"Update failed! {response.text}", icon_path="Icons/warning.png").show_toast()
         except Exception as e:
