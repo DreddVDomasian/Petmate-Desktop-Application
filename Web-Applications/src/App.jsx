@@ -1,8 +1,8 @@
-
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
 import Index from './pages/Index'
-import Account from './pages/Account'
+import Dashboard from './pages/Dashboard'
 
 import './App.css'
 
@@ -12,7 +12,7 @@ function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={<Index />} />
-
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </div>
     </Router>

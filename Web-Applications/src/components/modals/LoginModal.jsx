@@ -14,7 +14,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
     if (email && password) {
       alert("Login successful!");
       onClose(); // Close modal
-      navigate("/account-page"); // Redirect to dashboard page
+      navigate("/dashboard"); // Redirect to dashboard page
     } else {
       alert("Please fill in all fields");
     }
