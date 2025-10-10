@@ -39,13 +39,15 @@ class MainUI(QMainWindow):
     def __init__(self):
         super(MainUI, self).__init__()
         uic.loadUi("Home.ui", self)
-        #to delete.py
-        self.deleteFunction = Delete(self)
 
+        # Initialize delete and update functions
+        self.deleteFunction = Delete(self)
         self.updateFunction = Update(self)
-        #nav
+
+        # Nav
         self.sideNav.setVisible(False)
 
+        # Setup methods
         self.setup_calendar()
         self.setup_comboboxes()
         self.setup_layouts()
@@ -56,37 +58,54 @@ class MainUI(QMainWindow):
         self.setup_add_appintmentPopUp()
         self.setup_pet_buttons()
 
-        # Initial page and data
+        #CRITICAL: Initialize state variables ONCE
         self.selected_patient_id = None
         self.selected_service_id = None
+        self.selected_pet_id = None
+
+        # Initialize pagination state
         self.patient_currentPage = 1
+        self.current_patient_page = 1
+        self.total_patient_pages = 1
+        self.total_patient_count = 0
+        self.patient_cards = []  # Initialize empty list
+
+        # Page navigation state
+        self.page_history = []
+        self.current_page_index = 0
+        self.current_params = {}
+
+        # Duplicate dialog state
+        self.duplicateDialog = None
+        self.ignore_duplicates = False
+
+        # Search state
+        self.current_search_term = ""
+        self.is_searching = False
+
+        # Initial page setup
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
-        self.load_patients(1,search_term=None)
+
+        # Load data AFTER all state is initialized
+        self.load_patients(1, search_term=None)
         self.load_scheduled_services()
+
+        # Setup remaining UI elements
         self.setup_shadow()
         self.setup_all_back_buttons()
         self.setup_input_shadows()
         self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
 
-        #patients search bar
+        # Setup search
         self.setup_search()
 
-        #page history
-        self.page_history = []  # stores (index, params)
-        self.current_page_index = 0
-        self.current_params = {}
+        # Update back button visibility
         self.update_back_button_visibility()
 
-
-        # Optional: use min/max to prevent invalid dates
+        # Birthday date limits
         self.Bday.setMinimumDate(QDate(1900, 1, 1))
         self.Bday.setMaximumDate(QDate.currentDate())
-
-        self.duplicateDialog = None
-        self.ignore_duplicates = False
-
-        self.patient_currentPage = None
 
     #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
