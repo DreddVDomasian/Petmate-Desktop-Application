@@ -34,7 +34,7 @@ class Command(BaseCommand):
             owners.append(owner)
 
             # Generate 1-3 pets per owner
-            for _ in range(random.randint(1, 3)):
+            for _ in range(random.randint(10, 20)):
                 pet = Pet.objects.create(
                     owner=owner,
                     petName=fake.first_name(),
@@ -46,13 +46,13 @@ class Command(BaseCommand):
                 )
 
                 # Add 0-2 services
-                for _ in range(random.randint(0, 2)):
+                for _ in range(random.randint(30, 40)):
                     Service.objects.create(
                         owner=owner,
                         pet=pet,
                         service_type=random.choice(["Vaccination", "Check-up", "Deworming"]),
                         date=fake.date_between(start_date="-2y", end_date="today"),
-                        status=random.choice(["pending", "completed", "overdue", "cancelled"]),
+                        status=random.choice(["pending", "completed", "overdue"]),
                     )
 
                 for _ in range(random.randint(0, 2)):
@@ -62,7 +62,7 @@ class Command(BaseCommand):
                         date=fake.date_this_year(),
                         prefTime=fake.time(),
                         service_name=random.choice(["Consultation", "Surgery"]),
-                        status=random.choice(["pending", "accepted", "declined"]),
+                        status=random.choice(["pending", "completed", "overdue", "cancelled"]),
                     )
 
         self.stdout.write(self.style.SUCCESS(f"Successfully created {num_records} owners with pets & appointments!"))

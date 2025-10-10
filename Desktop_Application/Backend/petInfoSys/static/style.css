@@ -126,21 +126,44 @@ p{
 
 .service-table th {
     font-family: 'Montserrat';
-    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    background: #f2f2f2;
     font-weight: bold;
 }
 
 @media print {
-    body {
-        background: white;
-        margin: 0;
-        padding: 0;
+    table, tr, td, th {
+        page-break-inside: auto !important;
     }
 
+    tr {
+        page-break-after: auto !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+
     .page {
-        overflow: visible;
+        page-break-after: always;
         box-shadow: none;
         margin: 0;
+        padding: 15mm;
+    }
+
+    body {
+        margin: 0;
+        background: white;
+    }
+
+    .patient-info, .service-history {
+        page-break-inside: avoid;
     }
     
 }

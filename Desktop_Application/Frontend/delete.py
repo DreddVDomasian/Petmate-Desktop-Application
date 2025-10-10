@@ -53,16 +53,23 @@ class Delete:
                   icon_path="Icons/check.png").show_toast()
 
             if self.delete_type == "patient":
-                # ✅ Use safe page - fallback to 1 if invalid
+                # Use safe page - fallback to 1 if invalid
                 safe_page = getattr(self.ui, 'patient_currentPage', None) or 1
                 self.ui.load_patients(safe_page, search_term=None)
                 self.ui.load_scheduled_services()
                 self.ui.appointmentCard.load_appointments(1)
                 self.ui.stackedWidget.setCurrentIndex(2)
             elif self.delete_type == "pet":
+                # store the owner before deleting to avoid losing reference
+                owner_id = getattr(self.ui, "selected_patient_id", None)
                 self.ui.load_scheduled_services()
-                self.ui.appointmentCard.load_appointments(1)
-                self.ui.load_pets_for_owner(self.ui.selected_patient_id)
+                if hasattr(self.ui, "appointmentCard"):
+                    self.ui.appointmentCard.load_appointments(1)
+                # Only reload pets if owner_id is still valid
+                if owner_id:
+                    self.ui.load_pets_for_owner(owner_id)
+                else:
+                    print("Warning: owner_id not found after pet deletion")
                 self.ui.stackedWidget.setCurrentIndex(5)
             elif self.delete_type == "service":
                 self.ui.load_scheduled_services()

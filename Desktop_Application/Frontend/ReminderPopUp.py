@@ -2,7 +2,8 @@ import requests
 from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QLabel
 from  shadowEffects import *
-from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect
+from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect, QTimer
+
 
 class ReminderPopup(QWidget):
     def __init__(self, parent=None, main_window=None):
@@ -101,12 +102,20 @@ class ReminderPopup(QWidget):
         elif reminder_type == "service return":
             url = f"http://127.0.0.1:8000/api/services/{reminder_id}/"
 
-        if url:
-            response = requests.patch(url, json={"status": "completed"})
-            if response.status_code in [200, 202]:
-                print("Reminder marked as completed")
-                self.load_reminder(self.main_window.selected_pet_id)
-                self.main_window.load_scheduled_services()
-                self.main_window.appointmentCard.load_walkInAppointments()
-            else:
-                print("Failed:", response.text)
+        if not url:
+            return
+
+        response = requests.patch(url, json={"status": "completed"})
+        if response.status_code in [200, 202]:
+            print("Reminder marked as completed")
+
+            # Delay UI refresh to avoid deleting active widgets mid-callback
+            QTimer.singleShot(100, lambda: self._safe_refresh())
+        else:
+            print("Failed:", response.text)
+
+    def _safe_refresh(self):
+        """Safely reload reminders and services after completion"""
+        self.load_reminder(self.main_window.selected_pet_id)
+        self.main_window.load_scheduled_services()
+        self.main_window.appointmentCard.load_appointments(1)

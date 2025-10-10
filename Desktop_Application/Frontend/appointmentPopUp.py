@@ -344,23 +344,45 @@ class AddAppointmentCard(QWidget):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
+
+            # Extract both IDs
+            self.main_window.selected_pet_id = pet["id"]
+            self.main_window.selected_patient_id = pet["owner"]["id"]
+
+            # Open pet profile with full data
             self.main_window.show_pet_profile(pet)
-    def cancelled_appointment(self,appointment_id):
-        self.main_window.confirmCard.confirmationMessage.setText("Are you sure you want to cancel \nthis appointment?")
+        else:
+            print(f"Failed to fetch pet {pet_id}: {response.status_code}")
+    def cancelled_appointment(self, appointment_id):
+        self.main_window.confirmCard.confirmationMessage.setText(
+            "Are you sure you want to cancel \nthis appointment?"
+        )
         self.main_window.confirmCard.show_card()
+
         def clicked_yes():
             url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
-            if url:
-                response = requests.patch(url, json={"status": "cancelled"})
-                if response.status_code in [200, 202]:
-                    print("Reminder marked as cancelled")
-                    self.main_window.appointmentCard.load_walkInAppointments()
-                else:
-                    print("Failed:", response.text)
+            response = requests.patch(url, json={"status": "cancelled"})
+            if response.status_code in [200, 202]:
+                print("Reminder marked as cancelled")
+                self.load_appointments(1, "cancelled")  # reload directly
+            else:
+                print("Failed:", response.text)
             self.main_window.confirmCard.hide()
+
         def clicked_no():
             self.main_window.confirmCard.hide()
 
+        # Disconnect any previous connections first
+        try:
+            self.main_window.confirmCard.yesButton.clicked.disconnect()
+        except TypeError:
+            pass
+        try:
+            self.main_window.confirmCard.noButton.clicked.disconnect()
+        except TypeError:
+            pass
+
+        # Reconnect safely
         self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
     def show_empty_all_layouts(self):
@@ -544,7 +566,11 @@ class AppointmentCardManager:
     def create_appointment_card(self, appointment):
         """Create and configure an appointment card"""
         card = uic.loadUi("appointmentCard.ui")
-
+        status = appointment.get("status", "").lower()
+        if status in ["completed", "cancelled"]:
+            card.deleteButton.setVisible(False)
+        else:
+            card.deleteButton.setVisible(True)
         # Set appointment information
         card.ownerName.setText(appointment["owner_full_name"].title())
         card.petNameApp.setText(appointment["petName"].capitalize())
