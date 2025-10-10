@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginModal({ onClose, onOpenSignup, visible }) {
+  const navigate = useNavigate(); // Hook for navigation
+
   if (!visible) return null; // Hides modal when not active
 
   const handleSubmit = (e) => {
@@ -10,7 +13,8 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
 
     if (email && password) {
       alert("Login successful!");
-      onClose();
+      onClose(); // Close modal
+      navigate("/account-page"); // Redirect to dashboard page
     } else {
       alert("Please fill in all fields");
     }
@@ -54,7 +58,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
               <p>
                 Don't have an account?{" "}
                 <a href="#" onClick={onOpenSignup}>
-                Sign up here
+                  Sign up here
                 </a>
               </p>
             </div>
