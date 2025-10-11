@@ -85,10 +85,6 @@
         <form class="pet-form">
               <div class="form-header">
                 <h2>Pet Details</h2>
-                <div class="icons">
-                  <img src="../assets/icons/edit.png" alt="Edit Pet" id="editPet">
-                  <img src="../assets/icons/delete.png" alt="Delete Pet" id="deletePet">
-                </div>
               </div>
 
               <h2>Basic Information</h2>
@@ -126,64 +122,11 @@
                 </div>
         </form>  
 
-          <!-- EDIT PET MODAL -->
-            <div id="petModal" class="modal">
-            <div class="modal-content">
-              <span class="close-btn" id="closeModal">&times;</span>
-              <h2>Edit Customer Information</h2>
-              <h3>Basic Information</h3>
-              <div class="form-row">
-                <input type="text" placeholder="Pet name">
-                <input type="text" placeholder="Color">
-              </div>
-
-              <div class="form-row">
-                <input type="text" placeholder="Breed">
-                <select>
-                  <option value="" disabled selected>Species</option>
-                  <option value="dog">Dog</option>
-                  <option value="cat">Cat</option>
-                  <option value="others">Others</option>
-                </select>
-              </div>
-
-              <h3>Other Information</h3>
-              <div class="form-row">
-                  <input type="text" placeholder="Birthday (MM/DD/YYYY)" class="bday">
-                  <input type="text" placeholder="Age (Estimated)">
-
-                <select>
-                  <option value="" disabled selected>Sex</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-
-                <input type="text" placeholder="Remarks (Optional)">
-              </div>
-
-              <div>
-                <button type="submit" class="savebtn"id="savePet">Save Changes</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- DELETE PET MODAL -->
-          <div id="deletePetModal" class="modal">
-            <div class="modal-content">
-              <span class="close-btn" id="closeDeleteModal">&times;</span>
-              <p>Are you sure you want to delete this pet?</p>
-              <div class="modal-buttons">
-                <button id="confirmPet" class="confirmbtn">Yes</button>
-                <button id="cancelPet" class="cancelDelete">Cancel</button>
-              </div>
-            </div>
-          </div>
-          
           
           <!-- VIEW PET FORM -->
            <div class="view-form">
             <form class="viewpet">
-              <div class="petCard">
+              <div class="petCard" id="petCardClick">
                 <p>Pet name</p>
                 <p>Color</p>
                 <p>Breed</p>
@@ -195,10 +138,49 @@
               </div>
           </form>
           
+          <div id="petClickModal" class="modal">
+            <div class="modal-content">
+              <span class="close-btn" id="closeClick">&times;</span>
+              <h2>Pet Information</h2>
+              <div class="form-row">
+                <input type="text" placeholder="Pet name" disabled>
+                <input type="text" placeholder="Color" disabled>
+              </div>
+
+              <div class="form-row">
+                <input type="text" placeholder="Breed" disabled>
+                <select>
+                  <option value="" disabled selected>Species</option>
+                  <option value="dog" disabled>Dog</option>
+                  <option value="cat"disabled>Cat</option>
+                  <option value="others"disabled>Others</option>
+                </select>
+              </div>
+
+              <h3>Other Information</h3>
+              <div class="form-row">
+                  <input type="text" placeholder="Birthday (MM/DD/YYYY)" class="bday" disabled>
+                  <input type="text" placeholder="Age (Estimated)" disabled>
+
+                <select>
+                  <option value="" disabled selected>Sex</option>
+                  <option value="Male" disabled>Male</option>
+                  <option value="Female"disabled>Female</option>
+                </select>
+
+                <input type="text" placeholder="Remarks (Optional)" disabled>
+              </div>
+            </div>
+          </div>
+
+
+
+
+          
           <div id="petCardModal" class="modal">
             <div class="modal-content">
               <span class="close-btn" id="closeEditCard">&times;</span>
-              <h2>Edit Customer Information</h2>
+              <h2>Edit Pet Information</h2>
               <h3>Basic Information</h3>
               <div class="form-row">
                 <input type="text" placeholder="Pet name">
@@ -245,7 +227,7 @@
               </div>
             </div>
           </div>
-        
+        </div>
         
 
 
@@ -350,7 +332,7 @@
                 <button type="submit" class="savebtn" id="saveClient">Save Changes</button>
               </div>
             </div>
-            </div>
+          </div>
 
             <div id="deleteClientModal" class="modal">
               <div class="modal-content">
@@ -366,7 +348,7 @@
           <div id="clientAccount" class="modal">
             <div class="modal-content">
               <span class="close-btn" id="closeEditAccount">&times;</span>
-              <h2>Edit Customer Account</h2>
+              <h2 >Edit Customer Account</h2>
               <div class="form-edit">
                 <input type="text" placeholder="Username" >
                 <input type="password" placeholder="Password">
@@ -425,7 +407,6 @@
           <div>
             <button type="submit" class="confirmbtn">CONFIRM</button>
           </div>
-        
         </form>
 
       </div> <!-- closing tag .form-container -->
