@@ -1,0 +1,166 @@
+@page {
+    size: A4;
+    margin: 0;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('font/Montserrat/static/Montserrat-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Montserrat-Medium';
+    src: url('font/Montserrat/static/Montserrat-Medium.ttf') format('truetype');
+    font-style: normal;
+
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: rgb(26, 26, 26);
+    font-family: sans-serif;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: auto;
+    background: white;
+    padding: 8mm 15mm 8mm 15mm;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.logo img {
+    width: 300px;
+    height: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+p{
+    font-family: 'Montserrat';
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.header-line {
+    border-top: 2px solid #000;
+    height: 2px;
+    background-color: #000;
+    margin: 10px 0;
+    width: 100%;
+}
+.title p,.service-history-title p{
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+.patient-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.patient-info1,
+.patient-info2 {
+    flex: 1;
+}
+
+.form-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap; /* 👈 important for wrapping long lines */
+}
+
+.form-line label {
+    font-family: 'Montserrat', serif;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.line {
+    flex: 1;
+    min-height: 1.2em;
+    padding: 2px 4px;
+    font-weight: bold;
+    word-break: break-word;
+}
+
+.form-line .line {
+    font-family: 'Montserrat-Medium', serif;
+    font-size: 14px;
+}
+.indent-line {
+  padding-left: 100px; /* align with address label if needed */
+}
+.service-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+.service-table th,
+.service-table td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: left;
+}
+
+.service-table th {
+    font-family: 'Montserrat';
+    position: sticky;
+    top: 0;
+    background: #f2f2f2;
+    font-weight: bold;
+}
+
+@media print {
+    table, tr, td, th {
+        page-break-inside: auto !important;
+    }
+
+    tr {
+        page-break-after: auto !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+
+    .page {
+        page-break-after: always;
+        box-shadow: none;
+
+    }
+
+    body {
+        margin: 0;
+        background: white;
+    }
+
+    .patient-info, .service-history {
+        page-break-inside: avoid;
+    }
+    
+}

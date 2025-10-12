@@ -276,14 +276,29 @@ QToolButton:hover{
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <property name="spacing">
+                <number>0</number>
+               </property>
                <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
                 <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>0</number>
                </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item alignment="Qt::AlignTop">
                 <widget class="QLabel" name="label_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
 color:rgb(39, 39, 39);</string>
@@ -315,16 +330,16 @@ color:rgb(39, 39, 39);</string>
                 <number>0</number>
                </property>
                <property name="leftMargin">
-                <number>10</number>
+                <number>0</number>
                </property>
                <property name="topMargin">
                 <number>10</number>
                </property>
                <property name="rightMargin">
-                <number>10</number>
+                <number>0</number>
                </property>
                <property name="bottomMargin">
-                <number>10</number>
+                <number>0</number>
                </property>
                <item alignment="Qt::AlignTop">
                 <widget class="QTextEdit" name="noteLabel">
