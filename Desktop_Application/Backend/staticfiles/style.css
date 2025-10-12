@@ -1,6 +1,6 @@
 @page {
     size: A4;
-    margin: 0;
+    margin:8mm 0mm 8mm 0mm;
 }
 
 @font-face {
@@ -25,7 +25,6 @@
 
 body {
     background: rgb(26, 26, 26);
-    padding: 20px;
     font-family: sans-serif;
 }
 
@@ -34,7 +33,7 @@ body {
     min-height: 297mm;
     margin: auto;
     background: white;
-    padding: 8mm 15mm 8mm 15mm;
+    padding: 0mm 15mm 0mm 15mm;
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
@@ -94,14 +93,7 @@ p{
     font-weight: bold;
 }
 
-.line {
-    flex: 1;
-    border-bottom: 1px solid #000;
-    min-height: 1.2em;
-    padding: 2px 4px;
-    font-weight: bold;
-    word-break: break-word;
-}
+
 
 .form-line .line {
     font-family: 'Montserrat-Medium', serif;
@@ -133,37 +125,26 @@ p{
 }
 
 @media print {
-    table, tr, td, th {
-        page-break-inside: auto !important;
+    /* ✅ Allow table to split */
+    .service-history {
+        page-break-inside: auto;      /* allow breaking inside */
     }
 
-    tr {
-        page-break-after: auto !important;
+    .service-table {
+        page-break-inside: auto;      /* allow table to split */
+        page-break-after: auto;
+    }
+
+    .service-table tr {
+        page-break-inside: avoid;     /* keep each row together */
+        page-break-after: auto;
     }
 
     thead {
-        display: table-header-group;
+        display: table-header-group;  /* ✅ repeat header on each page */
     }
 
     tfoot {
         display: table-footer-group;
     }
-
-
-    .page {
-        page-break-after: always;
-        box-shadow: none;
-        margin: 0;
-        padding: 15mm;
-    }
-
-    body {
-        margin: 0;
-        background: white;
-    }
-
-    .patient-info, .service-history {
-        page-break-inside: avoid;
-    }
-    
 }

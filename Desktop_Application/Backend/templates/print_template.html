@@ -28,49 +28,51 @@
 
     <div class="patient-info">
       <div class="patient-info1">
-        <div class="form-line"><label>PET'S NAME:</label><span class="line">{{ pet.petName }}</span></div>
-        <div class="form-line"><label>BREED:</label><span class="line">{{ pet.breed }}</span></div>
-        <div class="form-line"><label>COLOR/MARKINGS:</label><span class="line">{{ pet.petColor }}</span></div>
-        <div class="form-line"><label>REMARKS:</label><span class="line">{{ pet.remarks }}</span></div>
+        <div class="form-line"><label>PET'S NAME:</label><span class="line"><span class="line-data">{{ pet.petName }}</span></span></div>
+        <div class="form-line"><label>BREED:</label><span class="line"><span class="line-data">{{ pet.breed }}</span></span></div>
+        <div class="form-line"><label>COLOR/MARKINGS:</label><span class="line"><span class="line-data">{{ pet.petColor }}</span></span></div>
+        <div class="form-line"><label>REMARKS:</label><span class="line"><span class="line-data">{{ pet.remarks }}</span></span></div>
       </div>
       <div class="patient-info2">
-          <div class="form-line"><label>SEX:</label><span class="line">{{ pet.sex }}</span></div>
-          <div class="form-line"><label>SPECIES:</label><span class="line">{{ pet.species }}</span></div>
+          <div class="form-line"><label>SEX:</label><span class="line"><span class="line-data">{{ pet.sex }}</span></span></div>
+          <div class="form-line"><label>SPECIES:</label><span class="line"><span class="line-data">{{ pet.species }}</span></span></div>
 
           <!-- ✅ Show birthdate only if it exists -->
           <div class="form-line">
             <label>BIRTHDATE:</label>
             <span class="line">
-              {% if pet.birthDay %}
+              <span class="line-data">
+                 {% if pet.birthDay %}
                 {{ pet.birthDay }}
-              {% else %}
-                -
-              {% endif %}
+                {% else %}
+                  -
+                {% endif %}
+              </span>
             </span>
           </div>
 
           <!-- ✅ Age comes from computed property OR stored age -->
           <div class="form-line">
             <label>AGE:</label>
-            <span class="line">{{ pet.age }}</span>
+            <span class="line"><span class="line-data">{{ pet.age }}</span></span>
           </div>
         </div>
 
     </div>
 
     <div>
-      <div class="form-line"><label>OWNER'S NAME:</label><span class="line">{{ owner }}</span></div>
+      <div class="form-line"><label>OWNER'S NAME:</label><span class="line"><span class="line-data">{{ owner }}</span></span></div>
       <div class="form-line"><label>ADDRESS:</label>
-        <span class="line"> {{ owner.province }},{{ owner.city }},{{ owner.barangay }}</span>
+        <span class="line"><span class="line-data">{{ owner.province }},{{ owner.city }},{{ owner.barangay }}</span></span>
       </div>
       <div class="form-line indent-line">
-        <span class="line">{{ owner.detailedAddress }}</span>
+        <span class="line"><span class="line-data">{{ owner.detailedAddress }}</span></span>
       </div>
 
       <!-- Cell Number -->
       <div class="form-line">
         <label>CELL NO:</label>
-        <span class="line">{{ owner.phoneNumber }}</span>
+        <span class="line"><span class="line-data">{{ owner.phoneNumber }}</span></span>
       </div>
     </div>
 

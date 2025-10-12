@@ -12,6 +12,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
 from django.conf import settings
+import re
 import os
 
 
@@ -70,14 +71,17 @@ def print_record(request, owner_id, pet_id):
     # Generate PDF
     pdf = HTML(
         string=html_string,
-        base_url=request.build_absolute_uri()  # IMPORTANT: allows {% static %} to resolve correctly
+        base_url=request.build_absolute_uri()  # allows {% static %} to resolve correctly
     ).write_pdf(
-        stylesheets=[CSS(os.path.join(settings.STATIC_ROOT, 'style.css'))]  # optional if inline CSS already in template
+        stylesheets=[CSS(os.path.join(settings.STATIC_ROOT, 'style.css'))]
     )
+
+    # Sanitize owner name for filename
+    owner_name_safe = re.sub(r'[^a-zA-Z0-9_-]', '_', owner.firstName + "_" + owner.lastName).upper()
 
     # Return as HTTP response to open in browser
     response = HttpResponse(pdf, content_type="application/pdf")
-    response["Content-Disposition"] = "inline; filename=patient_record.pdf"  # opens instead of downloading
+    response["Content-Disposition"] = f"inline; filename={owner_name_safe}_RECORD.pdf"
     return response
 
 

@@ -1,6 +1,6 @@
 @page {
     size: A4;
-    margin: 0;
+    margin:8mm 0mm 8mm 0mm;
 }
 
 @font-face {
@@ -33,7 +33,7 @@ body {
     min-height: 297mm;
     margin: auto;
     background: white;
-    padding: 8mm 15mm 8mm 15mm;
+    padding: 0mm 15mm 0mm 15mm;
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
@@ -95,10 +95,13 @@ p{
 
 .line {
     flex: 1;
-    min-height: 1.2em;
-    padding: 2px 4px;
-    font-weight: bold;
-    word-break: break-word;
+    border-bottom: 1px solid #000;  /* underline only */
+    margin-left: 5px;
+}
+
+.line-data {
+    position: absolute; /* or just inline if you want it on top of blank */
+    margin-left: 5px;   /* adjust spacing to sit nicely on top of underline */
 }
 
 .form-line .line {
@@ -131,36 +134,26 @@ p{
 }
 
 @media print {
-    table, tr, td, th {
-        page-break-inside: auto !important;
+    /* ✅ Allow table to split */
+    .service-history {
+        page-break-inside: auto;      /* allow breaking inside */
     }
 
-    tr {
-        page-break-after: auto !important;
+    .service-table {
+        page-break-inside: auto;      /* allow table to split */
+        page-break-after: auto;
+    }
+
+    .service-table tr {
+        page-break-inside: avoid;     /* keep each row together */
+        page-break-after: auto;
     }
 
     thead {
-        display: table-header-group;
+        display: table-header-group;  /* ✅ repeat header on each page */
     }
 
     tfoot {
         display: table-footer-group;
     }
-
-
-    .page {
-        page-break-after: always;
-        box-shadow: none;
-
-    }
-
-    body {
-        margin: 0;
-        background: white;
-    }
-
-    .patient-info, .service-history {
-        page-break-inside: avoid;
-    }
-    
 }
