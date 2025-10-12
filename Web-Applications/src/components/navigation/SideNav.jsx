@@ -40,7 +40,7 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
       <nav className="main-nav" aria-label="Main navigation">
         <ul className="nav-menu">
           {items.map(i => (
-            <li key={i.id} className="nav-item">
+            <li key={i.id} className={`nav-item ${active === i.id ? 'active' : ''}`}>
               <NavLink
                 to={i.to}
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}

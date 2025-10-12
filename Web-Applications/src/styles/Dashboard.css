@@ -78,6 +78,10 @@ body {
     margin-bottom: 20px;
 }
 
+.nav-menu.secondary .nav-item {
+  padding: 0; /* ensure container doesn't add spacing */
+}
+
 .nav-item {
     margin: 0;
 }
@@ -85,14 +89,9 @@ body {
 .nav-link {
     display: flex;
     align-items: center;
+    width: 100%;
     padding: 12px 25px;
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-    border-left: 3px solid transparent;
-
-    /* ADDED - make buttons look like links (remove default button chrome) */
+    color: rgba(255,255,255,0.9);
     background: transparent;
     border: 0;
     cursor: pointer;
@@ -108,27 +107,42 @@ body {
 }
 
 .nav-link:hover {
-    background-color: #d38c36da;
+    background: linear-gradient(90deg,#c97f34,#d79a4a);     /* warm orange */
     color: white;
     border-left-color: #3498db;
-    transform: translateX(5px);
 }
 
 .nav-item.active .nav-link {
-    background-color: rgba(52, 152, 219, 0.2);
-    color: white;
-    border-left-color: #3498db;
+    background: linear-gradient(90deg,#c97f34,#d79a4a);     /* warm orange */
+    color: #fff;
+    border-left-color: transparent;
+    transform: translateX(0);
+    box-shadow: none;
+}
+
+
+.nav-item.active .nav-icon,
+.nav-item.active .nav-text {
+    filter: none;
+    color: #fff;
+    
 }
 
 .nav-icon {
     width: 20px;
     height: 20px;
     margin-right: 15px;
-    filter: brightness(0) invert(1); /* Makes icons white */
     transition: all 0.3s ease;
 }
 
+.nav-item.active .nav-icon {
+    filter: brightness(0) invert(1); /* converts dark icons to white */
+    opacity: 1;
+}
 
+.nav-link:hover .nav-icon {
+    filter: brightness(0) invert(1);
+}
 
 .nav-text {
     font-size: 15px;
@@ -145,12 +159,11 @@ body {
 .logout {
     background: #ff4757 !important;
     color: white !important;
-    margin: 10px 15px !important;
+    margin: 0;
     padding: 15px 25px !important;
     font-weight: bold !important;
     text-transform: uppercase !important;
     letter-spacing: 1px !important;
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4) !important;
 }
 
 .logout:hover {
