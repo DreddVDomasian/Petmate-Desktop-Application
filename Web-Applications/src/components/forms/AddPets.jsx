@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function AddPets({ onSubmit }) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState({                    /*si form sya ung variable, si setform isa syang function para magupdate si form */
     name: "",
     color: "",
     breed: "",
