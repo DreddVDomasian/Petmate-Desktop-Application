@@ -2577,8 +2577,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>814</width>
+                   <height>514</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3045,7 +3045,7 @@ QPushButton:checked {
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="walkIn">
                  <property name="sizePolicy">
@@ -7488,7 +7488,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">

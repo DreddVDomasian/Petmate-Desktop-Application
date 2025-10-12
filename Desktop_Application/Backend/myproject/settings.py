@@ -121,11 +121,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "petInfoSys" / "static",  # Folder where your CSS and images are stored
+    BASE_DIR / "static",  # where your working CSS & images are
 ]
-STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR / "staticfiles"  # where collectstatic will copy them
+TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]  # global templates
 # Default primary key field type
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
 

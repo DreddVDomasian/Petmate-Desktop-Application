@@ -8,6 +8,11 @@ from .models import *
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .serializers import *
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML, CSS
+from django.conf import settings
+import os
 
 
 class StandardPagination(PageNumberPagination):
@@ -55,11 +60,25 @@ def print_record(request, owner_id, pet_id):
     pet = get_object_or_404(Pet, id=pet_id, owner=owner)
     services = Service.objects.filter(pet=pet).order_by("date")
 
-    return render(request, "print_template.html", {
+    # Render the HTML template into a string
+    html_string = render_to_string("print_template.html", {
         "owner": owner,
         "pet": pet,
         "services": services
     })
+
+    # Generate PDF
+    pdf = HTML(
+        string=html_string,
+        base_url=request.build_absolute_uri()  # IMPORTANT: allows {% static %} to resolve correctly
+    ).write_pdf(
+        stylesheets=[CSS(os.path.join(settings.STATIC_ROOT, 'style.css'))]  # optional if inline CSS already in template
+    )
+
+    # Return as HTTP response to open in browser
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = "inline; filename=patient_record.pdf"  # opens instead of downloading
+    return response
 
 
 @api_view(['GET'])
