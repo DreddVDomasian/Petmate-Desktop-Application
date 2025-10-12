@@ -6,8 +6,8 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
   const navigate = useNavigate();
 
   const items = [
-    { id: 'addpets', label: 'Add Pets', icon: '/assets/icons/add.png', to: '#' }, /*waala pa, */ 
-    { id: 'viewpets', label: 'View Pets', icon: '/assets/icons/view.png', to: '#' }, /* yung # dyan ilalagay kung saan gusto mo papuntahin */
+    { id: 'addpets', label: 'Add Pets', icon: '/assets/icons/add.png', to: '/dashboard/addpets' }, /*waala pa, */ 
+    { id: 'viewpets', label: 'View Pets', icon: '/assets/icons/view.png', to: '/dashboard/viewpets' }, /* yung # dyan ilalagay kung saan gusto mo papuntahin */
     { id: 'addclient', label: 'Set Appointment', icon: '/assets/icons/appointment.png', to: '#' },
     { id: 'appointments', label: 'View Appointments', icon: '/assets/icons/view.png', to: '#' },
   ];
@@ -34,7 +34,7 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
       <div className="nav-header">
         <img src="/assets/hjk-removebg-preview.png" alt="user" className="nav-logo" />
         <h1>Welcome</h1>
-        <p className="welcome-text">USER HEHE</p>
+        <p className="welcome-text">USER HEHE</p> {/*DITO DAPAT KUNG ANONG USERNAME DAPAT LALABAS  */}
       </div>
 
       <nav className="main-nav" aria-label="Main navigation">
