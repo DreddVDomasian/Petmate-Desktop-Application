@@ -95,7 +95,7 @@
             <td>{{ service.service_type }}</td>
             <td>{{ service.date }}</td>
             <td>{% if service.return_date %}{{ service.return_date }}{% else %}—{% endif %}</td>
-            <td>{{ service.notes }}</td>
+            <td class="notes">{{ service.notes }}</td>
           </tr>
           {% endfor %}
         </tbody>

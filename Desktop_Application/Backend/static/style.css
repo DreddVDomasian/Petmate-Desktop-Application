@@ -124,7 +124,11 @@ p{
     padding: 6px;
     text-align: left;
 }
-
+.service-table td.notes {
+    max-width: 80mm; /* adjust as needed */
+    word-wrap: break-word; /* wrap long words */
+    overflow-wrap: break-word;
+}
 .service-table th {
     font-family: 'Montserrat';
     position: sticky;

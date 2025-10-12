@@ -93,7 +93,16 @@ p{
     font-weight: bold;
 }
 
+.line {
+    flex: 1;
+    border-bottom: 1px solid #000;  /* underline only */
+    margin-left: 5px;
+}
 
+.line-data {
+    position: absolute; /* or just inline if you want it on top of blank */
+    margin-left: 5px;   /* adjust spacing to sit nicely on top of underline */
+}
 
 .form-line .line {
     font-family: 'Montserrat-Medium', serif;
@@ -115,7 +124,11 @@ p{
     padding: 6px;
     text-align: left;
 }
-
+.service-table td.notes {
+    max-width: 80mm; /* adjust as needed */
+    word-wrap: break-word; /* wrap long words */
+    overflow-wrap: break-word;
+}
 .service-table th {
     font-family: 'Montserrat';
     position: sticky;
