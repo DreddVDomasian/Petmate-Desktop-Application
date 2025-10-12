@@ -1,15 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // FOR EDIT AND DELETE PET MODALS 
-  const editPet = document.getElementById("editPet");
-  const petModal = document.getElementById("petModal");
-  const closeModal = document.getElementById("closeModal");
-  const savePetsBtn = document.getElementById("savePet")
 
-  const deletePet = document.getElementById("deletePet");
-  const deleteModal = document.getElementById("deletePetModal");
-  const closeDeleteModal = document.getElementById("closeDeleteModal");
-  const yesPetBtn = document.getElementById("confirmPet");
-  const cancelPetBtn = document.getElementById("cancelPet");
   
 
   // FOR EDIT AND DELETE CLIENT MODALS 
@@ -52,13 +42,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const closePetCard = document.getElementById("closeEditCard");
   const savePetCard = document.getElementById("savePetCard");
 
-
   const deletePetCard = document.getElementById("deletePetCard");
   const deletePetCardModal = document.getElementById("deletePetCardModal");
   const closeDeleteCard = document.getElementById("closeDeleteCard"); 
   const confirmPetCard = document.getElementById("confirmPetCard");
   const cancelPetCard = document.getElementById("cancelPetCard");
   
+  const petCardClick = document.getElementById("petCardClick");
+  const petClickModal = document.getElementById("petClickModal");
+  const closeClick = document.getElementById("closeClick");
+
+
 
   flatpickr(".bday", {
     dateFormat: "m/d/Y",  // MM/DD/YYYY
@@ -76,55 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dateFormat: "h:i K" 
     });
 
-  // ==========================
-  // EDIT PET MODAL
-  // ==========================
-    editPet.addEventListener("click", () => {
-      petModal.style.display = "block";
-    });
-    
-    savePetsBtn.addEventListener("click", () => {
-      alert("Changes saved!");
-      petModal.style.display = "none";
-    });
-
-    closeModal.addEventListener("click", () => {
-      petModal.style.display = "none";
-    });
-
-    window.addEventListener("click", (event) => {
-      if (event.target === petModal) {
-      petModal.style.display = "none";
-    }
-    });
-
-  // ==========================
-  // DELETE PET MODAL
-  // ==========================
-  deletePet.addEventListener("click", () => {
-    deleteModal.style.display = "block";
-  });
-
-  closeDeleteModal.addEventListener("click", () => {
-    deleteModal.style.display = "none";
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target === deleteModal) {
-      deleteModal.style.display = "none";
-    }
-  });
-
-  yesPetBtn.addEventListener("click", () => {
-    alert("Pet deleted!");
-    deleteModal.style.display = "none";
-  });
-
-  cancelPetBtn.addEventListener("click", () => {
-    deleteModal.style.display = "none";
-  });
-
-
+  
     // ==========================
     // EDIT CLIENT MODAL
     // ==========================
@@ -253,7 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     });
 
-    petCard.addEventListener("click", () => {
+    petCard.addEventListener("click", (e) => {
+      e.stopPropagation();
       petCardModal.style.display = "block";
     });
     
@@ -272,7 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     });
 
-  deletePetCard.addEventListener("click", () => {
+  deletePetCard.addEventListener("click", (e) => {
+    e.stopPropagation();
     deletePetCardModal.style.display = "block";
     });
 
@@ -293,6 +241,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cancelPetCard.addEventListener("click", () => {
     deletePetCardModal.style.display = "none";
+  });
+
+  petCardClick.addEventListener("click", () => {
+    petClickModal.style.display = "block";
+  });
+
+  closeClick.addEventListener("click", () =>{
+    petClickModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === petClickModal) {
+      petClickModal.style.display = "none";
+    }
   });
 });
 
