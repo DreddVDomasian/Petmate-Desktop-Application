@@ -325,11 +325,7 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        """
-        Use a fresh paginator instance per request and paginate the filtered queryset.
-        This avoids stale counts coming from a different queryset and guarantees
-        pagination metadata reflects the filtered (status) set.
-        """
+
         queryset = self.filter_queryset(self.get_queryset())
 
         # Allow client to disable pagination (e.g., combobox requests)

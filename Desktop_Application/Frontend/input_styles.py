@@ -318,6 +318,7 @@ current_pageBtn = """
         border-radius: 5px;
         font-weight: bold;
         color:#80B8D1;
+        padding:0px;
 
     }
     QPushButton:hover {
@@ -333,8 +334,7 @@ other_pageBtn = """
         background-color: #80B8D1;
         border-radius: 5px;
         color:#FCD597;
-
-
+        padding:0px;
 
     }
     QPushButton:hover {

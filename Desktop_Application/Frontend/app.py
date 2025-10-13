@@ -781,9 +781,10 @@ class MainUI(QMainWindow):
         # Add page number buttons
         for page in range(start_page, end_page + 1):
             page_btn = QPushButton(str(page))
-            page_btn.setFixedSize(40, 40)
-            if current_page > 99:
-                page_btn.setFixedSize(45, 45)
+
+            # Dynamically resize button width based on text length
+            btn_width = 40 + (len(str(page)) - 1) * 8
+            page_btn.setFixedSize(btn_width, 40)
             font = page_btn.font()
             font.setPointSize(10)
             font.setBold(True)

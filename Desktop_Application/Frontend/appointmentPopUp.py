@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton
+from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton, QSizePolicy
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer
 from input_styles import *
@@ -19,6 +19,7 @@ from  shadowEffects import *
 from toast import Toast
 from Desktop_Application.Backend.api_client import add_new_appointment
 from datetime import datetime
+from functools import partial
 import requests
 
 class AddAppointmentCard(QWidget):
@@ -263,11 +264,7 @@ class AddAppointmentCard(QWidget):
             # Determine which layout(s) to clear — only clear the active layout(s)
             current_layout = self.get_layout_for_status(status_filter)
             if current_layout:
-                # remove widgets from that layout only
-                while current_layout.count():
-                    child = current_layout.takeAt(0)
-                    if child and child.widget():
-                        child.widget().deleteLater()
+                self.card_manager.show_loading_state(current_layout)
 
             # Build API URL (page + optional status)
             url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
@@ -365,6 +362,8 @@ class AddAppointmentCard(QWidget):
             "cancelled": self.cancelledLayout,
             None: self.pendingLayout  # default
         }
+        print(f"[DEBUG] show_empty_state called for: {status_filter}")
+
         return map_.get(status_filter, self.pendingLayout)
     def show_empty_all_layouts(self):
 
@@ -562,6 +561,11 @@ class AppointmentCardManager:
         self.total_appointment_count = 0
         self.current_status_filter = None
 
+        self._pagination_cooldown = QTimer()
+        self._pagination_cooldown.setInterval(150)
+        self._pagination_cooldown.setSingleShot(True)
+        self._can_paginate = True
+
     def clear_layouts(self):
         """Clear all appointment layouts"""
         layouts = [
@@ -576,10 +580,9 @@ class AppointmentCardManager:
                 child = layout.takeAt(0)
                 if child and child.widget():
                     child.widget().deleteLater()
-
     def show_empty_state(self, layout, message="No appointments found"):
         """Show empty state message in a layout"""
-        # Clear layout completely first
+        # Remove all existing widgets
         while layout.count():
             child = layout.takeAt(0)
             if child and child.widget():
@@ -590,14 +593,15 @@ class AppointmentCardManager:
         empty_label.setStyleSheet("""
             font: 81 16pt 'Montserrat ExtraBold';
             color: rgb(168,168,168);
-            padding: 40px;
+            padding: 80px;
         """)
 
-        # Add some flexible space so it's centered vertically
+        # ✅ Make sure the label expands fully in the scroll area
+        empty_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
         layout.addStretch()
         layout.addWidget(empty_label)
         layout.addStretch()
-
     def create_appointment_card(self, appointment):
         """Create and configure an appointment card"""
         card = uic.loadUi("appointmentCard.ui")
@@ -653,10 +657,10 @@ class AppointmentCardManager:
 
             # Connect prev/next buttons with status filter
             self.appointment_pagination_widget.PrevPage.clicked.connect(
-                lambda: self.appointment_card.load_appointments(self.current_appointment_page - 1, status_filter)
+                partial(self.safe_paginate, self.current_appointment_page - 1, status_filter)
             )
             self.appointment_pagination_widget.NextPage.clicked.connect(
-                lambda: self.appointment_card.load_appointments(self.current_appointment_page + 1, status_filter)
+                partial(self.safe_paginate, self.current_appointment_page + 1, status_filter)
             )
 
             # Set button states
@@ -672,7 +676,6 @@ class AppointmentCardManager:
 
         except Exception as e:
             print(f"Error creating appointment pagination: {e}")
-
     def create_appointment_page_buttons(self, status_filter=None):
         """Create page buttons for appointment pagination"""
         page_layout = self.appointment_pagination_widget.pageButtonsLayout
@@ -704,9 +707,10 @@ class AppointmentCardManager:
         # Add page number buttons
         for page in range(start_page, end_page + 1):
             page_btn = QPushButton(str(page))
-            page_btn.setFixedSize(40, 40)
-            if current_page > 99:
-                page_btn.setFixedSize(45, 45)
+
+            # Dynamically resize button width based on text length
+            btn_width = 40 + (len(str(page)) - 1) * 8
+            page_btn.setFixedSize(btn_width, 40)
             font = page_btn.font()
             font.setPointSize(10)
             font.setBold(True)
@@ -717,6 +721,34 @@ class AppointmentCardManager:
             else:
                 page_btn.setStyleSheet(other_pageBtn)
                 # Pass status filter when loading different pages
-                page_btn.clicked.connect(lambda checked, p=page: self.appointment_card.load_appointments(p, status_filter))
+                page_btn.clicked.connect(partial(self.safe_paginate, page, status_filter))
 
             page_layout.addWidget(page_btn)
+    def safe_paginate(self, page, status_filter):
+        """Prevent spamming pagination clicks."""
+        if not self._can_paginate:
+            print("[DEBUG] Pagination ignored (cooldown active)")
+            return
+
+        self._can_paginate = False
+        self._pagination_cooldown.start()
+        self._pagination_cooldown.timeout.connect(lambda: setattr(self, "_can_paginate", True))
+
+        # Trigger actual loading
+        self.appointment_card.load_appointments(page, status_filter)
+
+    def show_loading_state(self, layout, message="Loading..."):
+        """Display a temporary loading overlay."""
+        # Don’t remove existing cards yet — just add overlay
+        loading_label = QLabel(message)
+        loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        loading_label.setStyleSheet("""
+            font: 700 14pt 'Montserrat';
+            color: rgb(120,120,120);
+            background-color: rgba(255, 255, 255, 200);
+            border-radius: 10px;
+            padding: 20px;
+        """)
+        loading_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        layout.addWidget(loading_label)
+        layout.loading_overlay = loading_label
