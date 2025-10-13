@@ -34,7 +34,7 @@ class Command(BaseCommand):
             owners.append(owner)
 
             # Generate 1-3 pets per owner
-            for _ in range(random.randint(10, 20)):
+            for _ in range(random.randint(1, 5)):
                 pet = Pet.objects.create(
                     owner=owner,
                     petName=fake.first_name(),
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 )
 
                 # Add 0-2 services
-                for _ in range(random.randint(30, 40)):
+                for _ in range(random.randint(1, 5)):
                     Service.objects.create(
                         owner=owner,
                         pet=pet,

@@ -449,7 +449,6 @@ class AddAppointmentCard(QWidget):
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
                 self.add_empty_label(layout)
-
     def show_review_page(self, appoint,date):
         #Owner details
         self.main_window.BookingId.setText(appoint["booking_id"])
@@ -497,7 +496,6 @@ class AddAppointmentCard(QWidget):
 
         self.main_window.acceptAppointmentBtn.clicked.connect(lambda _, r_id=appoint['id']: self.accepted_booking(r_id))
         self.main_window.declineAppointmentBtn.clicked.connect(lambda _, r_id=appoint['id']: self.declined_booking(r_id))
-
     def accepted_booking(self, review_id):
         url = f"http://127.0.0.1:8000/api/appointments/{review_id}/statusUpdate/"
         response = requests.patch(url, json={"status": "accepted"})
@@ -509,7 +507,6 @@ class AddAppointmentCard(QWidget):
             self.main_window.AcceptedBtn.setChecked(True)
         else:
             print("Failed:", response.text)
-
     def declined_booking(self, review_id):
         url = f"http://127.0.0.1:8000/api/appointments/{review_id}/statusUpdate/"
         response = requests.patch(url, json={"status": "declined"})
@@ -521,7 +518,6 @@ class AddAppointmentCard(QWidget):
             self.main_window.DeclinedBtn.setChecked(True)
         else:
             print("Failed:", response.text)
-
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
         empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")

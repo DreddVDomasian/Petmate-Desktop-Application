@@ -2577,8 +2577,8 @@ border-bottom-right-radius:10px;
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>814</width>
-                   <height>514</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3529,8 +3529,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>814</width>
-                           <height>362</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -3941,8 +3941,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>796</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3997,8 +3997,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>796</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4827,7 +4827,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>812</width>
+                          <width>100</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -5271,8 +5271,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>814</width>
-                       <height>394</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -7488,7 +7488,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8308,8 +8308,7 @@ color:rgb(39, 39, 39);</string>
                               <item>
                                <widget class="QTextEdit" name="addNoteLineEdit">
                                 <property name="styleSheet">
-                                 <string notr="true">
-QTextEdit{
+                                 <string notr="true">QTextEdit{
     border-radius: 10px;
 	font-family: &quot;Montserrat Medium&quot;;
 	font-weight: 57;

@@ -1324,6 +1324,8 @@ class MainUI(QMainWindow):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
+            self.selected_pet_id = pet["id"]
+            self.selected_patient_id = pet["owner"]["id"]
             self.show_pet_profile(pet)
 
     #DATE PICK AND DATE FORMATING LOGIC
