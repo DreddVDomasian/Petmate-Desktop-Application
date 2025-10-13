@@ -46,7 +46,7 @@ class AddAppointmentCard(QWidget):
         self.addAppointmentBtn.clicked.connect(self.submit_appointment_data)
 
         # load data
-        self.load_appointments(1)
+        self.load_appointments(1,"pending")
         self.setup_status_filters()
         self.web_Appointment()
 
@@ -124,7 +124,7 @@ class AddAppointmentCard(QWidget):
         anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         anim.start()
         self.anim = anim  # Keep reference para di ma-garbage collect
-        self.load_appointments(1)
+        self.load_appointments(1, "pending")
     def eventFilter(self, obj, event):
         if obj == self.parent() and event.type() == event.Type.Resize:
             if self.isVisible():
@@ -240,7 +240,7 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
             toast.show_toast()
             self.close()
-            self.load_appointments(1)  # Refresh with first page
+            self.load_appointments(1, "pending")  # Refresh with first page
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
@@ -257,89 +257,125 @@ class AddAppointmentCard(QWidget):
 
         for status, button in status_buttons.items():
             button.clicked.connect(lambda checked, s=status: self.load_appointments(1, s))
-    def load_appointments(self, page=1, status_filter=None):
-        """Load appointments with pagination and filtering"""
+    def load_appointments(self, page=1, status_filter="pending"):
+        """Load appointments with pagination and filtering (frontend side)."""
         try:
-            # Clear existing appointment cards
-            self.card_manager.clear_layouts()
+            # Determine which layout(s) to clear — only clear the active layout(s)
+            current_layout = self.get_layout_for_status(status_filter)
+            if current_layout:
+                # remove widgets from that layout only
+                while current_layout.count():
+                    child = current_layout.takeAt(0)
+                    if child and child.widget():
+                        child.widget().deleteLater()
 
-            # Build API URL with pagination and filtering
+            # Build API URL (page + optional status)
             url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
             if status_filter:
                 url += f"&status={status_filter}"
 
-            # Make API request
             response = requests.get(url, timeout=10)
-
-            if response.status_code == 200:
-                data = response.json()
-                appointments = data.get('results', [])
-
-                # Update pagination info
-                self.card_manager.current_appointment_page = page
-                self.card_manager.total_appointment_pages = data.get('total_pages', 1)
-                self.card_manager.total_appointment_count = data.get('count', 0)
-                self.card_manager.current_status_filter = status_filter
-
-            else:
-                appointments = []
+            if response.status_code != 200:
                 print(f"Failed to load appointments: {response.status_code}")
-
-            # Handle empty results
-            if not appointments:
-                self.show_empty_all_layouts()
+                # Show empty state for the active layout
+                if current_layout:
+                    self.card_manager.show_empty_state(current_layout)
                 return
 
-            # Create and distribute appointment cards to appropriate layouts
-            self.distribute_appointment_cards(appointments)
+            data = response.json()
 
-            # Add pagination to the current active layout
-            current_layout = self.get_current_active_layout()
-            if current_layout:
+            # If backend returned paginated structure, handle it; otherwise treat as list
+            if isinstance(data, dict) and 'results' in data:
+                appointments = data.get('results', [])
+                total_pages = data.get('total_pages', 1)
+                total_count = data.get('count', 0)
+                current_page = data.get('current_page', page)
+            else:
+                appointments = data or []
+                # No pagination meta from backend -> assume single page
+                total_pages = 1
+                total_count = len(appointments)
+                current_page = page
+            print(f"[DEBUG] Status: {status_filter} | Page: {page}/{total_pages} | Total items: {total_count} | Loaded: {len(appointments)}")
+            # Update card_manager pagination state
+            self.card_manager.current_appointment_page = current_page
+            self.card_manager.total_appointment_pages = max(1, total_pages)
+            self.card_manager.total_appointment_count = total_count
+            self.card_manager.current_status_filter = status_filter
+
+            # If no appointments returned for this status → show empty state for that layout and return
+            if not appointments:
+                if current_layout:
+                    self.card_manager.show_empty_state(current_layout)
+                    # Remove pagination widget if it exists
+                if hasattr(self.card_manager, 'appointment_pagination_widget'):
+                    try:
+                        self.card_manager.appointment_pagination_widget.deleteLater()
+                    except Exception:
+                        pass
+                return
+
+            # Create UI cards for the returned appointments and add to the current layout
+            self.distribute_appointment_cards(appointments, target_layout=current_layout)
+
+            # Add pagination controls only to the active layout and only if there's more than 1 page
+            if current_layout and self.card_manager.total_appointment_pages > 1:
                 self.card_manager.add_appointment_pagination_controls(current_layout, status_filter)
+            else:
+                # ensure any leftover pagination widget for that layout is removed/hidden
+                try:
+                    # If card_manager has a method or attribute to remove pagination for layout, call it;
+                    # otherwise rely on add_appointment_pagination_controls to handle replacement.
+                    pass
+                except Exception:
+                    pass
 
         except Exception as e:
             print(f"Error loading appointments: {e}")
-            self.show_empty_all_layouts()
-    def distribute_appointment_cards(self, appointments):
-        """Distribute appointment cards to their respective status layouts"""
-        status_layouts = {
-            "pending": self.pendingLayout,  # Access directly
-            "completed": self.completedLayout,
-            "overdue": self.overdueLayout,
-            "cancelled": self.cancelledLayout
-        }
+            # show empty state for active layout on error
+            current_layout = self.get_layout_for_status(status_filter)
+            if current_layout:
+                self.card_manager.show_empty_state(current_layout)
+    def distribute_appointment_cards(self, appointments, target_layout=None):
+        """Add appointment cards to a single target layout (the active status layout)."""
+        if target_layout is None:
+            target_layout = self.get_layout_for_status(None)  # default to pending layout
 
-        # Group appointments by status
-        appointments_by_status = {status: [] for status in status_layouts.keys()}
+        # Clear target layout (should already be cleared, but keep safe)
+        while target_layout.count():
+            child = target_layout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+
+        created_any = False
         for appointment in appointments:
-            status = appointment.get("status", "pending")
-            if status in appointments_by_status:
-                appointments_by_status[status].append(appointment)
+            card = self.card_manager.create_appointment_card(appointment)
+            target_layout.addWidget(card)
+            self.card_manager.appointment_cards.append(card)
+            created_any = True
 
-        # Create cards for each status group
-        for status, layout in status_layouts.items():
-            status_appointments = appointments_by_status[status]
-
-            if not status_appointments:
-                self.card_manager.show_empty_state(layout)
-                continue
-
-            for appointment in status_appointments:
-                card = self.card_manager.create_appointment_card(appointment)
-                layout.addWidget(card)
-                self.card_manager.appointment_cards.append(card)
-    def get_current_active_layout(self):
-        """Get the currently active layout based on status filter"""
-        status_layout_map = {
-            "pending": self.pendingLayout,  # Access directly
+        if not created_any:
+            self.card_manager.show_empty_state(target_layout)
+    def get_layout_for_status(self, status_filter):
+        """Return the Qt layout corresponding to the given status_filter."""
+        map_ = {
+            "pending": self.pendingLayout,
             "completed": self.completedLayout,
             "overdue": self.overdueLayout,
             "cancelled": self.cancelledLayout,
-            None: self.pendingLayout  # Default to pending if no filter
+            None: self.pendingLayout  # default
         }
+        return map_.get(status_filter, self.pendingLayout)
+    def show_empty_all_layouts(self):
 
-        return status_layout_map.get(self.card_manager.current_status_filter)
+        layouts = [
+            self.pendingLayout,
+            self.completedLayout,
+            self.overdueLayout,
+            self.cancelledLayout
+        ]
+        for layout in layouts:
+            self.card_manager.show_empty_state(layout)
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
@@ -385,17 +421,7 @@ class AddAppointmentCard(QWidget):
         # Reconnect safely
         self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
-    def show_empty_all_layouts(self):
-        """Show empty state in all layouts"""
-        layouts = [
-            self.pendingLayout,  # Access directly, not through main_window
-            self.completedLayout,
-            self.overdueLayout,
-            self.cancelledLayout
-        ]
 
-        for layout in layouts:
-            self.card_manager.show_empty_state(layout)
 
     #-------------------------------------------WEB APPOINTMENT---------------------------------------
 
@@ -551,12 +577,25 @@ class AppointmentCardManager:
                 if child and child.widget():
                     child.widget().deleteLater()
 
-    def show_empty_state(self, layout, message="EMPTY"):
+    def show_empty_state(self, layout, message="No appointments found"):
         """Show empty state message in a layout"""
+        # Clear layout completely first
+        while layout.count():
+            child = layout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+
         empty_label = QLabel(message)
-        empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+        empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        empty_label.setStyleSheet("""
+            font: 81 16pt 'Montserrat ExtraBold';
+            color: rgb(168,168,168);
+            padding: 40px;
+        """)
+
+        # Add some flexible space so it's centered vertically
         layout.addStretch()
-        layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addWidget(empty_label)
         layout.addStretch()
 
     def create_appointment_card(self, appointment):

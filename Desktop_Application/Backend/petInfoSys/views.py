@@ -300,22 +300,22 @@ class ScheduledServiceListView(generics.ListAPIView):
         return queryset
 
 
+
 class WalkInListCreateView(generics.ListCreateAPIView):
     serializer_class = WalkInSerializer
     pagination_class = StandardPagination
 
     def get_queryset(self):
         today = date.today()
-
-        # Start with a base queryset, ordered by date
+        # Base queryset ordered (most recent first)
         queryset = WalkInAppointment.objects.all().order_by('-date', '-prefTime')
 
-        # Filter by status if the 'status' query parameter is provided
+        # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
 
-        # Auto-update status to overdue if needed
+        # Auto-update status to overdue where necessary (operate on the filtered queryset)
         for appt in queryset:
             if appt.status not in ["completed", "cancelled", "overdue"]:
                 if appt.date < today:
@@ -325,25 +325,33 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        # Get the filtered queryset
+        """
+        Use a fresh paginator instance per request and paginate the filtered queryset.
+        This avoids stale counts coming from a different queryset and guarantees
+        pagination metadata reflects the filtered (status) set.
+        """
         queryset = self.filter_queryset(self.get_queryset())
 
-        # Check if client wants to disable pagination
+        # Allow client to disable pagination (e.g., combobox requests)
         disable_pagination = request.query_params.get('no_pagination')
         if disable_pagination:
-            self.pagination_class = None
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
 
-        # Paginate the queryset if pagination is enabled
-        if self.pagination_class is None:
-            page = queryset
-        else:
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
+        # Instantiate a fresh paginator for this request
+        paginator = self.pagination_class()
 
+        # Paginate the filtered queryset
+        page = paginator.paginate_queryset(queryset, request, view=self)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        # Fallback - non-paginated response
         serializer = self.get_serializer(queryset, many=True)
+
         return Response(serializer.data)
+
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WalkInSerializer
