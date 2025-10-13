@@ -263,8 +263,7 @@ class AddAppointmentCard(QWidget):
         try:
             # Determine which layout(s) to clear — only clear the active layout(s)
             current_layout = self.get_layout_for_status(status_filter)
-            if current_layout:
-                self.card_manager.show_loading_state(current_layout)
+
 
             # Build API URL (page + optional status)
             url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
@@ -293,14 +292,24 @@ class AddAppointmentCard(QWidget):
                 total_pages = 1
                 total_count = len(appointments)
                 current_page = page
-            print(f"[DEBUG] Status: {status_filter} | Page: {page}/{total_pages} | Total items: {total_count} | Loaded: {len(appointments)}")
+
+            print(
+                f"[DEBUG] Status: {status_filter} | Page: {page}/{total_pages} | Total items: {total_count} | Loaded: {len(appointments)}")
+
             # Update card_manager pagination state
             self.card_manager.current_appointment_page = current_page
             self.card_manager.total_appointment_pages = max(1, total_pages)
             self.card_manager.total_appointment_count = total_count
             self.card_manager.current_status_filter = status_filter
 
-            # If no appointments returned for this status → show empty state for that layout and return
+            # FIX: Clear the current layout before adding new content
+            if current_layout:
+                while current_layout.count():
+                    child = current_layout.takeAt(0)
+                    if child and child.widget():
+                        child.widget().deleteLater()
+
+            # If no appointments returned for this status → show empty state for that layout
             if not appointments:
                 if current_layout:
                     self.card_manager.show_empty_state(current_layout)
@@ -321,9 +330,8 @@ class AddAppointmentCard(QWidget):
             else:
                 # ensure any leftover pagination widget for that layout is removed/hidden
                 try:
-                    # If card_manager has a method or attribute to remove pagination for layout, call it;
-                    # otherwise rely on add_appointment_pagination_controls to handle replacement.
-                    pass
+                    if hasattr(self.card_manager, 'appointment_pagination_widget'):
+                        self.card_manager.appointment_pagination_widget.deleteLater()
                 except Exception:
                     pass
 
@@ -399,7 +407,9 @@ class AddAppointmentCard(QWidget):
             response = requests.patch(url, json={"status": "cancelled"})
             if response.status_code in [200, 202]:
                 print("Reminder marked as cancelled")
-                self.load_appointments(1, "cancelled")  # reload directly
+                toast = Toast(self.main_window, "Appointment cancelled!", icon_path="Icons/check.png")
+                toast.show_toast()
+                self.load_appointments(1, "pending")  # reload directly
             else:
                 print("Failed:", response.text)
             self.main_window.confirmCard.hide()
@@ -582,7 +592,7 @@ class AppointmentCardManager:
                     child.widget().deleteLater()
     def show_empty_state(self, layout, message="No appointments found"):
         """Show empty state message in a layout"""
-        # Remove all existing widgets
+        # Remove all existing widgets first
         while layout.count():
             child = layout.takeAt(0)
             if child and child.widget():
@@ -596,9 +606,10 @@ class AppointmentCardManager:
             padding: 80px;
         """)
 
-        # ✅ Make sure the label expands fully in the scroll area
+        # Make sure the label expands fully in the scroll area
         empty_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+        # Add some stretch to center the message vertically
         layout.addStretch()
         layout.addWidget(empty_label)
         layout.addStretch()
@@ -737,18 +748,3 @@ class AppointmentCardManager:
         # Trigger actual loading
         self.appointment_card.load_appointments(page, status_filter)
 
-    def show_loading_state(self, layout, message="Loading..."):
-        """Display a temporary loading overlay."""
-        # Don’t remove existing cards yet — just add overlay
-        loading_label = QLabel(message)
-        loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        loading_label.setStyleSheet("""
-            font: 700 14pt 'Montserrat';
-            color: rgb(120,120,120);
-            background-color: rgba(255, 255, 255, 200);
-            border-radius: 10px;
-            padding: 20px;
-        """)
-        loading_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        layout.addWidget(loading_label)
-        layout.loading_overlay = loading_label

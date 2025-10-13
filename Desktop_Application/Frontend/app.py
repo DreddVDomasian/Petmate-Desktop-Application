@@ -1119,7 +1119,7 @@ class MainUI(QMainWindow):
 
             service_card.serviceDeleteBtn.clicked.connect(lambda _, service_id=service['id']: self.deleteFunction.set_delete_target("service", service_id))
             service_card.updateServiceCardBtn.clicked.connect(lambda _, service_id=service["id"]: self.updateFunction.update_service_info(service_id))
-
+            service_card.wholeFrameCard.setGraphicsEffect(create_card_shadow())
             # Connect buttons safely
             if open_btn and close_btn and lower_frame:
                 open_btn.setVisible(True)
