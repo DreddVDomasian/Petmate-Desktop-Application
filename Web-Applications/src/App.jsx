@@ -11,8 +11,8 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Index />} />  {/* index lalabas */}
+          <Route path="/dashboard/*" element={<Dashboard />} /> {/* dashboard lalabas */}
         </Routes>
       </div>
     </Router>
