@@ -8,7 +8,7 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
   const items = [
     { id: 'addpets', label: 'Add Pets', icon: '/assets/icons/add.png', to: '/dashboard/addpets' }, /*waala pa, */ 
     { id: 'viewpets', label: 'View Pets', icon: '/assets/icons/view.png', to: '/dashboard/viewpets' }, /* yung # dyan ilalagay kung saan gusto mo papuntahin */
-    { id: 'addclient', label: 'Set Appointment', icon: '/assets/icons/appointment.png', to: '#' },
+    { id: 'setappointment', label: 'Set Appointment', icon: '/assets/icons/appointment.png', to: '/dashboard/setappointment' },
     { id: 'appointments', label: 'View Appointments', icon: '/assets/icons/view.png', to: '#' },
   ];
 

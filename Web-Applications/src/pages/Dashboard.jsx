@@ -9,7 +9,7 @@ import '../styles/Dashboard.css';
 import SideNav from '../components/navigation/SideNav';
 import AddPets from '../components/forms/AddPets';
 import ViewPets from '../components/view/ViewPets';
-
+import SetAppointment from '../components/forms/SetAppointment';
 
 
 function Dashboard() {
@@ -20,6 +20,7 @@ function Dashboard() {
                 <Routes>
                     <Route path="addpets" element={<AddPets />} />
                     <Route path="viewpets" element={<ViewPets />} />
+                    <Route path="setappointment" element={<SetAppointment />} />
                     {/* Add more routes as needed */}
                 </Routes>
             </main>
