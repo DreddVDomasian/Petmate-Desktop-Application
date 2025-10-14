@@ -15,6 +15,12 @@ from django.conf import settings
 import re
 import os
 
+from django.contrib.auth import authenticate, login as django_login, logout as django_logout, get_user_model
+from django.middleware.csrf import get_token
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework import status as drf_status
+
 
 class StandardPagination(PageNumberPagination):
     page_size = 16
@@ -177,6 +183,102 @@ def check_duplicate_patient(request):
     except Exception as e:
         print("Error checking duplicates:", e)  # will show full error in console
         return Response({"error": str(e)}, status=500)
+
+
+# -------------------- Auth endpoints (JSON + session) --------------------
+@api_view(["GET"])
+def csrf_token(request):
+    """Return a CSRF token for the frontend to use in subsequent POSTs."""
+    token = get_token(request)
+    return Response({"csrfToken": token})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_view(request):
+    """
+    Expect JSON with first_name, last_name, email, password.
+    Creates the user (username set to email), stores first/last name,
+    logs the user in (session) and returns JSON.
+    """
+    data = request.data if hasattr(request, 'data') else request.POST
+    first_name = data.get('first_name') or data.get('firstName') or ''
+    last_name = data.get('last_name') or data.get('lastName') or ''
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return Response({'error': 'Missing email or password'}, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    User = get_user_model()
+    if User.objects.filter(username=email).exists() or User.objects.filter(email=email).exists():
+        return Response({'error': 'User with this email already exists'}, status=drf_status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create_user(username=email, email=email, password=password)
+    user.first_name = first_name
+    user.last_name = last_name
+    user.save()
+
+    # Log the user in (use underlying Django request)
+    try:
+        auth_request = request._request if hasattr(request, '_request') else request
+        django_login(auth_request, user)
+    except Exception:
+        # if login fails for any reason, continue — user was created
+        pass
+
+    return Response({'ok': True, 'username': user.username}, status=drf_status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+def login_view(request):
+    """
+    POST JSON { email, password } -> authenticate and set session cookie
+    """
+    try:
+        data = request.data if hasattr(request, 'data') else request.POST
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return Response({'error': 'Missing email or password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # authenticate; use underlying WSGI request for Django auth
+        auth_request = request._request if hasattr(request, '_request') else request
+        user = authenticate(auth_request, username=email, password=password)
+        if user is None:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+        django_login(auth_request, user)
+        return Response({'ok': True, 'username': user.username})
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+def logout_view(request):
+    try:
+        auth_request = request._request if hasattr(request, '_request') else request
+        django_logout(auth_request)
+        return Response({"ok": True})
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+
+@api_view(["GET"])
+def current_user(request):
+    """Return basic info about the currently authenticated user or anonymous."""
+    if request.user.is_authenticated:
+        return Response({
+            "is_authenticated": True,
+            "username": request.user.get_username(),
+            "email": request.user.email,
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+        })
+    else:
+        return Response({"is_authenticated": False})
+
 
 
 # GET all & POST new patient

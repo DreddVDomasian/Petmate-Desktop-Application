@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-!o_*_w5caj#!(+clkyqu)+xb4juw9@3dti0m&rad7-09^k9=ym
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -142,7 +142,19 @@ CORS_ALLOWED_ORIGINS = [
     "file://",
 ]
 
+# Allow credentials so cookies (session, csrf) are accepted from the frontend dev origin
+CORS_ALLOW_CREDENTIALS = True
+
+# In dev it's okay to allow all origins but be explicit for clarity
 CORS_ALLOW_ALL_ORIGINS = True  # Only for development
+
+# Add frontend dev origins to CSRF trusted origins so Django accepts X-CSRFToken from them
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+]
 
 CORS_ALLOWED_HEADERS = [
     'accept',

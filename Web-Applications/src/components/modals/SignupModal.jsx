@@ -1,11 +1,13 @@
 import React from "react";
+import { getCookie } from "../../utils/csrf";
 
 function SignupModal({ onClose, onOpenLogin, visible }) {
   if (!visible) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const name = e.target.name.value;
+    const firstName = e.target.firstName.value;
+    const lastName = e.target.lastName.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const confirmPassword = e.target.confirmPassword.value;
@@ -15,8 +17,39 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
       return;
     }
 
-    alert("Account created successfully!");
-    onClose();
+    (async () => {
+      try {
+        const res = await fetch('/api/register/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') || ''
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password
+          })
+        });
+
+        const text = await res.text();
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (err) {
+          data = { error: text || res.statusText };
+        }
+
+        if (!res.ok) throw new Error(data.error || res.statusText || 'Register failed');
+
+        alert('Account created successfully!');
+        onClose();
+      } catch (err) {
+        alert(err.message);
+      }
+    })();
   };
 
   return (
@@ -28,9 +61,16 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
         <div className="login-container">
           <h2>Create Account</h2>
           <form id="signupForm" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="signupName">Full Name</label>
-              <input type="text" id="signupName" name="name" required />
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="signupFirstName">First Name</label>
+                <input type="text" id="signupFirstName" name="firstName" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="signupLastName">Last Name</label>
+                <input type="text" id="signupLastName" name="lastName" required />
+              </div>
             </div>
 
             <div className="form-group">

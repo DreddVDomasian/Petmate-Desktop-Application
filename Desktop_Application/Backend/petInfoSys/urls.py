@@ -30,4 +30,11 @@ urlpatterns = [
     path('appointments/<int:pk>/', AppointmentDetailView.as_view(), name='appointment-detail'),
     path('appointments/<int:pk>/statusUpdate/', update_appointment_status, name='update_appointment_status'),
 
+    # Auth endpoints for frontend (final paths: /api/csrf/, /api/register/, /api/login/, /api/logout/)
+    path('csrf/', views.csrf_token, name='api_csrf'),
+    path('register/', views.register_view, name='api_register'),
+    path('login/', views.login_view, name='api_login'),
+    path('logout/', views.logout_view, name='api_logout'),
+    path('user/', views.current_user, name='api_current_user'),
+
 ]

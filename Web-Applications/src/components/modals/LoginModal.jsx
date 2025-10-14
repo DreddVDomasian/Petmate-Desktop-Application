@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../utils/csrf";
 
 function LoginModal({ onClose, onOpenSignup, visible }) {
   const navigate = useNavigate(); // Hook for navigation
@@ -11,13 +12,40 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    if (email && password) {
-      alert("Login successful!");
-      onClose(); // Close modal
-      navigate("/dashboard"); // Redirect to dashboard page
-    } else {
+    if (!email || !password) {
       alert("Please fill in all fields");
+      return;
     }
+
+    (async () => {
+      try {
+        const res = await fetch('/api/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') || ''
+          },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        });
+
+        const text = await res.text();
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (err) {
+          // non-json response (HTML or empty), keep text in error
+          data = { error: text || res.statusText };
+        }
+
+        if (!res.ok) throw new Error(data.error || res.statusText || 'Login failed');
+
+        onClose();
+        navigate('/dashboard');
+      } catch (err) {
+        alert(err.message);
+      }
+    })();
   };
 
   return (
