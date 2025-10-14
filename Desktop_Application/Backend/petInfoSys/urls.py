@@ -21,6 +21,8 @@ urlpatterns = [
 
     path("print/<int:owner_id>/<int:pet_id>/", views.print_record, name="print_record"),
     path("reminders/", views.reminders, name="reminders"),
+    
+    
     # WEB APP URlS
     # Main booking endpoint for your HTML form
     path('bookings/', BookingCreateView.as_view(), name='create_booking'),
