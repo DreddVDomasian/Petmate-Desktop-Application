@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -3535,8 +3535,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>814</width>
-                           <height>362</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -4833,7 +4833,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
+                          <width>812</width>
                           <height>450</height>
                          </rect>
                         </property>

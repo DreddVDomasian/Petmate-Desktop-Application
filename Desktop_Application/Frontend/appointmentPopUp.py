@@ -293,8 +293,8 @@ class AddAppointmentCard(QWidget):
                 total_count = len(appointments)
                 current_page = page
 
-            print(
-                f"[DEBUG] Status: {status_filter} | Page: {page}/{total_pages} | Total items: {total_count} | Loaded: {len(appointments)}")
+            print(f"--- VARIABLE CHECK --- Type: {type(appointments)}, Value: {appointments}")
+
 
             # Update card_manager pagination state
             self.card_manager.current_appointment_page = current_page
@@ -302,7 +302,7 @@ class AddAppointmentCard(QWidget):
             self.card_manager.total_appointment_count = total_count
             self.card_manager.current_status_filter = status_filter
 
-            # FIX: Clear the current layout before adding new content
+
             if current_layout:
                 while current_layout.count():
                     child = current_layout.takeAt(0)
@@ -310,10 +310,6 @@ class AddAppointmentCard(QWidget):
                         child.widget().deleteLater()
 
 
-            if not appointments:
-                if current_layout:
-                    self.card_manager.show_empty_state(current_layout)
-                return
 
             print(f"[DEBUG] Found {len(appointments)} appointments for {status_filter}")
 
@@ -586,8 +582,8 @@ class AppointmentCardManager:
                 child = layout.takeAt(0)
                 if child and child.widget():
                     child.widget().deleteLater()
-
     def show_empty_state(self, layout, message="No appointments found"):
+
         empty_label = QLabel(message)
         empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         empty_label.setStyleSheet("""
@@ -634,7 +630,6 @@ class AppointmentCardManager:
 
         card.setGraphicsEffect(create_card_shadow())
         return card
-
     def add_appointment_pagination_controls(self, layout, status_filter=None):
         """Add pagination controls for appointments"""
         # Safely remove existing pagination widget
