@@ -144,7 +144,6 @@ class AddAppointmentCard(QWidget):
             response = requests.get("http://127.0.0.1:8000/api/patient-combobox-data/")
             if response.status_code == 200:
                 patients = response.json()  # This will be the direct list, no pagination
-
                 self.selectPatientPopUp.clear()
                 self.selectPatientPopUp.addItem("", None)
 
@@ -243,6 +242,7 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
             toast.show_toast()
             self.close()
+            self.serviceTypeComboBox.setCurrentIndex(-1)
             self.load_appointments(1, "pending")
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
@@ -279,7 +279,7 @@ class AddAppointmentCard(QWidget):
                 return
 
             data = response.json()
-            print(f"[DEBUG] API Response data: {data}")
+
             # If backend returned paginated structure, handle it; otherwise treat as list
             if isinstance(data, dict) and 'results' in data:
                 appointments = data.get('results', [])
@@ -293,7 +293,7 @@ class AddAppointmentCard(QWidget):
                 total_count = len(appointments)
                 current_page = page
 
-            print(f"--- VARIABLE CHECK --- Type: {type(appointments)}, Value: {appointments}")
+
 
 
             # Update card_manager pagination state
@@ -311,7 +311,7 @@ class AddAppointmentCard(QWidget):
 
 
 
-            print(f"[DEBUG] Found {len(appointments)} appointments for {status_filter}")
+
 
             # Create UI cards for the returned appointments and add to the current layout
             self.distribute_appointment_cards(appointments, target_layout=current_layout)
@@ -360,21 +360,10 @@ class AddAppointmentCard(QWidget):
 
         layout = map_.get(status_filter, self.pendingLayout)
 
-        # Debug: check if layout and parent are visible
-        if layout and layout.parent():
-            print(f"[DEBUG] Layout for {status_filter}: parent visible={layout.parent().isVisible()}")
+
 
         return layout
-    def show_empty_all_layouts(self):
 
-        layouts = [
-            self.pendingLayout,
-            self.completedLayout,
-            self.overdueLayout,
-            self.cancelledLayout
-        ]
-        for layout in layouts:
-            self.card_manager.show_empty_state(layout)
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
@@ -564,7 +553,7 @@ class AppointmentCardManager:
         self.current_status_filter = None
 
         self._pagination_cooldown = QTimer()
-        self._pagination_cooldown.setInterval(150)
+        self._pagination_cooldown.setInterval(300)
         self._pagination_cooldown.setSingleShot(True)
         self._can_paginate = True
 
