@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 export default function AddPets({ onSubmit }) {
-  const [form, setForm] = useState({                    /*si form sya ung variable, si setform isa syang function para magupdate si form */
+  const [form, setForm] = useState({
     name: "",
     color: "",
     breed: "",
@@ -11,6 +13,40 @@ export default function AddPets({ onSubmit }) {
     sex: "",
     remarks: "",
   });
+
+  const birthdayRef = useRef(null);     //... na nakikita ay common for copy all old properties
+
+  // Initialize Flatpickr once
+  useEffect(() => {
+    flatpickr(birthdayRef.current, {
+      dateFormat: "Y-m-d",
+      maxDate: "today", // disable future dates
+      onChange: (selectedDates) => {
+        if (selectedDates.length > 0) {
+          const birthday = selectedDates[0];
+          const age = calculateAge(birthday);
+          setForm((prev) => ({
+            ...prev,
+            birthday: birthday.toISOString().split("T")[0],
+            age: age.toString(),
+          }));
+        }
+      },
+    });
+  }, []);
+
+  // Function to compute age
+  const calculateAge = (birthday) => {
+    const today = new Date();
+    let age = today.getFullYear() - birthday.getFullYear();
+    const monthDiff = today.getMonth() - birthday.getMonth();
+    const dayDiff = today.getDate() - birthday.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+    return age >= 0 ? age : 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +58,6 @@ export default function AddPets({ onSubmit }) {
     if (onSubmit) {
       onSubmit(form);
     } else {
-      // fallback: log and clear form
       console.log("Pet form submitted:", form);
       alert("Pet details saved.");
       setForm({
@@ -90,21 +125,24 @@ export default function AddPets({ onSubmit }) {
 
       <h2>Other Information</h2>
       <div className="form-row">
+        {/* Birthday using Flatpickr */}
         <input
+          ref={birthdayRef}       // connected sa useRef() para magamit si flatpickr
           name="birthday"
-          type="date"
+          type="text"
           placeholder="Birthday"
           className="bday"
           value={form.birthday}
-          onChange={handleChange}
+          readOnly
         />
+
         <input
           name="age"
           type="text"
-          placeholder="Age (Estimated)"
+          placeholder="Age (Auto)"
           required
           value={form.age}
-          onChange={handleChange}
+          readOnly
         />
 
         <select
