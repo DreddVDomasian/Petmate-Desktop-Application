@@ -1,9 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function SideNav({ defaultActive = 'addclient', onNavigate = () => {} }) {
   const [active, setActive] = useState(defaultActive);
+  const [userFirstName, setUserFirstName] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // fetch current user info from backend
+    fetch('/api/user/', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(data => {
+        if (data && data.is_authenticated) {
+          setUserFirstName(data.first_name || data.username || '');
+        }
+      })
+      .catch(() => {
+        // ignore errors in UI; optional: setUserFirstName('Guest')
+      });
+  }, []);
 
   const items = [
     { id: 'addpets', label: 'Add Pets', icon: '/assets/icons/add.png', to: '/dashboard/addpets' }, /*waala pa, */ 
@@ -34,7 +49,7 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
       <div className="nav-header">
         <img src="/assets/hjk-removebg-preview.png" alt="user" className="nav-logo" />
         <h1>Welcome</h1>
-        <p className="welcome-text">USER HEHE</p> {/*DITO DAPAT KUNG ANONG USERNAME DAPAT LALABAS  */}
+        <p className="welcome-text">{userFirstName || 'USER'}</p> {/* shows first name when available */}
       </div>
 
       <nav className="main-nav" aria-label="Main navigation">
