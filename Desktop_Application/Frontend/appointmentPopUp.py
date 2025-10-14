@@ -11,7 +11,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton, QSizePolicy, QVBoxLayout, QScrollArea
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer
 from input_styles import *
@@ -38,6 +38,8 @@ class AddAppointmentCard(QWidget):
         # shaadow
         self.setup_input_shadow()
 
+        self.popUpDateEdit.setMinimumDate(QDate.currentDate())
+        self.popUpDateEdit.setReadOnly(True)
         self.popUpDateEdit.setDate(QDate.currentDate())
         self.popUpDateEdit.mousePressEvent = lambda event: self.on_date_field_clicked(self.popUpDateEdit)
 
@@ -50,7 +52,7 @@ class AddAppointmentCard(QWidget):
         self.load_appointments(1,"pending")
         self.setup_status_filters()
         self.web_Appointment()
-
+        self.status_filter_global = None
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
 
         if parent:
@@ -183,8 +185,8 @@ class AddAppointmentCard(QWidget):
     def setup_comboboxes(self):
         self.selectPetPopUp, self.selectPatientPopUp
         self.load_patients_to_combobox()
-        combo_boxes = [self.selectPatientPopUp,self.selectPetPopUp]
-        placeholders = ["Select Patient", "Select Pet"]
+        combo_boxes = [self.selectPatientPopUp,self.selectPetPopUp,self.serviceTypeComboBox]
+        placeholders = ["Select Patient", "Select Pet","Select Service Type"]
         for cb, text in zip(combo_boxes, placeholders):
             cb.setEditable(True)
             cb.lineEdit().setReadOnly(False)
@@ -241,7 +243,7 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
             toast.show_toast()
             self.close()
-            self.load_appointments(1, "pending")  # Refresh with first page
+            self.load_appointments(1, "pending")
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
@@ -259,12 +261,10 @@ class AddAppointmentCard(QWidget):
         for status, button in status_buttons.items():
             button.clicked.connect(lambda checked, s=status: self.load_appointments(1, s))
     def load_appointments(self, page=1, status_filter="pending"):
-        """Load appointments with pagination and filtering (frontend side)."""
         try:
-            # Determine which layout(s) to clear — only clear the active layout(s)
+
+            self.status_filter_global = status_filter
             current_layout = self.get_layout_for_status(status_filter)
-
-
             # Build API URL (page + optional status)
             url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
             if status_filter:
@@ -279,7 +279,7 @@ class AddAppointmentCard(QWidget):
                 return
 
             data = response.json()
-
+            print(f"[DEBUG] API Response data: {data}")
             # If backend returned paginated structure, handle it; otherwise treat as list
             if isinstance(data, dict) and 'results' in data:
                 appointments = data.get('results', [])
@@ -309,17 +309,13 @@ class AddAppointmentCard(QWidget):
                     if child and child.widget():
                         child.widget().deleteLater()
 
-            # If no appointments returned for this status → show empty state for that layout
+
             if not appointments:
                 if current_layout:
                     self.card_manager.show_empty_state(current_layout)
-                    # Remove pagination widget if it exists
-                if hasattr(self.card_manager, 'appointment_pagination_widget'):
-                    try:
-                        self.card_manager.appointment_pagination_widget.deleteLater()
-                    except Exception:
-                        pass
                 return
+
+            print(f"[DEBUG] Found {len(appointments)} appointments for {status_filter}")
 
             # Create UI cards for the returned appointments and add to the current layout
             self.distribute_appointment_cards(appointments, target_layout=current_layout)
@@ -346,11 +342,6 @@ class AddAppointmentCard(QWidget):
         if target_layout is None:
             target_layout = self.get_layout_for_status(None)  # default to pending layout
 
-        # Clear target layout (should already be cleared, but keep safe)
-        while target_layout.count():
-            child = target_layout.takeAt(0)
-            if child and child.widget():
-                child.widget().deleteLater()
 
         created_any = False
         for appointment in appointments:
@@ -370,9 +361,14 @@ class AddAppointmentCard(QWidget):
             "cancelled": self.cancelledLayout,
             None: self.pendingLayout  # default
         }
-        print(f"[DEBUG] show_empty_state called for: {status_filter}")
 
-        return map_.get(status_filter, self.pendingLayout)
+        layout = map_.get(status_filter, self.pendingLayout)
+
+        # Debug: check if layout and parent are visible
+        if layout and layout.parent():
+            print(f"[DEBUG] Layout for {status_filter}: parent visible={layout.parent().isVisible()}")
+
+        return layout
     def show_empty_all_layouts(self):
 
         layouts = [
@@ -409,7 +405,7 @@ class AddAppointmentCard(QWidget):
                 print("Reminder marked as cancelled")
                 toast = Toast(self.main_window, "Appointment cancelled!", icon_path="Icons/check.png")
                 toast.show_toast()
-                self.load_appointments(1, "pending")  # reload directly
+                self.load_appointments(1, self.status_filter_global)
             else:
                 print("Failed:", response.text)
             self.main_window.confirmCard.hide()
@@ -590,28 +586,20 @@ class AppointmentCardManager:
                 child = layout.takeAt(0)
                 if child and child.widget():
                     child.widget().deleteLater()
-    def show_empty_state(self, layout, message="No appointments found"):
-        """Show empty state message in a layout"""
-        # Remove all existing widgets first
-        while layout.count():
-            child = layout.takeAt(0)
-            if child and child.widget():
-                child.widget().deleteLater()
 
+    def show_empty_state(self, layout, message="No appointments found"):
         empty_label = QLabel(message)
         empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         empty_label.setStyleSheet("""
             font: 81 16pt 'Montserrat ExtraBold';
             color: rgb(168,168,168);
-            padding: 80px;
+            padding: 60px;
+            background: transparent;
         """)
-
-        # Make sure the label expands fully in the scroll area
         empty_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-        # Add some stretch to center the message vertically
         layout.addStretch()
-        layout.addWidget(empty_label)
+        layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignCenter)
         layout.addStretch()
     def create_appointment_card(self, appointment):
         """Create and configure an appointment card"""

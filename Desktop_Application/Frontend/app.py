@@ -1391,6 +1391,10 @@ class MainUI(QMainWindow):
             min_date = self.dateEdit.date().addDays(1)
             self.calendarWidget.setMinimumDate(min_date)
             self.calendarWidget.setMaximumDate(QDate(7999, 12, 31))  # some far future max
+        elif dateEdit == self.appointmentCard.popUpDateEdit:
+            # 💼 Appointment date: no past allowed
+            self.calendarWidget.setMinimumDate(QDate.currentDate())
+            self.calendarWidget.setMaximumDate(QDate(7999, 12, 31))
         else:
             self.calendarWidget.setMinimumDate(QDate(1752, 9, 14))
             self.calendarWidget.setMaximumDate(QDate(7999, 12, 31))  # default max

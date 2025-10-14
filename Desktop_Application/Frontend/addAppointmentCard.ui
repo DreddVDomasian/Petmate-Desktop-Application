@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>738</width>
-    <height>475</height>
+    <width>743</width>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -460,19 +460,14 @@ color:rgb(39, 39, 39);</string>
             <bool>false</bool>
            </property>
            <property name="currentText">
-            <string>Select Service</string>
+            <string/>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>-1</number>
            </property>
            <property name="maxVisibleItems">
             <number>10</number>
            </property>
-           <item>
-            <property name="text">
-             <string>Select Service</string>
-            </property>
-           </item>
            <item>
             <property name="text">
              <string>Vaccination</string>

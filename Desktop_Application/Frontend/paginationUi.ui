@@ -62,7 +62,7 @@ color:rgb(56, 56, 56);
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignHCenter">
        <widget class="QWidget" name="pageButtonsContainer" native="true">
         <layout class="QHBoxLayout" name="pageButtonsLayout">
          <property name="spacing">
