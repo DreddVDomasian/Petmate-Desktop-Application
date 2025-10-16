@@ -403,7 +403,6 @@ class ScheduledServiceListView(generics.ListAPIView):
         return queryset
 
 
-
 class WalkInListCreateView(generics.ListCreateAPIView):
     serializer_class = WalkInSerializer
     pagination_class = StandardPagination
@@ -418,7 +417,28 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         if status_filter:
             queryset = queryset.filter(status=status_filter)
 
-        # Auto-update status to overdue where necessary (operate on the filtered queryset)
+        # Search functionality - similar to patient search
+        search_term = self.request.query_params.get('search', '').strip()
+        if search_term:
+            # Remove extra spaces and split
+            search_terms = ' '.join(search_term.split()).split()
+
+            if search_terms:
+                query = Q()
+                for term in search_terms:
+                    # Search in owner name, pet name, and service name
+                    term_query = (
+                            Q(owner__firstName__icontains=term) |
+                            Q(owner__lastName__icontains=term) |
+                            Q(owner__middleName__icontains=term) |
+                            Q(pet__petName__icontains=term) |
+                            Q(service_name__icontains=term)
+                    )
+                    query &= term_query
+
+                queryset = queryset.filter(query)
+
+        # Auto-update status to overdue where necessary
         for appt in queryset:
             if appt.status not in ["completed", "cancelled", "overdue"]:
                 if appt.date < today:
@@ -428,27 +448,21 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-
         queryset = self.filter_queryset(self.get_queryset())
 
-        # Allow client to disable pagination (e.g., combobox requests)
+        # Allow client to disable pagination
         disable_pagination = request.query_params.get('no_pagination')
         if disable_pagination:
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
 
-        # Instantiate a fresh paginator for this request
         paginator = self.pagination_class()
-
-        # Paginate the filtered queryset
         page = paginator.paginate_queryset(queryset, request, view=self)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        # Fallback - non-paginated response
         serializer = self.get_serializer(queryset, many=True)
-
         return Response(serializer.data)
 
 

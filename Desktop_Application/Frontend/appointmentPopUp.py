@@ -49,11 +49,13 @@ class AddAppointmentCard(QWidget):
         self.addAppointmentBtn.clicked.connect(self.submit_appointment_data)
 
         # load data
-        self.load_appointments(1,"pending")
+        self.load_appointments(1,"pending", search_term=None)
         self.setup_status_filters()
         self.web_Appointment()
         self.status_filter_global = None
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
+
+        self.setup_search()
 
         if parent:
             parent.installEventFilter(self)
@@ -127,7 +129,7 @@ class AddAppointmentCard(QWidget):
         anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         anim.start()
         self.anim = anim  # Keep reference para di ma-garbage collect
-        self.load_appointments(1, "pending")
+        self.load_appointments(1, "pending", search_term=None)
     def eventFilter(self, obj, event):
         if obj == self.parent() and event.type() == event.Type.Resize:
             if self.isVisible():
@@ -243,7 +245,7 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             self.close()
             self.serviceTypeComboBox.setCurrentIndex(-1)
-            self.load_appointments(1, "pending")
+            self.load_appointments(1, "pending" ,search_term=None)
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
@@ -259,28 +261,62 @@ class AddAppointmentCard(QWidget):
         }
 
         for status, button in status_buttons.items():
-            button.clicked.connect(lambda checked, s=status: self.load_appointments(1, s))
-    def load_appointments(self, page=1, status_filter="pending"):
-        try:
+            button.clicked.connect(lambda checked, s=status: self.load_appointments(1, s,search_term=None))
 
+    def setup_search(self):
+        """Setup search functionality for appointments"""
+        # Connect search bar to search handler
+        self.main_window.searchBar_2.textEdited.connect(self.handle_appointment_search_input)
+
+        # Setup search timer for debouncing
+        self._appointment_search_timer = QTimer()
+        self._appointment_search_timer.setSingleShot(True)
+        self._appointment_search_timer.timeout.connect(self.perform_appointment_search)
+
+        # Search state variables
+        self.current_appointment_search_term = ""
+        self.is_appointment_searching = False
+
+    def handle_appointment_search_input(self, text):
+        """Handle search input with debouncing"""
+        self.current_appointment_search_term = text.strip()
+        self._appointment_search_timer.start(500)
+
+    def perform_appointment_search(self):
+        """Perform the actual search"""
+        if self.current_appointment_search_term:
+            self.is_appointment_searching = True
+            self.load_appointments(1, self.status_filter_global, self.current_appointment_search_term)
+        else:
+            # If search is empty, load normal appointment list
+            self.is_appointment_searching = False
+            self.load_appointments(1, self.status_filter_global)
+
+    def load_appointments(self, page=1, status_filter="pending", search_term=None):
+        """Updated load_appointments with search support"""
+        try:
             self.status_filter_global = status_filter
             current_layout = self.get_layout_for_status(status_filter)
-            # Build API URL (page + optional status)
+
+            # Build API URL with search term
             url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
             if status_filter:
                 url += f"&status={status_filter}"
+            if search_term:
+                import urllib.parse
+                encoded_term = urllib.parse.quote(search_term.strip())
+                url += f"&search={encoded_term}"
 
             response = requests.get(url, timeout=10)
             if response.status_code != 200:
                 print(f"Failed to load appointments: {response.status_code}")
-                # Show empty state for the active layout
                 if current_layout:
                     self.card_manager.show_empty_state(current_layout)
                 return
 
             data = response.json()
 
-            # If backend returned paginated structure, handle it; otherwise treat as list
+            # Handle paginated response
             if isinstance(data, dict) and 'results' in data:
                 appointments = data.get('results', [])
                 total_pages = data.get('total_pages', 1)
@@ -288,51 +324,42 @@ class AddAppointmentCard(QWidget):
                 current_page = data.get('current_page', page)
             else:
                 appointments = data or []
-                # No pagination meta from backend -> assume single page
                 total_pages = 1
                 total_count = len(appointments)
                 current_page = page
-
-
-
 
             # Update card_manager pagination state
             self.card_manager.current_appointment_page = current_page
             self.card_manager.total_appointment_pages = max(1, total_pages)
             self.card_manager.total_appointment_count = total_count
             self.card_manager.current_status_filter = status_filter
+            self.card_manager.current_search_term = search_term
 
-
+            # Clear current layout
             if current_layout:
                 while current_layout.count():
                     child = current_layout.takeAt(0)
                     if child and child.widget():
                         child.widget().deleteLater()
 
-
-
-
-
-            # Create UI cards for the returned appointments and add to the current layout
+            # Create UI cards
             self.distribute_appointment_cards(appointments, target_layout=current_layout)
 
-            # Add pagination controls only to the active layout and only if there's more than 1 page
+            # Add pagination controls
             if current_layout and self.card_manager.total_appointment_pages > 1:
-                self.card_manager.add_appointment_pagination_controls(current_layout, status_filter)
+                self.card_manager.add_appointment_pagination_controls(current_layout, status_filter, search_term)
             else:
-                # ensure any leftover pagination widget for that layout is removed/hidden
+                # Remove any leftover pagination widget
                 try:
                     if hasattr(self.card_manager, 'appointment_pagination_widget'):
                         self.card_manager.appointment_pagination_widget.deleteLater()
                 except Exception:
                     pass
-
         except Exception as e:
             print(f"Error loading appointments: {e}")
-            # show empty state for active layout on error
             current_layout = self.get_layout_for_status(status_filter)
             if current_layout:
-                self.card_manager.show_empty_state(current_layout)
+                self.card_manager.show_empty_state(current_layout, "Error loading appointments")
     def distribute_appointment_cards(self, appointments, target_layout=None):
         """Add appointment cards to a single target layout (the active status layout)."""
         if target_layout is None:
@@ -619,8 +646,9 @@ class AppointmentCardManager:
 
         card.setGraphicsEffect(create_card_shadow())
         return card
-    def add_appointment_pagination_controls(self, layout, status_filter=None):
-        """Add pagination controls for appointments"""
+
+    def add_appointment_pagination_controls(self, layout, status_filter=None, search_term=None):
+        """Add pagination controls for appointments with search support"""
         # Safely remove existing pagination widget
         if hasattr(self, 'appointment_pagination_widget'):
             try:
@@ -638,12 +666,12 @@ class AppointmentCardManager:
         try:
             self.appointment_pagination_widget = uic.loadUi("paginationUi.ui")
 
-            # Connect prev/next buttons with status filter
+            # Connect prev/next buttons with status filter and search term
             self.appointment_pagination_widget.PrevPage.clicked.connect(
-                partial(self.safe_paginate, self.current_appointment_page - 1, status_filter)
+                partial(self.safe_paginate, self.current_appointment_page - 1, status_filter, search_term)
             )
             self.appointment_pagination_widget.NextPage.clicked.connect(
-                partial(self.safe_paginate, self.current_appointment_page + 1, status_filter)
+                partial(self.safe_paginate, self.current_appointment_page + 1, status_filter, search_term)
             )
 
             # Set button states
@@ -651,16 +679,17 @@ class AppointmentCardManager:
             self.appointment_pagination_widget.NextPage.setEnabled(
                 self.current_appointment_page < self.total_appointment_pages)
 
-            # Create page buttons with status filter support
-            self.create_appointment_page_buttons(status_filter)
+            # Create page buttons with status filter and search support
+            self.create_appointment_page_buttons(status_filter, search_term)
 
             self.appointment_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
             layout.addWidget(self.appointment_pagination_widget)
 
         except Exception as e:
             print(f"Error creating appointment pagination: {e}")
-    def create_appointment_page_buttons(self, status_filter=None):
-        """Create page buttons for appointment pagination"""
+
+    def create_appointment_page_buttons(self, status_filter=None, search_term=None):
+        """Create page buttons for appointment pagination with search support"""
         page_layout = self.appointment_pagination_widget.pageButtonsLayout
 
         # Clear existing buttons
@@ -703,12 +732,13 @@ class AppointmentCardManager:
                 page_btn.setStyleSheet(current_pageBtn)
             else:
                 page_btn.setStyleSheet(other_pageBtn)
-                # Pass status filter when loading different pages
-                page_btn.clicked.connect(partial(self.safe_paginate, page, status_filter))
+                # Pass status filter AND search term when loading different pages
+                page_btn.clicked.connect(partial(self.safe_paginate, page, status_filter, search_term))
 
             page_layout.addWidget(page_btn)
-    def safe_paginate(self, page, status_filter):
-        """Prevent spamming pagination clicks."""
+
+    def safe_paginate(self, page, status_filter, search_term):
+        """Prevent spamming pagination clicks with search support."""
         if not self._can_paginate:
             print("[DEBUG] Pagination ignored (cooldown active)")
             return
@@ -717,6 +747,6 @@ class AppointmentCardManager:
         self._pagination_cooldown.start()
         self._pagination_cooldown.timeout.connect(lambda: setattr(self, "_can_paginate", True))
 
-        # Trigger actual loading
-        self.appointment_card.load_appointments(page, status_filter)
+        # Trigger actual loading with search term
+        self.appointment_card.load_appointments(page, status_filter, search_term)
 
