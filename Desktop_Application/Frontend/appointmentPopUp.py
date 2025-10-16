@@ -110,6 +110,10 @@ class AddAppointmentCard(QWidget):
 
         self.selectPatientPopUp.currentIndexChanged.connect(self.on_patient_selected)
 
+
+        #OTHER SHADOW
+        self.addAppointmentHeader.setGraphicsEffect(create_card_shadow(3,2,2,))
+
     #CARD POSITION LOGIC
     def show_card(self):
         if self.parent():

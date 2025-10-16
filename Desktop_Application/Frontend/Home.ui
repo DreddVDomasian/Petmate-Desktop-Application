@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -4836,7 +4836,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>80</width>
+                          <width>812</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -9857,8 +9857,8 @@ border-radius: 10px;
      <y>320</y>
     </hint>
     <hint type="destinationlabel">
-     <x>236</x>
-     <y>306</y>
+     <x>233</x>
+     <y>335</y>
     </hint>
    </hints>
   </connection>
@@ -9869,12 +9869,12 @@ border-radius: 10px;
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>319</x>
-     <y>380</y>
+     <x>389</x>
+     <y>371</y>
     </hint>
     <hint type="destinationlabel">
-     <x>239</x>
-     <y>349</y>
+     <x>233</x>
+     <y>382</y>
     </hint>
    </hints>
   </connection>
@@ -9921,8 +9921,8 @@ border-radius: 10px;
      <y>277</y>
     </hint>
     <hint type="destinationlabel">
-     <x>318</x>
-     <y>286</y>
+     <x>389</x>
+     <y>281</y>
     </hint>
    </hints>
   </connection>
@@ -9937,8 +9937,8 @@ border-radius: 10px;
      <y>325</y>
     </hint>
     <hint type="destinationlabel">
-     <x>322</x>
-     <y>337</y>
+     <x>389</x>
+     <y>326</y>
     </hint>
    </hints>
   </connection>
@@ -9953,8 +9953,8 @@ border-radius: 10px;
      <y>362</y>
     </hint>
     <hint type="destinationlabel">
-     <x>321</x>
-     <y>377</y>
+     <x>389</x>
+     <y>371</y>
     </hint>
    </hints>
   </connection>
