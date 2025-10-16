@@ -1,6 +1,12 @@
-from django.urls import path
+from django.urls import path,include
+from rest_framework.routers import DefaultRouter
 from .views import *
 from . import views
+
+# REACT NA ITO
+router = DefaultRouter()
+router.register(r'reactpets', ReactPetViewSet, basename='reactpet')
+
 
 urlpatterns = [
     path('patients/', BasicInfoListCreateView.as_view(), name='patients-list-create'),
@@ -10,6 +16,7 @@ urlpatterns = [
 
     path('pets/', PetListCreateView.as_view(), name='pets-list-create'),
     path('pets/<int:pk>/', PetRetrieveUpdateDestroyView.as_view(), name='pets-detail'),
+    #path('pets/', views.create_pet, name='api_create_pet'), # REACT ADD PETS
 
     path('services/', ServiceListCreateView.as_view(), name='services-list-create'),
     path('services/<int:pk>/', ServiceRetrieveUpdateDestroyView.as_view(), name='services-detail'),
@@ -38,5 +45,8 @@ urlpatterns = [
     path('login/', views.login_view, name='api_login'),
     path('logout/', views.logout_view, name='api_logout'),
     path('user/', views.current_user, name='api_current_user'),
+
+    # REACT ADD PETS
+    path('', include(router.urls)), #connects to the router
 
 ]

@@ -2,6 +2,8 @@ from datetime import date
 import uuid
 from django.db import models
 
+from django.contrib.auth.models import User #para sa auth_user
+
 #-----------------------------------------DESKTOP WEBSITE MODELS------------------------------
 class basicInfo(models.Model):
     firstName = models.CharField(max_length=255)
@@ -265,3 +267,22 @@ class AppointmentType(models.Model):
     def __str__(self):
         return f"{self.client.full_name} - {self.pet.pet_name} ({self.appointment_reason})"
 
+
+
+#---------------------------REACT PETS------------------------
+
+
+class ReactPet(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pets")
+    name = models.CharField(max_length=255)
+    color = models.CharField(max_length=255)
+    breed = models.CharField(max_length=255)
+    species = models.CharField(max_length=255)
+    birthday = models.DateField(null=True, blank=True)
+    age = models.CharField(max_length=50, null=True, blank=True)
+    sex = models.CharField(max_length=50)
+    remarks = models.CharField(max_length=350, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.owner.username})"
+    

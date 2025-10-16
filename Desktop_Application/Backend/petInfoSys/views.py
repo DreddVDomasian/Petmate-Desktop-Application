@@ -1,6 +1,7 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions, viewsets
 from django.db import transaction
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from datetime import date
@@ -15,10 +16,10 @@ from django.conf import settings
 import re
 import os
 
+
+
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout, get_user_model
 from django.middleware.csrf import get_token
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import AllowAny
 from rest_framework import status as drf_status
 
 
@@ -713,3 +714,16 @@ def update_appointment_status(request, pk):
             "status": "error",
             "message": str(e)
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# REACT NA ITO
+class ReactPetViewSet(viewsets.ModelViewSet): #URLS.PY
+    serializer_class = ReactPetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return ReactPet.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)

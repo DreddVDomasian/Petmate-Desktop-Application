@@ -117,3 +117,13 @@ class AppointmentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppointmentType
         fields = '__all__'
+
+
+# REACT NA ITO 
+
+class ReactPetSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = ReactPet
+        fields = '__all__'

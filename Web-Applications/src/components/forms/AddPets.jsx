@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import { getCookie } from '../../utils/csrf';
 
 export default function AddPets({ onSubmit }) {
   const [form, setForm] = useState({
@@ -53,13 +54,33 @@ export default function AddPets({ onSubmit }) {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // If parent provided onSubmit, keep that behavior
     if (onSubmit) {
       onSubmit(form);
-    } else {
-      console.log("Pet form submitted:", form);
-      alert("Pet details saved.");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/reactpets/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        credentials: 'include',
+        body: JSON.stringify(form)
+      });
+
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (err) { data = { error: text || res.statusText }; }
+
+      if (!res.ok) throw new Error(data.error || res.statusText || 'Save failed');
+
+      alert('Pet saved successfully');
       setForm({
         name: "",
         color: "",
@@ -70,6 +91,8 @@ export default function AddPets({ onSubmit }) {
         sex: "",
         remarks: "",
       });
+    } catch (err) {
+      alert(err.message);
     }
   };
 
