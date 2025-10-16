@@ -461,9 +461,7 @@ class MainUI(QMainWindow):
         #ADD PATIENT PAGE
         self.label_4.setGraphicsEffect(create_card_shadow(3,2,2,))
         self.label_15.setGraphicsEffect(create_card_shadow(3,2,2,))
-        #APPOINTMENT PAGE
-        self.walkInBtn.setGraphicsEffect(create_card_shadow())
-        self.websiteBtn.setGraphicsEffect(create_card_shadow())
+
 
     #FORM INPUT CHECKER
     def collect_and_validate_fields(self, required_fields):

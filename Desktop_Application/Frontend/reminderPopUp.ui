@@ -21,8 +21,11 @@
     <widget class="QFrame" name="remidersChecklists">
      <property name="styleSheet">
       <string notr="true">#remidersChecklists{
-	border-radius:15px;
-	background-color:rgb(255, 255, 255);
+	border-radius:15px;	background-color: qlineargradient(
+		 y1: 0, x1: 0, y2: 1, x2: 0,
+		 stop: 0 #78B3CE, 
+    	 stop: 1 #D0F0FF
+	);
 }</string>
      </property>
      <property name="frameShape">
@@ -34,6 +37,9 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item alignment="Qt::AlignTop">
        <widget class="QFrame" name="titleReminderFrame">
+        <property name="styleSheet">
+         <string notr="true">background:none;</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -102,7 +108,7 @@ color:rgb(0, 0, 0);</string>
         <property name="styleSheet">
          <string notr="true">#reminderScrollArea{
 	border:none;
-
+	background-color:transparent;
 }
 QScrollBar:vertical {
     background: transparent;
@@ -146,7 +152,7 @@ QScrollBar::groove:vertical {
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:rgb(255, 255, 255);</string>
+          <string notr="true">background-color:transparent;</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="leftMargin">
