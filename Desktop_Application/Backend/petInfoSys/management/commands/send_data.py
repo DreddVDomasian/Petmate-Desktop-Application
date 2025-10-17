@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 barangay=fake.street_name(),
                 detailedAddress=fake.street_address(),
                 email=fake.email(),
-                emergencyNumber=fake.phone_number()
+                SecondaryNumber=fake.phone_number()
             )
             owners.append(owner)
 

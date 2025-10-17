@@ -83,10 +83,6 @@ const handleSubmit = (e) => {
             </div>
 
             <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="signupEmail">Email</label>
-                  <input type="email" id="signupEmail" name="email" required />
-                </div>
 
                 <div className="form-group">
                   <label htmlFor="signupEmail">Phone number</label>
@@ -156,6 +152,11 @@ const handleSubmit = (e) => {
             <div className="form-group">
                 <label htmlFor="signupEmail">Detailed Address</label>
                 <input type="text" id="signupDetailedAdd" name="detailedAdd" placeholder="Subdivision/Ph/Blk-L/Street"  required />
+            </div>
+
+             <div className="form-group">
+                 <label htmlFor="signupEmail">Email</label>
+                 <input type="email" id="signupEmail" name="email" required />
             </div>
 
             <div className="form-row">
