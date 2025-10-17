@@ -467,13 +467,10 @@ class PetListCreateView(generics.ListCreateAPIView):
         return Pet.objects.none()
 
     def perform_create(self, serializer):
-        print(f"User authenticated: {self.request.user.is_authenticated}")
-        print(f"Request data: {self.request.data}")
 
         # For web: auto-link to user's basicInfo profile
         if self.request.user.is_authenticated:
             user_profile = basicInfo.objects.filter(user_account=self.request.user).first()
-            print(f"Web user profile: {user_profile}")
             if user_profile:
                 serializer.save(owner=user_profile)
                 return
