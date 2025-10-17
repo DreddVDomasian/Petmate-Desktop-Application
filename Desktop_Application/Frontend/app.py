@@ -198,9 +198,9 @@ class MainUI(QMainWindow):
         self.sourceBtnGroup.setExclusive(True)
         for btn in [self.walkInBtn, self.websiteBtn]:
             self.sourceBtnGroup.addButton(btn)
-        self.walkInBtn.setChecked(True)
-        self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
-        self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
+        self.websiteBtn.setChecked(True)
+        self.walkInBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(1))
+        self.websiteBtn.clicked.connect(lambda: self.walkInOrWeb.setCurrentIndex(0))
 
         # toggle walk-in status Btn
         self.pendingBtn.setCheckable(True)
