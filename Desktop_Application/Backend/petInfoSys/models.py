@@ -6,21 +6,54 @@ from django.contrib.auth.models import User #para sa auth_user
 
 #-----------------------------------------DESKTOP WEBSITE MODELS------------------------------
 class basicInfo(models.Model):
+    SOURCE_CHOICES = [
+        ('desktop', 'Desktop System'),
+        ('web', 'Website'),
+    ]
+
+    DESKTOP_RECORD_CHOICES = [
+        ('show', 'Show in Desktop Records'),
+        ('hide', 'Hide from Desktop Records'),
+    ]
+
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
     middleName = models.CharField(max_length=255, null=True, blank=True)
     phoneNumber = models.CharField(max_length=255)
+    SecondaryNumber = models.CharField(max_length=255,null=True, blank=True)
     province = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     barangay = models.CharField(max_length=255)
     detailedAddress = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
-    emergencyNumber = models.CharField(max_length=255)
     date_added = models.DateTimeField(auto_now_add=True)
+
+    # NEW FIELDS - Add these
+    source = models.CharField(max_length=20, choices=SOURCE_CHOICES, default='desktop')
+    desktop_record = models.CharField(
+        max_length=10,
+        choices=DESKTOP_RECORD_CHOICES,
+        default='show'
+    )
+    user_account = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='patient_profiles'
+    )
 
     def __str__(self):
         parts = [self.firstName, self.middleName, self.lastName]
         return " ".join(p for p in parts if p)
+
+    def save(self, *args, **kwargs):
+        # Auto-set based on source
+        if self.source == 'desktop' and not self.pk:
+            self.desktop_record = 'show'
+        elif self.source == 'web' and not self.pk:
+            self.desktop_record = 'hide'
+        super().save(*args, **kwargs)
 
 class Pet(models.Model):
     owner = models.ForeignKey(

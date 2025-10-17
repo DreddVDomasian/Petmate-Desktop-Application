@@ -76,6 +76,11 @@ input, textarea, select {
     animation: slideIn 0.3s ease-out;
 }
 
+/* resize register modal */
+.signupModal{
+    max-width: 850px;
+}
+
 /* Modal Animation */
 @keyframes slideIn {
     from {

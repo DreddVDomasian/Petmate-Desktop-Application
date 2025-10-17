@@ -380,7 +380,7 @@ class MainUI(QMainWindow):
         self.phoneNumberEdit.clear()
         self.detailedAddressEdit.clear()
         self.emailEdit.clear()
-        self.emergencyNoEdit.clear()
+        self.secondaryPhoneEdit.clear()
 
         # Reset combo boxes to first index
         self.provinceComboBox.setCurrentIndex(0)
@@ -539,11 +539,11 @@ class MainUI(QMainWindow):
             "barangay": self.barangayComboBox,
             "detailedAddress": self.detailedAddressEdit,
             "email": self.emailEdit,
-            "emergencyNumber": self.emergencyNoEdit
         }
 
         data, missing = self.collect_and_validate_fields(required_fields)
         data["middleName"] = self.middleNameEdit.text().strip() if self.middleNameEdit.text().strip() else None
+        data["SecondaryNumber"] = self.secondaryPhoneEdit.text().strip() if self.secondaryPhoneEdit.text().strip() else None
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
             toast = Toast(self, message, icon_path="Icons/warning.png")
@@ -845,7 +845,7 @@ class MainUI(QMainWindow):
 
         # Combine address parts
         address = f"{patient['barangay']}, {patient['city']}, {patient['province']}"
-        contactNumbers = f"{patient['phoneNumber']}  / {patient['emergencyNumber']}"
+        contactNumbers = f"{patient['phoneNumber']}  / {patient.get('SecondaryNumber', 'None')}"
         self.addressLabel.setText(address)
         self.detailedAddressLabel.setText(patient['detailedAddress'])
         self.phoneLabel.setText(contactNumbers)

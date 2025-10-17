@@ -229,7 +229,7 @@ body {
 }
 
 .form-row {
-    display: flex;    
+    display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;

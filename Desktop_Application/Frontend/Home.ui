@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1861,7 +1861,7 @@ QComboBox QLineEdit {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="emergencyNoEdit">
+                     <widget class="QLineEdit" name="secondaryPhoneEdit">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
@@ -1872,7 +1872,7 @@ QComboBox QLineEdit {
                        <string notr="true"/>
                       </property>
                       <property name="placeholderText">
-                       <string>Emergency no.</string>
+                       <string>Secondary Phone (optional)</string>
                       </property>
                      </widget>
                     </item>

@@ -198,37 +198,101 @@ def csrf_token(request):
 @permission_classes([AllowAny])
 def register_view(request):
     """
-    Expect JSON with first_name, last_name, email, password.
-    Creates the user (username set to email), stores first/last name,
-    logs the user in (session) and returns JSON.
+    Web client registration - creates both User account and basicInfo profile
     """
     data = request.data if hasattr(request, 'data') else request.POST
+
+    # Extract user account data
     first_name = data.get('first_name') or data.get('firstName') or ''
     last_name = data.get('last_name') or data.get('lastName') or ''
-    email = data.get('email')
+    email = data.get('email', '').strip().lower()
     password = data.get('password')
 
+    # Extract basicInfo profile data
+    middle_name = data.get('middleName') or ''
+    phone_number = data.get('phoneNum') or ''
+    secondary_number = data.get('phoneNum2') or ''  # Secondary phone as emergency number
+    province = data.get('province') or ''
+    city = data.get('city') or ''
+    barangay = data.get('barangay') or ''
+    detailed_address = data.get('detailedAdd') or ''
+
+    # Validation
     if not email or not password:
-        return Response({'error': 'Missing email or password'}, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Missing email or password'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not first_name or not last_name:
+        return Response({'error': 'First name and last name are required'}, status=status.HTTP_400_BAD_REQUEST)
 
     User = get_user_model()
     if User.objects.filter(username=email).exists() or User.objects.filter(email=email).exists():
-        return Response({'error': 'User with this email already exists'}, status=drf_status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'User with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(username=email, email=email, password=password)
-    user.first_name = first_name
-    user.last_name = last_name
-    user.save()
+    # Check if basicInfo already exists with this email
+    if basicInfo.objects.filter(email=email).exists():
+        return Response({'error': 'Patient profile with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Log the user in (use underlying Django request)
     try:
-        auth_request = request._request if hasattr(request, '_request') else request
-        django_login(auth_request, user)
-    except Exception:
-        # if login fails for any reason, continue — user was created
-        pass
+        with transaction.atomic():
+            # 1. Create User account
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password
+            )
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
 
-    return Response({'ok': True, 'username': user.username}, status=drf_status.HTTP_201_CREATED)
+            # 2. Create basicInfo profile linked to User
+            patient_profile = basicInfo.objects.create(
+                # Personal Info
+                firstName=first_name,
+                lastName=last_name,
+                middleName=middle_name if middle_name else None,
+                email=email,
+                phoneNumber=phone_number,
+                SecondaryNumber=secondary_number if secondary_number else None,
+
+                # Address Info
+                province=province,
+                city=city,
+                barangay=barangay,
+                detailedAddress=detailed_address,
+
+                # System Fields
+                source='web',
+                desktop_record='hide',  # Hidden until appointments are accepted
+                user_account=user  # Link to User account
+            )
+
+            # 3. Log the user in
+            try:
+                auth_request = request._request if hasattr(request, '_request') else request
+                django_login(auth_request, user)
+            except Exception as e:
+                print(f"Login failed but user created: {e}")
+
+            return Response({
+                'ok': True,
+                'message': 'Registration successful',
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name
+                },
+                'patient_profile': {
+                    'id': patient_profile.id,
+                    'full_name': f"{patient_profile.firstName} {patient_profile.lastName}",
+                    'desktop_record': patient_profile.desktop_record
+                }
+            }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -268,15 +332,32 @@ def logout_view(request):
 
 @api_view(["GET"])
 def current_user(request):
-    """Return basic info about the currently authenticated user or anonymous."""
+    """Return basic info about the currently authenticated user and their patient profile."""
     if request.user.is_authenticated:
-        return Response({
+        # Get the patient profile if it exists
+        patient_profile = None
+        if hasattr(request.user, 'patient_profiles'):
+            # User might have multiple profiles, get the first one
+            patient_profile = request.user.patient_profiles.first()
+
+        response_data = {
             "is_authenticated": True,
             "username": request.user.get_username(),
             "email": request.user.email,
             "first_name": request.user.first_name,
             "last_name": request.user.last_name,
-        })
+        }
+
+        if patient_profile:
+            response_data["patient_profile"] = {
+                "id": patient_profile.id,
+                "firstName": patient_profile.firstName,
+                "lastName": patient_profile.lastName,
+                "desktop_record": patient_profile.desktop_record,
+                "source": patient_profile.source
+            }
+
+        return Response(response_data)
     else:
         return Response({"is_authenticated": False})
 
@@ -284,12 +365,12 @@ def current_user(request):
 
 # GET all & POST new patient
 class BasicInfoListCreateView(generics.ListCreateAPIView):
-    queryset = basicInfo.objects.all().order_by('-id')
+    queryset = basicInfo.objects.filter(desktop_record='show').order_by('-id')
     serializer_class = BasicInfoSerializer
     pagination_class = StandardPagination
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = basicInfo.objects.filter(desktop_record='show').order_by('-id')
 
         # Check if client wants to disable pagination (for combobox)
         disable_pagination = self.request.query_params.get('no_pagination')
@@ -297,6 +378,23 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
             self.pagination_class = None
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        # Create a mutable copy of the data instead of modifying request.data directly
+        data = request.data.copy()
+
+        # Force desktop settings when creating from desktop
+        data['source'] = 'desktop'
+        data['desktop_record'] = 'show'
+        data['user_account'] = None  # No user account for desktop patients
+
+        # Pass the modified data to the serializer
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PatientSearchView(generics.ListAPIView):
@@ -306,7 +404,7 @@ class PatientSearchView(generics.ListAPIView):
     def get_queryset(self):
         search_term = self.request.query_params.get('search', '').strip()
 
-        queryset = basicInfo.objects.all().order_by('firstName')
+        queryset = basicInfo.objects.filter(desktop_record='show').order_by('firstName')
 
         if search_term:
             # Remove extra spaces and split

@@ -723,7 +723,15 @@ body {
     gap: 20px;
     margin-bottom: 25px;
 }
+.addressTitle{
+    text-align: left;
+    color: #333;
+    margin-bottom: 15px;
+    margin-top: 0;
+    font-size: 24px;
+    font-weight:700;
 
+}
 .form-group {
     flex: 1;
     display: flex;
@@ -746,7 +754,15 @@ body {
     transition: all 0.3s ease;
     background: #fff;
 }
+.addressSelect{
+    padding: 13px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: #fff;
 
+}
 .form-group input:focus, .form-group textarea:focus {
     outline: none;
     border-color: #4885CC;
