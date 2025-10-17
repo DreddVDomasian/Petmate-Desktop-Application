@@ -453,9 +453,36 @@ class PetListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         owner_id = self.request.query_params.get('owner_id')
+
+        # For desktop: filter by owner_id
         if owner_id:
             return Pet.objects.filter(owner_id=owner_id)
-        return Pet.objects.all()
+
+        # For web: get pets for logged-in user's basicInfo profile
+        if self.request.user.is_authenticated:
+            user_profile = basicInfo.objects.filter(user_account=self.request.user).first()
+            if user_profile:
+                return Pet.objects.filter(owner=user_profile)
+
+        return Pet.objects.none()
+
+    def perform_create(self, serializer):
+        print(f"User authenticated: {self.request.user.is_authenticated}")
+        print(f"Request data: {self.request.data}")
+
+        # For web: auto-link to user's basicInfo profile
+        if self.request.user.is_authenticated:
+            user_profile = basicInfo.objects.filter(user_account=self.request.user).first()
+            print(f"Web user profile: {user_profile}")
+            if user_profile:
+                serializer.save(owner=user_profile)
+                return
+            else:
+                print("No basicInfo profile found for web user")
+
+        # For desktop: use owner_id from request data
+        print("Using desktop logic - expecting owner_id in request data")
+        serializer.save()
 
 class PetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pet.objects.all()

@@ -56,7 +56,7 @@ const handleSubmit = (e) => {
 };
 
   return (
-    <div className="modal" onClick={onClose}>
+    <div className="modal">
       <div className="modal-content signupModal" onClick={(e) => e.stopPropagation()}>
         <span className="close" onClick={onClose}>
           &times;

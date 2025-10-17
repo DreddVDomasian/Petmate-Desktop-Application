@@ -14,7 +14,8 @@ class PetSerializer(serializers.ModelSerializer):
     owner_id = serializers.PrimaryKeyRelatedField(
         queryset=basicInfo.objects.all(),
         source='owner',
-        write_only=True
+        write_only=True,
+        required=False
     )
     has_reminder = serializers.SerializerMethodField()
     age = serializers.ReadOnlyField()

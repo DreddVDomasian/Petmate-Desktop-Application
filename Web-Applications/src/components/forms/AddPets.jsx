@@ -9,45 +9,62 @@ export default function AddPets({ onSubmit }) {
     color: "",
     breed: "",
     species: "",
-    birthday: "",
-    age: "",
+    birthday: "", // Stores "2025-10-09" for backend
+    age: "", // Calculated age OR manual age
     sex: "",
     remarks: "",
   });
 
-  const birthdayRef = useRef(null);     //... na nakikita ay common for copy all old properties
+  const birthdayRef = useRef(null);
+
+  // Function to calculate age like desktop (days, weeks, months, years)
+  const calculateAge = (birthday) => {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    const days = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24));
+
+    if (days < 0) return "0 days old";
+
+    if (days < 7) {
+      return `${days} day${days !== 1 ? 's' : ''} old`;
+    } else if (days < 30) {
+      const weeks = Math.floor(days / 7);
+      return `${weeks} week${weeks !== 1 ? 's' : ''} old`;
+    } else if (days < 365) {
+      const months = Math.floor(days / 30);
+      return `${months} month${months !== 1 ? 's' : ''} old`;
+    } else {
+      const years = Math.floor(days / 365);
+      return `${years} year${years !== 1 ? 's' : ''} old`;
+    }
+  };
 
   // Initialize Flatpickr once
   useEffect(() => {
     flatpickr(birthdayRef.current, {
-      dateFormat: "Y-m-d",
-      maxDate: "today", // disable future dates
+      dateFormat: "M d, Y", // Display format like "Oct 9, 2025"
+      maxDate: "today",
       onChange: (selectedDates) => {
         if (selectedDates.length > 0) {
           const birthday = selectedDates[0];
-          const age = calculateAge(birthday);
+          const calculatedAge = calculateAge(birthday);
+
           setForm((prev) => ({
             ...prev,
-            birthday: birthday.toISOString().split("T")[0],
-            age: age.toString(),
+            birthday: birthday.toISOString().split("T")[0], // "2025-10-09" for database
+            age: calculatedAge, // Auto-fill calculated age
+          }));
+        } else {
+          // Clear when no date selected
+          setForm((prev) => ({
+            ...prev,
+            birthday: "",
+            // Don't clear age - user might want to type estimated age
           }));
         }
       },
     });
   }, []);
-
-  // Function to compute age
-  const calculateAge = (birthday) => {
-    const today = new Date();
-    let age = today.getFullYear() - birthday.getFullYear();
-    const monthDiff = today.getMonth() - birthday.getMonth();
-    const dayDiff = today.getDate() - birthday.getDate();
-
-    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-      age--;
-    }
-    return age >= 0 ? age : 0;
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,15 +80,44 @@ export default function AddPets({ onSubmit }) {
       return;
     }
 
+    // Validation: Either birthday OR age must be provided
+    if (!form.birthday && !form.age.trim()) {
+      alert("Please provide either Birthday or Age");
+      return;
+    }
+
+
     try {
-      const res = await fetch('/api/reactpets/', {
+         const payload = {
+          petName: form.name,
+          petColor: form.color,
+          breed: form.breed,
+          species: form.species,
+          birthDay: form.birthday || null,
+          stored_age: form.age.trim() || null,
+          sex: form.sex,
+          remarks: form.remarks
+        };
+
+        console.log("Sending payload:", payload);
+
+      const res = await fetch('/api/pets/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCookie('csrftoken') || ''
         },
         credentials: 'include',
-        body: JSON.stringify(form)
+        body: JSON.stringify({
+          petName: form.name,
+          petColor: form.color,
+          breed: form.breed,
+          species: form.species,
+          birthDay: form.birthday || null, // Send null if empty
+          stored_age: form.age.trim() || null, // Send calculated OR manual age
+          sex: form.sex,
+          remarks: form.remarks
+        })
       });
 
       const text = await res.text();
@@ -81,6 +127,8 @@ export default function AddPets({ onSubmit }) {
       if (!res.ok) throw new Error(data.error || res.statusText || 'Save failed');
 
       alert('Pet saved successfully');
+
+      // Reset form
       setForm({
         name: "",
         color: "",
@@ -91,8 +139,14 @@ export default function AddPets({ onSubmit }) {
         sex: "",
         remarks: "",
       });
+
+      // Clear the flatpickr
+      if (birthdayRef.current && birthdayRef.current._flatpickr) {
+        birthdayRef.current._flatpickr.clear();
+      }
     } catch (err) {
-      alert(err.message);
+        console.error("Error details:", err);
+        alert(`Error: ${err.message}`);
     }
   };
 
@@ -137,9 +191,7 @@ export default function AddPets({ onSubmit }) {
           value={form.species}
           onChange={handleChange}
         >
-          <option value="" disabled>
-            Species
-          </option>
+          <option value="" disabled>Species</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>
           <option value="others">Others</option>
@@ -148,24 +200,27 @@ export default function AddPets({ onSubmit }) {
 
       <h2>Other Information</h2>
       <div className="form-row">
-        {/* Birthday using Flatpickr */}
+        {/* Birthday - Optional */}
         <input
-          ref={birthdayRef}       // connected sa useRef() para magamit si flatpickr
-          name="birthday"
+          ref={birthdayRef}
           type="text"
-          placeholder="Birthday"
+          placeholder="Birthday (Optional)"
           className="bday"
-          value={form.birthday}
+          value={form.birthday ? new Date(form.birthday).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) : ""}
           readOnly
         />
 
+        {/* Age - Auto-calculated OR manual input */}
         <input
           name="age"
           type="text"
-          placeholder="Age (Auto)"
-          required
+          placeholder="Age (Auto from birthday or type estimated)"
           value={form.age}
-          readOnly
+          onChange={handleChange}
         />
 
         <select
@@ -174,9 +229,7 @@ export default function AddPets({ onSubmit }) {
           value={form.sex}
           onChange={handleChange}
         >
-          <option value="" disabled>
-            Sex
-          </option>
+          <option value="" disabled>Sex</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>

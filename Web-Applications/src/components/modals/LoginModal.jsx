@@ -49,7 +49,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
   };
 
   return (
-    <div className="modal" onClick={onClose}>
+    <div className="modal">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <span className="close" onClick={onClose}>
           &times;
