@@ -163,7 +163,7 @@ def check_duplicate_patient(request):
                 Q(middleName__exact="")
             )
 
-        duplicates = basicInfo.objects.filter(query)
+        duplicates = basicInfo.objects.filter(query).filter(desktop_record='show')
 
         patients = []
         for patient in duplicates:
