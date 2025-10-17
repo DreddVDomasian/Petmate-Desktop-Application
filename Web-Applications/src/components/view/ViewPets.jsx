@@ -6,6 +6,8 @@ export default function ViewPets() {
   const [loading, setLoading] = useState(true);
   const [selectedPet, setSelectedPet] = useState(null);
   const [showPetModal, setShowPetModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [petToDelete, setPetToDelete] = useState(null);
 
   useEffect(() => {
     fetchUserPets();
@@ -43,10 +45,51 @@ export default function ViewPets() {
     setShowPetModal(false);
   };
 
+  const handleDeleteClick = (pet) => {
+    setPetToDelete(pet);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!petToDelete) return;
+
+    try {
+      const res = await fetch(`/api/pets/${petToDelete.id}/`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        credentials: 'include'
+      });
+
+      if (res.ok) {
+        // Remove pet from local state
+        setPets(pets.filter(pet => pet.id !== petToDelete.id));
+        alert('Pet deleted successfully!');
+
+        // Close both modals
+        setShowDeleteConfirm(false);
+        closePetModal();
+      } else {
+        throw new Error('Failed to delete pet');
+      }
+    } catch (error) {
+      console.error('Error deleting pet:', error);
+      alert('Error deleting pet. Please try again.');
+    } finally {
+      setPetToDelete(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setPetToDelete(null);
+    setShowDeleteConfirm(false);
+  };
+
   const getSpeciesIcon = (species) => {
     const speciesLower = species?.toLowerCase();
-    if (speciesLower === 'dog') return '../../../public/assets/icons/dog.png';
-    if (speciesLower === 'cat') return '../../../public/assets/icons/catIcon.png';
+    if (speciesLower === 'dog') return '/assets/icons/dog.png';
+    if (speciesLower === 'cat') return '/assets/icons/catIcon.png';
     return '/assets/icons/other-pet.png';
   };
 
@@ -131,13 +174,13 @@ export default function ViewPets() {
       {showPetModal && selectedPet && (
         <div className="modal-overlay" onClick={closePetModal}>
           <div className="pet-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                  <h2>Pet Details</h2>
-                  <button className="close-btn" onClick={closePetModal}>×</button>
-              </div>
+            <div className="modal-header">
+              <h2>Pet Details</h2>
+              <button className="close-btn" onClick={closePetModal}>×</button>
+            </div>
 
 
-              <div className="pet-profile-header">
+             <div className="pet-profile-header">
                 <img
                   src={getSpeciesIcon(selectedPet.species)}
                   alt={selectedPet.species}
@@ -147,9 +190,9 @@ export default function ViewPets() {
                   <h1>{selectedPet.petName}</h1>
                   <p className="pet-breed">{selectedPet.breed}</p>
                 </div>
-              </div>
+             </div>
 
-              <div className="details-grid">
+             <div className="details-grid">
                 <div className="detail-section">
                   <h3>Basic Information</h3>
                   <div className="detail-row">
@@ -186,16 +229,43 @@ export default function ViewPets() {
                     <p className="remarks-text">{selectedPet.remarks}</p>
                   </div>
                 )}
-              </div>
+             </div>
 
-              <div className="modal-actions">
-                <button className="DeletePetBtn">
+             <div className="modal-actions">
+                <button
+                  className="DeletePetBtn"
+                  onClick={() => handleDeleteClick(selectedPet)}
+                >
                   DELETE PET
                 </button>
                 <button className="EditPetBtn">
                   EDIT PET
                 </button>
-              </div>
+             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay" onClick={cancelDelete}>
+          <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="confirm-header">
+              <h3>Confirm Delete</h3>
+            </div>
+            <div className="confirm-content">
+              <p>Are you sure you want to delete <strong>{petToDelete?.petName}</strong>?</p>
+              <p className="warning-text">This action cannot be undone.</p>
+            </div>
+            <div className="confirm-actions">
+              <button className="cancel-btn" onClick={cancelDelete}>
+                Cancel
+              </button>
+              <button className="confirm-delete-btn" onClick={confirmDelete}>
+                Delete Pet
+              </button>
+            </div>
           </div>
         </div>
       )}
