@@ -5,12 +5,6 @@ body {
     color: #272727;
 }
 
-/* Main layout */   
-.frame {
-    display: flex;
-    height: 100vh; 
-    flex-wrap: wrap; 
-}
 
 /* Enhanced Left side navigation */
 .leftside {
@@ -164,10 +158,10 @@ body {
     background: #ff4757 !important;
     color: white !important;
     margin: 0;
-    padding: 15px 25px !important;
-    font-weight: bold !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
+    padding: 15px 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .logout:hover {
@@ -188,14 +182,6 @@ body {
     padding: 40px;
 }
 
-.logo{
-    width: 150px;
-    height: auto;  
-}
-/* Remove old button styles */
-.buttons {
-    display: none;
-}
 /* Shared form styling */
 .client-form, 
 .pet-form,
@@ -211,29 +197,6 @@ body {
     box-sizing: border-box;
     border: 1px solid #e0e0e0;
 }
-.icons {
-    display: flex;
-    gap: 5px;
-}
-
-.icons img {
-    width: 26px;
-    height: 26px;
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.icons img:hover {
-    transform: scale(1.1);
-    opacity: 0.8;
-}
-
-.form-row {
-    display: flex;    
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
-}
 
 .form-row input,
 .form-row select {
@@ -248,30 +211,6 @@ input, select {
     border-radius: 5px;
     font-size: 14px;
 }
-
-.viewpet{
-    display: flex;
-    justify-content: space-between;
-
-}
-
-.petCard{
-    border: 1px solid #dedede;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color:#272727;
-    border-radius:10px;
-    padding: 10px;
-    width: 100%;
-    height: 40px;
-    margin: 5px;
-}
-.petCard:hover{
-    background-color: #60AED0;
-    color: #fcfcfc
-}
-
 
 /* ViewPets.css */
 .view-pets-container {
@@ -600,7 +539,7 @@ input, select {
   font-size: 1.5rem;
   cursor: pointer;
   color: #666;
-  padding: 0;
+  padding-right: 5%;
   width: 30px;
   height: 30px;
   display: flex;
@@ -691,6 +630,10 @@ input, select {
     padding-bottom: 1.5rem;
     border-top: 1px solid #e1e5e9;
 }
+
+
+
+
 /*Edit modal css*/
 .form-section{
     padding-left: 2rem;
@@ -718,10 +661,6 @@ input, select {
 .DeletePetBtn,.cancel-btn {
   background: #DC5A5A;
   color: #424242;
-}
-
-.DeletePetBtn:hover,.cancel-btn:hover, {
-  background: #AA3B3B;
 }
 
 /* Delete Confirmation Modal */
@@ -786,35 +725,8 @@ input, select {
   padding: 1.5rem;
 }
 
-/* FOR MODALS (EDIT & DELETE) */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 10;
-  left: 0; 
-  top: 0;
-  width: 100%; 
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
-}
-.modal-content { 
-  background-color: white;
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-}
-.close-btn {
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.close-btn:hover {
-  color: red;
-}
+
+
 /* Buttons */
 .confirmbtn,
 .savebtn
@@ -837,72 +749,6 @@ input, select {
 
 
 /* Settings Form */
-.settings-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;   
-}
-.settings-form h2 {
-    align-self: flex-start; 
-    margin-bottom: 10px;
-    flex-direction: column;
-    color: #272727;
-}
-.settingsedit {
-    width: 90%;
-    height: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    border: 1px solid #dedede;
-    border-radius: 10px;
-    box-shadow: #4a9bbc;
-    margin: 5px;
-    cursor: pointer;
-}
-.settingsedit:hover{
-    background-color: #60AED0;
-    color: #fcfcfc
-}
-.form-edit{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.form-edit h2 {
-    font-size: 30px;
-    font-weight: 700;
-    color: #272727;
-    margin-bottom: 10px; 
-}
-.form-edit input {
-    margin: 8px;
-    padding: 10px;
-    width: 379px;  
-    border-radius: 5px;
-    border:px solid #dedede;
-}
-
-.cancelDelete{
-    width: 100%; 
-    height: 45px; 
-    font-weight: bold;     
-    font-size: 16px;   
-    color: #d3d3d3;
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 6px; 
-    cursor: pointer; 
-    background-color: #ed5252;  
-    transition: background 0.3s;
-}
-.cancelDelete:hover {
-    background-color: #d44141;
-}
 
 
 
