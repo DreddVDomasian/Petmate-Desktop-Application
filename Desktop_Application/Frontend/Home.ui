@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2710,7 +2710,7 @@ border:none;</string>
                     <string notr="true"/>
                    </property>
                    <property name="text">
-                    <string>Pending Appointments</string>
+                    <string>Appointments</string>
                    </property>
                   </widget>
                  </item>
@@ -3147,7 +3147,7 @@ QPushButton:checked {
                         <string notr="true"/>
                        </property>
                        <property name="text">
-                        <string>Pending</string>
+                        <string>Requests</string>
                        </property>
                       </widget>
                      </item>
@@ -3308,8 +3308,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>796</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -3367,8 +3367,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>796</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3876,8 +3876,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>814</width>
-                           <height>360</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="styleSheet">

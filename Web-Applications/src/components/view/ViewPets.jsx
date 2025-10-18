@@ -2,245 +2,304 @@ import React, { useState, useEffect } from 'react';
 import { getCookie } from '../../utils/csrf';
 
 export default function ViewPets() {
-  const [pets, setPets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedPet, setSelectedPet] = useState(null);
-  const [showPetModal, setShowPetModal] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [petToDelete, setPetToDelete] = useState(null);
-  const [editForm, setEditForm] = useState({
-    petName: '',
-    petColor: '',
-    breed: '',
-    species: '',
-    birthDay: '',
-    age: '',
-    sex: '',
-    remarks: ''
-  });
+    const [pets, setPets] = useState([]);
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [servicesLoading, setServicesLoading] = useState(false);
+    const [selectedPet, setSelectedPet] = useState(null);
+    const [showPetModal, setShowPetModal] = useState(false);
+    const [activeTab, setActiveTab] = useState('details'); // 'details' or 'services'
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [petToDelete, setPetToDelete] = useState(null);
+    const [editForm, setEditForm] = useState({
+        petName: '',
+        petColor: '',
+        breed: '',
+        species: '',
+        birthDay: '',
+        age: '',
+        sex: '',
+        remarks: ''
+    });
 
-  useEffect(() => {
-    fetchUserPets();
-  }, []);
+    useEffect(() => {
+        fetchUserPets();
+    }, []);
 
-  // Real-time age calculation function (same as desktop)
-  const calculateAge = (birthday) => {
-    if (!birthday) return '';
+    // Real-time age calculation function (same as desktop)
+    const calculateAge = (birthday) => {
+        if (!birthday) return '';
 
-    const today = new Date();
-    const birthDate = new Date(birthday);
-    const days = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24));
+        const today = new Date();
+        const birthDate = new Date(birthday);
+        const days = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24));
 
-    if (days < 0) return '0 days old';
+        if (days < 0) return '0 days old';
 
-    if (days < 7) {
-      return `${days} day${days !== 1 ? 's' : ''} old`;
-    } else if (days < 30) {
-      const weeks = Math.floor(days / 7);
-      return `${weeks} week${weeks !== 1 ? 's' : ''} old`;
-    } else if (days < 365) {
-      const months = Math.floor(days / 30);
-      return `${months} month${months !== 1 ? 's' : ''} old`;
-    } else {
-      const years = Math.floor(days / 365);
-      return `${years} year${years !== 1 ? 's' : ''} old`;
-    }
-  };
-
-  const fetchUserPets = async () => {
-    try {
-      const res = await fetch('/api/pets/', {
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken') || ''
+        if (days < 7) {
+            return `${days} day${days !== 1 ? 's' : ''} old`;
+        } else if (days < 30) {
+            const weeks = Math.floor(days / 7);
+            return `${weeks} week${weeks !== 1 ? 's' : ''} old`;
+        } else if (days < 365) {
+            const months = Math.floor(days / 30);
+            return `${months} month${months !== 1 ? 's' : ''} old`;
+        } else {
+            const years = Math.floor(days / 365);
+            return `${years} year${years !== 1 ? 's' : ''} old`;
         }
-      });
+    };
 
-      if (res.ok) {
-        const petsData = await res.json();
-        setPets(petsData);
-      } else {
-        console.error('Failed to fetch pets');
-      }
-    } catch (error) {
-      console.error('Error fetching pets:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchUserPets = async () => {
+        try {
+            const res = await fetch('/api/pets/', {
+                credentials: 'include',
+                headers: {
+                  'X-CSRFToken': getCookie('csrftoken') || ''
+                }
+            });
 
-  const openPetModal = (pet) => {
-    setSelectedPet(pet);
-    setShowPetModal(true);
-  };
+            if (res.ok) {
+                const petsData = await res.json();
+                setPets(petsData);
+            }
+            else {
+                console.error('Failed to fetch pets');
+            }
+        }
+        catch (error) {
+            console.error('Error fetching pets:', error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+    const fetchPetServices = async (petId) => {
+        setServicesLoading(true);
+        try {
+            const res = await fetch(`/api/services/?pet_id=${petId}`, {
+                credentials: 'include',
+                headers: {
+                  'X-CSRFToken': getCookie('csrftoken') || ''
+                }
+            });
 
-  const closePetModal = () => {
-    setSelectedPet(null);
-    setShowPetModal(false);
-  };
+            if (res.ok) {
+                const servicesData = await res.json();
+                setServices(servicesData);
+            } else {
+                console.error('Failed to fetch services');
+                setServices([]);
+            }
+        } catch (error) {
+            console.error('Error fetching services:', error);
+            setServices([]);
+        } finally {
+            setServicesLoading(false);
+        }
+    };
 
-  const openEditModal = (pet) => {
-    setEditForm({
-      petName: pet.petName || '',
-      petColor: pet.petColor || '',
-      breed: pet.breed || '',
-      species: pet.species || '',
-      birthDay: pet.birthDay || '',
-      age: pet.age || '',
-      sex: pet.sex || '',
-      remarks: pet.remarks || ''
-    });
-    setShowEditModal(true);
-    setShowPetModal(false);
-  };
+    const openPetModal = (pet) => {
+        setSelectedPet(pet);
+        setShowPetModal(true);
+        setActiveTab('details');
+        // Pre-fetch services for this pet
+        fetchPetServices(pet.id);
+    };
 
-  const closeEditModal = () => {
-    setShowEditModal(false);
-    setEditForm({
-      petName: '',
-      petColor: '',
-      breed: '',
-      species: '',
-      birthDay: '',
-      age: '',
-      sex: '',
-      remarks: ''
-    });
-  };
+    const closePetModal = () => {
+        setSelectedPet(null);
+        setShowPetModal(false);
+        setServices([]);
+    };
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+        // If switching to services tab and services aren't loaded yet, fetch them
+        if (tab === 'services' && selectedPet && services.length === 0) {
+            fetchPetServices(selectedPet.id);
+        }
+    };
 
-    setEditForm(prev => {
-      const updatedForm = {
-        ...prev,
-        [name]: value
-      };
+    const openEditModal = (pet) => {
+        setEditForm({
+            petName: pet.petName || '',
+            petColor: pet.petColor || '',
+            breed: pet.breed || '',
+            species: pet.species || '',
+            birthDay: pet.birthDay || '',
+            age: pet.age || '',
+            sex: pet.sex || '',
+            remarks: pet.remarks || ''
+        });
+        setShowEditModal(true);
+        setShowPetModal(false);
+    };
 
-      // Real-time age calculation when birthday changes
-      if (name === 'birthDay' && value) {
-        updatedForm.age = calculateAge(value);
-      }
+    const closeEditModal = () => {
+        setShowEditModal(false);
+        setEditForm({
+          petName: '',
+          petColor: '',
+          breed: '',
+          species: '',
+          birthDay: '',
+          age: '',
+          sex: '',
+          remarks: ''
+        });
+    };
 
-      return updatedForm;
-    });
-  };
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
 
-  const handleAgeChange = (e) => {
-    const { value } = e.target;
+        setEditForm(prev => {
+            const updatedForm = {
+                ...prev,
+                [name]: value
+            };
 
-    // If user manually types in age, clear the birthday
-    setEditForm(prev => ({
-      ...prev,
-      age: value,
-      birthDay: value ? '' : prev.birthDay // Clear birthday if age is manually entered
-    }));
-  };
+            // Real-time age calculation when birthday changes
+            if (name === 'birthDay' && value) {
+                updatedForm.age = calculateAge(value);
+            }
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
+            return updatedForm;
+        });
+    };
 
-    if (!selectedPet) return;
+    const handleAgeChange = (e) => {
+        const { value } = e.target;
 
-    try {
-      const res = await fetch(`/api/pets/${selectedPet.id}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken') || ''
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          ...editForm,
-          // Ensure stored_age is only sent if no birthday
-          stored_age: editForm.birthDay ? null : (editForm.age || null)
-        })
-      });
+        // If user manually types in age, clear the birthday
+        setEditForm(prev => ({
+            ...prev,
+            age: value,
+            birthDay: value ? '' : prev.birthDay // Clear birthday if age is manually entered
+        }));
+    };
 
-      if (res.ok) {
-        const updatedPet = await res.json();
-        // Update the pet in local state
-        setPets(pets.map(pet =>
-          pet.id === selectedPet.id ? updatedPet : pet
-        ));
-        alert('Pet updated successfully!');
-        closeEditModal();
-        closePetModal();
-      } else {
-        throw new Error('Failed to update pet');
-      }
-    } catch (error) {
-      console.error('Error updating pet:', error);
-      alert('Error updating pet. Please try again.');
-    }
-  };
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
 
-  const handleDeleteClick = (pet) => {
-    setPetToDelete(pet);
-    setShowDeleteConfirm(true);
-  };
+        if (!selectedPet) return;
 
-  const confirmDelete = async () => {
-    if (!petToDelete) return;
+        try {
+            const res = await fetch(`/api/pets/${selectedPet.id}/`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': getCookie('csrftoken') || ''
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                  ...editForm,
+                  // Ensure stored_age is only sent if no birthday
+                  stored_age: editForm.birthDay ? null : (editForm.age || null)
+                })
+            });
 
-    try {
-      const res = await fetch(`/api/pets/${petToDelete.id}/`, {
-        method: 'DELETE',
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken') || ''
-        },
-        credentials: 'include'
-      });
+            if (res.ok) {
+                const updatedPet = await res.json();
+                // Update the pet in local state
+                setPets(pets.map(pet =>
+                  pet.id === selectedPet.id ? updatedPet : pet
+                ));
+                alert('Pet updated successfully!');
+                closeEditModal();
+                closePetModal();
+            } else {
+                throw new Error('Failed to update pet');
+            }
+        }
+        catch (error) {
+            console.error('Error updating pet:', error);
+            alert('Error updating pet. Please try again.');
+        }
+    };
 
-      if (res.ok) {
-        // Remove pet from local state
-        setPets(pets.filter(pet => pet.id !== petToDelete.id));
-        alert('Pet deleted successfully!');
+    const handleDeleteClick = (pet) => {
+        setPetToDelete(pet);
+        setShowDeleteConfirm(true);
+    };
 
-        // Close both modals
+    const confirmDelete = async () => {
+        if (!petToDelete) return;
+
+        try {
+            const res = await fetch(`/api/pets/${petToDelete.id}/`, {
+                method: 'DELETE',
+                headers: {
+                  'X-CSRFToken': getCookie('csrftoken') || ''
+                },
+                credentials: 'include'
+            });
+
+            if (res.ok) {
+                // Remove pet from local state
+                setPets(pets.filter(pet => pet.id !== petToDelete.id));
+                alert('Pet deleted successfully!');
+
+                // Close both modals
+                setShowDeleteConfirm(false);
+                closePetModal();
+            }
+            else {
+                throw new Error('Failed to delete pet');
+            }
+        }
+        catch (error) {
+            console.error('Error deleting pet:', error);
+            alert('Error deleting pet. Please try again.');
+        }
+        finally {
+            setPetToDelete(null);
+        }
+    };
+
+    const cancelDelete = () => {
+        setPetToDelete(null);
         setShowDeleteConfirm(false);
-        closePetModal();
-      } else {
-        throw new Error('Failed to delete pet');
-      }
-    } catch (error) {
-      console.error('Error deleting pet:', error);
-      alert('Error deleting pet. Please try again.');
-    } finally {
-      setPetToDelete(null);
+    };
+
+    const getSpeciesIcon = (species) => {
+        const speciesLower = species?.toLowerCase();
+        if (speciesLower === 'dog') return '/assets/icons/dog.png';
+        if (speciesLower === 'cat') return '/assets/icons/catIcon.png';
+        return '/assets/icons/otherSpecies.png';
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Unknown';
+        const date = new Date(dateString);
+
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    };
+
+    const getStatusBadge = (status) => {
+        const statusConfig = {
+            'pending': { class: 'status-pending', text: 'Pending' },
+            'completed': { class: 'status-completed', text: 'Completed' },
+            'overdue': { class: 'status-overdue', text: 'Overdue' },
+            'cancelled': { class: 'status-cancelled', text: 'Cancelled' }
+        };
+
+        const config = statusConfig[status] || { class: 'status-pending', text: status };
+        return <span className={`status-badge ${config.class}`}>{config.text}</span>;
+    };
+
+    if (loading) {
+        return (
+            <div className="view-pets-container">
+                <div className="loading">Loading pets...</div>
+            </div>
+        );
     }
-  };
-
-  const cancelDelete = () => {
-    setPetToDelete(null);
-    setShowDeleteConfirm(false);
-  };
-
-  const getSpeciesIcon = (species) => {
-    const speciesLower = species?.toLowerCase();
-    if (speciesLower === 'dog') return '/assets/icons/dog.png';
-    if (speciesLower === 'cat') return '/assets/icons/catIcon.png';
-    return '/assets/icons/other-pet.png';
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="view-pets-container">
-        <div className="loading">Loading pets...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="view-pets-container">
@@ -301,80 +360,135 @@ export default function ViewPets() {
         </div>
       )}
 
-      {/* Pet Detail Modal */}
+
       {showPetModal && selectedPet && (
         <div className="modal-overlay" onClick={closePetModal}>
           <div className="pet-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Pet Details</h2>
+               <div className="modal-tabs">
+                   <button
+                        className={`tab ${activeTab === 'details' ? 'active' : ''}`}
+                        onClick={() => handleTabClick('details')}
+                        > Details
+                    </button>
+                   <button
+                       className={`tab ${activeTab === 'services' ? 'active' : ''}`}
+                       onClick={() => handleTabClick('services')}
+                       >Service History
+                   </button>
+               </div>
               <button className="close-btn" onClick={closePetModal}>×</button>
             </div>
+            {activeTab === 'details' &&(
+                <div className="details-container">
+                    <div className="pet-profile-header">
+                        <img
+                        src={getSpeciesIcon(selectedPet.species)}
+                        alt={selectedPet.species}
+                        className="profile-pet-icon"
+                        />
+                        <div className="pet-profile-info">
+                            <h1>{selectedPet.petName}</h1>
+                            <p className="pet-breed">{selectedPet.breed}</p>
+                        </div>
+                    </div>
 
-            <div className="pet-profile-header">
-              <img
-                src={getSpeciesIcon(selectedPet.species)}
-                alt={selectedPet.species}
-                className="profile-pet-icon"
-              />
-              <div className="pet-profile-info">
-                <h1>{selectedPet.petName}</h1>
-                <p className="pet-breed">{selectedPet.breed}</p>
-              </div>
-            </div>
+                    <div className="details-grid">
+                        <div className="detail-section">
+                            <h3>Basic Information</h3>
+                            <div className="detail-row">
+                                <span className="detail-label">Species:</span>
+                                <span className="detail-value">{selectedPet.species}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span className="detail-label">Color:</span>
+                                <span className="detail-value">{selectedPet.petColor}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span className="detail-label">Sex:</span>
+                                <span className="detail-value">{selectedPet.sex}</span>
+                            </div>
+                        </div>
 
-            <div className="details-grid">
-              <div className="detail-section">
-                <h3>Basic Information</h3>
-                <div className="detail-row">
-                  <span className="detail-label">Species:</span>
-                  <span className="detail-value">{selectedPet.species}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-label">Color:</span>
-                  <span className="detail-value">{selectedPet.petColor}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-label">Sex:</span>
-                  <span className="detail-value">{selectedPet.sex}</span>
-                </div>
-              </div>
+                        <div className="detail-section">
+                            <h3>Age Information</h3>
+                                <div className="detail-row">
+                                <span className="detail-label">Birthday:</span>
+                                <span className="detail-value">
+                                {selectedPet.birthDay ? formatDate(selectedPet.birthDay) : 'Not specified'}
+                                </span>
+                            </div>
 
-              <div className="detail-section">
-                <h3>Age Information</h3>
-                <div className="detail-row">
-                  <span className="detail-label">Birthday:</span>
-                  <span className="detail-value">
-                    {selectedPet.birthDay ? formatDate(selectedPet.birthDay) : 'Not specified'}
-                  </span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-label">Age:</span>
-                  <span className="detail-value">{selectedPet.age || 'Unknown'}</span>
-                </div>
-              </div>
+                            <div className="detail-row">
+                                <span className="detail-label">Age:</span>
+                                <span className="detail-value">{selectedPet.age || 'Unknown'}</span>
+                            </div>
+                        </div>
 
-              {selectedPet.remarks && (
-                <div className="detail-section">
-                  <h3>Remarks</h3>
-                  <p className="remarks-text">{selectedPet.remarks}</p>
-                </div>
-              )}
-            </div>
+                        {selectedPet.remarks && (
+                        <div className="detail-section">
+                            <h3>Remarks</h3>
+                            <p className="remarks-text">{selectedPet.remarks}</p>
+                        </div>
+                        )}
+                    </div>
 
-            <div className="modal-actions">
-              <button
-                className="DeletePetBtn"
-                onClick={() => handleDeleteClick(selectedPet)}
-              >
-                DELETE PET
-              </button>
-              <button
-                className="EditPetBtn"
-                onClick={() => openEditModal(selectedPet)}
-              >
-                EDIT PET
-              </button>
-            </div>
+                    <div className="modal-actions">
+                        <button
+                            className="DeletePetBtn"
+                            onClick={() => handleDeleteClick(selectedPet)}
+                            >DELETE PET
+                        </button>
+
+                        <button
+                            className="EditPetBtn"
+                            onClick={() => openEditModal(selectedPet)}
+                            >EDIT PET
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {activeTab === 'services' && (
+                <div className="services-container">
+                    <div className="services-header">
+                        <h3>Service History for {selectedPet.petName}</h3>
+                        <p>All medical services and appointments</p>
+                    </div>
+
+                    {servicesLoading ? (
+                        <div className="loading">Loading services...</div>
+                    ) : services.length === 0 ? (
+                        <div className="empty-services">
+                            <img src="/assets/icons/no-services.png" alt="No services" className="empty-icon" />
+                            <h4>No Services Yet</h4>
+                            <p>No service history found for this pet</p>
+                        </div>
+                    ) : (
+                        <div className="services-list">
+                            {services.map(service => (
+                                <div key={service.id} className="service-item">
+                                    <div className="service-main">
+                                        <div className="service-type">{service.service_type}</div>
+                                        <div className="service-date">{formatDate(service.date)}</div>
+                                        {getStatusBadge(service.status)}
+                                    </div>
+                                    {service.return_date && (
+                                        <div className="service-return">
+                                            Return: {formatDate(service.return_date)}
+                                        </div>
+                                    )}
+                                    {service.notes && (
+                                        <div className="service-notes">
+                                            <strong>Notes:</strong> {service.notes}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
           </div>
         </div>
       )}

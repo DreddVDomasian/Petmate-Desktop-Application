@@ -498,11 +498,16 @@ class ServiceListCreateView(generics.ListCreateAPIView):
         if pet_id:
             services = services.filter(pet_id=pet_id)
 
-        # 🔄 Auto-update status to overdue if needed
+        # 🔄 Auto-update status based on return_date logic
         for svc in services:
-            if svc.status not in ["completed", "cancelled"]:
-                if svc.return_date and svc.return_date < today and svc.status != "overdue":
-                    svc.status = "overdue"
+            if svc.return_date:  # Only check status for services with return dates
+                if svc.status not in ["completed", "cancelled"]:
+                    if svc.return_date < today and svc.status != "overdue":
+                        svc.status = "overdue"
+                        svc.save(update_fields=["status"])
+            else:  # No return date = one-time service, auto-complete
+                if svc.status != "completed":
+                    svc.status = "completed"
                     svc.save(update_fields=["status"])
 
         return services.order_by("date")
