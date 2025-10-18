@@ -202,16 +202,11 @@ export default function AddPets({ onSubmit }) {
       <div className="form-row">
         {/* Birthday - Optional */}
         <input
-          ref={birthdayRef}
-          type="text"
-          placeholder="Birthday (Optional)"
-          className="bday"
-          value={form.birthday ? new Date(form.birthday).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }) : ""}
-          readOnly
+            ref={birthdayRef}
+            type="text"
+            placeholder="Birthday (Optional)"
+            className="bday"
+            readOnly
         />
 
         {/* Age - Auto-calculated OR manual input */}
