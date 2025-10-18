@@ -47,30 +47,41 @@ export default function SetAppointment() {
 
   // ✅ Date & time pickers
   useEffect(() => {
+    // Date Picker
     flatpickr(dateRef.current, {
-      dateFormat: "Y-m-d", // Change to match Django format
+      dateFormat: "M d, Y",
       minDate: "today",
-      onChange: (dates) => {
-        if (dates.length > 0) {
-          const date = dates[0].toISOString().split("T")[0]; // YYYY-MM-DD
-          setForm((prev) => ({ ...prev, preferredDate: date }));
+      onChange: (selectedDates) => {
+        if (selectedDates.length > 0) {
+          const date = selectedDates[0];
+          setForm((prev) => ({
+            ...prev,
+            preferredDate: date.toISOString().split("T")[0],
+          }));
         }
       },
     });
 
     flatpickr(timeRef.current, {
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: "H:i:S", // Change to 24-hour format for Django
-      time_24hr: true,
-      onChange: (dates) => {
-        if (dates.length > 0) {
-          const time = dates[0].toISOString().split("T")[1].split(".")[0]; // HH:MM:SS
-          setForm((prev) => ({ ...prev, preferredTime: time }));
-        }
-      },
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "h:i K",
+        time_24hr: false,
+        onChange: (selectedDates) => {
+            if (selectedDates.length > 0) {
+                const time = selectedDates[0];
+                const formattedTime = time.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                });
+                setForm((prev) => ({
+                    ...prev,
+                    preferredTime: formattedTime,
+                }));
+            }
+        },
     });
-  }, []);
+    }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
