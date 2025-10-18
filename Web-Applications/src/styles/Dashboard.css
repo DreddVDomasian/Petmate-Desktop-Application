@@ -185,7 +185,7 @@ body {
     flex: 1;
     overflow-y: auto;
     background: #f8f9fa;
-    padding: 20px;
+    padding: 40px;
 }
 
 .logo{
@@ -229,7 +229,7 @@ body {
 }
 
 .form-row {
-    display: flex;
+    display: flex;    
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;
@@ -248,10 +248,7 @@ input, select {
     border-radius: 5px;
     font-size: 14px;
 }
-.form-group select {
-    border: 2px solid #D9D9D9;
-    border-radius: 10px;
-}
+
 .viewpet{
     display: flex;
     justify-content: space-between;
@@ -274,124 +271,6 @@ input, select {
     background-color: #60AED0;
     color: #fcfcfc
 }
-/* FOR MODALS (EDIT & DELETE) */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 10;
-  left: 0; 
-  top: 0;
-  width: 100%; 
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
-}
-.modal-content {
-  background-color: white;
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-}
-.close-btn {
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.close-btn:hover {
-  color: red;
-}
-/* Buttons */
-.confirmbtn,
-.savebtn
-{
-    width: 100%; 
-    height: 45px; 
-    font-weight: bold;     
-    font-size: 16px;   
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 6px; 
-    cursor: pointer; 
-    background-color: #60AED0;  
-    transition: background 0.3s;
-}
-.savebtn:hover,.confirmbtn:hover {
-    background-color: #4a9bbc;
-}
-
-
-/* Settings Form */
-.settings-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;   
-}
-.settings-form h2 {
-    align-self: flex-start; 
-    margin-bottom: 10px;
-    flex-direction: column;
-    color: #272727;
-}
-.settingsedit {
-    width: 90%;
-    height: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    border: 1px solid #dedede;
-    border-radius: 10px;
-    box-shadow: #4a9bbc;
-    margin: 5px;
-    cursor: pointer;
-}
-.settingsedit:hover{
-    background-color: #60AED0;
-    color: #fcfcfc
-}
-.form-edit{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.form-edit h2 {
-    font-size: 30px;
-    font-weight: 700;
-    color: #272727;
-    margin-bottom: 10px; 
-}
-.form-edit input {
-    margin: 8px;
-    padding: 10px;
-    width: 379px;  
-    border-radius: 5px;
-    border:px solid #dedede;
-}
-
-.cancelDelete{
-    width: 100%; 
-    height: 45px; 
-    font-weight: bold;     
-    font-size: 16px;   
-    color: #d3d3d3;
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 6px; 
-    cursor: pointer; 
-    background-color: #ed5252;  
-    transition: background 0.3s;
-}
-.cancelDelete:hover {
-    background-color: #d44141;
-}
-
 
 
 /* ViewPets.css */
@@ -845,28 +724,6 @@ input, select {
   background: #AA3B3B;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-
-
-  .pets-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
-
-  .pet-profile-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .profile-pet-icon {
-    margin-right: 0;
-    margin-bottom: 1rem;
-  }
-}
 /* Delete Confirmation Modal */
 .confirm-modal {
   background: white;
@@ -929,37 +786,132 @@ input, select {
   padding: 1.5rem;
 }
 
-
-
-
-
-
-
-
-
-
-
-/* Responsive */
-@media (max-width: 768px) {
-    .frame {
-        flex-direction: column;
-        height: auto;
-    }
-    .leftside {
-        min-height: auto;
-        width: 100%;
-        align-items: start;
-        text-align: center;
-    }
-    .rightside {
-        width: 100%;
-        padding: 20px;
-    }
-    .client-form, .pet-form {
-        width: 100%;
-        max-width: 100%;
-    }
-    .form-row {
-        flex-direction: column;
-    }
+/* FOR MODALS (EDIT & DELETE) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0; 
+  top: 0;
+  width: 100%; 
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
 }
+.modal-content { 
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.close-btn {
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close-btn:hover {
+  color: red;
+}
+/* Buttons */
+.confirmbtn,
+.savebtn
+{
+    width: 100%; 
+    height: 45px; 
+    font-weight: bold;     
+    font-size: 16px;   
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 6px; 
+    cursor: pointer; 
+    background-color: #60AED0;  
+    transition: background 0.3s;
+}
+.savebtn:hover,.confirmbtn:hover {
+    background-color: #4a9bbc;
+}
+
+
+/* Settings Form */
+.settings-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+}
+.settings-form h2 {
+    align-self: flex-start; 
+    margin-bottom: 10px;
+    flex-direction: column;
+    color: #272727;
+}
+.settingsedit {
+    width: 90%;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    border: 1px solid #dedede;
+    border-radius: 10px;
+    box-shadow: #4a9bbc;
+    margin: 5px;
+    cursor: pointer;
+}
+.settingsedit:hover{
+    background-color: #60AED0;
+    color: #fcfcfc
+}
+.form-edit{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-edit h2 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #272727;
+    margin-bottom: 10px; 
+}
+.form-edit input {
+    margin: 8px;
+    padding: 10px;
+    width: 379px;  
+    border-radius: 5px;
+    border:px solid #dedede;
+}
+
+.cancelDelete{
+    width: 100%; 
+    height: 45px; 
+    font-weight: bold;     
+    font-size: 16px;   
+    color: #d3d3d3;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px; 
+    cursor: pointer; 
+    background-color: #ed5252;  
+    transition: background 0.3s;
+}
+.cancelDelete:hover {
+    background-color: #d44141;
+}
+
+
+
+
+
+
+
+
+
+
+
+
