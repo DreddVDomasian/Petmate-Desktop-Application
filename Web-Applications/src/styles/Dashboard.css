@@ -248,7 +248,10 @@ input, select {
     border-radius: 5px;
     font-size: 14px;
 }
-
+.form-group select {
+    border: 2px solid #D9D9D9;
+    border-radius: 10px;
+}
 .viewpet{
     display: flex;
     justify-content: space-between;
@@ -388,6 +391,8 @@ input, select {
 .cancelDelete:hover {
     background-color: #d44141;
 }
+
+
 
 /* ViewPets.css */
 .view-pets-container {
@@ -625,7 +630,6 @@ input, select {
 .detail-value {
   color: #333;
 }
-
 .remarks-text {
   background: #f8f9fa;
   padding: 1rem;
@@ -635,17 +639,22 @@ input, select {
 }
 
 .modal-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  padding-right: 2rem;
-  padding-bottom: 1.5rem;
-  border-top: 1px solid #e1e5e9;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    padding-right: 2rem;
+    padding-bottom: 1.5rem;
+    border-top: 1px solid #e1e5e9;
+}
+/*Edit modal css*/
+.form-section{
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
-.EditPetBtn, .DeletePetBtn {
+.EditPetBtn, .DeletePetBtn,.cancel-btn,.save-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 6px;
@@ -654,21 +663,21 @@ input, select {
   transition: background-color 0.2s;
 }
 
-.EditPetBtn {
+.EditPetBtn,.save-btn {
   background: #FFC86F;
   color: #424242;
 }
 
-.EditPetBtn:hover {
+.EditPetBtn:hover,.save-btn:hover {
   background: #DFA954;
 }
 
-.DeletePetBtn {
+.DeletePetBtn,.cancel-btn {
   background: #DC5A5A;
   color: #424242;
 }
 
-.DeletePetBtn:hover {
+.DeletePetBtn:hover,.cancel-btn:hover, {
   background: #AA3B3B;
 }
 
@@ -696,13 +705,6 @@ input, select {
     margin-bottom: 1rem;
   }
 }
-
-
-
-
-
-
-
 /* Delete Confirmation Modal */
 .confirm-modal {
   background: white;
@@ -744,20 +746,6 @@ input, select {
   border-top: 1px solid #e1e5e9;
 }
 
-.cancel-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid #6c757d;
-  background: white;
-  color: #6c757d;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.cancel-btn:hover {
-  background: #f8f9fa;
-}
 
 .confirm-delete-btn {
   flex: 1;

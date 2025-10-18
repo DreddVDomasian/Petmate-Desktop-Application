@@ -432,7 +432,7 @@ export default function ViewPets() {
                       onChange={handleEditChange}
                       required
                     >
-                      <option value="">Select Species</option>
+                      <option value="" disabled>Select Species</option>
                       <option value="dog">Dog</option>
                       <option value="cat">Cat</option>
                       <option value="others">Others</option>
