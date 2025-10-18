@@ -433,7 +433,7 @@ class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['GET'])
 def patient_combobox_data(request):
-    patients = basicInfo.objects.all().order_by('-id')
+    patients = basicInfo.objects.filter(desktop_record="show").order_by('-id')
 
     patient_data = []
     for patient in patients:
@@ -536,10 +536,15 @@ class WalkInListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         today = date.today()
-        # Base queryset ordered (most recent first)
-        queryset = WalkInAppointment.objects.all().order_by('-date', '-prefTime')
+        # Base queryset - show accepted by default, but allow filtering by request
+        queryset = WalkInAppointment.objects.filter(request='accepted').order_by('-date', '-prefTime')
 
-        # Filter by status if provided
+        # Filter by request status if provided
+        request_filter = self.request.query_params.get('request', None)
+        if request_filter:
+            queryset = WalkInAppointment.objects.filter(request=request_filter).order_by('-date', '-prefTime')
+
+        # Rest of your existing code remains the same...
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
@@ -574,24 +579,14 @@ class WalkInListCreateView(generics.ListCreateAPIView):
 
         return queryset
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        # Allow client to disable pagination
-        disable_pagination = request.query_params.get('no_pagination')
-        if disable_pagination:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-
-        paginator = self.pagination_class()
-        page = paginator.paginate_queryset(queryset, request, view=self)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
+    def perform_create(self, serializer):
+        # For web appointments, set request to 'pending'
+        if self.request.user.is_authenticated:
+            # This is a web user, set request to pending for admin review
+            serializer.save(request='pending', status='pending')
+        else:
+            # This is desktop, set request to accepted (auto-approved)
+            serializer.save(request='accepted')
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WalkInSerializer

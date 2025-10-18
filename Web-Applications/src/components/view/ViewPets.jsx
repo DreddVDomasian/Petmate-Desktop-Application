@@ -310,7 +310,7 @@ export default function ViewPets() {
 
       {pets.length === 0 ? (
         <div className="empty-state">
-          <img src="/assets/icons/no-pets.png" alt="No pets" className="empty-icon" />
+          <img src="/assets/icons/dog-walking.gif" alt="No pets" className="empty-icon" />
           <h3>No Pets Yet</h3>
           <p>Add your first pet to get started</p>
         </div>

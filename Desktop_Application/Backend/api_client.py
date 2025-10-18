@@ -66,6 +66,18 @@ def add_new_service(data):
         print("Error:", e)
         return False
 
+
 def add_new_appointment(data):
-    response = requests.post("http://127.0.0.1:8000/api/walkIn/", json=data)
-    return response.status_code == 201
+    try:
+        response = requests.post("http://127.0.0.1:8000/api/walkIn/", json=data)
+        print(f"Create appointment response status: {response.status_code}")
+        print(f"Create appointment response text: {response.text}")
+
+        if response.status_code == 201:
+            return True
+        else:
+            print(f"Failed with status: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"Exception in add_new_appointment: {e}")
+        return False

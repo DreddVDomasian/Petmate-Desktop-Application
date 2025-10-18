@@ -5,14 +5,15 @@ import { getCookie } from "../../utils/csrf";
 
 export default function SetAppointment() {
   const [form, setForm] = useState({
-    pet: "",
+    pet: "", // This will store pet ID
     service: "",
     preferredDate: "",
     preferredTime: "",
   });
 
-  const [pets, setPets] = useState([]);       //  store pets here
+  const [pets, setPets] = useState([]);
   const [loadingPets, setLoadingPets] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const dateRef = useRef(null);
   const timeRef = useRef(null);
@@ -47,11 +48,11 @@ export default function SetAppointment() {
   // ✅ Date & time pickers
   useEffect(() => {
     flatpickr(dateRef.current, {
-      dateFormat: "M d, Y",
+      dateFormat: "Y-m-d", // Change to match Django format
       minDate: "today",
       onChange: (dates) => {
         if (dates.length > 0) {
-          const date = dates[0].toISOString().split("T")[0];
+          const date = dates[0].toISOString().split("T")[0]; // YYYY-MM-DD
           setForm((prev) => ({ ...prev, preferredDate: date }));
         }
       },
@@ -60,14 +61,11 @@ export default function SetAppointment() {
     flatpickr(timeRef.current, {
       enableTime: true,
       noCalendar: true,
-      dateFormat: "h:i K",
-      time_24hr: false,
+      dateFormat: "H:i:S", // Change to 24-hour format for Django
+      time_24hr: true,
       onChange: (dates) => {
         if (dates.length > 0) {
-          const time = dates[0].toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+          const time = dates[0].toISOString().split("T")[1].split(".")[0]; // HH:MM:SS
           setForm((prev) => ({ ...prev, preferredTime: time }));
         }
       },
@@ -79,13 +77,60 @@ export default function SetAppointment() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Appointment Data:", form);
-    alert("Appointment set successfully!"); //wala pang backend integration
+    setSubmitting(true);
+
+    if (!form.pet || !form.service || !form.preferredDate || !form.preferredTime) {
+      alert("Please fill all fields");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const appointmentData = {
+        pet_id: parseInt(form.pet), // Send pet ID
+        service_name: form.service,
+        date: form.preferredDate,
+        prefTime: form.preferredTime,
+        request: "pending", // Web appointments start as pending
+        status: "pending"   // Initial status
+      };
+
+      console.log("Sending appointment data:", appointmentData);
+
+      const res = await fetch("/api/walkIn/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken") || "",
+        },
+        body: JSON.stringify(appointmentData),
+        credentials: "include",
+      });
+
+      if (res.status === 201) {
+        alert("Appointment set successfully! Waiting for admin approval.");
+        // Reset form
+        setForm({
+          pet: "",
+          service: "",
+          preferredDate: "",
+          preferredTime: "",
+        });
+      } else {
+        const errorData = await res.json();
+        console.error("Failed to create appointment:", errorData);
+        alert("Failed to set appointment. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error setting appointment:", error);
+      alert("Error setting appointment. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  //  dynamic pet list
   return (
     <form className="appointment-form" onSubmit={handleSubmit}>
       <div className="form-header">
@@ -95,7 +140,6 @@ export default function SetAppointment() {
       <h2>Appointment Details</h2>
 
       <div className="form-row">
-        {/* --- dito yung drop down na dynamic--- */}
         <select
           name="pet"
           required
@@ -107,7 +151,7 @@ export default function SetAppointment() {
             {loadingPets ? "Loading pets..." : "Select Pet"}
           </option>
           {pets.map((pet) => (
-            <option key={pet.id} value={pet.petName}>
+            <option key={pet.id} value={pet.id}> {/* Store ID instead of name */}
               {pet.petName}
             </option>
           ))}
@@ -122,11 +166,13 @@ export default function SetAppointment() {
           <option value="" disabled>
             Select Service
           </option>
-          <option value="vaccination">Vaccination</option>
-          <option value="checkup">Check-up</option>
-          <option value="surgery">Surgery</option>
-          <option value="consultations">Consultations</option>
-          <option value="deworming">Deworming</option>
+          <option value="Vaccination">Vaccination</option>
+          <option value="Check-up">Check-up</option>
+          <option value="Surgery">Surgery</option>
+          <option value="Consultations">Consultations</option>
+          <option value="Deworming">Deworming</option>
+          <option value="Tick & Flea Prevention">Tick & Flea Prevention</option>
+          <option value="Grooming">Grooming</option>
         </select>
       </div>
 
@@ -137,8 +183,12 @@ export default function SetAppointment() {
       </div>
 
       <div>
-        <button type="submit" className="confirmbtn">
-          CONFIRM
+        <button
+          type="submit"
+          className="confirmbtn"
+          disabled={submitting}
+        >
+          {submitting ? "Setting Appointment..." : "CONFIRM"}
         </button>
       </div>
     </form>

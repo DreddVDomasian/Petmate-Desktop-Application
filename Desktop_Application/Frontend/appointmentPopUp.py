@@ -233,15 +233,17 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             return
 
-        # build data
+        # build data - USE THE NEW FIELD NAMES
         appointment_data = {
-            "owner": patient_id,
-            "pet": pet_id,
+            "owner_id": patient_id,  # Change from "owner" to "owner_id"
+            "pet_id": pet_id,  # Change from "pet" to "pet_id"
             "date": date,
             "prefTime": time,
-            "service_name": service_name,  # include service
-            # add notes or other fields if you have
+            "service_name": service_name,
+            "request": "accepted"
         }
+
+        print(f"Sending appointment data: {appointment_data}")  # Debug print
 
         # send data to backend
         if add_new_appointment(appointment_data):
@@ -249,7 +251,7 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             self.close()
             self.serviceTypeComboBox.setCurrentIndex(-1)
-            self.load_appointments(1, "pending" ,search_term=None)
+            self.load_appointments(1, "pending", search_term=None)
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
@@ -266,7 +268,6 @@ class AddAppointmentCard(QWidget):
 
         for status, button in status_buttons.items():
             button.clicked.connect(lambda checked, s=status: self.load_appointments(1, s,search_term=None))
-
     def setup_search(self):
         """Setup search functionality for appointments"""
         # Connect search bar to search handler
@@ -280,12 +281,10 @@ class AddAppointmentCard(QWidget):
         # Search state variables
         self.current_appointment_search_term = ""
         self.is_appointment_searching = False
-
     def handle_appointment_search_input(self, text):
         """Handle search input with debouncing"""
         self.current_appointment_search_term = text.strip()
         self._appointment_search_timer.start(500)
-
     def perform_appointment_search(self):
         """Perform the actual search"""
         if self.current_appointment_search_term:
@@ -295,7 +294,6 @@ class AddAppointmentCard(QWidget):
             # If search is empty, load normal appointment list
             self.is_appointment_searching = False
             self.load_appointments(1, self.status_filter_global)
-
     def load_appointments(self, page=1, status_filter="pending", search_term=None):
         """Updated load_appointments with search support"""
         try:
@@ -303,7 +301,7 @@ class AddAppointmentCard(QWidget):
             current_layout = self.get_layout_for_status(status_filter)
 
             # Build API URL with search term
-            url = f"http://127.0.0.1:8000/api/walkIn/?page={page}"
+            url = f"http://127.0.0.1:8000/api/walkIn/?request=accepted&page={page}"
             if status_filter:
                 url += f"&status={status_filter}"
             if search_term:
@@ -416,7 +414,7 @@ class AddAppointmentCard(QWidget):
 
         def clicked_yes():
             url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
-            response = requests.patch(url, json={"status": "cancelled"})
+            response = requests.patch(url, json={"status": "cancelled", "request": "accepted"})
             if response.status_code in [200, 202]:
                 print("Reminder marked as cancelled")
                 toast = Toast(self.main_window, "Appointment cancelled!", icon_path="Icons/check.png")
@@ -447,84 +445,143 @@ class AddAppointmentCard(QWidget):
     #-------------------------------------------WEB APPOINTMENT---------------------------------------
 
     def web_Appointment(self):
-        response = requests.get("http://127.0.0.1:8000/api/appointments/")
-        if response.status_code == 200:
-            data = response.json()
-            # handle both cases safely
-            if isinstance(data, dict) and "appointments" in data:
-                appointments = data["appointments"]
-            else:
-                appointments = data
-        else:
-            appointments = []
+        # Fetch all walk-in appointments with different request statuses
+        pending_response = requests.get("http://127.0.0.1:8000/api/walkIn/?request=pending")
+        accepted_response = requests.get("http://127.0.0.1:8000/api/walkIn/?request=accepted")
+        declined_response = requests.get("http://127.0.0.1:8000/api/walkIn/?request=declined")
 
+        # Helper function to safely extract data
+        def get_appointments(response):
+            if response.status_code == 200:
+                data = response.json()
+                # Handle paginated response
+                if isinstance(data, dict) and 'results' in data:
+                    return data['results']
+                else:
+                    return data
+            return []
+
+        pending_appointments = get_appointments(pending_response)
+        accepted_appointments = get_appointments(accepted_response)
+        declined_appointments = get_appointments(declined_response)
+
+        # Clear all layouts first
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             while layout.count():
                 child = layout.takeAt(0)
                 if child.widget():
                     child.widget().deleteLater()
 
-        for appoint in appointments:
-            card = uic.loadUi("webAppointmentCard.ui")
-            card.ownerName.setText(appoint["client_name"].title())
-            raw_datetime = appoint.get("appointment_datetime", "")
-            # Split into date and time parts
-            parts = raw_datetime.split(" ", 1)  # ["2025-09-18", "9:00 AM"]
-            date_only = parts[0]
-            time_only = parts[1] if len(parts) > 1 else ""
-            # Format the date
-            formatted_date = self.main_window.format_date(date_only)
-            #date + time
-            dateAndTime = f"{formatted_date}   {time_only}"
-
-            card.DateTime.setText(dateAndTime)
-
-            card.setGraphicsEffect(create_card_shadow())
-            status = appoint.get("status", "pending")
-
-            if status == "pending":
+        # Process pending appointments
+        for appoint in pending_appointments:
+            card = self.create_walkin_card(appoint)
+            if card:
                 self.pendingWebLayout.addWidget(card)
-            elif status == "accepted":
+
+        # Process accepted appointments
+        for appoint in accepted_appointments:
+            card = self.create_walkin_card(appoint)
+            if card:
                 self.acceptedWebLayout.addWidget(card)
-            elif status == "declined":
+
+        # Process declined appointments
+        for appoint in declined_appointments:
+            card = self.create_walkin_card(appoint)
+            if card:
                 self.declinedWebLayout.addWidget(card)
 
-            card.ReviewButton.clicked.connect(lambda _, a=appoint, date=dateAndTime: self.show_review_page(a,date))
-
-
-
+        # Add empty labels if no appointments
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
                 self.add_empty_label(layout)
-    def show_review_page(self, appoint,date):
-        #Owner details
-        self.main_window.BookingId.setText(appoint["booking_id"])
-        self.main_window.reviewFullname.setText(appoint["client_name"].capitalize())
-        self.main_window.reviewPhoneNo.setText(appoint["phone"])
-        self.main_window.reviewEmail.setText(appoint["email"].capitalize())
-        address = f"{appoint['barangay']}, {appoint['city']}, {appoint['province']}"
-        self.main_window.reviewAddress.setText(address.capitalize())
-        self.main_window.reviewDetailedAddress.setText(appoint["detailed_address"].capitalize())
 
-        #Pet details
-        self.main_window.reviewPetName.setText(appoint["pet_name"].capitalize())
-        self.main_window.reviewSpecies.setText(appoint["species"].capitalize())
-        self.main_window.reviewBreed.setText(appoint["breed"].capitalize())
-        self.main_window.reviewSex.setText(appoint["sex"].capitalize())
-        self.main_window.reviewColor.setText(appoint["color"].capitalize())
-        self.main_window.reviewDoctor.setText(appoint["provider"].capitalize())
-        self.main_window.reviewService.setText(appoint["appointment_reason"].capitalize())
-        self.main_window.reviewComments.setText(appoint["comments"].capitalize())
-        self.main_window.reviewDateTime.setText(date)
+    def create_walkin_card(self, appoint):
+        """Helper method to create a walk-in appointment card"""
+        try:
+            card = uic.loadUi("webAppointmentCard.ui")
+
+            # Get owner and pet information
+            owner = appoint.get("owner", {})
+            pet = appoint.get("pet", {})
+
+            # Set owner name
+            first_name = owner.get("firstName", "").title()
+            last_name = owner.get("lastName", "").title()
+            owner_name = f"{first_name} {last_name}".strip()
+            card.ownerName.setText(owner_name or "Unknown Owner")
+
+            # Format date and time
+            date_str = appoint.get("date", "")
+            time_str = appoint.get("prefTime", "")
+
+            formatted_date = self.main_window.format_date(date_str)
+            date_and_time = f"{formatted_date}   {time_str}" if time_str else formatted_date
+
+            card.DateTime.setText(date_and_time)
+
+            # Add service name if available
+            service_name = appoint.get("service_name", "")
+            if service_name and service_name != "none":
+                # You might want to add a label for service name in your UI
+                pass
+
+            card.setGraphicsEffect(create_card_shadow())
+
+            # Connect review button
+            card.ReviewButton.clicked.connect(lambda _, a=appoint, date=date_and_time: self.show_review_page(a, date))
+
+            return card
+        except Exception as e:
+            print(f"Error creating walk-in card: {e}")
+            return None
+
+    def show_review_page(self, appoint, date):
+        # Owner details - updated for WalkInAppointment structure
+        self.main_window.BookingId.setText(appoint.get("booking_id", ""))
+
+        # Get owner and pet information from nested objects
+        owner = appoint.get("owner", {})
+        pet = appoint.get("pet", {})
+
+        # Owner details
+        first_name = owner.get("firstName", "").title()
+        last_name = owner.get("lastName", "").title()
+        full_name = f"{first_name} {last_name}".strip()
+        self.main_window.reviewFullname.setText(full_name)
+        contactNumber = f"{owner.get('phoneNumber', '')} / {owner.get('SecondaryNumber', 'NONE')}"
+        self.main_window.reviewPhoneNo.setText(contactNumber)
+        self.main_window.reviewEmail.setText(owner.get("email", "").lower())
+
+        address = f"{owner.get('barangay', '')}, {owner.get('city', '')}, {owner.get('province', '')}"
+        self.main_window.reviewAddress.setText(address.title())
+        self.main_window.reviewDetailedAddress.setText(owner.get("detailedAddress", "").title())
+
+        # Pet details
+        self.main_window.reviewPetName.setText(pet.get("petName", "").title())
+        self.main_window.reviewSpecies.setText(pet.get("species", "").title())
+        self.main_window.reviewBreed.setText(pet.get("breed", "").title())
+        self.main_window.reviewSex.setText(pet.get("sex", "").title())
+        self.main_window.reviewColor.setText(pet.get("petColor", "").title())
+        dateTime = date.split(" ",3)
+        mdy = " ".join(dateTime[:3])  # 'oct 19, 2025'
+        time = dateTime[3]
+        # WalkInAppointment specific fields
+        self.main_window.reviewDoctor.setText("Walk-in")  # Default for walk-ins
+        self.main_window.reviewService.setText(appoint.get("service_name", "").title())
+        self.main_window.reviewTime.setText(time)
+        self.main_window.reviewDate.setText(mdy)
+
         self.main_window.navigate_to_page(7)
 
-        status = appoint.get("status", "pending")
-        if status == "pending":
+        # Check request status instead of status
+        request_status = appoint.get("request", "pending")
+        if request_status == "pending":
             self.main_window.AcceptDeclineFrame.setVisible(True)
         else:
             self.main_window.AcceptDeclineFrame.setVisible(False)
 
-        species = appoint.get("species", "").lower()
+        # Pet icon
+        species = pet.get("species", "").lower()
         if species == "dog":
             icon_path = "Icons/dog.png"
         elif species == "cat":
@@ -533,38 +590,63 @@ class AddAppointmentCard(QWidget):
             icon_path = "Icons/otherSpecies.png"
         self.main_window.ReviewPetIcon.setPixmap(QPixmap(icon_path))
 
-
+        # Disconnect previous connections
         try:
             self.main_window.acceptAppointmentBtn.clicked.disconnect()
             self.main_window.declineAppointmentBtn.clicked.disconnect()
         except TypeError:
             pass
 
+        # Connect buttons with walk-in appointment ID
+        self.main_window.acceptAppointmentBtn.clicked.connect(
+            lambda _, r_id=appoint['id']: self.accepted_booking(r_id, owner.get('id')))
+        self.main_window.declineAppointmentBtn.clicked.connect(
+            lambda _, r_id=appoint['id']: self.declined_booking(r_id))
 
-        self.main_window.acceptAppointmentBtn.clicked.connect(lambda _, r_id=appoint['id']: self.accepted_booking(r_id))
-        self.main_window.declineAppointmentBtn.clicked.connect(lambda _, r_id=appoint['id']: self.declined_booking(r_id))
-    def accepted_booking(self, review_id):
-        url = f"http://127.0.0.1:8000/api/appointments/{review_id}/statusUpdate/"
-        response = requests.patch(url, json={"status": "accepted"})
+    def accepted_booking(self, walkin_id, owner_id):
+        # Update the walk-in appointment request to 'accepted'
+        url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
+
+        # First, update the walk-in request status
+        response = requests.patch(url, json={"request": "accepted"})
+
         if response.status_code in [200, 202]:
+            # Update basicInfo desktop_record to 'show' if owner_id is provided
+            if owner_id:
+                owner_url = f"http://127.0.0.1:8000/api/patients/{owner_id}/"
+                # Get current owner data first
+                owner_response = requests.get(owner_url)
+                if owner_response.status_code == 200:
+                    owner_data = owner_response.json()
+                    # Only update if current desktop_record is 'hide'
+                    if owner_data.get('desktop_record') == 'hide':
+                        update_response = requests.patch(owner_url, json={"desktop_record": "show"})
+                        print(f"Updated desktop_record to show: {update_response.status_code}")
+
+            # Refresh the appointments and navigate
             self.web_Appointment()
             self.main_window.navigate_to_page(3)
             self.main_window.walkInOrWeb.setCurrentIndex(1)
-            self.main_window.webAppointmentStackWidget.setCurrentIndex(1)
-            self.main_window.AcceptedBtn.setChecked(True)
+            self.main_window.walkInBtn.setChecked(True)
+            self.main_window.load_patients(1,None)
         else:
-            print("Failed:", response.text)
-    def declined_booking(self, review_id):
-        url = f"http://127.0.0.1:8000/api/appointments/{review_id}/statusUpdate/"
-        response = requests.patch(url, json={"status": "declined"})
+            print("Failed to accept walk-in:", response.text)
+
+    def declined_booking(self, walkin_id):
+        # Update the walk-in appointment request to 'declined'
+        url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
+
+        response = requests.patch(url, json={"request": "declined"})
+
         if response.status_code in [200, 202]:
+            # For declined bookings, desktop_record remains unchanged
             self.web_Appointment()
             self.main_window.navigate_to_page(3)
             self.main_window.walkInOrWeb.setCurrentIndex(1)
             self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
             self.main_window.DeclinedBtn.setChecked(True)
         else:
-            print("Failed:", response.text)
+            print("Failed to decline walk-in:", response.text)
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
         empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
@@ -645,9 +727,9 @@ class AppointmentCardManager:
 
         # Connect buttons
         appointment_id = appointment["id"]
+        pet_id = appointment["pet"]["id"]
         card.deleteButton.clicked.connect(lambda _, a_id=appointment_id: self.appointment_card.cancelled_appointment(a_id))
-        card.mousePressEvent = lambda event, pid=appointment["pet"]: self.appointment_card.open_pet_from_appointment(pid)
-
+        card.mousePressEvent = lambda event, pid=pet_id: self.appointment_card.open_pet_from_appointment(pid)
         card.setGraphicsEffect(create_card_shadow())
         return card
 

@@ -125,6 +125,7 @@ class WalkInAppointment(models.Model):
     status = models.CharField(max_length=20, default='pending')
     service_name = models.CharField(max_length=100, default='none')
     created_at = models.DateTimeField(auto_now_add=True)
+    request = models.CharField(max_length=20, default='accepted')
 
     def save(self, *args, **kwargs):
         if not self.booking_id:
