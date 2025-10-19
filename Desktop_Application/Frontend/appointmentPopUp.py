@@ -54,7 +54,7 @@ class AddAppointmentCard(QWidget):
         self.web_Appointment()
         self.status_filter_global = None
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
-
+        self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment())
         self.setup_search()
 
         if parent:
@@ -642,7 +642,7 @@ class AddAppointmentCard(QWidget):
             # For declined bookings, desktop_record remains unchanged
             self.web_Appointment()
             self.main_window.navigate_to_page(3)
-            self.main_window.walkInOrWeb.setCurrentIndex(1)
+            self.main_window.walkInOrWeb.setCurrentIndex(0)
             self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
             self.main_window.DeclinedBtn.setChecked(True)
         else:

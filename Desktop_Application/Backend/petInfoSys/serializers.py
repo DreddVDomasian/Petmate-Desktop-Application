@@ -51,8 +51,6 @@ class PetSerializer(serializers.ModelSerializer):
         return has_appointment or has_service
 
 
-
-
 class ServiceSerializer(serializers.ModelSerializer):
     owner_full_name = serializers.SerializerMethodField()
     pet_name = serializers.SerializerMethodField()
@@ -113,35 +111,3 @@ class WalkInSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-
-
-class ClientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Client
-        fields = '__all__'
-
-
-class PetWebSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PetWeb
-        fields = '__all__'
-
-
-class AppointmentTypeSerializer(serializers.ModelSerializer):
-    client = ClientSerializer(read_only=True)
-    pet = PetWebSerializer(read_only=True)
-    booking_id = serializers.CharField(read_only=True)  # Add this line
-
-    class Meta:
-        model = AppointmentType
-        fields = '__all__'
-
-
-# REACT NA ITO 
-
-class ReactPetSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-
-    class Meta:
-        model = ReactPet
-        fields = '__all__'

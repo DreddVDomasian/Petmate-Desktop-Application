@@ -3,9 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import *
 from . import views
 
-# REACT NA ITO
-router = DefaultRouter()
-router.register(r'reactpets', ReactPetViewSet, basename='reactpet')
+
 
 
 urlpatterns = [
@@ -30,14 +28,10 @@ urlpatterns = [
     path("reminders/", views.reminders, name="reminders"),
     
     
-    # WEB APP URlS
+
     # Main booking endpoint for your HTML form
-    path('bookings/', BookingCreateView.as_view(), name='create_booking'),
-    path('clients/', ClientListView.as_view(), name='get_clients'),
-    path('pets-web/', PetWebListView.as_view(), name='get_pets'),
-    path('appointments/', AppointmentListView.as_view(), name='get_appointments'),
-    path('appointments/<int:pk>/', AppointmentDetailView.as_view(), name='appointment-detail'),
-    path('appointments/<int:pk>/statusUpdate/', update_appointment_status, name='update_appointment_status'),
+    #path('bookings/', BookingCreateView.as_view(), name='create_booking'),
+
 
     # Auth endpoints for frontend (final paths: /api/csrf/, /api/register/, /api/login/, /api/logout/)
     path('csrf/', views.csrf_token, name='api_csrf'),
@@ -46,7 +40,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='api_logout'),
     path('user/', views.current_user, name='api_current_user'),
 
-    # REACT ADD PETS
-    path('', include(router.urls)), #connects to the router
+
 
 ]

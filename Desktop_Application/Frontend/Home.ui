@@ -5253,7 +5253,7 @@ border:none;</string>
               <item>
                <widget class="QStackedWidget" name="profileStackedWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="petCardsPage">
                  <layout class="QVBoxLayout" name="verticalLayout_20">
