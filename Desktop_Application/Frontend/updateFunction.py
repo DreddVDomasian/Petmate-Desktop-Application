@@ -99,7 +99,26 @@ class Update:
         self.ui.petName.setText(pet["petName"])
         self.ui.petColor.setText(pet["petColor"])
         self.ui.breed.setText(pet["breed"])
-        self.ui.speciesComboBox.setCurrentText(pet["species"])
+        species_value = pet.get("species", "").strip()
+        # Check if species exists in combo box
+        index = self.ui.speciesComboBox.findText(species_value, Qt.MatchFlag.MatchFixedString)
+
+        if index >= 0:
+            # Species found (Cat or Dog)
+            self.ui.speciesComboBox.setCurrentIndex(index)
+            self.ui.otherSpeciesLineEdit.hide()
+            self.ui.otherSpeciesLineEdit.clear()
+            self.ui.clearSpeciesBtn.hide()
+            self.ui.speciesComboBox.show()
+        else:
+            # Species not found → treat as "Others"
+            others_index = self.ui.speciesComboBox.findText("Others", Qt.MatchFlag.MatchFixedString)
+            if others_index >= 0:
+                self.ui.speciesComboBox.setCurrentIndex(others_index)
+            else:
+                self.ui.speciesComboBox.setCurrentIndex(0)  # fallback
+            self.ui.otherSpeciesLineEdit.show()
+            self.ui.otherSpeciesLineEdit.setText(species_value)
         self.ui.age.setText(str(pet["age"]))
         self.ui.petSexComboBox.setCurrentText(pet["sex"])
         self.ui.selected_pet_id = pet["id"]
@@ -125,12 +144,14 @@ class Update:
         pet_id = self.ui.selected_pet_id
         if not pet_id:
             return
-
+        species_value = self.ui.speciesComboBox.currentText()
+        if species_value.lower() == "others":
+            species_value = self.ui.otherSpeciesLineEdit.text().strip()
         data = {
             "petName": self.ui.petName.text(),
             "petColor": self.ui.petColor.text(),
             "breed": self.ui.breed.text(),
-            "species": self.ui.speciesComboBox.currentText(),
+            "species": species_value,
             "sex": self.ui.petSexComboBox.currentText(),
             "owner_id": self.ui.selected_patient_id,
             "remarks": self.ui.petRemarks.text().strip() or None
@@ -237,6 +258,7 @@ class Update:
             self.ui.updateServiceBtn.hide()
             self.ui.dateEdit.setEnabled(True)
             self.ui.addServiceBtn.show()
+            self.ui.clearInputs()
         else:
             Toast(self.ui, "Failed to update service!", icon_path="Icons/warning.png").show_toast()
 

@@ -407,6 +407,7 @@ class MainUI(QMainWindow):
         self.petRemarks.clear()
         self.speciesComboBox.setCurrentIndex(0)
         self.petSexComboBox.setCurrentIndex(0)
+        self.clearSpeciesFunc()
         # reset birthday → back to placeholder
         sentinel = QDate(1900, 1, 1)
         self.Bday.setDate(sentinel)
