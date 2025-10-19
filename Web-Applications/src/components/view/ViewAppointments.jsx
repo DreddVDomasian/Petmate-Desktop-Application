@@ -5,6 +5,8 @@ export default function ViewAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -40,7 +42,7 @@ export default function ViewAppointments() {
   }, []);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "Not specified";
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -50,7 +52,7 @@ export default function ViewAppointments() {
   };
 
   const formatTime = (timeString) => {
-    if (!timeString) return "N/A";
+    if (!timeString) return "Not specified";
     if (timeString.includes(":")) {
       const [hours, minutes] = timeString.split(":");
       const date = new Date();
@@ -64,17 +66,75 @@ export default function ViewAppointments() {
     return timeString;
   };
 
-  const getStatusBadge = (status) => {
-    const statusText = String(status).charAt(0).toUpperCase() + String(status).slice(1);
-    return <span className={`status-badge status-${status}`}>{statusText}</span>;
+  // Updated badge system - only show relevant badges based on request status
+  const getAppointmentBadges = (requestStatus, appointmentStatus) => {
+    const badges = [];
+
+    // Request status badges (always shown)
+    const requestConfig = {
+      'pending': { class: 'request-pending', text: 'Under Review', icon: '⏳' },
+      'accepted': { class: 'request-accepted', text: 'Approved', icon: '✅' },
+      'declined': { class: 'request-declined', text: 'Declined', icon: '❌' }
+    };
+
+    const requestInfo = requestConfig[requestStatus] || { class: 'request-pending', text: requestStatus, icon: '❓' };
+
+    badges.push(
+      <span key="request" className={`status-badge ${requestInfo.class}`}>
+        {requestInfo.icon} {requestInfo.text}
+      </span>
+    );
+
+    // Only show appointment status if request is accepted
+    if (requestStatus === 'accepted') {
+      const statusConfig = {
+        'pending': { class: 'status-scheduled', text: 'Scheduled', icon: '📅' },
+        'completed': { class: 'status-completed', text: 'Completed', icon: '✅' },
+        'overdue': { class: 'status-overdue', text: 'Overdue', icon: '⚠️' },
+        'cancelled': { class: 'status-cancelled', text: 'Cancelled', icon: '❌' }
+      };
+
+      const statusInfo = statusConfig[appointmentStatus] || { class: 'status-scheduled', text: appointmentStatus, icon: '📅' };
+
+      badges.push(
+        <span key="status" className={`status-badge ${statusInfo.class}`}>
+          {statusInfo.icon} {statusInfo.text}
+        </span>
+      );
+    }
+
+    return badges;
+  };
+
+  const getStatusExplanation = (request, status) => {
+    if (request === 'pending') return 'Your appointment request is under review by our staff.';
+    if (request === 'declined') return 'Your appointment request was not approved.';
+    if (request === 'accepted' && status === 'pending') return 'Your appointment has been approved and is scheduled.';
+    if (request === 'accepted' && status === 'completed') return 'Your appointment has been successfully completed.';
+    if (request === 'accepted' && status === 'overdue') return 'Your appointment was missed or needs rescheduling.';
+    if (request === 'accepted' && status === 'cancelled') return 'Your appointment was cancelled.';
+    return 'Status information not available.';
+  };
+
+  const openDetailsModal = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowDetailsModal(true);
+  };
+
+  const closeDetailsModal = () => {
+    setSelectedAppointment(null);
+    setShowDetailsModal(false);
   };
 
   return (
     <div className="appointments-container">
-      <h2 className="page-title">Appointments</h2>
+      <div className="page-header">
+        <h2 className="page-title">My Appointments</h2>
+        <p className="page-subtitle">Track your appointment requests and status</p>
+      </div>
 
-      <button 
-        onClick={fetchAppointments} 
+      <button
+        onClick={fetchAppointments}
         disabled={loading}
         className="refresh-btn"
       >
@@ -87,7 +147,11 @@ export default function ViewAppointments() {
       {!loading && !error && (
         <div className="appointments-card-grid">
           {appointments.length === 0 ? (
-            <div className="no-data">No appointments found.</div>
+            <div className="no-appointments">
+              <div className="empty-icon empty-appointment">📅</div>
+              <h3>No Appointments Found</h3>
+              <p>You don't have any appointments yet.</p>
+            </div>
           ) : (
             appointments.map((appointment) => {
               const petName = appointment.pet_name ||
@@ -99,50 +163,59 @@ export default function ViewAppointments() {
                 "General Consultation";
 
               const date = appointment.date ||
-                appointment.appointment_datetime?.split(" ")[0] || "N/A";
+                appointment.appointment_datetime?.split(" ")[0] || "Not specified";
 
               const time = appointment.prefTime ||
-                (appointment.appointment_datetime?.includes(" ") 
-                  ? appointment.appointment_datetime.split(" ")[1] 
-                  : null) || "N/A";
+                (appointment.appointment_datetime?.includes(" ")
+                  ? appointment.appointment_datetime.split(" ")[1]
+                  : null) || "Not specified";
 
-              const status = appointment.status || "pending";
-              const veterinarian = appointment.provider || "Not assigned";
-              const bookingId = appointment.booking_id || "N/A";
+              const requestStatus = appointment.request || "pending";
+              const appointmentStatus = appointment.status || "pending";
 
               return (
-                <div key={appointment.id || bookingId} className="appointment-card">
+                <div key={appointment.id} className="appointment-card">
                   <div className="card-header">
                     <h3 className="pet-name">{petName}</h3>
-                    {getStatusBadge(status)}
+                    <div className="badges-container">
+                      {getAppointmentBadges(requestStatus, appointmentStatus)}
+                    </div>
+                  </div>
+
+                  <div className="status-explanation">
+                    {getStatusExplanation(requestStatus, appointmentStatus)}
                   </div>
 
                   <div className="card-divider" />
 
-                  <p><strong>Service:</strong> {service}</p>
-                  <p><strong>Date:</strong> {formatDate(date)}</p>
-                  <p><strong>Time:</strong> {formatTime(time)}</p>
-                  <p><strong>Veterinarian:</strong> {veterinarian}</p>
+                  <div className="appointment-details">
+                    <div className="detail-row">
+                      <span className="detail-label">Service:</span>
+                      <span className="detail-value">{service}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">Date:</span>
+                      <span className="detail-value">{formatDate(date)}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-label">Time:</span>
+                      <span className="detail-value">{formatTime(time)}</span>
+                    </div>
+                  </div>
 
                   <div className="card-actions">
                     <button
                       className="view-btn"
-                      onClick={() =>
-                        alert(
-                          `Appointment Details:\n\nPet: ${petName}\nService: ${service}\nDate: ${formatDate(
-                            date
-                          )}\nTime: ${formatTime(time)}\nStatus: ${status}\nVeterinarian: ${veterinarian}\nBooking ID: ${bookingId}`
-                        )
-                      }
+                      onClick={() => openDetailsModal(appointment)}
                     >
                       View Details
                     </button>
                     {appointment.comments && (
                       <button
                         className="comments-btn"
-                        onClick={() => alert(`Comments:\n\n${appointment.comments}`)}
+                        onClick={() => alert(`Staff Comments:\n\n${appointment.comments}`)}
                       >
-                        Remarks
+                        View Remarks
                       </button>
                     )}
                   </div>
@@ -150,6 +223,77 @@ export default function ViewAppointments() {
               );
             })
           )}
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {showDetailsModal && selectedAppointment && (
+        <div className="modal-overlay" onClick={closeDetailsModal}>
+          <div className="details-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Appointment Details</h2>
+              <button className="close-btn" onClick={closeDetailsModal}>×</button>
+            </div>
+
+            <div className="appointment-details-modal">
+              <div className="detail-section">
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span className="detail-label">Pet:</span>
+                    <span className="detail-value">
+                      {selectedAppointment.pet_name ||
+                       (selectedAppointment.pet && (selectedAppointment.pet.petName || selectedAppointment.pet.pet_name)) ||
+                       "Unknown Pet"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Service:</span>
+                    <span className="detail-value">
+                      {selectedAppointment.appointment_reason || selectedAppointment.service_name || "General Consultation"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Date:</span>
+                    <span className="detail-value">{formatDate(selectedAppointment.date)}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Time:</span>
+                    <span className="detail-value">{formatTime(selectedAppointment.prefTime)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h3>Status Information</h3>
+                <div className="status-display">
+                  <div className="status-item">
+                    <span className="status-label">Request Status:</span>
+                    <div className="badges-container">
+                      {getAppointmentBadges(selectedAppointment.request || "pending", selectedAppointment.status || "pending")}
+                    </div>
+                  </div>
+                  <div className="status-explanation-full">
+                    {getStatusExplanation(selectedAppointment.request, selectedAppointment.status)}
+                  </div>
+                </div>
+              </div>
+
+              {selectedAppointment.comments && (
+                <div className="detail-section">
+                  <h3>Staff Remarks</h3>
+                  <div className="comments-box">
+                    {selectedAppointment.comments}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="modal-actions">
+              <button className="close-modal-btn" onClick={closeDetailsModal}>
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

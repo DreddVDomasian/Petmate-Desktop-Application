@@ -538,24 +538,32 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         today = date.today()
         user = self.request.user
 
-        # Base queryset
-        queryset = WalkInAppointment.objects.filter(request='accepted').order_by('-date', '-prefTime')
+        # Check if user has staff permissions (desktop or admin)
+        is_staff_user = user.is_authenticated and (user.is_staff or user.is_superuser)
 
-        # Filter sa current user
+        # Base queryset logic
         if user.is_authenticated:
-            queryset = queryset.filter(owner__user_account=user)
+            if is_staff_user:
+                # Staff/Desktop: see ALL appointments for management
+                queryset = WalkInAppointment.objects.all().order_by('created_at')
+            else:
+                # Regular web user: only show their own appointments
+                queryset = WalkInAppointment.objects.filter(
+                    owner__user_account=user
+                ).order_by('created_at')
+        else:
+            # Unauthenticated request (desktop system) - treat as staff
+            queryset = WalkInAppointment.objects.all().order_by('created_at')
 
-        # Filter by request if provided
+        # Rest of your filtering logic remains the same...
         request_filter = self.request.query_params.get('request', None)
         if request_filter:
             queryset = queryset.filter(request=request_filter)
 
-        # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
 
-        # Search functionality
         search_term = self.request.query_params.get('search', '').strip()
         if search_term:
             search_terms = ' '.join(search_term.split()).split()
@@ -563,11 +571,11 @@ class WalkInListCreateView(generics.ListCreateAPIView):
                 query = Q()
                 for term in search_terms:
                     term_query = (
-                        Q(owner__firstName__icontains=term) |
-                        Q(owner__lastName__icontains=term) |
-                        Q(owner__middleName__icontains=term) |
-                        Q(pet__petName__icontains=term) |
-                        Q(service_name__icontains=term)
+                            Q(owner__firstName__icontains=term) |
+                            Q(owner__lastName__icontains=term) |
+                            Q(owner__middleName__icontains=term) |
+                            Q(pet__petName__icontains=term) |
+                            Q(service_name__icontains=term)
                     )
                     query &= term_query
                 queryset = queryset.filter(query)
@@ -582,12 +590,16 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        # For web appointments, set request to 'pending'
-        if self.request.user.is_authenticated:
-            # This is a web user, set request to pending for admin review
+        # Check if user has staff permissions
+        is_staff_user = self.request.user.is_authenticated and (
+                self.request.user.is_staff or self.request.user.is_superuser
+        )
+
+        if self.request.user.is_authenticated and not is_staff_user:
+            # Regular web user: pending review
             serializer.save(request='pending', status='pending')
         else:
-            # This is desktop, set request to accepted (auto-approved)
+            # Staff/Desktop: auto-approved
             serializer.save(request='accepted')
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
