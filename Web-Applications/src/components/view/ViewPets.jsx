@@ -17,6 +17,7 @@ export default function ViewPets() {
         petColor: '',
         breed: '',
         species: '',
+        customSpecies: '',
         birthDay: '',
         age: '',
         sex: '',
@@ -123,19 +124,31 @@ export default function ViewPets() {
     };
 
     const openEditModal = (pet) => {
+        const speciesLower = pet.species?.toLowerCase() || "";
+        let species = speciesLower;
+        let customSpecies = "";
+
+        if (speciesLower !== "dog" && speciesLower !== "cat") {
+        species = "others";
+        customSpecies = pet.species; // e.g., "Hamster"
+        }
+
         setEditForm({
             petName: pet.petName || '',
             petColor: pet.petColor || '',
             breed: pet.breed || '',
-            species: pet.species || '',
+            species: species,
+            customSpecies: customSpecies,
             birthDay: pet.birthDay || '',
             age: pet.age || '',
             sex: pet.sex || '',
             remarks: pet.remarks || ''
         });
+
         setShowEditModal(true);
         setShowPetModal(false);
     };
+
 
     const closeEditModal = () => {
         setShowEditModal(false);
@@ -144,6 +157,7 @@ export default function ViewPets() {
           petColor: '',
           breed: '',
           species: '',
+          customSpecies: '',
           birthDay: '',
           age: '',
           sex: '',
@@ -184,7 +198,14 @@ export default function ViewPets() {
         e.preventDefault();
 
         if (!selectedPet) return;
-
+        let finalSpecies = editForm.species;
+        if (finalSpecies === "others") {
+            if (!editForm.customSpecies.trim()) {
+              alert("Please specify the species name");
+              return;
+            }
+            finalSpecies = editForm.customSpecies.trim();
+        }
         try {
             const res = await fetch(`/api/pets/${selectedPet.id}/`, {
                 method: 'PUT',
@@ -194,9 +215,14 @@ export default function ViewPets() {
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                  ...editForm,
-                  // Ensure stored_age is only sent if no birthday
-                  stored_age: editForm.birthDay ? null : (editForm.age || null)
+                  petName: editForm.petName,
+                  petColor: editForm.petColor,
+                  breed: editForm.breed,
+                  species: finalSpecies,
+                  birthDate: editForm.birthDay || null,  // ✅ corrected key
+                  stored_age: editForm.birthDay ? null : (editForm.age || null),
+                  sex: editForm.sex,
+                  remarks: editForm.remarks?.trim() || null
                 })
             });
 
@@ -352,7 +378,7 @@ export default function ViewPets() {
 
               {pet.has_reminder && (
                 <div className="reminder-badge">
-                  ⏰ Has Reminder
+                  Upcoming Schedule
                 </div>
               )}
             </div>
@@ -551,6 +577,17 @@ export default function ViewPets() {
                       <option value="cat">Cat</option>
                       <option value="others">Others</option>
                     </select>
+
+                    {editForm.species === "others" && (
+                        <input
+                            type="text"
+                            name="customSpecies"
+                            placeholder="Type specific species (e.g., Hamster)"
+                            value={editForm.customSpecies}
+                            onChange={handleEditChange}
+                            required
+                        />
+                    )}
                   </div>
                 </div>
               </div>

@@ -9,6 +9,7 @@ export default function AddPets({ onSubmit }) {
     color: "",
     breed: "",
     species: "",
+    customSpecies: "",
     birthday: "", // Stores "2025-10-09" for backend
     age: "", // Calculated age OR manual age
     sex: "",
@@ -72,83 +73,79 @@ export default function AddPets({ onSubmit }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // If parent provided onSubmit, keep that behavior
-    if (onSubmit) {
-      onSubmit(form);
+  if (!form.birthday && !form.age.trim()) {
+    alert("Please provide either Birthday or Age");
+    return;
+  }
+
+  // ✅ Handle 'Others' species case
+  let speciesValue = form.species;
+  if (speciesValue === "others") {
+    if (!form.customSpecies.trim()) {
+      alert("Please specify the species name");
       return;
     }
+    speciesValue = form.customSpecies.trim();
+  }
 
-    // Validation: Either birthday OR age must be provided
-    if (!form.birthday && !form.age.trim()) {
-      alert("Please provide either Birthday or Age");
-      return;
-    }
+  try {
+    const payload = {
+      petName: form.name,
+      petColor: form.color,
+      breed: form.breed,
+      species: speciesValue, // 👈 use resolved value
+      birthDay: form.birthday || null,
+      stored_age: form.age.trim() || null,
+      sex: form.sex,
+      remarks: form.remarks,
+    };
 
+    console.log("Sending payload:", payload);
 
+    const res = await fetch("/api/pets/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken") || "",
+      },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    const text = await res.text();
+    let data = {};
     try {
-         const payload = {
-          petName: form.name,
-          petColor: form.color,
-          breed: form.breed,
-          species: form.species,
-          birthDay: form.birthday || null,
-          stored_age: form.age.trim() || null,
-          sex: form.sex,
-          remarks: form.remarks
-        };
-
-        console.log("Sending payload:", payload);
-
-      const res = await fetch('/api/pets/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken') || ''
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          petName: form.name,
-          petColor: form.color,
-          breed: form.breed,
-          species: form.species,
-          birthDay: form.birthday || null, // Send null if empty
-          stored_age: form.age.trim() || null, // Send calculated OR manual age
-          sex: form.sex,
-          remarks: form.remarks
-        })
-      });
-
-      const text = await res.text();
-      let data = {};
-      try { data = text ? JSON.parse(text) : {}; } catch (err) { data = { error: text || res.statusText }; }
-
-      if (!res.ok) throw new Error(data.error || res.statusText || 'Save failed');
-
-      alert('Pet saved successfully');
-
-      // Reset form
-      setForm({
-        name: "",
-        color: "",
-        breed: "",
-        species: "",
-        birthday: "",
-        age: "",
-        sex: "",
-        remarks: "",
-      });
-
-      // Clear the flatpickr
-      if (birthdayRef.current && birthdayRef.current._flatpickr) {
-        birthdayRef.current._flatpickr.clear();
-      }
+      data = text ? JSON.parse(text) : {};
     } catch (err) {
-        console.error("Error details:", err);
-        alert(`Error: ${err.message}`);
+      data = { error: text || res.statusText };
     }
-  };
+
+    if (!res.ok) throw new Error(data.error || res.statusText || "Save failed");
+
+    alert("Pet saved successfully");
+
+    setForm({
+      name: "",
+      color: "",
+      breed: "",
+      species: "",
+      customSpecies: "",
+      birthday: "",
+      age: "",
+      sex: "",
+      remarks: "",
+    });
+
+    if (birthdayRef.current && birthdayRef.current._flatpickr) {
+      birthdayRef.current._flatpickr.clear();
+    }
+  } catch (err) {
+    console.error("Error details:", err);
+    alert(`Error: ${err.message}`);
+  }
+};
 
   return (
     <form className="pet-form" onSubmit={handleSubmit}>
@@ -196,6 +193,17 @@ export default function AddPets({ onSubmit }) {
           <option value="cat">Cat</option>
           <option value="others">Others</option>
         </select>
+
+         {form.species === "others" && (
+            <input
+              name="customSpecies"
+              type="text"
+              placeholder="Type specific species (e.g., Hamster)"
+              required
+              value={form.customSpecies}
+              onChange={handleChange}
+            />
+         )}
       </div>
 
       <h2>Other Information</h2>
