@@ -3,7 +3,8 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from "../../utils/csrf";
 
-export default function SetAppointment() {
+
+export default function SetAppointment({ onNewAppointment }) {
   const [form, setForm] = useState({
     pet: "", // This will store pet ID
     service: "",
@@ -18,17 +19,15 @@ export default function SetAppointment() {
   const dateRef = useRef(null);
   const timeRef = useRef(null);
 
-  // ✅ Fetch pets from Django backend
+
+  // Fetch pets
   useEffect(() => {
     const fetchPets = async () => {
       try {
         const res = await fetch("/api/pets/", {
           credentials: "include",
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken") || "",
-          },
+          headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
-
         if (res.ok) {
           const data = await res.json();
           setPets(data);
@@ -41,13 +40,11 @@ export default function SetAppointment() {
         setLoadingPets(false);
       }
     };
-
     fetchPets();
   }, []);
 
-  // ✅ Date & time pickers
+  // Date & time pickers
   useEffect(() => {
-    // Date Picker
     flatpickr(dateRef.current, {
       dateFormat: "M d, Y",
       minDate: "today",
@@ -62,29 +59,22 @@ export default function SetAppointment() {
       },
     });
 
-      // Time Picker
     flatpickr(timeRef.current, {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "h:i K",
-        time_24hr: false,
-        onChange: (selectedDates) => {
-          if (selectedDates.length > 0) {
-            const time = selectedDates[0];
-            const hh = String(time.getHours()).padStart(2, "0");
-            const mm = String(time.getMinutes()).padStart(2, "0");
-
-            // ✅ Output: HH:MM:SS (Django-friendly)
-            const formattedTime = `${hh}:${mm}:00`;
-
-            setForm((prev) => ({
-              ...prev,
-              preferredTime: formattedTime,
-            }));
-          }
-        },
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "h:i K",
+      time_24hr: false,
+      onChange: (selectedDates) => {
+        if (selectedDates.length > 0) {
+          const time = selectedDates[0];
+          const hh = String(time.getHours()).padStart(2, "0");
+          const mm = String(time.getMinutes()).padStart(2, "0");
+          const formattedTime = `${hh}:${mm}:00`;
+          setForm((prev) => ({ ...prev, preferredTime: formattedTime }));
+        }
+      },
     });
-    }, []);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -103,12 +93,12 @@ export default function SetAppointment() {
 
     try {
       const appointmentData = {
-        pet_id: parseInt(form.pet), // Send pet ID
+        pet_id: parseInt(form.pet),
         service_name: form.service,
         date: form.preferredDate,
         prefTime: form.preferredTime,
-        request: "pending", // Web appointments start as pending
-        status: "pending"   // Initial status
+        request: "pending",
+        status: "pending",
       };
 
       console.log("Sending appointment data:", appointmentData);
@@ -124,7 +114,9 @@ export default function SetAppointment() {
       });
 
       if (res.status === 201) {
+        const newAppointment = await res.json(); // return created appointment from backend
         alert("Appointment set successfully! Waiting for admin approval.");
+
         // Reset form
         setForm({
           pet: "",
@@ -132,6 +124,11 @@ export default function SetAppointment() {
           preferredDate: "",
           preferredTime: "",
         });
+
+        // 🔹 Add appointment to parent state so it shows immediately
+        if (onNewAppointment) {
+          onNewAppointment(newAppointment);
+        }
       } else {
         const errorData = await res.json();
         console.error("Failed to create appointment:", errorData);
@@ -165,7 +162,7 @@ export default function SetAppointment() {
             {loadingPets ? "Loading pets..." : "Select Pet"}
           </option>
           {pets.map((pet) => (
-            <option key={pet.id} value={pet.id}> {/* Store ID instead of name */}
+            <option key={pet.id} value={pet.id}>
               {pet.petName}
             </option>
           ))}
@@ -197,11 +194,7 @@ export default function SetAppointment() {
       </div>
 
       <div>
-        <button
-          type="submit"
-          className="confirmbtn"
-          disabled={submitting}
-        >
+        <button type="submit" className="confirmbtn" disabled={submitting}>
           {submitting ? "Setting Appointment..." : "CONFIRM"}
         </button>
       </div>

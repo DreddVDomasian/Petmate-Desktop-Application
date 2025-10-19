@@ -536,41 +536,43 @@ class WalkInListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         today = date.today()
-        # Base queryset - show accepted by default, but allow filtering by request
+        user = self.request.user
+
+        # Base queryset
         queryset = WalkInAppointment.objects.filter(request='accepted').order_by('-date', '-prefTime')
 
-        # Filter by request status if provided
+        # Filter sa current user
+        if user.is_authenticated:
+            queryset = queryset.filter(owner__user_account=user)
+
+        # Filter by request if provided
         request_filter = self.request.query_params.get('request', None)
         if request_filter:
-            queryset = WalkInAppointment.objects.filter(request=request_filter).order_by('-date', '-prefTime')
+            queryset = queryset.filter(request=request_filter)
 
-        # Rest of your existing code remains the same...
+        # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
 
-        # Search functionality - similar to patient search
+        # Search functionality
         search_term = self.request.query_params.get('search', '').strip()
         if search_term:
-            # Remove extra spaces and split
             search_terms = ' '.join(search_term.split()).split()
-
             if search_terms:
                 query = Q()
                 for term in search_terms:
-                    # Search in owner name, pet name, and service name
                     term_query = (
-                            Q(owner__firstName__icontains=term) |
-                            Q(owner__lastName__icontains=term) |
-                            Q(owner__middleName__icontains=term) |
-                            Q(pet__petName__icontains=term) |
-                            Q(service_name__icontains=term)
+                        Q(owner__firstName__icontains=term) |
+                        Q(owner__lastName__icontains=term) |
+                        Q(owner__middleName__icontains=term) |
+                        Q(pet__petName__icontains=term) |
+                        Q(service_name__icontains=term)
                     )
                     query &= term_query
-
                 queryset = queryset.filter(query)
 
-        # Auto-update status to overdue where necessary
+        # Auto-update overdue
         for appt in queryset:
             if appt.status not in ["completed", "cancelled", "overdue"]:
                 if appt.date < today:
@@ -755,40 +757,18 @@ class AppointmentListView(generics.ListAPIView):
     queryset = AppointmentType.objects.select_related('client', 'pet').all().order_by('-created_at')
     serializer_class = AppointmentTypeSerializer
 
-    def list(self, request, *args, **kwargs):
-        appointments = self.get_queryset()
-
-        appointments_data = []
-        for appointment in appointments:
-            appointments_data.append({
-                'id': appointment.id,
-                'booking_id': appointment.booking_id,
-                'client_name': appointment.client.full_name,
-                'email': appointment.client.email,
-                'phone': appointment.client.phone,
-                'province': appointment.client.province,
-                'city': appointment.client.city,
-                'barangay': appointment.client.barangay,
-                'detailed_address': appointment.client.detailed_address,
-                'pet_name': appointment.pet.pet_name,
-                'species': appointment.pet.species,
-                'breed': appointment.pet.breed,
-                'color': appointment.pet.color,
-                'sex': appointment.pet.sex,
-                'provider': appointment.provider,
-                'appointment_reason': appointment.appointment_reason,
-                'appointment_datetime': appointment.appointment_datetime,
-                'status': appointment.status,
-                'comments': appointment.comments,
-                'created_at': appointment.created_at.strftime('%Y-%m-%d %H:%M:%S')
-            })
-
-        return Response({
-            'status': 'success',
-            'appointments': appointments_data,
-            'total': len(appointments_data)
-        })
-
+    def get_queryset(self):
+        qs = super().get_queryset()
+        mine = self.request.query_params.get('mine')
+        if mine in ('1', 'true', 'True') and self.request.user.is_authenticated:
+            # try link by user_account then fallback to email
+            profile = basicInfo.objects.filter(user_account=self.request.user).first()
+            if not profile:
+                profile = basicInfo.objects.filter(email__iexact=getattr(self.request.user, 'email', '')).first()
+            if profile:
+                return qs.filter(pet__owner=profile)
+            return qs.none()
+        return qs
 
 # CONVERT get_appointment_detail to DRF
 class AppointmentDetailView(generics.RetrieveAPIView):
@@ -863,3 +843,30 @@ class ReactPetViewSet(viewsets.ModelViewSet): #URLS.PY
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+#VIEW APPOINTMENTS FOR REACT
+class ViewAppointments(generics.ListAPIView):
+    serializer_class = WalkInSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the basicInfo entry tied to the logged-in user
+        user_profile = basicInfo.objects.filter(user_account=self.request.user).first()
+
+        # If user has no profile yet, return empty queryset
+        if not user_profile:
+            return WalkInAppointment.objects.none()
+
+        # Return only appointments that belong to this owner
+        return WalkInAppointment.objects.filter(owner=user_profile).order_by('-date')
+
+
+class PetListView(generics.ListAPIView):
+    serializer_class = PetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_profile = basicInfo.objects.filter(user_account=self.request.user).first()
+        return Pet.objects.filter(owner=user_profile)
+

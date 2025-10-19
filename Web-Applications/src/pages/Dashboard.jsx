@@ -10,7 +10,7 @@ import SideNav from '../components/navigation/SideNav';
 import AddPets from '../components/forms/AddPets';
 import ViewPets from '../components/view/ViewPets';
 import SetAppointment from '../components/forms/SetAppointment';
-
+import ViewAppointments from '../components/view/ViewAppointments';
 
 function Dashboard() {
     return (
@@ -21,6 +21,7 @@ function Dashboard() {
                     <Route path="addpets" element={<AddPets />} />
                     <Route path="viewpets" element={<ViewPets />} />
                     <Route path="setappointment" element={<SetAppointment />} />
+                    <Route path="viewappointments" element={<ViewAppointments />} />
                     {/* Add more routes as needed */}
                 </Routes>
             </main>

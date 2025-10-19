@@ -748,7 +748,6 @@ input, select {
 }
 
 
-/* Settings Form */
 
 
 
@@ -758,6 +757,126 @@ input, select {
 
 
 
+/* VIEW APPOINTMENTS - CARD VERSION */
+.appointments-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
 
+.page-title {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+}
 
+.refresh-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.refresh-btn:hover {
+  background: #2980b9;
+}
+
+.appointments-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.appointment-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pet-name {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.card-divider {
+  border-bottom: 1px solid #ddd;
+  margin: 10px 0;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-accepted {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-declined,
+.status-overdue {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.card-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn, .comments-btn {
+  flex: 1;
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.comments-btn {
+  background: #3498db;
+}
+
+.view-btn:hover {
+  background: #219a52;
+}
+
+.comments-btn:hover {
+  background: #2980b9;
+}
+
+.no-data {
+  text-align: center;
+  padding: 25px;
+  color: #7f8c8d;
+}
 
