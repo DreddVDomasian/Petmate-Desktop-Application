@@ -62,23 +62,26 @@ export default function SetAppointment() {
       },
     });
 
+      // Time Picker
     flatpickr(timeRef.current, {
         enableTime: true,
         noCalendar: true,
         dateFormat: "h:i K",
         time_24hr: false,
         onChange: (selectedDates) => {
-            if (selectedDates.length > 0) {
-                const time = selectedDates[0];
-                const formattedTime = time.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                });
-                setForm((prev) => ({
-                    ...prev,
-                    preferredTime: formattedTime,
-                }));
-            }
+          if (selectedDates.length > 0) {
+            const time = selectedDates[0];
+            const hh = String(time.getHours()).padStart(2, "0");
+            const mm = String(time.getMinutes()).padStart(2, "0");
+
+            // ✅ Output: HH:MM:SS (Django-friendly)
+            const formattedTime = `${hh}:${mm}:00`;
+
+            setForm((prev) => ({
+              ...prev,
+              preferredTime: formattedTime,
+            }));
+          }
         },
     });
     }, []);
