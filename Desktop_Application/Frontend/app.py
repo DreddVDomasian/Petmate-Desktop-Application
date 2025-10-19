@@ -83,6 +83,9 @@ class MainUI(QMainWindow):
         self.current_search_term = ""
         self.is_searching = False
 
+        #Pet species comboBox
+        self.setup_species_field()
+
         # Initial page setup
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
@@ -462,6 +465,7 @@ class MainUI(QMainWindow):
         self.label_4.setGraphicsEffect(create_card_shadow(3,2,2,))
         self.label_15.setGraphicsEffect(create_card_shadow(3,2,2,))
 
+        self.clearSpeciesBtn.setGraphicsEffect(create_card_shadow())
 
     #FORM INPUT CHECKER
     def collect_and_validate_fields(self, required_fields):
@@ -857,6 +861,27 @@ class MainUI(QMainWindow):
         self.navigate_to_page(5, owner_id=patient['id'])
 
     #PET INFO DATA SUBMIT
+    def setup_species_field(self):
+        # Hide the "Other" text field initially
+        self.otherSpeciesLineEdit.hide()
+        self.clearSpeciesBtn.hide()
+        # Connect the species combo box change signal
+        self.speciesComboBox.currentTextChanged.connect(self.handle_species_selection)
+    def handle_species_selection(self, text):
+        if text.lower() == "others":
+            self.otherSpeciesLineEdit.show()
+            self.clearSpeciesBtn.show()
+            self.speciesComboBox.hide()
+            self.clearSpeciesBtn.clicked.connect(self.clearSpeciesFunc)
+        else:
+            self.otherSpeciesLineEdit.hide()
+            self.otherSpeciesLineEdit.clear()
+    def clearSpeciesFunc(self):
+        self.otherSpeciesLineEdit.clear()
+        self.otherSpeciesLineEdit.hide()
+        self.clearSpeciesBtn.hide()
+        self.speciesComboBox.show()
+        self.speciesComboBox.setCurrentIndex(0)
     def submit_pet_data(self):
         # Only fields that are always required go here:
         required_fields = {
@@ -868,6 +893,14 @@ class MainUI(QMainWindow):
         }
 
         data, missing = self.collect_and_validate_fields(required_fields)
+
+        if data["species"].lower() == "others":
+            custom_species = self.otherSpeciesLineEdit.text().strip()
+            if not custom_species:
+                toast = Toast(self, "Please specify the species.", icon_path="Icons/warning.png")
+                toast.show_toast()
+                return
+            data["species"] = custom_species
 
         # optional remarks
         data["remarks"] = self.petRemarks.text().strip() or None

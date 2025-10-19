@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2591,8 +2591,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>814</width>
+                   <height>488</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3276,7 +3276,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                     </property>
                     <property name="currentIndex">
-                     <number>2</number>
+                     <number>0</number>
                     </property>
                     <widget class="QWidget" name="webAppPending">
                      <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -3308,8 +3308,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>814</width>
+                           <height>440</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -3423,8 +3423,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>814</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -3876,8 +3876,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>90</width>
+                           <height>16</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -5318,8 +5318,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>814</width>
+                       <height>394</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -5764,88 +5764,208 @@ QComboBox QLineEdit {
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_21">
                      <property name="spacing">
-                      <number>35</number>
+                      <number>20</number>
                      </property>
                      <property name="leftMargin">
-                      <number>5</number>
+                      <number>0</number>
                      </property>
                      <property name="topMargin">
                       <number>0</number>
                      </property>
                      <property name="rightMargin">
-                      <number>5</number>
+                      <number>0</number>
                      </property>
                      <property name="bottomMargin">
-                      <number>5</number>
+                      <number>0</number>
                      </property>
                      <item>
-                      <widget class="QLineEdit" name="breed">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
+                      <widget class="QFrame" name="frame_69">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
                        </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
                        </property>
-                       <property name="styleSheet">
-                        <string notr="true"/>
-                       </property>
-                       <property name="placeholderText">
-                        <string>Breed</string>
-                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_83">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>5</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>5</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>5</number>
+                        </property>
+                        <item>
+                         <widget class="QLineEdit" name="breed">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>174</width>
+                            <height>45</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true"/>
+                          </property>
+                          <property name="placeholderText">
+                           <string>Breed</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QComboBox" name="speciesComboBox">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>174</width>
-                         <height>45</height>
-                        </size>
-                       </property>
+                      <widget class="QFrame" name="frame_59">
                        <property name="styleSheet">
                         <string notr="true"/>
                        </property>
-                       <property name="editable">
-                        <bool>false</bool>
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
                        </property>
-                       <property name="currentText">
-                        <string>Select Species</string>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
                        </property>
-                       <property name="currentIndex">
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <property name="text">
-                         <string>Select Species</string>
+                       <layout class="QHBoxLayout" name="horizontalLayout_82">
+                        <property name="spacing">
+                         <number>0</number>
                         </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Cat</string>
+                        <property name="leftMargin">
+                         <number>5</number>
                         </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Dog</string>
+                        <property name="topMargin">
+                         <number>0</number>
                         </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Others</string>
+                        <property name="rightMargin">
+                         <number>5</number>
                         </property>
-                       </item>
+                        <property name="bottomMargin">
+                         <number>5</number>
+                        </property>
+                        <item>
+                         <widget class="QComboBox" name="speciesComboBox">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>174</width>
+                            <height>45</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true"/>
+                          </property>
+                          <property name="editable">
+                           <bool>false</bool>
+                          </property>
+                          <property name="currentText">
+                           <string>Select Species</string>
+                          </property>
+                          <property name="currentIndex">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <property name="text">
+                            <string>Select Species</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>Cat</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>Dog</string>
+                           </property>
+                          </item>
+                          <item>
+                           <property name="text">
+                            <string>Others</string>
+                           </property>
+                          </item>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLineEdit" name="otherSpeciesLineEdit">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>174</width>
+                            <height>45</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QLineEdit#otherSpeciesLineEdit{
+	border-top-right-radius:none;
+	border-bottom-right-radius:none;
+}</string>
+                          </property>
+                          <property name="placeholderText">
+                           <string>Specify species</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="clearSpeciesBtn">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>0</width>
+                            <height>45</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">background-color:rgb(245, 245, 245);
+border:none;
+margin:0;
+padding:0;
+padding-right:5px;
+border-top-right-radius:10px;
+border-bottom-right-radius:10px;</string>
+                          </property>
+                          <property name="text">
+                           <string/>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="resource.qrc">
+                            <normaloff>:/Icons/Icons/close.png</normaloff>:/Icons/Icons/close.png</iconset>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>25</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                     </layout>
