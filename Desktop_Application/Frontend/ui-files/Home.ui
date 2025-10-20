@@ -26,7 +26,7 @@
    <string>PETMATE INFORMATION SYSTEM</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resource.qrc">
+   <iconset resource="../resource.qrc">
     <normaloff>:/images/image/desktopIcon.png</normaloff>:/images/image/desktopIcon.png</iconset>
   </property>
   <property name="windowOpacity">
@@ -173,7 +173,7 @@ border:none
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/hideNav.png</normaloff>:/Icons/Icons/hideNav.png</iconset>
                </property>
                <property name="iconSize">
@@ -214,7 +214,7 @@ border:none
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+             <pixmap resource="../resource.qrc">:/images/image/petmateLogo.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -296,7 +296,7 @@ QToolButton:checked{
                 <string>   HOME</string>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/home.png</normaloff>:/Icons/Icons/home.png</iconset>
                </property>
                <property name="iconSize">
@@ -346,7 +346,7 @@ QToolButton:checked{
                 <string>   ADD CLIENT</string>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/addPatient.png</normaloff>:/Icons/Icons/addPatient.png</iconset>
                </property>
                <property name="iconSize">
@@ -396,7 +396,7 @@ QToolButton:checked{
                 <string>   RECORDS</string>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/Records.png</normaloff>:/Icons/Icons/Records.png</iconset>
                </property>
                <property name="iconSize">
@@ -446,7 +446,7 @@ QToolButton:checked{
                 <string>   APPOINTMENT</string>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/AddAppointment.png</normaloff>:/Icons/Icons/AddAppointment.png</iconset>
                </property>
                <property name="iconSize">
@@ -496,7 +496,7 @@ QToolButton:checked{
                 <string>   FOLLOW-UPS</string>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/schedVax.png</normaloff>:/Icons/Icons/schedVax.png</iconset>
                </property>
                <property name="iconSize">
@@ -568,7 +568,7 @@ QToolButton:checked{
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="resource.qrc">:/images/image/navImg.png</pixmap>
+             <pixmap resource="../resource.qrc">:/images/image/navImg.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -605,7 +605,7 @@ QToolButton:hover{
              <string notr="true">       LOG OUT</string>
             </property>
             <property name="icon">
-             <iconset resource="resource.qrc">
+             <iconset resource="../resource.qrc">
               <normaloff>:/Icons/Icons/logOutIcon.png</normaloff>:/Icons/Icons/logOutIcon.png</iconset>
             </property>
             <property name="iconSize">
@@ -695,7 +695,7 @@ QToolButton:hover{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/showNav.png</normaloff>:/Icons/Icons/showNav.png</iconset>
                </property>
                <property name="iconSize">
@@ -733,7 +733,7 @@ QToolButton:hover{
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="resource.qrc">:/images/image/Dog.png</pixmap>
+             <pixmap resource="../resource.qrc">:/images/image/Dog.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -829,7 +829,7 @@ QToolButton:checked{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/home.png</normaloff>:/Icons/Icons/home.png</iconset>
                </property>
                <property name="iconSize">
@@ -885,7 +885,7 @@ QToolButton:checked{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/addPatient.png</normaloff>:/Icons/Icons/addPatient.png</iconset>
                </property>
                <property name="iconSize">
@@ -938,7 +938,7 @@ QToolButton:checked{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/Records.png</normaloff>:/Icons/Icons/Records.png</iconset>
                </property>
                <property name="iconSize">
@@ -991,7 +991,7 @@ QToolButton:checked{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/AddAppointment.png</normaloff>:/Icons/Icons/AddAppointment.png</iconset>
                </property>
                <property name="iconSize">
@@ -1044,7 +1044,7 @@ QToolButton:checked{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="resource.qrc">
+                <iconset resource="../resource.qrc">
                  <normaloff>:/Icons/Icons/schedVax.png</normaloff>:/Icons/Icons/schedVax.png</iconset>
                </property>
                <property name="iconSize">
@@ -1116,7 +1116,7 @@ QToolButton:hover{
              <string notr="true"/>
             </property>
             <property name="icon">
-             <iconset resource="resource.qrc">
+             <iconset resource="../resource.qrc">
               <normaloff>:/Icons/Icons/logOutIcon.png</normaloff>:/Icons/Icons/logOutIcon.png</iconset>
             </property>
             <property name="iconSize">
@@ -1229,7 +1229,7 @@ QToolButton:hover{
 border:none;</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resource.qrc">
+                    <iconset resource="../resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                    </property>
                   </widget>
@@ -1397,7 +1397,7 @@ border:none;</string>
 border:none;</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resource.qrc">
+                 <iconset resource="../resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                 </property>
                </widget>
@@ -1473,7 +1473,7 @@ border:none;</string>
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+                    <pixmap resource="../resource.qrc">:/images/image/petmateLogo.png</pixmap>
                    </property>
                    <property name="scaledContents">
                     <bool>true</bool>
@@ -2329,7 +2329,7 @@ QPushButton:hover{
 border:none;</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resource.qrc">
+                 <iconset resource="../resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                 </property>
                </widget>
@@ -2396,7 +2396,7 @@ border:none;</string>
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+                    <pixmap resource="../resource.qrc">:/images/image/petmateLogo.png</pixmap>
                    </property>
                    <property name="scaledContents">
                     <bool>true</bool>
@@ -2532,7 +2532,7 @@ QLineEdit#searchBar:focus{
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap resource="resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
+                       <pixmap resource="../resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
                       </property>
                       <property name="scaledContents">
                        <bool>true</bool>
@@ -2591,8 +2591,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>814</width>
-                   <height>488</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -2653,7 +2653,7 @@ color:rgb(141, 141, 141);</string>
 border:none;</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resource.qrc">
+                 <iconset resource="../resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                 </property>
                </widget>
@@ -2726,7 +2726,7 @@ border:none;</string>
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+                    <pixmap resource="../resource.qrc">:/images/image/petmateLogo.png</pixmap>
                    </property>
                    <property name="scaledContents">
                     <bool>true</bool>
@@ -3024,7 +3024,7 @@ QLineEdit#searchBar_2 :focus{
                           <string/>
                          </property>
                          <property name="pixmap">
-                          <pixmap resource="resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
+                          <pixmap resource="../resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
                          </property>
                          <property name="scaledContents">
                           <bool>true</bool>
@@ -3308,8 +3308,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>814</width>
-                           <height>440</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -3534,7 +3534,7 @@ border:none;</string>
                         <string>...</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="resource.qrc">
+                        <iconset resource="../resource.qrc">
                          <normaloff>:/Icons/Icons/AddIconAppointment.png</normaloff>:/Icons/Icons/AddIconAppointment.png</iconset>
                        </property>
                        <property name="iconSize">
@@ -3876,8 +3876,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>814</width>
-                           <height>360</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -4120,7 +4120,7 @@ QFrame{
 border:none;</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resource.qrc">
+                    <iconset resource="../resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                    </property>
                   </widget>
@@ -4194,7 +4194,7 @@ QLabel{
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+                       <pixmap resource="../resource.qrc">:/images/image/petmateLogo.png</pixmap>
                       </property>
                       <property name="scaledContents">
                        <bool>true</bool>
@@ -4563,7 +4563,7 @@ border-bottom-right-radius:10px;
                              <string/>
                             </property>
                             <property name="pixmap">
-                             <pixmap resource="resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
+                             <pixmap resource="../resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
                             </property>
                             <property name="scaledContents">
                              <bool>true</bool>
@@ -4874,7 +4874,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>812</width>
+                          <width>100</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -4954,7 +4954,7 @@ border:none;</string>
                  <string>...</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resource.qrc">
+                 <iconset resource="../resource.qrc">
                   <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                 </property>
                </widget>
@@ -5172,7 +5172,7 @@ border:none;</string>
                              <string>...</string>
                             </property>
                             <property name="icon">
-                             <iconset resource="resource.qrc">
+                             <iconset resource="../resource.qrc">
                               <normaloff>:/Icons/Icons/EditProfile.png</normaloff>:/Icons/Icons/EditProfile.png</iconset>
                             </property>
                             <property name="iconSize">
@@ -5196,7 +5196,7 @@ border:none;</string>
                              <string>...</string>
                             </property>
                             <property name="icon">
-                             <iconset resource="resource.qrc">
+                             <iconset resource="../resource.qrc">
                               <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
                             </property>
                             <property name="iconSize">
@@ -5237,7 +5237,7 @@ border:none;</string>
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
+                       <pixmap resource="../resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
                       </property>
                       <property name="scaledContents">
                        <bool>true</bool>
@@ -5318,8 +5318,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>814</width>
-                       <height>394</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -5396,7 +5396,7 @@ border:none;</string>
                             <string>...</string>
                            </property>
                            <property name="icon">
-                            <iconset resource="resource.qrc">
+                            <iconset resource="../resource.qrc">
                              <normaloff>:/Icons/Icons/AddIconAppointment.png</normaloff>:/Icons/Icons/AddIconAppointment.png</iconset>
                            </property>
                            <property name="iconSize">
@@ -5954,7 +5954,7 @@ border-bottom-right-radius:10px;</string>
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset resource="resource.qrc">
+                           <iconset resource="../resource.qrc">
                             <normaloff>:/Icons/Icons/close.png</normaloff>:/Icons/Icons/close.png</iconset>
                           </property>
                           <property name="iconSize">
@@ -6398,7 +6398,7 @@ border:none;</string>
                     <string>...</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resource.qrc">
+                    <iconset resource="../resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                    </property>
                   </widget>
@@ -6520,7 +6520,7 @@ border:none;</string>
                                 <string/>
                                </property>
                                <property name="icon">
-                                <iconset resource="resource.qrc">
+                                <iconset resource="../resource.qrc">
                                  <normaloff>:/Icons/Icons/checklist.png</normaloff>:/Icons/Icons/checklist.png</iconset>
                                </property>
                                <property name="iconSize">
@@ -6570,7 +6570,7 @@ border:none;</string>
                                 <string/>
                                </property>
                                <property name="pixmap">
-                                <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
+                                <pixmap resource="../resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
                                </property>
                                <property name="scaledContents">
                                 <bool>true</bool>
@@ -7026,7 +7026,7 @@ color:rgb(98, 98, 98);
                                       <string>EDIT DETAILS</string>
                                      </property>
                                      <property name="icon">
-                                      <iconset resource="resource.qrc">
+                                      <iconset resource="../resource.qrc">
                                        <normaloff>:/Icons/Icons/editPeDetails.png</normaloff>:/Icons/Icons/editPeDetails.png</iconset>
                                      </property>
                                      <property name="iconSize">
@@ -7401,7 +7401,7 @@ color:rgb(98, 98, 98);
                                       <string>DELETE PET</string>
                                      </property>
                                      <property name="icon">
-                                      <iconset resource="resource.qrc">
+                                      <iconset resource="../resource.qrc">
                                        <normaloff>:/Icons/Icons/deleteBlack.png</normaloff>:/Icons/Icons/deleteBlack.png</iconset>
                                      </property>
                                      <property name="iconSize">
@@ -7790,7 +7790,7 @@ border-bottom-right-radius:10px;
                               <string/>
                              </property>
                              <property name="pixmap">
-                              <pixmap resource="resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
+                              <pixmap resource="../resource.qrc">:/Icons/Icons/searchIcon.png</pixmap>
                              </property>
                              <property name="scaledContents">
                               <bool>true</bool>
@@ -7905,7 +7905,7 @@ background:none;</string>
                            <string/>
                           </property>
                           <property name="icon">
-                           <iconset resource="resource.qrc">
+                           <iconset resource="../resource.qrc">
                             <normaloff>:/Icons/Icons/printIcon.png</normaloff>:/Icons/Icons/printIcon.png</iconset>
                           </property>
                           <property name="iconSize">
@@ -8877,7 +8877,7 @@ QPushButton:hover{
 border:none;</string>
                    </property>
                    <property name="icon">
-                    <iconset resource="resource.qrc">
+                    <iconset resource="../resource.qrc">
                      <normaloff>:/Icons/Icons/left-arrow.png</normaloff>:/Icons/Icons/left-arrow.png</iconset>
                    </property>
                   </widget>
@@ -8938,7 +8938,7 @@ border:none;</string>
                        <string/>
                       </property>
                       <property name="pixmap">
-                       <pixmap resource="resource.qrc">:/images/image/petmateLogo.png</pixmap>
+                       <pixmap resource="../resource.qrc">:/images/image/petmateLogo.png</pixmap>
                       </property>
                       <property name="scaledContents">
                        <bool>true</bool>
@@ -9035,7 +9035,7 @@ border:none;</string>
                              <string/>
                             </property>
                             <property name="pixmap">
-                             <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
+                             <pixmap resource="../resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
                             </property>
                             <property name="scaledContents">
                              <bool>true</bool>
@@ -9374,7 +9374,7 @@ color:rgb(0, 0, 0);</string>
                              <string/>
                             </property>
                             <property name="pixmap">
-                             <pixmap resource="resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
+                             <pixmap resource="../resource.qrc">:/Icons/Icons/catIcon.png</pixmap>
                             </property>
                             <property name="scaledContents">
                              <bool>true</bool>
@@ -9969,6 +9969,7 @@ border-radius: 10px;
   </widget>
  </widget>
  <resources>
+  <include location="../resource.qrc"/>
   <include location="resource.qrc"/>
  </resources>
  <connections>

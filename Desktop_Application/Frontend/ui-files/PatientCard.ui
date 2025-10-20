@@ -89,7 +89,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
+         <pixmap resource="../resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -171,7 +171,7 @@ background:transparent;</string>
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/Icons/Icons/EditProfile.png</normaloff>:/Icons/Icons/EditProfile.png</iconset>
            </property>
            <property name="iconSize">
@@ -198,7 +198,7 @@ background:transparent;</string>
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/Icons/Icons/delete.png</normaloff>:/Icons/Icons/delete.png</iconset>
            </property>
            <property name="iconSize">
@@ -218,6 +218,7 @@ background:transparent;</string>
   </layout>
  </widget>
  <resources>
+  <include location="../resource.qrc"/>
   <include location="resource.qrc"/>
  </resources>
  <connections/>

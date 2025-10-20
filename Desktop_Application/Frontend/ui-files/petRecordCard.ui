@@ -136,7 +136,7 @@ color:rgb(39, 39, 39);</string>
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

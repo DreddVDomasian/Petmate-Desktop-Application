@@ -277,7 +277,7 @@ QTimeEdit::down-button {
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="resource.qrc">
+               <iconset resource="../resource.qrc">
                 <normaloff>:/Icons/Icons/close.png</normaloff>:/Icons/Icons/close.png</iconset>
               </property>
               <property name="iconSize">
@@ -875,7 +875,7 @@ QPushButton:hover{
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

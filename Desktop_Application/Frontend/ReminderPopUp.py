@@ -9,7 +9,7 @@ class ReminderPopup(QWidget):
     def __init__(self, parent=None, main_window=None):
         super().__init__(parent)
         self.main_window = main_window
-        uic.loadUi("reminderPopUp.ui", self)  # load your reminder popup UI
+        uic.loadUi("ui-files/reminderPopUp.ui", self)  # load your reminder popup UI
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.remidersChecklists.setGraphicsEffect(create_card_shadow())
 
@@ -77,7 +77,7 @@ class ReminderPopup(QWidget):
             self.reminderForLabel.setText(f"REMINDERS FOR {pet_name.upper()}")
 
         for reminder in reminders:
-            card = uic.loadUi("reminderCard.ui")
+            card = uic.loadUi("ui-files/reminderCard.ui")
             card.typeReq.setText(reminder["type"])
             card.dateReq.setText(self.main_window.format_date(reminder["date"]))
             if not reminder["time"] or reminder["time"] == "null":

@@ -5,7 +5,7 @@ from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
 class ConfirmCard(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        uic.loadUi("ConfirmDialog.ui", self)
+        uic.loadUi("ui-files/ConfirmDialog.ui", self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
 

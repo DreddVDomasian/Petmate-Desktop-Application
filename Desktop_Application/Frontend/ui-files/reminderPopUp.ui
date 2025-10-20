@@ -63,7 +63,7 @@ border:none;</string>
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/Icons/Icons/checklist.png</normaloff>:/Icons/Icons/checklist.png</iconset>
            </property>
            <property name="iconSize">
@@ -235,7 +235,7 @@ QPushButton:hover{
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

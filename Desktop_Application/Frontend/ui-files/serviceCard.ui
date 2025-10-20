@@ -159,7 +159,7 @@ QToolButton:hover{
             <string>Open Note</string>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/Icons/Icons/downArrow.png</normaloff>:/Icons/Icons/downArrow.png</iconset>
            </property>
            <property name="toolButtonStyle">
@@ -190,7 +190,7 @@ QToolButton:hover{
             <string>Close Note</string>
            </property>
            <property name="icon">
-            <iconset resource="resource.qrc">
+            <iconset resource="../resource.qrc">
              <normaloff>:/Icons/Icons/upArrow.png</normaloff>:/Icons/Icons/upArrow.png</iconset>
            </property>
            <property name="toolButtonStyle">
@@ -450,7 +450,7 @@ p, li { white-space: pre-wrap; }
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset resource="resource.qrc">
+                  <iconset resource="../resource.qrc">
                    <normaloff>:/Icons/Icons/editPeDetails.png</normaloff>:/Icons/Icons/editPeDetails.png</iconset>
                  </property>
                  <property name="iconSize">
@@ -476,7 +476,7 @@ p, li { white-space: pre-wrap; }
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset resource="resource.qrc">
+                  <iconset resource="../resource.qrc">
                    <normaloff>:/Icons/Icons/deleteBlack.png</normaloff>:/Icons/Icons/deleteBlack.png</iconset>
                  </property>
                  <property name="iconSize">
@@ -502,7 +502,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

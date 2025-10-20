@@ -38,7 +38,7 @@ import webbrowser
 class MainUI(QMainWindow):
     def __init__(self):
         super(MainUI, self).__init__()
-        uic.loadUi("Home.ui", self)
+        uic.loadUi("ui-files/Home.ui", self)
 
         # Initialize delete and update functions
         self.deleteFunction = Delete(self)
@@ -687,7 +687,7 @@ class MainUI(QMainWindow):
         self.patient_cards = []
 
         for patient in patients:
-            card = uic.loadUi("PatientCard.ui")
+            card = uic.loadUi("ui-files/PatientCard.ui")
             self.scale_cards([card], base_h=81)
 
             # Set patient information
@@ -731,7 +731,7 @@ class MainUI(QMainWindow):
             return
 
         try:
-            self.patient_pagination_widget = uic.loadUi("paginationUi.ui")
+            self.patient_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
 
             # Connect prev/next buttons with search term
             self.patient_pagination_widget.PrevPage.clicked.connect(
@@ -1015,7 +1015,7 @@ class MainUI(QMainWindow):
         col = 1  # start at col=1, col=0 is your addPetButton
 
         for pet in pets:
-            pet_card = uic.loadUi("petRecordCard.ui")
+            pet_card = uic.loadUi("ui-files/petRecordCard.ui")
             pet_card.petNameCard.setText(pet["petName"].upper())
 
             #Dynamic icon by species
@@ -1125,7 +1125,7 @@ class MainUI(QMainWindow):
             header.setVisible(True)
 
         for service in services:
-            service_card = uic.loadUi("serviceCard.ui")
+            service_card = uic.loadUi("ui-files/serviceCard.ui")
 
             # Always cast to str to avoid None crashing
             service_type = str(service.get("service_type", "N/A"))
@@ -1337,7 +1337,7 @@ class MainUI(QMainWindow):
 
         # segregate by status after filtering
         for service in filtered_services:
-            card = uic.loadUi("schedCard.ui")
+            card = uic.loadUi("ui-files/schedCard.ui")
             card.ReturnNameLabel.setText(service['owner_full_name'].title())
             card.petName.setText(service['pet_name'].capitalize())
             card.ReturnServiceLabel.setText(service['service_type'])
@@ -1398,7 +1398,7 @@ class MainUI(QMainWindow):
                 return raw
         return None
     def setup_calendar(self):
-        self.customCalendar = uic.loadUi("customCalendar.ui")
+        self.customCalendar = uic.loadUi("ui-files/customCalendar.ui")
         self.customCalendar.setParent(None)
         self.customCalendar.setWindowFlags(Qt.WindowType.Popup)
         self.calendarWidget = self.customCalendar.findChild(QCalendarWidget, "calendarWidget")

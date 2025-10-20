@@ -26,7 +26,7 @@ class AddAppointmentCard(QWidget):
     def __init__(self, parent=None, main_window=None):
         super().__init__(parent)
         self.main_window = main_window
-        uic.loadUi("addAppointmentCard.ui", self)
+        uic.loadUi("ui-files/addAppointmentCard.ui", self)
         self.card_manager = AppointmentCardManager(self)
 
         #layouts
@@ -498,7 +498,7 @@ class AddAppointmentCard(QWidget):
     def create_walkin_card(self, appoint):
         """Helper method to create a walk-in appointment card"""
         try:
-            card = uic.loadUi("webAppointmentCard.ui")
+            card = uic.loadUi("ui-files/webAppointmentCard.ui")
 
             # Get owner and pet information
             owner = appoint.get("owner", {})
@@ -704,7 +704,7 @@ class AppointmentCardManager:
         layout.addStretch()
     def create_appointment_card(self, appointment):
         """Create and configure an appointment card"""
-        card = uic.loadUi("appointmentCard.ui")
+        card = uic.loadUi("ui-files/appointmentCard.ui")
         status = appointment.get("status", "").lower()
         if status in ["completed", "cancelled"]:
             card.deleteButton.setVisible(False)
@@ -753,7 +753,7 @@ class AppointmentCardManager:
             return
 
         try:
-            self.appointment_pagination_widget = uic.loadUi("paginationUi.ui")
+            self.appointment_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
 
             # Connect prev/next buttons with status filter and search term
             self.appointment_pagination_widget.PrevPage.clicked.connect(

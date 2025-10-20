@@ -51,7 +51,7 @@ color:rgb(56, 56, 56);
          <string notr="true">border:none; background-color:transparent;</string>
         </property>
         <property name="icon">
-         <iconset resource="resource.qrc">
+         <iconset resource="../resource.qrc">
           <normaloff>:/Icons/Icons/prevPage.png</normaloff>:/Icons/Icons/prevPage.png</iconset>
         </property>
         <property name="iconSize">
@@ -89,7 +89,7 @@ color:rgb(56, 56, 56);
          <string notr="true">border:none; background-color:transparent;</string>
         </property>
         <property name="icon">
-         <iconset resource="resource.qrc">
+         <iconset resource="../resource.qrc">
           <normaloff>:/Icons/Icons/NextPage.png</normaloff>:/Icons/Icons/NextPage.png</iconset>
         </property>
         <property name="iconSize">
@@ -106,7 +106,7 @@ color:rgb(56, 56, 56);
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

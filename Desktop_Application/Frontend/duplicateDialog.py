@@ -8,7 +8,7 @@ class DuplicateDialog(QWidget):
     def __init__(self, duplicates, parent=None, main_window=None):
         super().__init__(parent)
         self.main_window = main_window
-        uic.loadUi("duplicateDialog.ui", self)
+        uic.loadUi("ui-files/duplicateDialog.ui", self)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
 
         # Layout inside scrollAreaWidgetContents where cards will be added
@@ -65,7 +65,7 @@ class DuplicateDialog(QWidget):
 
         # Add new cards
         for entry in duplicates:
-            card = uic.loadUi("duplicateCard.ui")
+            card = uic.loadUi("ui-files/duplicateCard.ui")
             card.setGraphicsEffect(create_card_shadow())
             patient = entry["patient"]
             pets = entry["pets"]
