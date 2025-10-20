@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -4137,7 +4137,7 @@ border:none;</string>
                     <string notr="true">
 QLabel{
 	font-family:&quot;Rubik Mono One&quot;;
-	color:rgb(39, 39, 39);
+color:rgb(52, 52, 52);
 
 }</string>
                    </property>
@@ -4874,7 +4874,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
+                          <width>812</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -5318,8 +5318,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>814</width>
+                       <height>394</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -9970,7 +9970,7 @@ border-radius: 10px;
  </widget>
  <resources>
   <include location="../resource.qrc"/>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections>
   <connection>

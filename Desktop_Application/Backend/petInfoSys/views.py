@@ -448,6 +448,45 @@ def patient_combobox_data(request):
 
     return Response(patient_data)
 
+
+@api_view(['GET'])
+def check_time_slot_availability_api(request):
+    """API endpoint to check time slot availability"""
+    date = request.GET.get('date')
+    time = request.GET.get('time')
+
+    if not date or not time:
+        return Response({'error': 'Date and time required'}, status=400)
+
+    is_available = check_time_slot_availability(date, time)
+
+    return Response({
+        'date': date,
+        'time': time,
+        'available': is_available,
+        'message': 'Available' if is_available else 'Fully booked'
+    })
+def check_time_slot_availability(date, time):
+    """Check if a time slot has available capacity (max 4 appointments per slot)"""
+    try:
+        # Convert to date object if it's a string
+        if isinstance(date, str):
+            from datetime import datetime
+            date = datetime.strptime(date, '%Y-%m-%d').date()
+
+        # Count appointments for this date and time
+        appointment_count = WalkInAppointment.objects.filter(
+            date=date,
+            prefTime=time,
+            request__in=['accepted', 'pending']  # Count both accepted and pending
+        ).exclude(status='cancelled').count()
+
+        # Return True if there are less than 4 appointments
+        return appointment_count < 4
+    except Exception as e:
+        print(f"Error checking time slot availability: {e}")
+        return True  # Default to available if there's an error
+
 class PetListCreateView(generics.ListCreateAPIView):
     serializer_class = PetSerializer
 
@@ -601,6 +640,7 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         else:
             # Staff/Desktop: auto-approved
             serializer.save(request='accepted')
+
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WalkInSerializer

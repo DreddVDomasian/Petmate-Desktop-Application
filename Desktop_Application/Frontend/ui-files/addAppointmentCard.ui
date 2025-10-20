@@ -716,12 +716,6 @@ color:rgb(39, 39, 39);</string>
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>20</number>
-            </property>
             <item>
              <widget class="QLabel" name="label_140">
               <property name="styleSheet">
@@ -734,7 +728,7 @@ color:rgb(39, 39, 39);</string>
              </widget>
             </item>
             <item>
-             <widget class="QTimeEdit" name="timeEdit">
+             <widget class="QComboBox" name="timeComboBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -747,29 +741,29 @@ color:rgb(39, 39, 39);</string>
                 <height>45</height>
                </size>
               </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
-              <property name="maximumTime">
-               <time>
-                <hour>17</hour>
-                <minute>0</minute>
-                <second>0</second>
-               </time>
-              </property>
-              <property name="minimumTime">
-               <time>
-                <hour>9</hour>
-                <minute>0</minute>
-                <second>0</second>
-               </time>
-              </property>
-              <property name="currentSection">
-               <enum>QDateTimeEdit::HourSection</enum>
-              </property>
-              <property name="calendarPopup">
+              <property name="editable">
                <bool>true</bool>
               </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+              </property>
+              <property name="duplicatesEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Select Time</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>

@@ -1,7 +1,7 @@
 import os
 import sys
 
-# Get the Desktop_Application directory (one level up from frontend/)
+# ETO ANG SAGGOT
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_file_dir)  # Go up from frontend to Desktop_Application
 project_root = os.path.dirname(project_root)      # Go up to the actual project root
@@ -57,6 +57,9 @@ class AddAppointmentCard(QWidget):
         self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment())
         self.setup_search()
 
+        self.setup_time_combo_box()
+        # Connect date change signal to update time slots
+        self.popUpDateEdit.dateChanged.connect(self.update_time_slots_availability)
         if parent:
             parent.installEventFilter(self)
 
@@ -101,7 +104,7 @@ class AddAppointmentCard(QWidget):
             comboBox.setGraphicsEffect(create_card_shadow())
 
         self.popUpDateEdit.setGraphicsEffect(create_card_shadow())
-        self.timeEdit.setGraphicsEffect(create_card_shadow())
+        self.timeComboBox.setGraphicsEffect(create_card_shadow())
 
         #other Shadows
         self.addPopUPFrame.setGraphicsEffect(create_card_shadow())
@@ -187,6 +190,63 @@ class AddAppointmentCard(QWidget):
     def on_date_field_clicked(self, dateEdit):
         if self.main_window:
             self.main_window.show_custom_calendar(dateEdit)
+    def setup_time_combo_box(self):
+        """Set up the time combo box with clinic hours and real-time availability"""
+        self.timeComboBox.clear()
+
+        # Generate time slots from 9:30 AM to 5:30 PM in 1-hour intervals
+        start_hour = 9
+        start_minute = 30
+        end_hour = 17  # 5 PM
+        end_minute = 30
+
+        current_hour = start_hour
+        current_minute = start_minute
+
+        selected_date = self.popUpDateEdit.date().toString("yyyy-MM-dd")
+
+        while current_hour < end_hour or (current_hour == end_hour and current_minute <= end_minute):
+            # Format time for display (12-hour format with AM/PM)
+            period = "AM" if current_hour < 12 else "PM"
+            display_hour = current_hour if current_hour <= 12 else current_hour - 12
+            if display_hour == 0:
+                display_hour = 12
+
+            time_display = f"{display_hour}:{current_minute:02d} {period}"
+
+            # Format time for storage (24-hour format)
+            time_value = f"{current_hour:02d}:{current_minute:02d}:00"
+
+            # Check availability for this time slot
+            is_available = self.is_time_slot_available(selected_date, time_value)
+
+            if is_available:
+                self.timeComboBox.addItem(time_display, time_value)
+            else:
+                # Show unavailable slots as disabled
+                self.timeComboBox.addItem(f"{time_display} (FULL)", time_value)
+                # Get the last added item and disable it
+                last_index = self.timeComboBox.count() - 1
+                self.timeComboBox.model().item(last_index).setEnabled(False)
+
+            # Move to next hour
+            current_hour += 1
+
+            # If we go past 5:30 PM, break
+            if current_hour > end_hour or (current_hour == end_hour and current_minute > end_minute):
+                break
+    def update_time_slots_availability(self):
+        """Update time slots availability when date changes"""
+        current_index = self.timeComboBox.currentIndex()
+        current_data = self.timeComboBox.currentData() if current_index >= 0 else None
+
+        self.setup_time_combo_box()
+
+        # Try to restore previous selection if still available
+        if current_data:
+            index = self.timeComboBox.findData(current_data)
+            if index >= 0 and self.timeComboBox.model().item(index).isEnabled():
+                self.timeComboBox.setCurrentIndex(index)
     def setup_comboboxes(self):
         self.selectPetPopUp, self.selectPatientPopUp
         self.load_patients_to_combobox()
@@ -213,7 +273,11 @@ class AddAppointmentCard(QWidget):
         pet_id = self.selectPetPopUp.itemData(pet_index)
 
         date = self.popUpDateEdit.date().toString("yyyy-MM-dd")
-        time = self.timeEdit.time().toString("HH:mm:ss")
+
+        # Get time from combo box
+        time_index = self.timeComboBox.currentIndex()
+        time = self.timeComboBox.itemData(time_index) if time_index >= 0 else ""
+
         service_name = self.serviceTypeComboBox.currentText()
 
         # basic validation
@@ -233,17 +297,23 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             return
 
+        # Additional validation: Check if the selected time slot is available
+        if not self.is_time_slot_available(date, time):
+            toast = Toast(self.main_window, "This time slot is already fully booked! Please choose another time.",
+                          icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
         # build data - USE THE NEW FIELD NAMES
         appointment_data = {
-            "owner_id": patient_id,  # Change from "owner" to "owner_id"
-            "pet_id": pet_id,  # Change from "pet" to "pet_id"
+            "owner_id": patient_id,
+            "pet_id": pet_id,
             "date": date,
             "prefTime": time,
             "service_name": service_name,
             "request": "accepted"
         }
 
-        print(f"Sending appointment data: {appointment_data}")  # Debug print
 
         # send data to backend
         if add_new_appointment(appointment_data):
@@ -251,10 +321,33 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             self.close()
             self.serviceTypeComboBox.setCurrentIndex(-1)
+            self.timeComboBox.setCurrentIndex(-1)  # Reset time combo box
             self.load_appointments(1, "pending", search_term=None)
         else:
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
+    def is_time_slot_available(self, date, time):
+        """Check if the selected time slot has available appointments (max 4 per slot)"""
+        try:
+            # Use API call instead of direct import
+            url = "http://127.0.0.1:8000/api/check-time-slot/"
+            params = {
+                'date': date,
+                'time': time
+            }
+
+            response = requests.get(url, params=params, timeout=5)
+
+            if response.status_code == 200:
+                data = response.json()
+                return data.get('available', True)
+            else:
+                print(f"API error: {response.status_code}")
+                return True  # Default to available if API fails
+
+        except Exception as e:
+            print(f"Error checking time slot availability: {e}")
+            return True  # Default to available if there's an error
 
     #LOADING WALK IN APPOINTMENTS AND CARD LOGIC
     def setup_status_filters(self):

@@ -21,6 +21,8 @@ urlpatterns = [
     path('scheduled-services/', ScheduledServiceListView.as_view(), name='scheduled-services'),
 
     path('patient-combobox-data/', views.patient_combobox_data, name='patient-combobox-data'),
+    path('check-time-slot/', views.check_time_slot_availability_api, name='check-time-slot'),
+
     path('walkIn/', WalkInListCreateView.as_view(), name='walk-in'),
     path('walkIn/<int:pk>/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
 
