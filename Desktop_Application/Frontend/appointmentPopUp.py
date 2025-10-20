@@ -627,6 +627,9 @@ class AddAppointmentCard(QWidget):
             self.web_Appointment()
             self.main_window.navigate_to_page(3)
             self.main_window.walkInOrWeb.setCurrentIndex(1)
+            self.load_appointments()
+            self.main_window.statusStackedWidget.setCurrentIndex(0)
+            self.main_window.pendingBtn.setChecked(True)
             self.main_window.walkInBtn.setChecked(True)
             self.main_window.load_patients(1,None)
         else:
