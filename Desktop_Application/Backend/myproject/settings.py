@@ -150,9 +150,11 @@ CORS_ALLOW_ALL_ORIGINS = True  # Only for development
 
 # Add frontend dev origins to CSRF trusted origins so Django accepts X-CSRFToken from them
 CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5174",
     "http://localhost:5173",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
     "http://127.0.0.1:3000",
 ]
 

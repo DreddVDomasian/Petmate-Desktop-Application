@@ -589,7 +589,7 @@ class WalkInListCreateView(generics.ListCreateAPIView):
                 # Regular web user: only show their own appointments
                 queryset = WalkInAppointment.objects.filter(
                     owner__user_account=user
-                ).order_by('created_at')
+                ).order_by('-created_at')
         else:
             # Unauthenticated request (desktop system) - treat as staff
             queryset = WalkInAppointment.objects.all().order_by('created_at')
