@@ -3,10 +3,9 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from "../../utils/csrf";
 
-
 export default function SetAppointment({ onNewAppointment }) {
   const [form, setForm] = useState({
-    pet: "", // This will store pet ID
+    pet: "",
     service: "",
     preferredDate: "",
     preferredTime: "",
@@ -17,8 +16,19 @@ export default function SetAppointment({ onNewAppointment }) {
   const [submitting, setSubmitting] = useState(false);
 
   const dateRef = useRef(null);
-  const timeRef = useRef(null);
 
+  // time slots for selection
+  const timeSlots = [
+    { time: "09:30 AM", full: false },
+    { time: "10:30 AM", full: false },
+    { time: "11:30 AM", full: false },
+    { time: "12:30 PM", full: false },
+    { time: "01:30 PM", full: false },
+    { time: "02:30 PM", full: false },
+    { time: "03:30 PM", full: false },
+    { time: "04:30 PM", full: false },
+    { time: "05:30 PM", full: false },
+  ];
 
   // Fetch pets
   useEffect(() => {
@@ -43,7 +53,7 @@ export default function SetAppointment({ onNewAppointment }) {
     fetchPets();
   }, []);
 
-  // Date & time pickers
+  // Date picker only (no more time picker)
   useEffect(() => {
     flatpickr(dateRef.current, {
       dateFormat: "M d, Y",
@@ -55,22 +65,6 @@ export default function SetAppointment({ onNewAppointment }) {
             ...prev,
             preferredDate: date.toISOString().split("T")[0],
           }));
-        }
-      },
-    });
-
-    flatpickr(timeRef.current, {
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: "h:i K",
-      time_24hr: false,
-      onChange: (selectedDates) => {
-        if (selectedDates.length > 0) {
-          const time = selectedDates[0];
-          const hh = String(time.getHours()).padStart(2, "0");
-          const mm = String(time.getMinutes()).padStart(2, "0");
-          const formattedTime = `${hh}:${mm}:00`;
-          setForm((prev) => ({ ...prev, preferredTime: formattedTime }));
         }
       },
     });
@@ -101,8 +95,6 @@ export default function SetAppointment({ onNewAppointment }) {
         status: "pending",
       };
 
-      console.log("Sending appointment data:", appointmentData);
-
       const res = await fetch("/api/walkIn/", {
         method: "POST",
         headers: {
@@ -114,28 +106,17 @@ export default function SetAppointment({ onNewAppointment }) {
       });
 
       if (res.status === 201) {
-        const newAppointment = await res.json(); // return created appointment from backend
+        const newAppointment = await res.json();
         alert("Appointment set successfully! Waiting for admin approval.");
+        setForm({ pet: "", service: "", preferredDate: "", preferredTime: "" });
 
-        // Reset form
-        setForm({
-          pet: "",
-          service: "",
-          preferredDate: "",
-          preferredTime: "",
-        });
-
-        // 🔹 Add appointment to parent state so it shows immediately
         if (onNewAppointment) {
           onNewAppointment(newAppointment);
         }
       } else {
-        const errorData = await res.json();
-        console.error("Failed to create appointment:", errorData);
         alert("Failed to set appointment. Please try again.");
       }
     } catch (error) {
-      console.error("Error setting appointment:", error);
       alert("Error setting appointment. Please try again.");
     } finally {
       setSubmitting(false);
@@ -174,9 +155,7 @@ export default function SetAppointment({ onNewAppointment }) {
           value={form.service}
           onChange={handleChange}
         >
-          <option value="" disabled>
-            Select Service
-          </option>
+          <option value="" disabled>Select Service</option>
           <option value="Vaccination">Vaccination</option>
           <option value="Check-up">Check-up</option>
           <option value="Surgery">Surgery</option>
@@ -190,7 +169,19 @@ export default function SetAppointment({ onNewAppointment }) {
       <h2>Preferred Schedule</h2>
       <div className="form-row">
         <input ref={dateRef} type="text" placeholder="Preferred Date" readOnly />
-        <input ref={timeRef} type="text" placeholder="Preferred Time" readOnly />
+        <select
+          name="preferredTime"
+          required
+          value={form.preferredTime}
+          onChange={handleChange}
+        >
+          <option value="" disabled>Select Time</option>
+          {timeSlots.map((slot, index) => (
+            <option key={index} value={slot.time} disabled={slot.full}>
+              {slot.time} {slot.full ? "(FULL)" : ""}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
