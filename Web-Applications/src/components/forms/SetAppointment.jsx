@@ -14,21 +14,23 @@ export default function SetAppointment({ onNewAppointment }) {
   const [pets, setPets] = useState([]);
   const [loadingPets, setLoadingPets] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
 
   const dateRef = useRef(null);
 
   // time slots for selection
-    const timeSlots = [
-        { label: "09:30 AM", value: "09:30:00" },
-        { label: "10:30 AM", value: "10:30:00" },
-        { label: "11:30 AM", value: "11:30:00" },
-        { label: "12:30 PM", value: "12:30:00" },
-        { label: "01:30 PM", value: "13:30:00" },
-        { label: "02:30 PM", value: "14:30:00" },
-        { label: "03:30 PM", value: "15:30:00" },
-        { label: "04:30 PM", value: "16:30:00" },
-        { label: "05:30 PM", value: "17:30:00" },
-    ];
+  const timeSlots = [
+    { label: "09:30 AM", value: "09:30:00" },
+    { label: "10:30 AM", value: "10:30:00" },
+    { label: "11:30 AM", value: "11:30:00" },
+    { label: "12:30 PM", value: "12:30:00" },
+    { label: "01:30 PM", value: "13:30:00" },
+    { label: "02:30 PM", value: "14:30:00" },
+    { label: "03:30 PM", value: "15:30:00" },
+    { label: "04:30 PM", value: "16:30:00" },
+    { label: "05:30 PM", value: "17:30:00" },
+  ];
 
   // Fetch pets
   useEffect(() => {
@@ -53,7 +55,60 @@ export default function SetAppointment({ onNewAppointment }) {
     fetchPets();
   }, []);
 
-  // Date picker only (no more time picker)
+  // Check availability when date changes
+  useEffect(() => {
+    if (form.preferredDate) {
+      checkAllTimeSlots(form.preferredDate);
+    } else {
+      setAvailableTimes([]);
+    }
+  }, [form.preferredDate]);
+
+  // Check all time slots for availability
+  const checkAllTimeSlots = async (date) => {
+    setCheckingAvailability(true);
+
+    try {
+      const updatedSlots = await Promise.all(
+        timeSlots.map(async (slot) => {
+          const isAvailable = await checkTimeSlotAvailability(date, slot.value);
+          return {
+            ...slot,
+            available: isAvailable
+          };
+        })
+      );
+
+      setAvailableTimes(updatedSlots);
+    } catch (error) {
+      console.error("Error checking time slots:", error);
+      // If error, show all as available
+      setAvailableTimes(timeSlots.map(slot => ({ ...slot, available: true })));
+    } finally {
+      setCheckingAvailability(false);
+    }
+  };
+
+  // Check single time slot availability
+  const checkTimeSlotAvailability = async (date, time) => {
+    try {
+      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
+        credentials: "include",
+        headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.available;
+      }
+      return true; // Default to available if API fails
+    } catch (error) {
+      console.error("Error checking time slot:", error);
+      return true; // Default to available if there's an error
+    }
+  };
+
+  // Date picker
   useEffect(() => {
     flatpickr(dateRef.current, {
       dateFormat: "M d, Y",
@@ -64,6 +119,7 @@ export default function SetAppointment({ onNewAppointment }) {
           setForm((prev) => ({
             ...prev,
             preferredDate: date.toLocaleDateString("en-CA"),
+            preferredTime: "" // Reset time when date changes
           }));
         }
       },
@@ -86,20 +142,14 @@ export default function SetAppointment({ onNewAppointment }) {
     }
 
     try {
-            // First check if time slot is available
-        const availabilityCheck = await fetch(`/api/check-time-slot/?date=${form.preferredDate}&time=${form.preferredTime}`, {
-          credentials: "include",
-          headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
-        });
+      // Double-check availability before submitting
+      const isAvailable = await checkTimeSlotAvailability(form.preferredDate, form.preferredTime);
+      if (!isAvailable) {
+        alert("This time slot is no longer available. Please choose another time.");
+        setSubmitting(false);
+        return;
+      }
 
-        if (availabilityCheck.ok) {
-          const availabilityData = await availabilityCheck.json();
-          if (!availabilityData.available) {
-            alert("This time slot is no longer available. Please choose another time.");
-            setSubmitting(false);
-            return;
-          }
-        }
       const appointmentData = {
         pet_id: parseInt(form.pet),
         service_name: form.service,
@@ -123,6 +173,7 @@ export default function SetAppointment({ onNewAppointment }) {
         const newAppointment = await res.json();
         alert("Appointment set successfully! Waiting for admin approval.");
         setForm({ pet: "", service: "", preferredDate: "", preferredTime: "" });
+        setAvailableTimes([]); // Reset availability
 
         if (onNewAppointment) {
           onNewAppointment(newAppointment);
@@ -188,21 +239,49 @@ export default function SetAppointment({ onNewAppointment }) {
           required
           value={form.preferredTime}
           onChange={handleChange}
+          disabled={!form.preferredDate || checkingAvailability}
         >
-        <option value="" disabled>Select Time</option>
-        {timeSlots.map((slot, index) => (
-          <option key={index} value={slot.value}>
-            {slot.label}
+          <option value="" disabled>
+            {checkingAvailability ? "Checking availability..." : "Select Time"}
           </option>
-        ))}
-      </select>
+          {availableTimes.map((slot, index) => (
+            <option
+              key={index}
+              value={slot.value}
+              disabled={!slot.available}
+              style={{
+                color: slot.available ? 'inherit' : '#999',
+                fontStyle: slot.available ? 'normal' : 'italic'
+              }}
+            >
+              {slot.label} {!slot.available && '(FULL)'}
+            </option>
+          ))}
+        </select>
       </div>
 
+      {availableTimes.length > 0 && availableTimes.every(slot => !slot.available) && (
+        <div style={{
+          color: '#ff6b6b',
+          textAlign: 'center',
+          margin: '10px 0',
+          fontSize: '14px',
+          fontWeight: 'bold'
+        }}>
+          All time slots are fully booked for this date. Please choose another date.
+        </div>
+      )}
+
       <div>
-        <button type="submit" className="confirmbtn" disabled={submitting}>
+        <button
+          type="submit"
+          className="confirmbtn"
+          disabled={submitting || checkingAvailability}
+        >
           {submitting ? "Setting Appointment..." : "CONFIRM"}
         </button>
       </div>
+
     </form>
   );
 }
