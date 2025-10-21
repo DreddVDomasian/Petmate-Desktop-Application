@@ -19,15 +19,15 @@ export default function SetAppointment({ onNewAppointment }) {
 
   // time slots for selection
   const timeSlots = [
-    { time: "09:30 AM", full: false },
-    { time: "10:30 AM", full: false },
-    { time: "11:30 AM", full: false },
-    { time: "12:30 PM", full: false },
-    { time: "01:30 PM", full: false },
-    { time: "02:30 PM", full: false },
-    { time: "03:30 PM", full: false },
-    { time: "04:30 PM", full: false },
-    { time: "05:30 PM", full: false },
+    { label: "09:30 AM", value: "09:30" },
+    { label: "10:30 AM", value: "10:30" },
+    { label: "11:30 AM", value: "11:30" },
+    { label: "12:30 PM", value: "12:30" },
+    { label: "01:30 PM", value: "13:30" },
+    { label: "02:30 PM", value: "14:30" },
+    { label: "03:30 PM", value: "15:30" },
+    { label: "04:30 PM", value: "16:30" },
+    { label: "05:30 PM", value: "17:30" },
   ];
 
   // Fetch pets
@@ -175,13 +175,13 @@ export default function SetAppointment({ onNewAppointment }) {
           value={form.preferredTime}
           onChange={handleChange}
         >
-          <option value="" disabled>Select Time</option>
-          {timeSlots.map((slot, index) => (
-            <option key={index} value={slot.time} disabled={slot.full}>
-              {slot.time} {slot.full ? "(FULL)" : ""}
-            </option>
-          ))}
-        </select>
+        <option value="" disabled>Select Time</option>
+        {timeSlots.map((slot, index) => (
+          <option key={index} value={slot.value}>
+            {slot.label}
+          </option>
+        ))}
+      </select>
       </div>
 
       <div>
