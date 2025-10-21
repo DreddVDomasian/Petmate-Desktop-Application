@@ -282,6 +282,7 @@ input, select {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+
 }
 
 .pet-icon {
