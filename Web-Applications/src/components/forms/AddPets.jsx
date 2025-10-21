@@ -52,7 +52,7 @@ export default function AddPets({ onSubmit }) {
 
           setForm((prev) => ({
             ...prev,
-            birthday: birthday.toISOString().split("T")[0], // "2025-10-09" for database
+            birthday: birthday.toLocaleDateString("en-CA"), // "2025-10-09" for database
             age: calculatedAge, // Auto-fill calculated age
           }));
         } else {
@@ -60,7 +60,7 @@ export default function AddPets({ onSubmit }) {
           setForm((prev) => ({
             ...prev,
             birthday: "",
-            // Don't clear age - user might want to type estimated age
+
           }));
         }
       },

@@ -478,7 +478,7 @@ def check_time_slot_availability(date, time):
         appointment_count = WalkInAppointment.objects.filter(
             date=date,
             prefTime=time,
-            request__in=['accepted', 'pending']  # Count both accepted and pending
+            request='accepted'
         ).exclude(status='cancelled').count()
 
         # Return True if there are less than 4 appointments

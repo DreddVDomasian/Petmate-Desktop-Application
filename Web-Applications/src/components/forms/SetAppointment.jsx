@@ -18,17 +18,17 @@ export default function SetAppointment({ onNewAppointment }) {
   const dateRef = useRef(null);
 
   // time slots for selection
-  const timeSlots = [
-    { label: "09:30 AM", value: "09:30" },
-    { label: "10:30 AM", value: "10:30" },
-    { label: "11:30 AM", value: "11:30" },
-    { label: "12:30 PM", value: "12:30" },
-    { label: "01:30 PM", value: "13:30" },
-    { label: "02:30 PM", value: "14:30" },
-    { label: "03:30 PM", value: "15:30" },
-    { label: "04:30 PM", value: "16:30" },
-    { label: "05:30 PM", value: "17:30" },
-  ];
+    const timeSlots = [
+        { label: "09:30 AM", value: "09:30:00" },
+        { label: "10:30 AM", value: "10:30:00" },
+        { label: "11:30 AM", value: "11:30:00" },
+        { label: "12:30 PM", value: "12:30:00" },
+        { label: "01:30 PM", value: "13:30:00" },
+        { label: "02:30 PM", value: "14:30:00" },
+        { label: "03:30 PM", value: "15:30:00" },
+        { label: "04:30 PM", value: "16:30:00" },
+        { label: "05:30 PM", value: "17:30:00" },
+    ];
 
   // Fetch pets
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function SetAppointment({ onNewAppointment }) {
           const date = selectedDates[0];
           setForm((prev) => ({
             ...prev,
-            preferredDate: date.toISOString().split("T")[0],
+            preferredDate: date.toLocaleDateString("en-CA"),
           }));
         }
       },
@@ -86,6 +86,20 @@ export default function SetAppointment({ onNewAppointment }) {
     }
 
     try {
+            // First check if time slot is available
+        const availabilityCheck = await fetch(`/api/check-time-slot/?date=${form.preferredDate}&time=${form.preferredTime}`, {
+          credentials: "include",
+          headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
+        });
+
+        if (availabilityCheck.ok) {
+          const availabilityData = await availabilityCheck.json();
+          if (!availabilityData.available) {
+            alert("This time slot is no longer available. Please choose another time.");
+            setSubmitting(false);
+            return;
+          }
+        }
       const appointmentData = {
         pet_id: parseInt(form.pet),
         service_name: form.service,

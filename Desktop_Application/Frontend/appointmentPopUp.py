@@ -327,7 +327,7 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
             toast.show_toast()
     def is_time_slot_available(self, date, time):
-        """Check if the selected time slot has available appointments (max 4 per slot)"""
+        """Check if the selected time slot has available appointments (max 4 ACCEPTED per slot)"""
         try:
             # Use API call instead of direct import
             url = "http://127.0.0.1:8000/api/check-time-slot/"
@@ -485,7 +485,6 @@ class AddAppointmentCard(QWidget):
 
 
         return layout
-
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
         if response.status_code == 200:
@@ -506,15 +505,42 @@ class AddAppointmentCard(QWidget):
         self.main_window.confirmCard.show_card()
 
         def clicked_yes():
-            url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
-            response = requests.patch(url, json={"status": "cancelled", "request": "accepted"})
-            if response.status_code in [200, 202]:
-                print("Reminder marked as cancelled")
-                toast = Toast(self.main_window, "Appointment cancelled!", icon_path="Icons/check.png")
+            # First get the appointment details to know which time slot to free up
+            try:
+                appointment_url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+                appointment_response = requests.get(appointment_url)
+
+                if appointment_response.status_code == 200:
+                    appointment_data = appointment_response.json()
+                    # Store the date and time before cancelling
+                    date = appointment_data.get('date')
+                    time = appointment_data.get('prefTime')
+
+                    # Now cancel the appointment
+                    url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+                    response = requests.patch(url, json={"status": "cancelled", "request": "accepted"})
+
+                    if response.status_code in [200, 202]:
+                        print("Appointment cancelled - time slot freed up")
+                        toast = Toast(self.main_window, "Appointment cancelled! Time slot is now available.",
+                                      icon_path="Icons/check.png")
+                        toast.show_toast()
+                        self.load_appointments(1, self.status_filter_global)
+
+                        # Refresh time slot availability if the add appointment card is open
+                        if hasattr(self, 'setup_time_combo_box'):
+                            self.setup_time_combo_box()
+                    else:
+                        print("Failed:", response.text)
+                        toast = Toast(self.main_window, "Failed to cancel appointment!", icon_path="Icons/warning.png")
+                        toast.show_toast()
+                else:
+                    print("Failed to fetch appointment details")
+            except Exception as e:
+                print(f"Error cancelling appointment: {e}")
+                toast = Toast(self.main_window, "Error cancelling appointment!", icon_path="Icons/warning.png")
                 toast.show_toast()
-                self.load_appointments(1, self.status_filter_global)
-            else:
-                print("Failed:", response.text)
+
             self.main_window.confirmCard.hide()
 
         def clicked_no():
@@ -587,7 +613,6 @@ class AddAppointmentCard(QWidget):
         for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
             if layout.count() == 0:
                 self.add_empty_label(layout)
-
     def create_walkin_card(self, appoint):
         """Helper method to create a walk-in appointment card"""
         try:
@@ -606,9 +631,16 @@ class AddAppointmentCard(QWidget):
             # Format date and time
             date_str = appoint.get("date", "")
             time_str = appoint.get("prefTime", "")
-
+            if time_str:
+                try:
+                    time_obj = datetime.strptime(time_str, "%H:%M:%S")
+                    formatted_time = time_obj.strftime("%I:%M %p").lstrip("0")
+                except ValueError:
+                    formatted_time = "N/A"
+            else:
+                formatted_time = "N/A"
             formatted_date = self.main_window.format_date(date_str)
-            date_and_time = f"{formatted_date}   {time_str}" if time_str else formatted_date
+            date_and_time = f"{formatted_date}   {formatted_time}" if formatted_time else formatted_date
 
             card.DateTime.setText(date_and_time)
 
@@ -627,7 +659,6 @@ class AddAppointmentCard(QWidget):
         except Exception as e:
             print(f"Error creating walk-in card: {e}")
             return None
-
     def show_review_page(self, appoint, date):
         # Owner details - updated for WalkInAppointment structure
         self.main_window.BookingId.setText(appoint.get("booking_id", ""))
@@ -695,9 +726,31 @@ class AddAppointmentCard(QWidget):
             lambda _, r_id=appoint['id']: self.accepted_booking(r_id, owner.get('id')))
         self.main_window.declineAppointmentBtn.clicked.connect(
             lambda _, r_id=appoint['id']: self.declined_booking(r_id))
-
     def accepted_booking(self, walkin_id, owner_id):
-        # Update the walk-in appointment request to 'accepted'
+        # First check if the time slot is still available
+        try:
+            # Get the appointment details to check date and time
+            appointment_url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
+            appointment_response = requests.get(appointment_url)
+
+            if appointment_response.status_code == 200:
+                appointment_data = appointment_response.json()
+                date = appointment_data.get('date')
+                time = appointment_data.get('prefTime')
+
+                # Check if time slot is available
+                if not self.is_time_slot_available(date, time):
+                    toast = Toast(self.main_window,
+                                  "This time slot is already fully booked! Cannot accept this appointment.",
+                                  icon_path="Icons/warning.png")
+                    toast.show_toast()
+                    return  # Don't proceed with acceptance
+
+        except Exception as e:
+            print(f"Error checking time slot before acceptance: {e}")
+            # Continue anyway if there's an error checking
+
+        # If time slot is available, proceed with acceptance
         url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
 
         # First, update the walk-in request status
@@ -724,10 +777,14 @@ class AddAppointmentCard(QWidget):
             self.main_window.statusStackedWidget.setCurrentIndex(0)
             self.main_window.pendingBtn.setChecked(True)
             self.main_window.walkInBtn.setChecked(True)
-            self.main_window.load_patients(1,None)
+            self.main_window.load_patients(1, None)
+
+            toast = Toast(self.main_window, "Appointment accepted successfully!", icon_path="Icons/check.png")
+            toast.show_toast()
         else:
             print("Failed to accept walk-in:", response.text)
-
+            toast = Toast(self.main_window, "Failed to accept appointment!", icon_path="Icons/warning.png")
+            toast.show_toast()
     def declined_booking(self, walkin_id):
         # Update the walk-in appointment request to 'declined'
         url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
@@ -741,8 +798,18 @@ class AddAppointmentCard(QWidget):
             self.main_window.walkInOrWeb.setCurrentIndex(0)
             self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
             self.main_window.DeclinedBtn.setChecked(True)
+
+            # Refresh time slot availability
+            if hasattr(self, 'setup_time_combo_box'):
+                self.setup_time_combo_box()
+
+            toast = Toast(self.main_window, "Appointment declined! Time slot is now available.",
+                          icon_path="Icons/check.png")
+            toast.show_toast()
         else:
             print("Failed to decline walk-in:", response.text)
+            toast = Toast(self.main_window, "Failed to decline appointment!", icon_path="Icons/warning.png")
+            toast.show_toast()
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
         empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
