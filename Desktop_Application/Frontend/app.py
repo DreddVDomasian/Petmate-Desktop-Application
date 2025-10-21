@@ -845,14 +845,14 @@ class MainUI(QMainWindow):
     def show_patient_profile(self, patient):
         parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
         full_name = " ".join(p for p in parts if p)
-        self.profileNameLabel.setText(full_name)
+        self.profileNameLabel.setText(full_name.title())
         self.profileEmailLabel.setText(patient['email'])
 
         # Combine address parts
         address = f"{patient['barangay']}, {patient['city']}, {patient['province']}"
         contactNumbers = f"{patient['phoneNumber']}  / {patient.get('SecondaryNumber', 'None')}"
-        self.addressLabel.setText(address)
-        self.detailedAddressLabel.setText(patient['detailedAddress'])
+        self.addressLabel.setText(address.title())
+        self.detailedAddressLabel.setText(patient['detailedAddress'].title())
         self.phoneLabel.setText(contactNumbers)
 
         self.selected_patient_id = patient['id']

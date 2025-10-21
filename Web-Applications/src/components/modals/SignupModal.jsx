@@ -12,48 +12,58 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
   const filteredCities = cities.filter(city => city.prov_code === selectedProvince);
   const filteredBarangays = barangays.filter(brgy => brgy.mun_code === selectedCity);
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
 
-  if (data.password !== data.confirmPassword) {
-    alert("Passwords do not match!");
-    return;
-  }
-
-  // Remove confirmPassword before sending to backend
-  const { confirmPassword, ...submitData } = data;
-
-  (async () => {
-    try {
-      const res = await fetch('/api/register/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken') || ''
-        },
-        credentials: 'include',
-        body: JSON.stringify(submitData)
-      });
-
-      const text = await res.text();
-      let data = {};
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch (err) {
-        data = { error: text || res.statusText };
-      }
-
-      if (!res.ok) throw new Error(data.error || res.statusText || 'Register failed');
-
-      alert('Account created successfully!');
-      onClose();
-    } catch (err) {
-      alert(err.message);
+    if (data.password !== data.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
     }
-  })();
-};
+
+    // Remove confirmPassword before sending to backend
+    const { confirmPassword, ...submitData } = data;
+
+    (async () => {
+      try {
+        const res = await fetch('/api/register/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') || ''
+          },
+          credentials: 'include',
+          body: JSON.stringify(submitData)
+        });
+
+        const text = await res.text();
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (err) {
+          data = { error: text || res.statusText };
+        }
+
+        if (!res.ok) throw new Error(data.error || res.statusText || 'Register failed');
+
+        alert('Account created successfully!');
+        onClose();
+      } catch (err) {
+        alert(err.message);
+      }
+    })();
+  };
+
+  // Helper function to get province name by code
+  const getProvinceName = (code) => {
+    return provinces.find(prov => prov.prov_code === code)?.name || "";
+  };
+
+  // Helper function to get city name by code
+  const getCityName = (code) => {
+    return cities.find(city => city.mun_code === code)?.name || "";
+  };
 
   return (
     <div className="modal">
@@ -83,7 +93,6 @@ const handleSubmit = (e) => {
             </div>
 
             <div className="form-row">
-
                 <div className="form-group">
                   <label htmlFor="signupEmail">Phone number</label>
                   <input type="text" id="phoneNum" name="phoneNum" required />
@@ -100,8 +109,8 @@ const handleSubmit = (e) => {
             <div className="form-row">
               <div className="form-group">
                 <label>Province</label>
-                <select className="addressSelect"
-                  name="province"
+                <select
+                  className="addressSelect"
                   required
                   value={selectedProvince}
                   onChange={(e) => {
@@ -116,12 +125,18 @@ const handleSubmit = (e) => {
                     </option>
                   ))}
                 </select>
+                {/* Hidden input to send province name */}
+                <input
+                  type="hidden"
+                  name="province"
+                  value={getProvinceName(selectedProvince)}
+                />
               </div>
 
               <div className="form-group">
                 <label>City/Municipality</label>
-                <select className="addressSelect"
-                  name="city"
+                <select
+                  className="addressSelect"
                   required
                   value={selectedCity}
                   disabled={!selectedProvince}
@@ -134,6 +149,12 @@ const handleSubmit = (e) => {
                     </option>
                   ))}
                 </select>
+                {/* Hidden input to send city name */}
+                <input
+                  type="hidden"
+                  name="city"
+                  value={getCityName(selectedCity)}
+                />
               </div>
 
               <div className="form-group">
@@ -150,8 +171,8 @@ const handleSubmit = (e) => {
             </div>
 
             <div className="form-group">
-                <label htmlFor="signupEmail">Detailed Address</label>
-                <input type="text" id="signupDetailedAdd" name="detailedAdd" placeholder="Subdivision/Ph/Blk-L/Street"  required />
+                <label htmlFor="signupDetailedAdd">Detailed Address</label>
+                <input type="text" id="signupDetailedAdd" name="detailedAdd" placeholder="Subdivision/Ph/Blk-L/Street" required />
             </div>
 
             <div className="form-group">
@@ -174,9 +195,7 @@ const handleSubmit = (e) => {
                     required
                   />
                 </div>
-
             </div>
-
 
             <button type="submit" className="login-submit-btn">
               CREATE ACCOUNT
