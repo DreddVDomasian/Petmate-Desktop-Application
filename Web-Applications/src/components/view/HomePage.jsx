@@ -25,7 +25,7 @@ function LandingPage() {
           
           <div className="action-buttons">
             <button type="button" className="btn btn-primary" onClick={openLogin}>BOOK NOW</button>
-            <Link to="/account-page" className="btn btn-secondary">MANAGE BOOKING</Link>  /* hindi pa tapos ung html file */
+            <Link to="#" className="btn btn-secondary">LEARN MORE</Link>
           </div>
         </div>
       </div>

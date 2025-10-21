@@ -81,17 +81,30 @@ body {
     justify-content: space-between;
     gap: 12px;
     margin: 12px 0 18px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    min-height: 32px; /* ensures enough height for checkbox */
 }
 
-.checkbox-container {
-    display: inline-flex;
+.forgot-password {
+    color: #ff8c00;
+    text-decoration: none;
+    font-size: 15px;
+    white-space: nowrap;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    line-height: 1; /* Match checkbox baseline */
+}
+
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
-    position: relative;
-    font-size: 14px;
+    font-size: 15px;
     color: #333;
+    line-height: 1;
+    margin-bottom: -5px; /*para pumantay lang sya sa forgot password*/
 }
 
 /* hide native checkbox but keep it accessible */
@@ -114,6 +127,8 @@ body {
     display: inline-block;
     box-sizing: border-box;
     flex: 0 0 18px;
+    margin-right: 6px;
+    vertical-align: middle;
 }
 
 /* checked state */
@@ -140,16 +155,53 @@ body {
     display: block;
 }
 
-/* forgot link */
-.forgot-password {
-    color: #4885CC;
-    text-decoration: none;
-    font-size: 14px;
-    white-space: nowrap;
+
+/* Login and Signup */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
-.forgot-password:hover {
-    text-decoration: underline;
+
+.modal-content {
+    background: white;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.modal-content.signupModal {
+    max-width: 900px; /* medyo mataba ang signup    */
+    width: 95%;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+    z-index: 10;
+}
+
+.close:hover {
+    color: #e88025;
+}
+
 
 
 /* Home Section */
@@ -280,7 +332,7 @@ body {
     box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
 }
 
-/* Secondary Button (Manage Appointment) */
+/* Secondary Button (?) */
 .btn-secondary {
     background: linear-gradient(135deg, #333, #555);
     color: white;

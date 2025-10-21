@@ -3,7 +3,6 @@ import '../styles/Index.css';
 
 // Import all components
 import Navigation from '../components/navigation/Navigation';
-import HeroSection from '../components/view/HomePage';
 import AboutSection from '../components/sections/AboutSection';
 import ServicesSection from '../components/sections/ServicesSection';
 import OfficeHours from '../components/common/OfficeHours';

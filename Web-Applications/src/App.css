@@ -48,7 +48,7 @@ input, textarea, select {
 }
 
 /* ========================================
-   MODAL STYLES (Global - Used by Navigation)
+    MODAL STYLES (Global - Used by Navigation)
    ======================================== */
 
 /* Modal Overlay */
@@ -149,36 +149,6 @@ input, textarea, select {
     border-color: #ff8c00;
 }
 
-/* Form Options */
-.form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #666;
-    cursor: pointer;
-}
-
-.checkbox-container input {
-    margin-right: 8px;
-}
-
-.forgot-password {
-    color: #ff8c00;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.3s;
-}
-
-.forgot-password:hover {
-    color: #e67c00;
-}
 
 /* Submit Button */
 .login-submit-btn {
