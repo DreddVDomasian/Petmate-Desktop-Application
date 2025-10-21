@@ -67,7 +67,7 @@
 
 QLabel{
 	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(52, 52, 52);
 	background:none;
 
 }
@@ -104,7 +104,7 @@ QLabel{
         </property>
         <property name="styleSheet">
          <string notr="true">font: 81 12pt &quot;Montserrat ExtraBold&quot;;
-color:rgb(57, 57, 57);
+	color:rgb(52, 52, 52);
 background:none;</string>
         </property>
         <property name="text">
@@ -125,7 +125,7 @@ background:none;</string>
         </property>
         <property name="styleSheet">
          <string notr="true">	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(52, 52, 52);
 	background:none;</string>
         </property>
         <property name="text">
@@ -194,7 +194,7 @@ background:none;</string>
         <property name="styleSheet">
          <string notr="true">#markAsDone{
 	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(52, 52, 52);
 	background:none;
 	padding:10px 20px 10px 20px;
 	border:none;

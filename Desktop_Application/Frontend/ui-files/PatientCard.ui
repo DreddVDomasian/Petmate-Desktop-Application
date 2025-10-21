@@ -101,7 +101,7 @@
         <property name="styleSheet">
          <string notr="true">font-family:&quot;Montserrat ExtraBold&quot;;
 font-weight:81;
-color:rgb(57, 57, 57);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Dredd Domasian</string>
@@ -114,7 +114,7 @@ color:rgb(57, 57, 57);</string>
          <string notr="true">
 font-family:&quot;Montserrat Medium&quot;;
 font-weight:57;
-color:rgb(39, 39, 39);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>DomasianDredd@gmail.com</string>
@@ -219,7 +219,7 @@ background:transparent;</string>
  </widget>
  <resources>
   <include location="../resource.qrc"/>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>

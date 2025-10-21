@@ -104,7 +104,7 @@
        <widget class="QLabel" name="ownerName">
         <property name="styleSheet">
          <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
-color:rgb(57, 57, 57);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Robert Moleno</string>
@@ -118,7 +118,7 @@ color:rgb(57, 57, 57);</string>
        <widget class="QLabel" name="petNameApp">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Petname</string>
@@ -141,7 +141,7 @@ color:rgb(39, 39, 39);</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Service</string>
@@ -158,7 +158,7 @@ color:rgb(39, 39, 39);</string>
        <widget class="QLabel" name="appDate">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Aug, 2, 2025</string>
@@ -175,7 +175,7 @@ color:rgb(39, 39, 39);</string>
        <widget class="QLabel" name="preferredTime">
         <property name="styleSheet">
          <string notr="true">font: 57 14pt &quot;Montserrat Medium&quot;;
-color:rgb(39, 39, 39);</string>
+	color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>11:45 AM</string>
@@ -216,7 +216,7 @@ border:none;</string>
  </widget>
  <resources>
   <include location="../resource.qrc"/>
-  <include location="resource.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>
