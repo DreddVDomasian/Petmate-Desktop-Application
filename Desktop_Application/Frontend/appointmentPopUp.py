@@ -320,6 +320,7 @@ class AddAppointmentCard(QWidget):
             toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
             toast.show_toast()
             self.close()
+            self.update_time_slots_availability()
             self.serviceTypeComboBox.setCurrentIndex(-1)
             self.timeComboBox.setCurrentIndex(-1)  # Reset time combo box
             self.load_appointments(1, "pending", search_term=None)
