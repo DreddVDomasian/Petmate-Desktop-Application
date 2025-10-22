@@ -64,17 +64,20 @@ export default function SetAppointment({ onNewAppointment }) {
     }
   }, [form.preferredDate]);
 
-  // Check all time slots for availability
+  // Check all time slots for availability - UPDATED
   const checkAllTimeSlots = async (date) => {
     setCheckingAvailability(true);
 
     try {
       const updatedSlots = await Promise.all(
         timeSlots.map(async (slot) => {
-          const isAvailable = await checkTimeSlotAvailability(date, slot.value);
+          const slotDetails = await checkTimeSlotAvailability(date, slot.value);
           return {
             ...slot,
-            available: isAvailable
+            available: slotDetails.available,
+            isPast: slotDetails.is_past,
+            isFull: slotDetails.is_full,
+            message: slotDetails.message
           };
         })
       );
@@ -83,13 +86,19 @@ export default function SetAppointment({ onNewAppointment }) {
     } catch (error) {
       console.error("Error checking time slots:", error);
       // If error, show all as available
-      setAvailableTimes(timeSlots.map(slot => ({ ...slot, available: true })));
+      setAvailableTimes(timeSlots.map(slot => ({
+        ...slot,
+        available: true,
+        isPast: false,
+        isFull: false,
+        message: 'Available'
+      })));
     } finally {
       setCheckingAvailability(false);
     }
   };
 
-  // Check single time slot availability
+  // Check single time slot availability - UPDATED
   const checkTimeSlotAvailability = async (date, time) => {
     try {
       const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
@@ -99,12 +108,22 @@ export default function SetAppointment({ onNewAppointment }) {
 
       if (response.ok) {
         const data = await response.json();
-        return data.available;
+        return data; // Return the full response object
       }
-      return true; // Default to available if API fails
+      return {
+        available: true,
+        is_past: false,
+        is_full: false,
+        message: 'Available'
+      };
     } catch (error) {
       console.error("Error checking time slot:", error);
-      return true; // Default to available if there's an error
+      return {
+        available: true,
+        is_past: false,
+        is_full: false,
+        message: 'Available'
+      };
     }
   };
 
@@ -142,10 +161,15 @@ export default function SetAppointment({ onNewAppointment }) {
     }
 
     try {
-      // Double-check availability before submitting
-      const isAvailable = await checkTimeSlotAvailability(form.preferredDate, form.preferredTime);
-      if (!isAvailable) {
-        alert("This time slot is no longer available. Please choose another time.");
+      // Double-check availability before submitting - UPDATED
+      const slotDetails = await checkTimeSlotAvailability(form.preferredDate, form.preferredTime);
+
+      if (!slotDetails.available) {
+        if (slotDetails.is_past) {
+          alert("This time slot has already passed. Please choose a future time.");
+        } else {
+          alert("This time slot is no longer available. Please choose another time.");
+        }
         setSubmitting(false);
         return;
       }
@@ -186,6 +210,34 @@ export default function SetAppointment({ onNewAppointment }) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Get styling for time slot based on status
+  const getTimeSlotStyle = (slot) => {
+    if (slot.isPast) {
+      return {
+        color: '#ccc',
+        fontStyle: 'italic',
+        textDecoration: 'line-through'
+      };
+    }
+    if (!slot.available && slot.isFull) {
+      return {
+        color: '#999',
+        fontStyle: 'italic'
+      };
+    }
+    return {
+      color: 'inherit',
+      fontStyle: 'normal'
+    };
+  };
+
+  // Get status text for time slot
+  const getTimeSlotStatus = (slot) => {
+    if (slot.isPast) return 'PASSED';
+    if (!slot.available && slot.isFull) return 'FULL';
+    return 'AVAILABLE';
   };
 
   return (
@@ -247,19 +299,18 @@ export default function SetAppointment({ onNewAppointment }) {
             <option
               key={index}
               value={slot.value}
-              disabled={!slot.available}
-              style={{
-                color: slot.available ? 'inherit' : '#999',
-                fontStyle: slot.available ? 'normal' : 'italic'
-              }}
+              disabled={!slot.available || slot.isPast}
+              style={getTimeSlotStyle(slot)}
             >
-              {slot.label} {!slot.available && '(FULL)'}
+              {slot.label}
+              {slot.isPast && ' (PASSED)'}
+              {!slot.available && slot.isFull && !slot.isPast && ' (FULL)'}
             </option>
           ))}
         </select>
       </div>
 
-      {availableTimes.length > 0 && availableTimes.every(slot => !slot.available) && (
+      {availableTimes.length > 0 && availableTimes.every(slot => !slot.available || slot.isPast) && (
         <div style={{
           color: '#ff6b6b',
           textAlign: 'center',
@@ -267,7 +318,10 @@ export default function SetAppointment({ onNewAppointment }) {
           fontSize: '14px',
           fontWeight: 'bold'
         }}>
-          All time slots are fully booked for this date. Please choose another date.
+          {availableTimes.every(slot => slot.isPast)
+            ? "All time slots for today have already passed. Please choose another date."
+            : "All time slots are fully booked for this date. Please choose another date."
+          }
         </div>
       )}
 
@@ -280,7 +334,6 @@ export default function SetAppointment({ onNewAppointment }) {
           {submitting ? "Setting Appointment..." : "CONFIRM"}
         </button>
       </div>
-
     </form>
   );
 }

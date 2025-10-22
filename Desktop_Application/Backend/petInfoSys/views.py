@@ -632,15 +632,15 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         if user.is_authenticated:
             if is_staff_user:
                 # Staff/Desktop: see ALL appointments for management
-                queryset = WalkInAppointment.objects.all().order_by('created_at')
+                queryset = WalkInAppointment.objects.all().order_by('-created_at')
             else:
                 # Regular web user: only show their own appointments
                 queryset = WalkInAppointment.objects.filter(
                     owner__user_account=user
-                ).order_by('-created_at')
+                ).order_by('created_at')
         else:
             # Unauthenticated request (desktop system) - treat as staff
-            queryset = WalkInAppointment.objects.all().order_by('created_at')
+            queryset = WalkInAppointment.objects.all().order_by('-created_at')
 
         # Rest of your filtering logic remains the same...
         request_filter = self.request.query_params.get('request', None)

@@ -1167,7 +1167,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -8275,21 +8275,6 @@ background-color: transparent;
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Grooming</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
-                                  <string>Check-up</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
-                                  <string>Consultation</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
                                   <string>Deworming</string>
                                  </property>
                                 </item>
@@ -8300,12 +8285,22 @@ background-color: transparent;
                                 </item>
                                 <item>
                                  <property name="text">
+                                  <string>Consultation</string>
+                                 </property>
+                                </item>
+                                <item>
+                                 <property name="text">
+                                  <string>Wellness Check</string>
+                                 </property>
+                                </item>
+                                <item>
+                                 <property name="text">
                                   <string>Surgery</string>
                                  </property>
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Comprehensive Hematology</string>
+                                  <string>CBC</string>
                                  </property>
                                 </item>
                                 <item>

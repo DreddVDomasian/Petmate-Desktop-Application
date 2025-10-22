@@ -225,7 +225,7 @@ class AddAppointmentCard(QWidget):
 
             if is_past:
                 # Show past slots as disabled with "PASSED"
-                self.timeComboBox.addItem(f"{time_display} (PASSED)", time_value)
+                self.timeComboBox.addItem(f"{time_display} (TIME PASSED)", time_value)
                 last_index = self.timeComboBox.count() - 1
                 self.timeComboBox.model().item(last_index).setEnabled(False)
             elif not is_available and is_full:
@@ -257,11 +257,11 @@ class AddAppointmentCard(QWidget):
             if response.status_code == 200:
                 return response.json()
             else:
-                return {'available': True, 'is_past': False, 'is_full': False, 'message': 'Available'}
+                return {'available': True, 'is_past': False, 'is_full': False}
 
         except Exception as e:
             print(f"Error getting time slot details: {e}")
-            return {'available': True, 'is_past': False, 'is_full': False, 'message': 'Available'}
+            return {'available': True, 'is_past': False, 'is_full': False}
     def update_time_slots_availability(self):
         """Update time slots availability when date changes"""
         current_index = self.timeComboBox.currentIndex()
@@ -318,16 +318,22 @@ class AddAppointmentCard(QWidget):
         if not service_name:
             missing.append("Service")
 
+
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
             toast = Toast(self.main_window, message, icon_path="Icons/warning.png")
             toast.show_toast()
             return
 
-        # Additional validation: Check if the selected time slot is available
-        if not self.is_time_slot_available(date, time):
-            toast = Toast(self.main_window, "This time slot is already fully booked! Please choose another time.",
-                          icon_path="Icons/warning.png")
+        slot_details = self.get_time_slot_details(date, time)
+
+        if not slot_details.get('available', True):
+            if slot_details.get('is_past', False):
+                toast = Toast(self.main_window, "This time slot has already passed! Please choose a future time.",
+                              icon_path="Icons/warning.png")
+            else:
+                toast = Toast(self.main_window, "This time slot is already fully booked! Please choose another time.",
+                              icon_path="Icons/warning.png")
             toast.show_toast()
             return
 
