@@ -75,7 +75,7 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
           <h2>Create Account</h2>
           <form id="signupForm" onSubmit={handleSubmit}>
 
-            <div className="form-row">
+            <div className="form-row owner-details">
               <div className="form-group">
                 <label htmlFor="signupFirstName">First Name</label>
                 <input type="text" id="signupFirstName" name="firstName" required />
@@ -92,7 +92,7 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
               </div>
             </div>
 
-            <div className="form-row">
+            <div className="form-row owner-contact">
                 <div className="form-group">
                   <label htmlFor="signupEmail">Phone number</label>
                   <input type="text" id="phoneNum" name="phoneNum" required />
@@ -106,7 +106,7 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
 
             <p className="addressTitle" >Address</p>
 
-            <div className="form-row">
+            <div className="form-row address1">
               <div className="form-group">
                 <label>Province</label>
                 <select
@@ -170,17 +170,17 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
               </div>
             </div>
 
-            <div className="form-group">
+            <div className="form-group address2">
                 <label htmlFor="signupDetailedAdd">Detailed Address</label>
                 <input type="text" id="signupDetailedAdd" name="detailedAdd" placeholder="Subdivision/Ph/Blk-L/Street" required />
             </div>
 
-            <div className="form-group">
+            <div className="form-group email-row">
                 <label htmlFor="signupEmail">Email</label>
                 <input type="email" id="signupEmail" name="email" required />
             </div>
 
-            <div className="form-row">
+            <div className="form-row password-row">
                 <div className="form-group">
                   <label htmlFor="signupPassword">Password</label>
                   <input type="password" id="signupPassword" name="password" required />

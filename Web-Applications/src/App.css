@@ -53,7 +53,7 @@ input, textarea, select {
 
 /* Modal Overlay */
 .modal {
-    display: block; /* Changed from 'none' since React controls visibility */
+    display: flex; /* Changed from 'none' since React controls visibility */
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -77,8 +77,10 @@ input, textarea, select {
 }
 
 /* resize register modal */
-.signupModal{
-    max-width: 850px;
+
+.owner-details,.owner-contact,.address1,.address2.email-row,.password-row{
+    margin:0;
+
 }
 
 /* Modal Animation */
@@ -111,13 +113,13 @@ input, textarea, select {
 
 /* Login Container */
 .login-container {
-    padding: 20px 30px 30px;
+    padding: 15px 30px 30px;
 }
 
 .login-container h2 {
     text-align: center;
     color: #333;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     font-size: 24px;
 }
 
@@ -161,7 +163,7 @@ input, textarea, select {
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .login-submit-btn:hover {
