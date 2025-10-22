@@ -1,10 +1,11 @@
 from rest_framework import generics, status, permissions, viewsets
 from django.db import transaction
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from datetime import date
+from datetime import date,datetime,time
 from .models import *
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
@@ -13,6 +14,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
 from django.conf import settings
+import pytz
 import re
 import os
 
@@ -453,39 +455,85 @@ def patient_combobox_data(request):
 def check_time_slot_availability_api(request):
     """API endpoint to check time slot availability"""
     date = request.GET.get('date')
-    time = request.GET.get('time')
+    time_str = request.GET.get('time')
 
-    if not date or not time:
+    if not date or not time_str:
         return Response({'error': 'Date and time required'}, status=400)
 
-    is_available = check_time_slot_availability(date, time)
+    try:
+        # Check availability using the enhanced function
+        is_available, is_past, is_full = check_time_slot_availability(date, time_str)
 
-    return Response({
-        'date': date,
-        'time': time,
-        'available': is_available,
-        'message': 'Available' if is_available else 'Fully booked'
-    })
-def check_time_slot_availability(date, time):
-    """Check if a time slot has available capacity (max 4 appointments per slot)"""
+        # Determine message
+        if is_past:
+            message = 'Time slot has passed'
+        elif is_full:
+            message = 'Fully booked'
+        else:
+            message = 'Available'
+
+        return Response({
+            'date': date,
+            'time': time_str,
+            'available': is_available and not is_past,
+            'is_past': is_past,
+            'is_full': is_full,
+            'message': message
+        })
+
+    except Exception as e:
+        return Response({
+            'date': date,
+            'time': time_str,
+            'available': True,  # Default to available on error
+            'is_past': False,
+            'is_full': False,
+            'message': 'Available',
+            'error': str(e)
+        })
+def check_time_slot_availability(date, time_str):
+    """Check if a time slot has available capacity (max 4 appointments per slot) and is not in the past"""
     try:
         # Convert to date object if it's a string
         if isinstance(date, str):
-            from datetime import datetime
-            date = datetime.strptime(date, '%Y-%m-%d').date()
+            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        else:
+            date_obj = date
 
-        # Count appointments for this date and time
+        # Convert time string to time object
+        time_obj = datetime.strptime(time_str, '%H:%M:%S').time()
+
+        # Create datetime object for the appointment slot
+        appointment_datetime = datetime.combine(date_obj, time_obj)
+
+        # Set Philippines timezone
+        ph_tz = pytz.timezone('Asia/Manila')
+        appointment_datetime_ph = ph_tz.localize(appointment_datetime)
+
+        # Get current time in Philippines timezone
+        now_ph = timezone.now().astimezone(ph_tz)
+
+        # Check if the appointment is in the past
+        is_past = appointment_datetime_ph < now_ph
+
+        # If it's in the past, no need to check capacity
+        if is_past:
+            return False, True, False  # Not available, is past, not full
+
+        # Count appointments for this date and time (only if not in past)
         appointment_count = WalkInAppointment.objects.filter(
-            date=date,
-            prefTime=time,
+            date=date_obj,
+            prefTime=time_str,
             request='accepted'
         ).exclude(status='cancelled').count()
 
-        # Return True if there are less than 4 appointments
-        return appointment_count < 4
+        # Return availability status
+        is_available = appointment_count < 4
+        return is_available, False, not is_available
+
     except Exception as e:
         print(f"Error checking time slot availability: {e}")
-        return True  # Default to available if there's an error
+        return True, False, False  # Default to available if there's an error
 
 class PetListCreateView(generics.ListCreateAPIView):
     serializer_class = PetSerializer

@@ -217,17 +217,25 @@ class AddAppointmentCard(QWidget):
             # Format time for storage (24-hour format)
             time_value = f"{current_hour:02d}:{current_minute:02d}:00"
 
-            # Check availability for this time slot
-            is_available = self.is_time_slot_available(selected_date, time_value)
+            # Get detailed availability information
+            slot_details = self.get_time_slot_details(selected_date, time_value)
+            is_available = slot_details.get('available', True)
+            is_past = slot_details.get('is_past', False)
+            is_full = slot_details.get('is_full', False)
 
-            if is_available:
-                self.timeComboBox.addItem(time_display, time_value)
-            else:
-                # Show unavailable slots as disabled
-                self.timeComboBox.addItem(f"{time_display} (FULL)", time_value)
-                # Get the last added item and disable it
+            if is_past:
+                # Show past slots as disabled with "PASSED"
+                self.timeComboBox.addItem(f"{time_display} (PASSED)", time_value)
                 last_index = self.timeComboBox.count() - 1
                 self.timeComboBox.model().item(last_index).setEnabled(False)
+            elif not is_available and is_full:
+                # Show full slots as disabled with "FULL"
+                self.timeComboBox.addItem(f"{time_display} (FULL)", time_value)
+                last_index = self.timeComboBox.count() - 1
+                self.timeComboBox.model().item(last_index).setEnabled(False)
+            else:
+                # Show available slots
+                self.timeComboBox.addItem(time_display, time_value)
 
             # Move to next hour
             current_hour += 1
@@ -235,6 +243,25 @@ class AddAppointmentCard(QWidget):
             # If we go past 5:30 PM, break
             if current_hour > end_hour or (current_hour == end_hour and current_minute > end_minute):
                 break
+    def get_time_slot_details(self, date, time):
+        """Get detailed information about time slot availability"""
+        try:
+            url = "http://127.0.0.1:8000/api/check-time-slot/"
+            params = {
+                'date': date,
+                'time': time
+            }
+
+            response = requests.get(url, params=params, timeout=5)
+
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {'available': True, 'is_past': False, 'is_full': False, 'message': 'Available'}
+
+        except Exception as e:
+            print(f"Error getting time slot details: {e}")
+            return {'available': True, 'is_past': False, 'is_full': False, 'message': 'Available'}
     def update_time_slots_availability(self):
         """Update time slots availability when date changes"""
         current_index = self.timeComboBox.currentIndex()
