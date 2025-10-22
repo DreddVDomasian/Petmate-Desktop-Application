@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>813</width>
-    <height>500</height>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -148,7 +148,7 @@ QScrollBar::groove:vertical {
            <x>0</x>
            <y>0</y>
            <width>777</width>
-           <height>357</height>
+           <height>368</height>
           </rect>
          </property>
          <property name="styleSheet">
@@ -210,14 +210,14 @@ QScrollBar::groove:vertical {
             <string notr="true">QPushButton{
 	font: 63 15pt &quot;Montserrat SemiBold&quot;;
 	color:rgb(39, 39, 39);
-	background-color:rgb(129, 191, 218);
+	background-color: #FCD597;
 	border-radius: 5px;
 	border-right:1px solid rgb(200, 200, 200);
 	border-bottom:2px solid rgb(200, 200, 200);
 }
 
 QPushButton:hover{
-	background-color:rgb(110, 163, 186);
+background-color: rgb(223, 188, 134);
 
 }</string>
            </property>
