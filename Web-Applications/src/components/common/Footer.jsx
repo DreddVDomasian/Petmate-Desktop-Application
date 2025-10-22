@@ -34,7 +34,7 @@ function Footer() {
         
         <div className="footer-bottom">
             <p>©2024 PetMate Animal Clinic. All rights reserved.</p>
-            <a href="#home" className="back-to-top">
+            <a href="#nav" className="back-to-top">
             <img src="/assets/icons/up-arrow.png" alt="Back to Top" className="arrowup" />
             </a>
         </div>

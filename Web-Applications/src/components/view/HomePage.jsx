@@ -17,7 +17,7 @@ function LandingPage() {
     <section className="home section" id="home">
       <div className="home-container">
         <div className="doctor-image">
-          <img src="/assets/images/misc/Doctor.png" alt="Veterinarian" />
+          <img src="/assets/images/misc/doc.png" alt="Veterinarian" />
         </div>
         <div className="content">
           <h1>Your pet's health<br />is our priority.</h1>

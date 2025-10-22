@@ -17,17 +17,32 @@ html{
 body {
     margin: 0;
     padding: 0;
+    background-image: url("/assets/images/background/dumi.png");
+    background-color: #4885CC;
 }
+
 
 
 /* Navbar - scope to index page */
 .index-page nav {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;          
+    padding: 15px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 50px;
-    background-color: #4885CC;
-    background-image: url('/assets/images/background/dumi.png');
+    border-radius: 50px;
+    z-index: 100;
+
+    /* ✅ GLASS EFFECT */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
 .index-page .logo img {
@@ -44,9 +59,9 @@ body {
 
 .index-page ul li a {
     text-decoration: none;
-    color: black;
+    color: rgb(238, 234, 234);
     font-weight: bold;
-    font-size: 20px;
+    font-size: 25px;
     transition: color 0.3s;
 }
 
@@ -205,16 +220,23 @@ body {
 
 
 /* Home Section */
-.home-link {
-    color: #ff6b00;
-}
-
 .home {
     height: calc(100vh - 70px);
     position: relative;
     background-color: #4885CC;
     background-image: url("/assets/images/background/dumi.png");
+    margin-top: 120px;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    padding-top: 100px; /* makes space for floating nav */
 }
+
+.home-link {
+    color: #ff6b00;
+}
+
+
 
 .home-container {
     max-width: 1400px;
@@ -346,17 +368,30 @@ body {
 }
 
 /* About Section */
-.about {
+.about-section {
     padding: 50px 100px;
     background: #ffffff;
     background-image: url("/assets/images/background/dumi.png");
+    height: 100vh;
 
 }
 
-.about h1 {
+.about-section h1 {
     text-align: center;
-    font-size: 80px;
-    margin-bottom: 50px;
+    font-size: 64px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 60px;
+}
+.about-section h1::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 5px;
+    background: #ff8c00;
+    margin: 15px auto 0;
+    border-radius: 5px;
 }
 
 .about-content {
@@ -372,14 +407,16 @@ body {
 }
 
 .about-text h3 {
-    font-size: 32px;
-    line-height: 1.2;
-    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 25px;
 }
 
 .about-text p {
-    color: #1d1c1c;
-    line-height: 1.6;
+    color: #444;
+    font-size: 17px;
+    line-height: 1.8;
 }
 
 .about-image {
@@ -405,8 +442,20 @@ body {
 
 .services h1 {
     text-align: center;
-    font-size: 80px;
-    margin-bottom: 50px;
+    font-size: 64px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 60px;
+}
+.services h1::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 5px;
+    background: #ff8c00;
+    margin: 15px auto 0;
+    border-radius: 5px;
 }
 
 
@@ -647,14 +696,13 @@ body {
 
 
 
-
-
 /* CONTACT US  */
 .contact {
     background: linear-gradient(135deg, #6387b5 0%, #4885CC 50%, #5a7db8 100%);
     padding: 80px 50px 0px;
     position: relative;
     overflow: hidden;
+    height: 100vh;
 }
 
 /* Add subtle pattern overlay */
@@ -672,13 +720,20 @@ body {
 
 .contact h1 {
     text-align: center;
-    font-size: 70px;
-    font-weight: bold;
+    font-size: 64px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #222;
     margin-bottom: 60px;
-    color: #fff;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    position: relative;
-    z-index: 2;
+}
+.contact h1::after {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 5px;
+    background: #ff8c00;
+    margin: 15px auto 0;
+    border-radius: 5px;
 }
 
 .contact-container {

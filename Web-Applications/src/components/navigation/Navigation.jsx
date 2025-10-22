@@ -9,8 +9,8 @@ function Navigation() {
 
     return (
     <>
-      <nav>
-        <div className="logo">
+      <nav id="nav">
+        <div className="logo" >
           <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
         </div>
         <ul>
