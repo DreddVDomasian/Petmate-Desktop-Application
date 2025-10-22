@@ -213,11 +213,11 @@ const getStatusExplanation = (appointment) => {
       {!loading && !error && (
         <div className="appointments-card-grid">
           {appointments.length === 0 ? (
-            <div className="no-appointments">
-              <div className="empty-icon empty-appointment">📅</div>
-              <h3>No Appointments Found</h3>
-              <p>You don't have any appointments yet.</p>
-            </div>
+          <div className="empty-state">
+            <img src="/assets/icons/dog-walking.gif" alt="No pets" className="empty-icon" />
+            <h3>No Appointment Yet</h3>
+            <p>Schedule your appointment to get started.</p>
+          </div>
           ) : (
             appointments.map((appointment) => {
               const petName = appointment.pet_name ||
