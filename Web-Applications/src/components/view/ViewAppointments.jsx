@@ -7,6 +7,7 @@ export default function ViewAppointments() {
   const [error, setError] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [timeSlotAvailability, setTimeSlotAvailability] = useState({});
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -65,19 +66,72 @@ export default function ViewAppointments() {
     }
     return timeString;
   };
+  // New function to check time slot availability
+  const checkTimeSlotAvailability = async (date, time) => {
+    try {
+      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
+        credentials: "include",
+        headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.available;
+      }
+      return true; // Default to available if API fails
+    } catch (error) {
+      console.error("Error checking time slot:", error);
+      return true; // Default to available if there's an error
+    }
+  };
+
+  // Check availability for all declined appointments
+  useEffect(() => {
+    const checkDeclinedAppointments = async () => {
+      const declinedAppointments = appointments.filter(appt => appt.request === 'declined');
+
+      const availabilityMap = {};
+
+      for (const appointment of declinedAppointments) {
+        const date = appointment.date;
+        const time = appointment.prefTime;
+
+        if (date && time) {
+          const key = `${date}-${time}`;
+          const isAvailable = await checkTimeSlotAvailability(date, time);
+          availabilityMap[key] = isAvailable;
+        }
+      }
+
+      setTimeSlotAvailability(availabilityMap);
+    };
+
+    if (appointments.length > 0) {
+      checkDeclinedAppointments();
+    }
+  }, [appointments]);
 
   // Updated badge system - only show relevant badges based on request status
-  const getAppointmentBadges = (requestStatus, appointmentStatus) => {
+
+  const getAppointmentBadges = (appointment) => {
+    const { request, status, date, prefTime } = appointment;
     const badges = [];
 
-    // Request status badges (always shown)
+    const key = `${date}-${prefTime}`;
+    const isCurrentlyAvailable = timeSlotAvailability[key];
+
+    // Request status badges
     const requestConfig = {
       'pending': { class: 'request-pending', text: 'Under Review', icon: '⏳' },
       'accepted': { class: 'request-accepted', text: 'Approved', icon: '✅' },
-      'declined': { class: 'request-declined', text: 'Declined', icon: '❌' }
+      'declined': {
+        class: 'request-declined',
+        text: isCurrentlyAvailable === false ? 'Time Slot Full' : 'Declined',
+        icon: '❌'
+      }
     };
 
-    const requestInfo = requestConfig[requestStatus] || { class: 'request-pending', text: requestStatus, icon: '❓' };
+    const requestInfo = requestConfig[request] || { class: 'request-pending', text: request, icon: '❓' };
 
     badges.push(
       <span key="request" className={`status-badge ${requestInfo.class}`}>
@@ -86,7 +140,7 @@ export default function ViewAppointments() {
     );
 
     // Only show appointment status if request is accepted
-    if (requestStatus === 'accepted') {
+    if (request === 'accepted') {
       const statusConfig = {
         'pending': { class: 'status-scheduled', text: 'Scheduled', icon: '📅' },
         'completed': { class: 'status-completed', text: 'Completed', icon: '✅' },
@@ -94,7 +148,7 @@ export default function ViewAppointments() {
         'cancelled': { class: 'status-cancelled', text: 'Cancelled', icon: '❌' }
       };
 
-      const statusInfo = statusConfig[appointmentStatus] || { class: 'status-scheduled', text: appointmentStatus, icon: '📅' };
+      const statusInfo = statusConfig[status] || { class: 'status-scheduled', text: status, icon: '📅' };
 
       badges.push(
         <span key="status" className={`status-badge ${statusInfo.class}`}>
@@ -106,9 +160,21 @@ export default function ViewAppointments() {
     return badges;
   };
 
-  const getStatusExplanation = (request, status) => {
+const getStatusExplanation = (appointment) => {
+    const { request, status, date, prefTime } = appointment;
+
     if (request === 'pending') return 'Your appointment request is under review by our staff.';
-    if (request === 'declined') return 'Your appointment request was not approved.';
+
+    if (request === 'declined') {
+      const key = `${date}-${prefTime}`;
+      const isCurrentlyAvailable = timeSlotAvailability[key];
+
+      if (isCurrentlyAvailable === false) {
+        return 'Please reschedule for available time.';
+      }
+      return 'Your appointment request was not approved.';
+    }
+
     if (request === 'accepted' && status === 'pending') return 'Your appointment has been approved and is scheduled.';
     if (request === 'accepted' && status === 'completed') return 'Your appointment has been successfully completed.';
     if (request === 'accepted' && status === 'overdue') return 'Your appointment was missed or needs rescheduling.';
@@ -178,12 +244,12 @@ export default function ViewAppointments() {
                   <div className="card-header">
                     <h3 className="pet-name">{petName}</h3>
                     <div className="badges-container">
-                      {getAppointmentBadges(requestStatus, appointmentStatus)}
+                      {getAppointmentBadges(appointment)}
                     </div>
                   </div>
 
                   <div className="status-explanation">
-                    {getStatusExplanation(requestStatus, appointmentStatus)}
+                    {getStatusExplanation(appointment)}
                   </div>
 
                   <div className="card-divider" />

@@ -222,12 +222,11 @@ export default function SetAppointment({ onNewAppointment }) {
         >
           <option value="" disabled>Select Service</option>
           <option value="Vaccination">Vaccination</option>
+          <option value="Grooming">Grooming</option>
           <option value="Check-up">Check-up</option>
-          <option value="Surgery">Surgery</option>
           <option value="Consultations">Consultations</option>
           <option value="Deworming">Deworming</option>
           <option value="Tick & Flea Prevention">Tick & Flea Prevention</option>
-          <option value="Grooming">Grooming</option>
         </select>
       </div>
 

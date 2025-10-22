@@ -8270,12 +8270,22 @@ background-color: transparent;
                                 </item>
                                 <item>
                                  <property name="text">
+                                  <string>Vaccination</string>
+                                 </property>
+                                </item>
+                                <item>
+                                 <property name="text">
                                   <string>Grooming</string>
                                  </property>
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Vaccination</string>
+                                  <string>Check-up</string>
+                                 </property>
+                                </item>
+                                <item>
+                                 <property name="text">
+                                  <string>Consultation</string>
                                  </property>
                                 </item>
                                 <item>
@@ -8290,22 +8300,12 @@ background-color: transparent;
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Consultation</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
-                                  <string>Wellness Check</string>
-                                 </property>
-                                </item>
-                                <item>
-                                 <property name="text">
                                   <string>Surgery</string>
                                  </property>
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>CBC</string>
+                                  <string>Comprehensive Hematology</string>
                                  </property>
                                 </item>
                                 <item>

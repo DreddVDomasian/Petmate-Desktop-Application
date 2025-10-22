@@ -549,7 +549,7 @@ class ServiceListCreateView(generics.ListCreateAPIView):
                     svc.status = "completed"
                     svc.save(update_fields=["status"])
 
-        return services.order_by("date")
+        return services.order_by("-date")
 
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
