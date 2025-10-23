@@ -59,7 +59,7 @@
 
 
 #appointmentRecord:hover{
-	background-color:rgb(163, 210, 227)
+	background-color:#FBD496;
 }</string>
      </property>
      <property name="frameShape">

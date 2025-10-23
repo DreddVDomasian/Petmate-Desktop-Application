@@ -62,7 +62,7 @@
 
 }
 #SchedCard:hover{
-	background-color:rgb(163, 210, 227)
+	background-color:#FBD496;
 }</string>
      </property>
      <property name="frameShape">
@@ -99,7 +99,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>Icons/UserIcon.png</pixmap>
+         <pixmap resource="../resource.qrc">:/Icons/Icons/UserIcon.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

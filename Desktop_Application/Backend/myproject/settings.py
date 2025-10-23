@@ -169,3 +169,7 @@ CORS_ALLOWED_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
