@@ -63,6 +63,8 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
     { id: 'viewpets', label: 'View Pets', icon: '/assets/icons/view.png', to: '/dashboard/viewpets' },
     { id: 'setappointment', label: 'Set Appointment', icon: '/assets/icons/appointment.png', to: '/dashboard/setappointment' },
     { id: 'appointments', label: 'View Appointments', icon: '/assets/icons/view.png', to: '/dashboard/viewappointments' },
+    { id: 'settings', label: 'Settings', icon: '/assets/icons/settings.png', to: '/dashboard/settings' },
+    
   ];
 
   function handleAction(id, to) {
@@ -140,20 +142,6 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
         <div className="nav-divider" />
 
         <ul className="nav-menu secondary">
-          <li className={`nav-item ${active === 'settings' ? 'active' : ''}`}>
-            <NavLink
-              to="#"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleAction('settings', '/settings');
-              }}
-            >
-              <img src="/assets/icons/settings.png" alt="" className="nav-icon" />
-              <span className="nav-text">Settings</span>
-            </NavLink>
-          </li>
-
           <li className="nav-item">
             <button
               type="button"

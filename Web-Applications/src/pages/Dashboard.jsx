@@ -11,6 +11,7 @@ import AddPets from '../components/forms/AddPets';
 import ViewPets from '../components/view/ViewPets';
 import SetAppointment from '../components/forms/SetAppointment';
 import ViewAppointments from '../components/view/ViewAppointments';
+import Settings from '../components/common/Settings';
 
 function Dashboard() {
     return (
@@ -22,6 +23,7 @@ function Dashboard() {
                     <Route path="viewpets" element={<ViewPets />} />
                     <Route path="setappointment" element={<SetAppointment />} />
                     <Route path="viewappointments" element={<ViewAppointments />} />
+                    <Route path="settings" element={<Settings />} />
                     {/* Add more routes as needed */}
                 </Routes>
             </main>
