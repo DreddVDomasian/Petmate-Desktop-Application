@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/settings-icon.png</file>
     <file>Icons/NextPage.png</file>
     <file>Icons/prevPage.png</file>
     <file>Icons/deleteBlack.png</file>
