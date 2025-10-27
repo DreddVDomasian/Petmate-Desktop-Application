@@ -278,6 +278,8 @@ class MainUI(QMainWindow):
         self.cancelButton.hide()
         self.petUpdateButton.hide()
         self.updateServiceBtn.hide()
+        self.settingsProfileSaveBtn.hide()
+        self.settingsProfileCancelBtn.hide()
 
         #reminder pop up
         self.make_icon_pulse(self.reminderBtn)
@@ -285,6 +287,30 @@ class MainUI(QMainWindow):
         #nav
         self.miniNavBtn.clicked.connect(self.slide_in_sideNav)
         self.fullNavBtn.clicked.connect(self.slide_out_sideNav)
+
+        #profile settings
+        self.settingsProfileEditBtn.clicked.connect(self.enableProfileEdit)
+    def enableProfileEdit(self):
+        self.profileFullName.setEnabled(True)
+        self.profileUserName.setEnabled(True)
+        self.profileEmail.setEnabled(True)
+        self.profilePhone.setEnabled(True)
+
+        self.settingsProfileEditBtn.hide()
+        self.settingsProfileSaveBtn.show()
+        self.settingsProfileCancelBtn.show()
+
+        self.settingsProfileCancelBtn.clicked.connect(self.profileEdit_cancel)
+    def profileEdit_cancel(self):
+        self.settingsProfileEditBtn.show()
+        self.settingsProfileSaveBtn.hide()
+        self.settingsProfileCancelBtn.hide()
+
+        self.profileFullName.setEnabled(False)
+        self.profileUserName.setEnabled(False)
+        self.profileEmail.setEnabled(False)
+        self.profilePhone.setEnabled(False)
+
     def setup_all_back_buttons(self):
         self.all_back_buttons = [
             self.homeBackBtn,
