@@ -14,8 +14,8 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidge
     QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
-    QParallelAnimationGroup, QTimer
-from PyQt6.QtGui import QFontDatabase, QPixmap
+    QParallelAnimationGroup, QTimer,QRegularExpression
+from PyQt6.QtGui import QFontDatabase, QPixmap,QIntValidator, QRegularExpressionValidator
 from uiLogic import UIHandler
 from input_styles import *
 from toast import Toast
@@ -75,6 +75,7 @@ class MainUI(QMainWindow):
         self.current_page_index = 0
         self.current_params = {}
 
+        self.setup_phone_validator()
         # Duplicate dialog state
         self.duplicateDialog = None
         self.ignore_duplicates = False
@@ -469,8 +470,38 @@ class MainUI(QMainWindow):
         self.clearSpeciesBtn.setGraphicsEffect(create_card_shadow())
 
     #FORM INPUT CHECKER
+    def setup_phone_validator(self):
+        # Set up phone number validators - numbers only
+        phone_validator = QRegularExpressionValidator(QRegularExpression(r'^[0-9]{0,11}$'))
+        self.phoneNumberEdit.setValidator(phone_validator)
+        self.secondaryPhoneEdit.setValidator(phone_validator)
+
+        # Connect the text change signals
+        self.phoneNumberEdit.textChanged.connect(self.on_phone_number_changed)
+        self.secondaryPhoneEdit.textChanged.connect(self.on_secondary_phone_changed)
+    def validate_phone_number(self, phone):
+        """Validate and format Philippine phone numbers"""
+        # Remove any non-digit characters except +
+        cleaned_phone = ''.join(c for c in phone if c.isdigit() or c == '+')
+
+        # Check if it's a valid Philippine mobile number
+        if len(cleaned_phone) == 11 and cleaned_phone.startswith('09'):  # 09 + 9 digits = 11
+            # Convert 09XXXXXXXXX to +639XXXXXXXXX
+            return '+63' + cleaned_phone[1:]
+        elif len(cleaned_phone) == 12 and cleaned_phone.startswith('639'):  # 639 + 9 digits = 12
+            return '+' + cleaned_phone
+        elif len(cleaned_phone) == 13 and cleaned_phone.startswith('+639'):  # +639 + 9 digits = 13
+            return cleaned_phone
+
+        return None
+    def validate_email(self, email):
+        """Basic email validation"""
+        import re
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return re.match(pattern, email.strip()) is not None
     def collect_and_validate_fields(self, required_fields):
         missing = []
+        invalid_fields = []
 
         def apply_style(widget, error=False):
             is_combobox = isinstance(widget, QComboBox)
@@ -507,8 +538,27 @@ class MainUI(QMainWindow):
                     apply_style(widget, error=True)
                     missing.append(name)
                 else:
-                    apply_style(widget, error=False)
-                    data[name] = text.strip()
+                    # Special validation for phone numbers and email
+                    if name == "phoneNumber":
+                        formatted_phone = self.validate_phone_number(text)
+                        if formatted_phone:
+                            apply_style(widget, error=False)
+                            data[name] = formatted_phone
+                        else:
+                            apply_style(widget, error=True)
+                            invalid_fields.append("Phone number (must be 09XXXXXXXXX or +63XXXXXXXXXX)")
+
+                    elif name == "email":
+                        if self.validate_email(text):
+                            apply_style(widget, error=False)
+                            data[name] = text.strip()
+                        else:
+                            apply_style(widget, error=True)
+                            invalid_fields.append("Email address (must be valid format)")
+
+                    else:
+                        apply_style(widget, error=False)
+                        data[name] = text.strip()
 
         sentinel = QDate(1900, 1, 1)
         if self.Bday.date() != sentinel:
@@ -521,7 +571,7 @@ class MainUI(QMainWindow):
             data["birthDay"] = None
             data["stored_age"] = self.age.text().strip() if self.age.text().strip() else None
 
-        return data, missing
+        return data, missing, invalid_fields
 
     #PATIEN INFO SUBMIT/CHECK DUPLICATE
     def setup_comboboxes(self):
@@ -546,11 +596,29 @@ class MainUI(QMainWindow):
             "email": self.emailEdit,
         }
 
-        data, missing = self.collect_and_validate_fields(required_fields)
+        data, missing, invalid_fields = self.collect_and_validate_fields(required_fields)
         data["middleName"] = self.middleNameEdit.text().strip() if self.middleNameEdit.text().strip() else None
-        data["SecondaryNumber"] = self.secondaryPhoneEdit.text().strip() if self.secondaryPhoneEdit.text().strip() else None
-        if missing:
-            message = "The following fields are required:\n• " + "\n• ".join(missing)
+
+        # Validate secondary phone number if provided
+        secondary_phone = self.secondaryPhoneEdit.text().strip()
+        if secondary_phone:
+            formatted_secondary = self.validate_phone_number(secondary_phone)
+            if formatted_secondary:
+                data["SecondaryNumber"] = formatted_secondary
+            else:
+                invalid_fields.append("Secondary phone number (must be 09XXXXXXXXX or +63XXXXXXXXXX)")
+        else:
+            data["SecondaryNumber"] = None
+
+        # Show error messages if any
+        if missing or invalid_fields:
+            messages = []
+            if missing:
+                messages.append("The following fields are required:\n• " + "\n• ".join(missing))
+            if invalid_fields:
+                messages.append("The following fields are invalid:\n• " + "\n• ".join(invalid_fields))
+
+            message = "\n\n".join(messages)
             toast = Toast(self, message, icon_path="Icons/warning.png")
             toast.show_toast()
             return
@@ -572,7 +640,7 @@ class MainUI(QMainWindow):
         # proceed to save patient
         if add_new_patient(data):
             self.navigate_to_page(2)
-            self.load_patients(1,search_term=None)
+            self.load_patients(1, search_term=None)
 
             self.clearInputs()
 
@@ -583,13 +651,71 @@ class MainUI(QMainWindow):
                 elif isinstance(widget, QComboBox):
                     widget.setStyleSheet(default_combobox_style)
 
-            toast = Toast(self,icon_path="Icons/check.png")
+            toast = Toast(self, icon_path="Icons/check.png")
             toast.show_toast()
-
-
         else:
             toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
             toast.show_toast()
+    def on_phone_number_changed(self, text):
+        """Real-time phone number formatting with numbers-only input and length limits"""
+        # If text is empty, return
+        if not text:
+            return
+
+        # Store cursor position
+        cursor_pos = self.phoneNumberEdit.cursorPosition()
+
+        # Auto-format from 09 to +639 in real-time
+        if text.startswith('09') and len(text) >= 2:
+            if len(text) == 11:  # 09 + 9 digits = complete number
+                formatted = '+63' + text[1:]
+                if formatted != text:
+                    # Temporarily disconnect to avoid recursion
+                    self.phoneNumberEdit.textChanged.disconnect(self.on_phone_number_changed)
+                    self.phoneNumberEdit.setText(formatted)
+                    # Reconnect the signal
+                    self.phoneNumberEdit.textChanged.connect(self.on_phone_number_changed)
+                    # Move cursor to end
+                    self.phoneNumberEdit.setCursorPosition(len(formatted))
+
+            # If user tries to type beyond 11 digits, truncate
+            elif len(text) > 11:
+                # Temporarily disconnect to avoid recursion
+                self.phoneNumberEdit.textChanged.disconnect(self.on_phone_number_changed)
+                self.phoneNumberEdit.setText(text[:11])
+                # Reconnect the signal
+                self.phoneNumberEdit.textChanged.connect(self.on_phone_number_changed)
+                self.phoneNumberEdit.setCursorPosition(cursor_pos)
+    def on_secondary_phone_changed(self, text):
+        """Real-time secondary phone number formatting with numbers-only input and length limits"""
+        # If text is empty, return
+        if not text:
+            return
+
+        # Store cursor position
+        cursor_pos = self.secondaryPhoneEdit.cursorPosition()
+
+        # Auto-format from 09 to +639 in real-time
+        if text.startswith('09') and len(text) >= 2:
+            if len(text) == 11:  # 09 + 9 digits = complete number
+                formatted = '+63' + text[1:]
+                if formatted != text:
+                    # Temporarily disconnect to avoid recursion
+                    self.secondaryPhoneEdit.textChanged.disconnect(self.on_secondary_phone_changed)
+                    self.secondaryPhoneEdit.setText(formatted)
+                    # Reconnect the signal
+                    self.secondaryPhoneEdit.textChanged.connect(self.on_secondary_phone_changed)
+                    # Move cursor to end
+                    self.secondaryPhoneEdit.setCursorPosition(len(formatted))
+
+            # If user tries to type beyond 11 digits, truncate
+            elif len(text) > 11:
+                # Temporarily disconnect to avoid recursion
+                self.secondaryPhoneEdit.textChanged.disconnect(self.on_secondary_phone_changed)
+                self.secondaryPhoneEdit.setText(text[:11])
+                # Reconnect the signal
+                self.secondaryPhoneEdit.textChanged.connect(self.on_secondary_phone_changed)
+                self.secondaryPhoneEdit.setCursorPosition(cursor_pos)
     def check_duplicate_patient(self, data):
         try:
             response = requests.post(f"http://127.0.0.1:8000/api/check-duplicate/", json=data)

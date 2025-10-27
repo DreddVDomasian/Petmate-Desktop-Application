@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>743</width>
-    <height>453</height>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -636,7 +636,7 @@ color:rgb(39, 39, 39);</string>
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item alignment="Qt::AlignTop">
+         <item>
           <widget class="QFrame" name="frame_5">
            <property name="styleSheet">
             <string notr="true">#frame_5{
