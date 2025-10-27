@@ -10208,7 +10208,7 @@ border:none;</string>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>60</height>
+                     <height>80</height>
                     </size>
                    </property>
                    <property name="baseSize">
@@ -10269,12 +10269,6 @@ QPushButton:checked {
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>60</height>
-                       </size>
-                      </property>
                       <property name="styleSheet">
                        <string notr="true"/>
                       </property>
@@ -10290,12 +10284,6 @@ QPushButton:checked {
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>60</height>
-                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true"/>
@@ -10313,12 +10301,6 @@ QPushButton:checked {
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>60</height>
-                       </size>
-                      </property>
                       <property name="styleSheet">
                        <string notr="true"/>
                       </property>
@@ -10334,12 +10316,6 @@ QPushButton:checked {
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>60</height>
-                       </size>
                       </property>
                       <property name="styleSheet">
                        <string notr="true"/>
@@ -10361,7 +10337,7 @@ QPushButton:checked {
                     </sizepolicy>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="profileTab">
                     <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -10378,9 +10354,299 @@ QPushButton:checked {
                     <layout class="QVBoxLayout" name="verticalLayout_72">
                      <item>
                       <widget class="QLabel" name="label_7">
-                       <property name="text">
-                        <string>Security tab</string>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
                        </property>
+                       <property name="styleSheet">
+                        <string notr="true">font: 14pt &quot;Rubik Mono One&quot;;
+	color:rgb(52, 52, 52);</string>
+                       </property>
+                       <property name="text">
+                        <string>Change Password</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QFrame" name="frame_76">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_90">
+                        <property name="leftMargin">
+                         <number>100</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>50</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>100</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>50</number>
+                        </property>
+                        <item>
+                         <widget class="QFrame" name="changePassFrame">
+                          <property name="maximumSize">
+                           <size>
+                            <width>900</width>
+                            <height>500</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">
+#changePassFrame{
+	background-color:rgb(183, 218, 234);
+	border-radius:35px;
+}
+QLabel{
+font: 57 12pt &quot;Montserrat SemiBold&quot;;
+	color:rgb(52, 52, 52);
+}
+
+QLineEdit{
+    border-radius: 10px;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+	background-color:rgb(245, 245, 245);
+}
+QLineEdit:focus{
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
+}
+</string>
+                          </property>
+                          <property name="frameShape">
+                           <enum>QFrame::StyledPanel</enum>
+                          </property>
+                          <property name="frameShadow">
+                           <enum>QFrame::Raised</enum>
+                          </property>
+                          <layout class="QVBoxLayout" name="verticalLayout_76">
+                           <property name="leftMargin">
+                            <number>20</number>
+                           </property>
+                           <property name="topMargin">
+                            <number>40</number>
+                           </property>
+                           <property name="rightMargin">
+                            <number>20</number>
+                           </property>
+                           <property name="bottomMargin">
+                            <number>20</number>
+                           </property>
+                           <item>
+                            <widget class="QFrame" name="frame_81">
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>80</height>
+                              </size>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_3">
+                              <property name="spacing">
+                               <number>10</number>
+                              </property>
+                              <item>
+                               <widget class="QLabel" name="label_10">
+                                <property name="text">
+                                 <string>Current Password:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="currentPassEdit">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>45</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>80</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="frame_82">
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>80</height>
+                              </size>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_87">
+                              <property name="spacing">
+                               <number>35</number>
+                              </property>
+                              <item>
+                               <widget class="QLabel" name="label_29">
+                                <property name="text">
+                                 <string>New Password:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="newPassEdit">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>45</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>80</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="frame_83">
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>80</height>
+                              </size>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_88">
+                              <property name="spacing">
+                               <number>7</number>
+                              </property>
+                              <item>
+                               <widget class="QLabel" name="label_33">
+                                <property name="text">
+                                 <string>Confirm Passowrd:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="confirmPassEdit">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>45</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>80</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <spacer name="verticalSpacer_12">
+                             <property name="orientation">
+                              <enum>Qt::Vertical</enum>
+                             </property>
+                             <property name="sizeHint" stdset="0">
+                              <size>
+                               <width>20</width>
+                               <height>40</height>
+                              </size>
+                             </property>
+                            </spacer>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="frame_84">
+                             <property name="maximumSize">
+                              <size>
+                               <width>16777215</width>
+                               <height>80</height>
+                              </size>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_89">
+                              <item>
+                               <widget class="QPushButton" name="pushButton_2">
+                                <property name="styleSheet">
+                                 <string notr="true">QPushButton{
+	font: 63 14pt &quot;Montserrat SemiBold&quot;;
+	color:rgb(52, 52, 52);
+	background-color: #FCD597;
+	border-radius: 10px;
+	padding:10px 20px 10px 20px;
+}
+QPushButton:hover{
+background-color: rgb(223, 188, 134);
+border-radius: 10px;
+}</string>
+                                </property>
+                                <property name="text">
+                                 <string>Change Password</string>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                          </layout>
+                         </widget>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                     </layout>

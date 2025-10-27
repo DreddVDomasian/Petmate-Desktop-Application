@@ -488,6 +488,9 @@ class MainUI(QMainWindow):
 
         self.clearSpeciesBtn.setGraphicsEffect(create_card_shadow())
 
+        #settings shadow
+        self.changePassFrame.setGraphicsEffect(create_card_shadow())
+
     #FORM INPUT CHECKER
     def setup_phone_validator(self):
         # Set up phone number validators - numbers only
