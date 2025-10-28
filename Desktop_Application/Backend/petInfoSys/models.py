@@ -1,10 +1,55 @@
 from datetime import date
 import uuid
 from django.db import models
-
+from django.utils import timezone
 from django.contrib.auth.models import User #para sa auth_user
 
 #-----------------------------------------DESKTOP WEBSITE MODELS------------------------------
+
+class DesktopUser(models.Model):
+    ROLE_CHOICES = [
+        ('admin', 'Administrator'),
+        ('staff', 'Staff'),
+    ]
+
+    # Required fields
+    username = models.CharField(max_length=150, unique=True)
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='staff')
+
+    # Password field (we'll hash passwords like Django auth does)
+    password = models.CharField(max_length=128)  # Same as auth_user
+
+    # Status flags
+    force_password_change = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+
+    # For staff accounts, track who created them
+    created_by = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_users'
+    )
+
+    def __str__(self):
+        return f"{self.username} ({self.role})"
+
+    def set_password(self, raw_password):
+        from django.contrib.auth.hashers import make_password
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        from django.contrib.auth.hashers import check_password
+        return check_password(raw_password, self.password)
+
 class basicInfo(models.Model):
     SOURCE_CHOICES = [
         ('desktop', 'Desktop System'),

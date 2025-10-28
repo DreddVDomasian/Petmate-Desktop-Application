@@ -1,4 +1,5 @@
 from rest_framework import generics, status, permissions, viewsets
+from rest_framework.views import APIView
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
@@ -17,13 +18,208 @@ from django.conf import settings
 import pytz
 import re
 import os
-
-
-
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout, get_user_model
 from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
 
+
+# Desktop Authentication Views
+class DesktopLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        try:
+            user = DesktopUser.objects.get(username=username, is_active=True)
+            if user.check_password(password):
+                # Update last login
+                user.last_login = timezone.now()
+                user.save()
+
+                return Response({
+                    'success': True,
+                    'user': {
+                        'id': user.id,
+                        'username': user.username,
+                        'full_name': user.full_name,
+                        'email': user.email,
+                        'phone': user.phone,
+                        'role': user.role,
+                        'force_password_change': user.force_password_change
+                    }
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'success': False,
+                    'error': 'Invalid password'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+
+        except DesktopUser.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'User not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+class FirstTimeSetupView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        full_name = request.data.get('full_name')
+        email = request.data.get('email')
+        phone = request.data.get('phone')
+        username = request.data.get('username')
+        new_password = request.data.get('new_password')
+
+        try:
+            user = DesktopUser.objects.get(id=user_id, force_password_change=True)
+
+            # Check if username is already taken (excluding current user)
+            if DesktopUser.objects.filter(username=username).exclude(id=user_id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'Username already taken'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Update user details
+            user.full_name = full_name
+            user.email = email
+            user.phone = phone
+            user.username = username
+            user.set_password(new_password)
+            user.force_password_change = False
+            user.save()
+
+            return Response({
+                'success': True,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'full_name': user.full_name,
+                    'email': user.email,
+                    'phone': user.phone,
+                    'role': user.role,
+                    'force_password_change': user.force_password_change
+                }
+            }, status=status.HTTP_200_OK)
+
+        except DesktopUser.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'User not found or already setup'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+class ChangePasswordView(APIView):
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        try:
+            user = DesktopUser.objects.get(id=user_id)
+
+            if not user.check_password(current_password):
+                return Response({
+                    'success': False,
+                    'error': 'Current password is incorrect'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            user.set_password(new_password)
+            user.save()
+
+            return Response({
+                'success': True,
+                'message': 'Password changed successfully'
+            }, status=status.HTTP_200_OK)
+
+        except DesktopUser.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'User not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+# Admin-only views
+class CreateStaffView(APIView):
+    def post(self, request):
+        admin_id = request.data.get('admin_id')
+        full_name = request.data.get('full_name')
+        email = request.data.get('email')
+
+        try:
+            admin = DesktopUser.objects.get(id=admin_id, role='admin')
+
+            # Generate temporary credentials
+            import random
+            import string
+
+            # Create base username from full name
+            base_username = full_name.lower().replace(' ', '.')
+            username = base_username
+            counter = 1
+
+            # Ensure unique username
+            while DesktopUser.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+
+            temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+            staff = DesktopUser(
+                username=username,
+                full_name=full_name,
+                email=email,
+                role='staff',
+                force_password_change=True,
+                created_by=admin
+            )
+            staff.set_password(temp_password)
+            staff.save()
+
+            return Response({
+                'success': True,
+                'staff_account': {
+                    'id': staff.id,
+                    'username': username,
+                    'temp_password': temp_password,
+                    'email': email,
+                    'full_name': full_name
+                }
+            }, status=status.HTTP_201_CREATED)
+
+        except DesktopUser.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'Admin not found or unauthorized'
+            }, status=status.HTTP_403_FORBIDDEN)
+
+
+class DesktopUserListView(APIView):
+    def get(self, request):
+        users = DesktopUser.objects.filter(is_active=True).order_by('-created_at')
+        user_data = []
+
+        for user in users:
+            user_data.append({
+                'id': user.id,
+                'username': user.username,
+                'full_name': user.full_name,
+                'email': user.email,
+                'phone': user.phone,
+                'role': user.role,
+                'last_login': user.last_login,
+                'created_at': user.created_at,
+                'force_password_change': user.force_password_change
+            })
+
+        return Response({
+            'success': True,
+            'users': user_data
+        }, status=status.HTTP_200_OK)
 
 class StandardPagination(PageNumberPagination):
     page_size = 16

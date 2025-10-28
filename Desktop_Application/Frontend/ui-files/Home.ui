@@ -619,7 +619,7 @@ QToolButton:checked{
               <number>0</number>
              </property>
              <item>
-              <widget class="QToolButton" name="toolButton">
+              <widget class="QToolButton" name="logoutBtn">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -2701,8 +2701,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>860</width>
-                   <height>506</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3418,8 +3418,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -3477,8 +3477,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3533,8 +3533,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>842</width>
-                           <height>440</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -3992,8 +3992,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>860</width>
-                           <height>362</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -4054,8 +4054,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -4107,8 +4107,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -4160,8 +4160,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>98</width>
+                           <height>28</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -4947,8 +4947,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
-                          <height>30</height>
+                          <width>98</width>
+                          <height>28</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_67"/>
@@ -4990,8 +4990,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>858</width>
-                          <height>450</height>
+                          <width>98</width>
+                          <height>448</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_33"/>
@@ -5027,7 +5027,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>93</width>
+                          <width>98</width>
                           <height>41</height>
                          </rect>
                         </property>
@@ -5434,8 +5434,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>860</width>
-                       <height>412</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -8080,7 +8080,7 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>90</width>
+                          <width>98</width>
                           <height>33</height>
                          </rect>
                         </property>

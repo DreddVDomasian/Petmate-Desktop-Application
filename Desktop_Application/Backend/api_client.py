@@ -3,6 +3,56 @@ import requests
 
 BASE_URL = "http://127.0.0.1:8000/api"   # later change to your real server url
 
+
+def desktop_login(username, password):
+    """Login for desktop users (admin/staff)"""
+    try:
+        response = requests.post(
+            f"{BASE_URL}/desktop-login/",
+            json={
+                'username': username,
+                'password': password
+            },
+            timeout=10
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            return True, data
+        else:
+            data = response.json()
+            return False, data
+
+    except Exception as e:
+        return False, {'error': f'Connection error: {str(e)}'}
+
+
+def first_time_setup(user_id, full_name, email, phone, username, new_password):
+    """Complete first-time setup for desktop users"""
+    try:
+        response = requests.post(
+            f"{BASE_URL}/desktop-first-time-setup/",
+            json={
+                'user_id': user_id,
+                'full_name': full_name,
+                'email': email,
+                'phone': phone,
+                'username': username,
+                'new_password': new_password
+            },
+            timeout=10
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            return True, data
+        else:
+            data = response.json()
+            return False, data
+
+    except Exception as e:
+        return False, {'error': f'Connection error: {str(e)}'}
+
 def add_new_patient(data):
     """
     data: dict with all patient info
@@ -69,7 +119,7 @@ def add_new_service(data):
 
 def add_new_appointment(data):
     try:
-        response = requests.post("http://127.0.0.1:8000/api/walkIn/", json=data)
+        response = requests.post(f"{BASE_URL}/walkIn/", json=data)
         print(f"Create appointment response status: {response.status_code}")
         print(f"Create appointment response text: {response.text}")
 

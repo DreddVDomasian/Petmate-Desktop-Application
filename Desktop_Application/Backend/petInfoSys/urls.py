@@ -42,6 +42,11 @@ urlpatterns = [
     path('logout/', views.logout_view, name='api_logout'),
     path('user/', views.current_user, name='api_current_user'),
 
-
+    # Desktop Authentication
+    path('desktop-login/', views.DesktopLoginView.as_view(), name='desktop_login'),
+    path('desktop-first-time-setup/', views.FirstTimeSetupView.as_view(), name='desktop_first_time_setup'),
+    path('desktop-change-password/', views.ChangePasswordView.as_view(), name='desktop_change_password'),
+    path('desktop-create-staff/', views.CreateStaffView.as_view(), name='desktop_create_staff'),
+    path('desktop-users/', views.DesktopUserListView.as_view(), name='desktop_users_list'),
 
 ]

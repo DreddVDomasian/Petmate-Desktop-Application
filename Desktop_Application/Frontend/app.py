@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidge
     QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
-    QParallelAnimationGroup, QTimer,QRegularExpression
+    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings
 from PyQt6.QtGui import QFontDatabase, QPixmap,QIntValidator, QRegularExpressionValidator
 from uiLogic import UIHandler
 from input_styles import *
@@ -44,6 +44,8 @@ class MainUI(QMainWindow):
         self.deleteFunction = Delete(self)
         self.updateFunction = Update(self)
 
+        #users
+        self.current_user = None
         # Nav
         self.sideNav.setVisible(False)
 
@@ -290,6 +292,24 @@ class MainUI(QMainWindow):
 
         #profile settings
         self.settingsProfileEditBtn.clicked.connect(self.enableProfileEdit)
+
+        #log out
+        self.logoutBtn.clicked.connect(self.logout)
+
+    def logout(self):
+        # Confirm logout
+        reply = QMessageBox.question(self, 'Logout',
+                                     'Are you sure you want to logout?',
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+        if reply == QMessageBox.StandardButton.Yes:
+            # Clear saved credentials
+            settings = QSettings("PetMate", "DesktopApp")
+            settings.remove("username")
+            settings.setValue("stay_signed_in", False)
+
+            # Close and restart application (which will show login)
+            QApplication.quit()
     def enableProfileEdit(self):
         self.profileFullName.setEnabled(True)
         self.profileUserName.setEnabled(True)

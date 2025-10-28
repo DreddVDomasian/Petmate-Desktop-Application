@@ -25,6 +25,12 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QFrame{
+	background:transparent;
+	border:none;
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
@@ -44,11 +50,8 @@
    <item>
     <widget class="QFrame" name="firstLoginFrame">
      <property name="styleSheet">
-      <string notr="true">#loginFrame{
-
-	
+      <string notr="true">#firstLoginFrame{
 	background-image: url(:/images/image/loginBG.png);
-
 }</string>
      </property>
      <property name="frameShape">
@@ -87,6 +90,7 @@
            <property name="styleSheet">
             <string notr="true">#close{
 	background:transparent;
+	border:none;
 }</string>
            </property>
            <property name="text">
@@ -669,7 +673,7 @@ border-bottom-left-radius:25px;</string>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="PhoneNumIcon">
+                   <widget class="QLineEdit" name="PhoneNum">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                       <horstretch>0</horstretch>
