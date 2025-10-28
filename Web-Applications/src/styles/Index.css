@@ -99,17 +99,100 @@ body {
     min-height: 32px; /* ensures enough height for checkbox */
 }
 
-.forgot-password {
+
+
+/* -------------------------------
+    FORGOT PASSWORD MODAL STYLING
+--------------------------------*/
+
+.forgot-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.forgot-container h2 {
+    margin-top: 10px;
+    color: #333;
+    font-size: 22px;
+}
+
+.forgot-link{
     color: #ff8c00;
     text-decoration: none;
     font-size: 15px;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    line-height: 1; /* Match checkbox baseline */
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.forgot-link:hover {
+  color: #e67e00;
+  text-decoration: underline;
 }
 
 
+
+.subtitle {
+    font-size: 14px;
+    color: #777;
+    margin: 10px 0 20px;
+    max-width: 320px;
+}
+
+.reset-btn {
+    background: linear-gradient(135deg, #ff6b00, #ff8c00);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 10px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.reset-btn:hover {
+    background: #e67e00;
+    transform: translateY(-1px);
+}
+
+.success-msg {
+    color: #16a34a;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.back-link {
+    align-self: flex-start;
+    font-size: 14px;
+    color: #007bff;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* Adjust modal width for forgot password */
+.modal-content.forgot {
+    max-width: 400px;
+    width: 90%;
+    padding: 30px 25px;
+}
+
+
+/* Custom Checkbox */
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -170,7 +253,10 @@ body {
 }
 
 
-/* Login and Signup */
+
+
+
+/* Login and Signup and Forgot */
 .modal {
     position: fixed;
     top: 0;

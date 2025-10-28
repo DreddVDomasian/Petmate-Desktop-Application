@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/csrf";
+import ForgotPasswordModal from "../modals/ForgetPasswordModal";
 
 function LoginModal({ onClose, onOpenSignup, visible }) {
-  const navigate = useNavigate(); // Hook for navigation
+  const [showForgot, setShowForgot] = useState(false);
+  const navigate = useNavigate();
 
-  if (!visible) return null; // Hides modal when not active
+  if (!visible) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,29 +21,28 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
 
     (async () => {
       try {
-        const res = await fetch('/api/login/', {
-          method: 'POST',
+        const res = await fetch("/api/login/", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken') || ''
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken") || "",
           },
-          credentials: 'include',
-          body: JSON.stringify({ email, password })
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
         });
 
         const text = await res.text();
         let data = {};
         try {
           data = text ? JSON.parse(text) : {};
-        } catch (err) {
-          // non-json response (HTML or empty), keep text in error
+        } catch {
           data = { error: text || res.statusText };
         }
 
-        if (!res.ok) throw new Error(data.error || res.statusText || 'Login failed');
+        if (!res.ok) throw new Error(data.error || res.statusText || "Login failed");
 
         onClose();
-        navigate('/dashboard');
+        navigate("/dashboard");
       } catch (err) {
         alert(err.message);
       }
@@ -49,51 +50,62 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <span className="close" onClick={onClose}>
-          &times;
-        </span>
-        <div className="login-container">
-          <h2>Login to PetMate</h2>
-          <form id="loginForm" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="loginEmail">Email</label>
-              <input type="email" id="loginEmail" name="email" required />
-            </div>
+    <>
+      {!showForgot && (
+        <div className="modal" onClick={onClose}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close" onClick={onClose}>
+              &times;
+            </span>
+            <div className="login-container">
+              <h2>Login to PetMate</h2>
+              <form id="loginForm" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="loginEmail">Email</label>
+                  <input type="email" id="loginEmail" name="email" required />
+                </div>
 
-            <div className="form-group">
-              <label htmlFor="loginPassword">Password</label>
-              <input type="password" id="loginPassword" name="password" required />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="loginPassword">Password</label>
+                  <input type="password" id="loginPassword" name="password" required />
+                </div>
 
-            <div className="form-options">
-              <label className="checkbox-container">
-                <input type="checkbox" id="rememberMe" />
-                <span className="checkmark"></span>
-                Remember me
-              </label>
-              <a href="#" className="forgot-password">
-                Forgot Password?
-              </a>
-            </div>
+                <div className="form-options">
+                  <label className="checkbox-container">
+                    <input type="checkbox" id="rememberMe" />
+                    <span className="checkmark"></span>
+                    Remember me
+                  </label>
+                  <a className="forgot-link" onClick={() => setShowForgot(true)}>
+                    Forgot Password?
+                  </a>
+                </div>
 
-            <button type="submit" className="login-submit-btn">
-              LOGIN
-            </button>
+                <button type="submit" className="login-submit-btn">
+                  LOGIN
+                </button>
 
-            <div className="signup-link">
-              <p>
-                Don't have an account?{" "}
-                <a href="#" onClick={onOpenSignup}>
-                  Sign up here
-                </a>
-              </p>
+                <div className="signup-link">
+                  <p>
+                    Don't have an account?{" "}
+                    <a href="#" onClick={onOpenSignup}>
+                      Sign up here
+                    </a>
+                  </p>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+
+      {showForgot && (
+        <ForgotPasswordModal
+          onClose={onClose}
+          onBack={() => setShowForgot(false)}
+        />
+      )}
+    </>
   );
 }
 
