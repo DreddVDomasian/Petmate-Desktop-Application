@@ -293,23 +293,7 @@ class MainUI(QMainWindow):
         #profile settings
         self.settingsProfileEditBtn.clicked.connect(self.enableProfileEdit)
 
-        #log out
-        self.logoutBtn.clicked.connect(self.logout)
 
-    def logout(self):
-        # Confirm logout
-        reply = QMessageBox.question(self, 'Logout',
-                                     'Are you sure you want to logout?',
-                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-
-        if reply == QMessageBox.StandardButton.Yes:
-            # Clear saved credentials
-            settings = QSettings("PetMate", "DesktopApp")
-            settings.remove("username")
-            settings.setValue("stay_signed_in", False)
-
-            # Close and restart application (which will show login)
-            QApplication.quit()
     def enableProfileEdit(self):
         self.profileFullName.setEnabled(True)
         self.profileUserName.setEnabled(True)
