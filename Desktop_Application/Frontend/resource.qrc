@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/lockIcon.png</file>
     <file>Icons/settings-icon.png</file>
     <file>Icons/NextPage.png</file>
     <file>Icons/prevPage.png</file>
@@ -29,6 +30,7 @@
     <file>Icons/printIcon.png</file>
     <file>Icons/AddAppointment.png</file>
     <file>Icons/addPatient.png</file>
+    <file>Icons/usernameIcon.png</file>
     <file>Icons/home.png</file>
     <file>Icons/Records.png</file>
     <file>Icons/RecordsIcon.png</file>
@@ -43,6 +45,7 @@
     <file>Icons/warning.png</file>
   </qresource>
   <qresource prefix="/images">
+    <file>image/loginBG.png</file>
     <file>image/Dog.png</file>
     <file>image/desktopIcon.png</file>
     <file>image/image 1.png</file>
