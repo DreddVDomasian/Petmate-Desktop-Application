@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/emailIcon.png</file>
+    <file>Icons/left-arrow.png</file>
     <file>Icons/lockIcon.png</file>
     <file>Icons/settings-icon.png</file>
     <file>Icons/NextPage.png</file>
@@ -9,6 +11,7 @@
     <file>Icons/editPeDetails.png</file>
     <file>Icons/EditProfile.png</file>
     <file>Icons/hideNav.png</file>
+    <file>Icons/phoneNumIcon.png</file>
     <file>Icons/showNav.png</file>
     <file>Icons/menu.png</file>
     <file>Icons/checklist.png</file>
