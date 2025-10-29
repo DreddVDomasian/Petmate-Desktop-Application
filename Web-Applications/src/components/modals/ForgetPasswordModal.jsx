@@ -4,6 +4,8 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
+
+    //HINDI PA ITO NAGAGAWANG FUNCTIONAL, FRONTEND PALANG, NEED DAPAT MAGSEND NG OTP SA EMAIL NG USER
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage("Password reset link has been sent to your email!");
