@@ -11,7 +11,7 @@ from .models import *
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .serializers import *
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
 from django.conf import settings
@@ -23,9 +23,10 @@ from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
 
 import random
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.contrib.auth.models import User
 from .models import PasswordResetOTP
+from django.utils.html import strip_tags
 
 # Desktop Authentication Views
 class DesktopLoginView(APIView):
@@ -936,10 +937,7 @@ class PetListView(generics.ListAPIView):
 
 
 
-
-#---- FORGOT PASSWORD --------
-
-# SEND OTP
+# ---- SEND OTP with HTML Email ----
 @api_view(['POST'])
 def send_reset_otp(request):
     email = request.data.get('email')
@@ -956,19 +954,24 @@ def send_reset_otp(request):
     PasswordResetOTP.objects.create(user=user, otp=otp)
 
     try:
-        send_mail(
-            subject='Your Password Reset OTP',
-            message=f'Your OTP code is {otp}. It expires in 5 minutes.',
-            from_email='petmateanimalclinic@gmail.com',  # Update with your Gmail
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        subject = "🐾 PetMate Animal Clinic - Password Reset OTP"
+        from_email = 'petmateanimalclinic@gmail.com'
+        to = [email]
+
+        # Render HTML template (with OTP)
+        html_content = render_to_string('otp_email.html', {'otp': otp})
+        text_content = strip_tags(html_content)
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
         return Response({'message': 'OTP sent successfully to your email.'}, status=200)
     except Exception as e:
         return Response({'error': f'Failed to send email: {str(e)}'}, status=500)
 
 
-# VERIFY OTP + RESET PASSWORD
+# ---- VERIFY OTP + RESET PASSWORD ----
 @api_view(['POST'])
 def verify_reset_otp(request):
     email = request.data.get('email')
