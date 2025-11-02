@@ -8,18 +8,26 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
 
+  const [isSending, setIsSending] = useState(false);
+
   const sendOtp = async (e) => {
     e.preventDefault();
+    if (isSending) return; //  prevents sa pag multiple API calls
+    setIsSending(true);
+
     try {
       await axios.post("http://127.0.0.1:8000/api/send-reset-otp/", { email }, { withCredentials: true });
       setMessage(" OTP sent to your email!");
       setStep(2);
     } catch (error) {
       console.error("sendOtp error:", error.response?.status, error.response?.data);
-      setMessage(error.response?.data?.error || " Failed to send OTP ");
+      setMessage(error.response?.data?.error || " Failed to send OTP");
+    } finally {
+      setIsSending(false);
     }
   };
 
+  
   const verifyOtp = async (e) => {
     e.preventDefault();
     try {

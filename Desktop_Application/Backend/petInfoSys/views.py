@@ -959,7 +959,7 @@ def send_reset_otp(request):
         send_mail(
             subject='Your Password Reset OTP',
             message=f'Your OTP code is {otp}. It expires in 5 minutes.',
-            from_email='yourgmail@gmail.com',  # Update with your Gmail
+            from_email='petmateanimalclinic@gmail.com',  # Update with your Gmail
             recipient_list=[email],
             fail_silently=False,
         )
