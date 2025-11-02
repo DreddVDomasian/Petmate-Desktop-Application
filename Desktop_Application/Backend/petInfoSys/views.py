@@ -22,6 +22,10 @@ from django.contrib.auth import authenticate, login as django_login, logout as d
 from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
 
+import random
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from .models import PasswordResetOTP
 
 # Desktop Authentication Views
 class DesktopLoginView(APIView):
@@ -930,3 +934,66 @@ class PetListView(generics.ListAPIView):
         user_profile = basicInfo.objects.filter(user_account=self.request.user).first()
         return Pet.objects.filter(owner=user_profile)
 
+
+
+
+#---- FORGOT PASSWORD --------
+
+# SEND OTP
+@api_view(['POST'])
+def send_reset_otp(request):
+    email = request.data.get('email')
+
+    if not email:
+        return Response({'error': 'Email is required.'}, status=400)
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'No account found with this email.'}, status=404)
+
+    otp = str(random.randint(100000, 999999))
+    PasswordResetOTP.objects.create(user=user, otp=otp)
+
+    try:
+        send_mail(
+            subject='Your Password Reset OTP',
+            message=f'Your OTP code is {otp}. It expires in 5 minutes.',
+            from_email='yourgmail@gmail.com',  # Update with your Gmail
+            recipient_list=[email],
+            fail_silently=False,
+        )
+        return Response({'message': 'OTP sent successfully to your email.'}, status=200)
+    except Exception as e:
+        return Response({'error': f'Failed to send email: {str(e)}'}, status=500)
+
+
+# VERIFY OTP + RESET PASSWORD
+@api_view(['POST'])
+def verify_reset_otp(request):
+    email = request.data.get('email')
+    otp = request.data.get('otp')
+    new_password = request.data.get('new_password')
+
+    if not all([email, otp, new_password]):
+        return Response({'error': 'All fields are required.'}, status=400)
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'Invalid email.'}, status=404)
+
+    otp_record = PasswordResetOTP.objects.filter(user=user, otp=otp).last()
+
+    if not otp_record:
+        return Response({'error': 'Invalid OTP.'}, status=400)
+
+    if otp_record.is_expired():
+        otp_record.delete()
+        return Response({'error': 'OTP expired.'}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    otp_record.delete()
+
+    return Response({'message': 'Password reset successfully.'}, status=200)

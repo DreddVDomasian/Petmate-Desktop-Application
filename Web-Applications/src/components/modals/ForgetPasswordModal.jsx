@@ -1,15 +1,39 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 export default function ForgotPasswordModal({ onClose, onBack }) {
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
 
-
-    //HINDI PA ITO NAGAGAWANG FUNCTIONAL, FRONTEND PALANG, NEED DAPAT MAGSEND NG OTP SA EMAIL NG USER
-  const handleSubmit = (e) => {
+  const sendOtp = async (e) => {
     e.preventDefault();
-    setMessage("Password reset link has been sent to your email!");
-    setEmail("");
+    try {
+      await axios.post("http://127.0.0.1:8000/api/send-reset-otp/", { email }, { withCredentials: true });
+      setMessage(" OTP sent to your email!");
+      setStep(2);
+    } catch (error) {
+      console.error("sendOtp error:", error.response?.status, error.response?.data);
+      setMessage(error.response?.data?.error || " Failed to send OTP ");
+    }
+  };
+
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://127.0.0.1:8000/api/verify-reset-otp/", {
+        email,
+        otp,
+        new_password: newPassword,
+      }, { withCredentials: true });
+      setMessage("✅ Password reset successfully!");
+      setStep(3);
+    } catch (error) {
+      console.error("verifyOtp error:", error.response?.status, error.response?.data);
+      setMessage(error.response?.data?.error || " Failed to reset password ");
+    }
   };
 
   return (
@@ -24,27 +48,62 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
             ← Back to Login
           </a>
 
-          <h2>Forgot Password</h2>
-          <p className="subtitle">
-            Enter your registered email address and we’ll send you a link to reset your password.
-          </p>
+          {step === 1 && (
+            <>
+              <h2>Forgot Password</h2>
+              <p>Enter your registered email to receive an OTP.</p>
+              <form onSubmit={sendOtp}>
+                <label>Email</label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <button type="submit" className="reset-btn">
+                  Send OTP
+                </button>
+              </form>
+            </>
+          )}
 
-          <form onSubmit={handleSubmit}>
-            <label>Email</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          {step === 2 && (
+            <>
+              <h2>Reset Password</h2>
+              <form onSubmit={verifyOtp}>
+                <label>OTP Code</label>
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
 
-            <button type="submit" className="reset-btn">
-              Send Reset Link
-            </button>
+                <label>New Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                <button type="submit" className="reset-btn">
+                  Verify & Reset
+                </button>
+              </form>
+            </>
+          )}
 
-            {message && <p className="success-msg">{message}</p>}
-          </form>
+          {step === 3 && (
+            <div>
+              <h2>Success!</h2>
+              <p>Your password has been reset. You can now log in.</p>
+            </div>
+          )}
+
+          {message && <p className="success-msg">{message}</p>}
         </div>
       </div>
     </div>

@@ -76,6 +76,20 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
+
+        # =========================== 
+        # EMAIL CONFIGURATION (GMAIL)  
+        # =========================== 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'petmateanimalclinic@gmail.com'   # <-- your Gmail address 
+EMAIL_HOST_PASSWORD = 'seqwqhnoohgsgkpi'   # <-- 16-character app password NO SPACE Dapat
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

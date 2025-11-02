@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User #para sa auth_user
 
+from datetime import timedelta
+
 #-----------------------------------------DESKTOP WEBSITE MODELS------------------------------
 
 class DesktopUser(models.Model):
@@ -195,4 +197,17 @@ class WalkInAppointment(models.Model):
         return booking_id
 
 
-    
+
+#--------- FORGOT PASSWORD  MODEL ---------
+
+# Model for Password Reset OTP
+class PasswordResetOTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=5)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.otp}"

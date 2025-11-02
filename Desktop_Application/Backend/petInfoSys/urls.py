@@ -5,7 +5,6 @@ from . import views
 
 
 
-
 urlpatterns = [
     path('patients/', BasicInfoListCreateView.as_view(), name='patients-list-create'),
     path('patients/<int:pk>/', BasicInfoRetrieveUpdateDestroyView.as_view(), name='patients-detail'),
@@ -48,5 +47,10 @@ urlpatterns = [
     path('desktop-change-password/', views.ChangePasswordView.as_view(), name='desktop_change_password'),
     path('desktop-create-staff/', views.CreateStaffView.as_view(), name='desktop_create_staff'),
     path('desktop-users/', views.DesktopUserListView.as_view(), name='desktop_users_list'),
+
+
+    #   Password Reset Endpoints
+    path('send-reset-otp/', views.send_reset_otp, name='send_reset_otp'),
+    path('verify-reset-otp/', views.verify_reset_otp, name='verify_reset_otp'),
 
 ]
