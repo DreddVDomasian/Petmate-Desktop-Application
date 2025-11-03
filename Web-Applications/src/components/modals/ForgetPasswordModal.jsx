@@ -36,7 +36,7 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
         otp,
         new_password: newPassword,
       }, { withCredentials: true });
-      setMessage("✅ Password reset successfully!");
+      setMessage(" Password reset successfully!");
       setStep(3);
     } catch (error) {
       console.error("verifyOtp error:", error.response?.status, error.response?.data);
