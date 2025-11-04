@@ -691,7 +691,7 @@ border-bottom-left-radius:25px;</string>
                      <bool>false</bool>
                     </property>
                     <property name="placeholderText">
-                     <string>Enter password</string>
+                     <string>Phone number</string>
                     </property>
                    </widget>
                   </item>

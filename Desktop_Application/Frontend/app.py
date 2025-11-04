@@ -1071,7 +1071,7 @@ class MainUI(QMainWindow):
             "sex": self.petSexComboBox,
         }
 
-        data, missing = self.collect_and_validate_fields(required_fields)
+        data, missing, invalid_fields = self.collect_and_validate_fields(required_fields)
 
         if data["species"].lower() == "others":
             custom_species = self.otherSpeciesLineEdit.text().strip()
@@ -1397,7 +1397,7 @@ class MainUI(QMainWindow):
         }
 
         # Basic validation lang para sa service type
-        data, missing = self.collect_and_validate_fields(required_fields)
+        data, missing, invalid_fields = self.collect_and_validate_fields(required_fields)
 
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)

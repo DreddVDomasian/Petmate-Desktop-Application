@@ -20,7 +20,7 @@ def load_fonts():
         if os.path.exists(font_path):
             font_id = QFontDatabase.addApplicationFont(font_path)
             if font_id != -1:
-                print("✅ Font loaded successfully")
+                print("Font loaded successfully")
             else:
                 print("❌ Failed to load font")
         else:

@@ -1278,7 +1278,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>9</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2701,8 +2701,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>860</width>
+                   <height>506</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3418,8 +3418,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -3477,8 +3477,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_43">
@@ -3533,8 +3533,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -3992,8 +3992,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>860</width>
+                           <height>362</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -4054,8 +4054,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -4107,8 +4107,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_38">
@@ -4160,8 +4160,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>98</width>
-                           <height>28</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_39">
@@ -4947,8 +4947,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
-                          <height>28</height>
+                          <width>100</width>
+                          <height>30</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_67"/>
@@ -4990,8 +4990,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
-                          <height>448</height>
+                          <width>858</width>
+                          <height>450</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_33"/>
@@ -5027,7 +5027,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
+                          <width>93</width>
                           <height>41</height>
                          </rect>
                         </property>
@@ -5369,7 +5369,7 @@ border:none;</string>
               <item>
                <widget class="QStackedWidget" name="profileStackedWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="petCardsPage">
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -8080,7 +8080,7 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>98</width>
+                          <width>90</width>
                           <height>33</height>
                          </rect>
                         </property>
@@ -10337,7 +10337,7 @@ QPushButton:checked {
                     </sizepolicy>
                    </property>
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="profileTab">
                     <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -10759,6 +10759,9 @@ QLineEdit:disabled{
                            </item>
                            <item>
                             <widget class="QFrame" name="accountInfo">
+                             <property name="enabled">
+                              <bool>false</bool>
+                             </property>
                              <property name="frameShape">
                               <enum>QFrame::StyledPanel</enum>
                              </property>
@@ -10819,6 +10822,9 @@ QLineEdit:disabled{
                            </item>
                            <item>
                             <widget class="QFrame" name="settingAcctionBtn">
+                             <property name="enabled">
+                              <bool>false</bool>
+                             </property>
                              <property name="styleSheet">
                               <string notr="true">QPushButton{
 	font: 63 14pt &quot;Montserrat SemiBold&quot;;
@@ -10854,6 +10860,9 @@ border-radius: 10px;
                               </item>
                               <item>
                                <widget class="QPushButton" name="settingsProfileEditBtn">
+                                <property name="enabled">
+                                 <bool>false</bool>
+                                </property>
                                 <property name="text">
                                  <string>Edit Profile</string>
                                 </property>
@@ -10861,6 +10870,9 @@ border-radius: 10px;
                               </item>
                               <item>
                                <widget class="QPushButton" name="settingsProfileSaveBtn">
+                                <property name="enabled">
+                                 <bool>false</bool>
+                                </property>
                                 <property name="text">
                                  <string>Save Changes</string>
                                 </property>
@@ -10868,6 +10880,9 @@ border-radius: 10px;
                               </item>
                               <item>
                                <widget class="QPushButton" name="settingsProfileCancelBtn">
+                                <property name="enabled">
+                                 <bool>false</bool>
+                                </property>
                                 <property name="styleSheet">
                                  <string notr="true">QPushButton{
 	background-color:	rgb(220, 90, 90);
@@ -11562,6 +11577,22 @@ border:none;</string>
     <hint type="destinationlabel">
      <x>333</x>
      <y>493</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>logoutBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>642</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>643</y>
     </hint>
    </hints>
   </connection>
