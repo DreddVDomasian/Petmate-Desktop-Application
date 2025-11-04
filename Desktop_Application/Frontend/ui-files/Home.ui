@@ -10359,7 +10359,7 @@ QPushButton:checked {
                      <item>
                       <widget class="QFrame" name="frame_77">
                        <property name="enabled">
-                        <bool>false</bool>
+                        <bool>true</bool>
                        </property>
                        <property name="styleSheet">
                         <string notr="true">QLabel{
@@ -10407,6 +10407,9 @@ QLineEdit:disabled{
                         </property>
                         <item>
                          <widget class="QFrame" name="profileInfoFrame">
+                          <property name="enabled">
+                           <bool>true</bool>
+                          </property>
                           <property name="styleSheet">
                            <string notr="true">#profileInfoFrame{
 	background-color:rgb(183, 218, 234);
@@ -10760,7 +10763,7 @@ QLineEdit:disabled{
                            <item>
                             <widget class="QFrame" name="accountInfo">
                              <property name="enabled">
-                              <bool>false</bool>
+                              <bool>true</bool>
                              </property>
                              <property name="frameShape">
                               <enum>QFrame::StyledPanel</enum>
@@ -10823,7 +10826,7 @@ QLineEdit:disabled{
                            <item>
                             <widget class="QFrame" name="settingAcctionBtn">
                              <property name="enabled">
-                              <bool>false</bool>
+                              <bool>true</bool>
                              </property>
                              <property name="styleSheet">
                               <string notr="true">QPushButton{
@@ -10861,7 +10864,7 @@ border-radius: 10px;
                               <item>
                                <widget class="QPushButton" name="settingsProfileEditBtn">
                                 <property name="enabled">
-                                 <bool>false</bool>
+                                 <bool>true</bool>
                                 </property>
                                 <property name="text">
                                  <string>Edit Profile</string>
@@ -10871,7 +10874,7 @@ border-radius: 10px;
                               <item>
                                <widget class="QPushButton" name="settingsProfileSaveBtn">
                                 <property name="enabled">
-                                 <bool>false</bool>
+                                 <bool>true</bool>
                                 </property>
                                 <property name="text">
                                  <string>Save Changes</string>
@@ -10881,7 +10884,7 @@ border-radius: 10px;
                               <item>
                                <widget class="QPushButton" name="settingsProfileCancelBtn">
                                 <property name="enabled">
-                                 <bool>false</bool>
+                                 <bool>true</bool>
                                 </property>
                                 <property name="styleSheet">
                                  <string notr="true">QPushButton{
