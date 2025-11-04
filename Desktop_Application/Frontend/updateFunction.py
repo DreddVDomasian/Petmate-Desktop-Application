@@ -2,7 +2,7 @@ import requests
 from toast import Toast
 from PyQt6.QtWidgets import QMessageBox,QComboBox
 from PyQt6.QtCore import Qt, QDate, QTimer
-
+from config_loader import API_BASE_URL
 
 class Update:
     def __init__(self, ui_context):
@@ -35,7 +35,7 @@ class Update:
         self.ui.selected_patient_id = patient.get("id")
 
     def update_patient_info(self, owner_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/patients/{owner_id}/")
+        response = requests.get(f"{API_BASE_URL}/api/patients/{owner_id}/")
         if response.status_code == 200:
             patient = response.json()
             self.populate_patient_form(patient)
@@ -73,7 +73,7 @@ class Update:
                 Toast(self.ui, f"Invalid {name} selected!", icon_path="Icons/warning.png").show_toast()
                 return
 
-        url = f"http://127.0.0.1:8000/api/patients/{patient_id}/"
+        url = f"{API_BASE_URL}/api/patients/{patient_id}/"
 
         try:
             response = requests.put(url, json=data)
@@ -129,7 +129,7 @@ class Update:
                 self.ui.Bday.setDate(qdate)
 
     def update_pet_info(self, pet_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
+        response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
             self.populate_pet_form(pet)
@@ -170,7 +170,7 @@ class Update:
             typed_age = self.ui.age.text().strip()
             data["stored_age"] = typed_age if typed_age else None
 
-        url = f"http://127.0.0.1:8000/api/pets/{pet_id}/"
+        url = f"{API_BASE_URL}/api/pets/{pet_id}/"
         response = requests.put(url, json=data)
 
         if response.status_code == 200:
@@ -211,7 +211,7 @@ class Update:
 
     def update_service_info(self, service_id):
         self.ui.selected_service_id = service_id
-        response = requests.get(f"http://127.0.0.1:8000/api/services/{service_id}/")
+        response = requests.get(f"{API_BASE_URL}/api/services/{service_id}/")
         if response.status_code == 200:
             service = response.json()
             self.populate_service_form(service)
@@ -247,7 +247,7 @@ class Update:
             data["return_date"] = None  # or skip this key entirely depending on API
 
         # Send PUT request
-        url = f"http://127.0.0.1:8000/api/services/{service_id}/"
+        url = f"{API_BASE_URL}/api/services/{service_id}/"
         response = requests.put(url, json=data)
 
         # Handle response

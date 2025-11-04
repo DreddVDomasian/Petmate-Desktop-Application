@@ -30,6 +30,7 @@ from shadowEffects import *
 from delete import Delete
 from duplicateDialog import DuplicateDialog
 from updateFunction import Update
+from config_loader import API_BASE_URL
 import requests
 import webbrowser
 
@@ -770,7 +771,7 @@ class MainUI(QMainWindow):
                 self.secondaryPhoneEdit.setCursorPosition(cursor_pos)
     def check_duplicate_patient(self, data):
         try:
-            response = requests.post(f"http://127.0.0.1:8000/api/check-duplicate/", json=data)
+            response = requests.post(f"{API_BASE_URL}/api/check-duplicate/", json=data)
             if response.status_code == 200:
                 result = response.json()
                 return result.get("duplicates", [])
@@ -802,9 +803,9 @@ class MainUI(QMainWindow):
             if search_term and search_term.strip():
                 import urllib.parse
                 encoded_term = urllib.parse.quote(search_term.strip())
-                url = f"http://127.0.0.1:8000/api/patient-search/?page={page}&search={encoded_term}"
+                url = f"{API_BASE_URL}/api/patient-search/?page={page}&search={encoded_term}"
             else:
-                url = f"http://127.0.0.1:8000/api/patients/?page={page}"
+                url = f"{API_BASE_URL}/api/patients/?page={page}"
 
             # Make API request with timeout
             try:
@@ -1175,7 +1176,7 @@ class MainUI(QMainWindow):
 
     #PET CARD LOADING IN PATIENT PROFILE
     def load_pets_for_owner(self, owner_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/pets/?owner_id={owner_id}")
+        response = requests.get(f"{API_BASE_URL}/api/pets/?owner_id={owner_id}")
         pets = response.json() if response.status_code == 200 else []
 
         # clear pet cards lang, wag galawin addPetButton
@@ -1278,7 +1279,7 @@ class MainUI(QMainWindow):
         self.serviceHistoryBtn.clicked.connect(lambda: self.service_stackedWidget(0))
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
     def load_services_for_pet(self, pet_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/services/?pet_id={pet_id}")
+        response = requests.get(f"{API_BASE_URL}/api/services/?pet_id={pet_id}")
         services = response.json() if response.status_code == 200 else []
 
         header = self.findChild(QWidget, "serviceTableHeader")
@@ -1375,7 +1376,7 @@ class MainUI(QMainWindow):
                 upper_frame.setStyleSheet(upper_Frame_borrad)
     def handlePrintButton(self):
         if self.selected_patient_id and self.selected_pet_id:
-            print_url = f"http://127.0.0.1:8000/api/print/{self.selected_patient_id}/{self.selected_pet_id}/"
+            print_url = f"{API_BASE_URL}/api/print/{self.selected_patient_id}/{self.selected_pet_id}/"
             webbrowser.open(print_url)
         else:
             QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
@@ -1532,7 +1533,7 @@ class MainUI(QMainWindow):
                 self.overdueLayout.addWidget(card)
             card.mousePressEvent = lambda event, pid=service["pet"]: self.open_pet_from_service(pid)
     def open_pet_from_service(self, pet_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
+        response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
             self.selected_pet_id = pet["id"]

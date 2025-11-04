@@ -1,6 +1,7 @@
 import requests
 from toast import Toast
 from PyQt6.QtWidgets import QMessageBox
+from config_loader import API_BASE_URL
 from PyQt6.QtCore import QTimer
 
 
@@ -38,9 +39,9 @@ class Delete:
             return
 
         url_map = {
-            "patient": f"http://127.0.0.1:8000/api/patients/{self.delete_id}/",
-            "pet": f"http://127.0.0.1:8000/api/pets/{self.delete_id}/",
-            "service": f"http://127.0.0.1:8000/api/services/{self.delete_id}/",
+            "patient": f"{API_BASE_URL}/api/patients/{self.delete_id}/",
+            "pet": f"{API_BASE_URL}/api/pets/{self.delete_id}/",
+            "service": f"{API_BASE_URL}/api/services/{self.delete_id}/",
         }
 
         url = url_map.get(self.delete_type)

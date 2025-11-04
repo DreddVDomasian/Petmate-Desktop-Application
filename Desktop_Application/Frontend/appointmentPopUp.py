@@ -20,6 +20,7 @@ from toast import Toast
 from Desktop_Application.Backend.api_client import add_new_appointment
 from datetime import datetime
 from functools import partial
+from config_loader import API_BASE_URL
 import requests
 
 class AddAppointmentCard(QWidget):
@@ -173,7 +174,7 @@ class AddAppointmentCard(QWidget):
             self.selectPetPopUp.addItem("", None)
             return
 
-        url = f"http://127.0.0.1:8000/api/pets/?owner_id={patient_id}"
+        url = f"{API_BASE_URL}/api/pets/?owner_id={patient_id}"
         response = requests.get(url)
         if response.status_code == 200:
             pets = response.json()
@@ -428,7 +429,7 @@ class AddAppointmentCard(QWidget):
             current_layout = self.get_layout_for_status(status_filter)
 
             # Build API URL with search term
-            url = f"http://127.0.0.1:8000/api/walkIn/?request=accepted&page={page}"
+            url = f"{API_BASE_URL}/api/walkIn/?request=accepted&page={page}"
             if status_filter:
                 url += f"&status={status_filter}"
             if search_term:
@@ -520,7 +521,7 @@ class AddAppointmentCard(QWidget):
 
         return layout
     def open_pet_from_appointment(self, pet_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/pets/{pet_id}/")
+        response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
         if response.status_code == 200:
             pet = response.json()
 
@@ -541,7 +542,7 @@ class AddAppointmentCard(QWidget):
         def clicked_yes():
             # First get the appointment details to know which time slot to free up
             try:
-                appointment_url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+                appointment_url = f"{API_BASE_URL}/api/walkIn/{appointment_id}/"
                 appointment_response = requests.get(appointment_url)
 
                 if appointment_response.status_code == 200:
@@ -551,7 +552,7 @@ class AddAppointmentCard(QWidget):
                     time = appointment_data.get('prefTime')
 
                     # Now cancel the appointment
-                    url = f"http://127.0.0.1:8000/api/walkIn/{appointment_id}/"
+                    url = f"{API_BASE_URL}/api/walkIn/{appointment_id}/"
                     response = requests.patch(url, json={"status": "cancelled", "request": "accepted"})
 
                     if response.status_code in [200, 202]:
@@ -764,7 +765,7 @@ class AddAppointmentCard(QWidget):
         # First check if the time slot is still available
         try:
             # Get the appointment details to check date and time
-            appointment_url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
+            appointment_url = f"{API_BASE_URL}/api/walkIn/{walkin_id}/"
             appointment_response = requests.get(appointment_url)
 
             if appointment_response.status_code == 200:
@@ -785,7 +786,7 @@ class AddAppointmentCard(QWidget):
             # Continue anyway if there's an error checking
 
         # If time slot is available, proceed with acceptance
-        url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
+        url = f"{API_BASE_URL}/api/walkIn/{walkin_id}/"
 
         # First, update the walk-in request status
         response = requests.patch(url, json={"request": "accepted"})
@@ -793,7 +794,7 @@ class AddAppointmentCard(QWidget):
         if response.status_code in [200, 202]:
             # Update basicInfo desktop_record to 'show' if owner_id is provided
             if owner_id:
-                owner_url = f"http://127.0.0.1:8000/api/patients/{owner_id}/"
+                owner_url = f"{API_BASE_URL}/api/patients/{owner_id}/"
                 # Get current owner data first
                 owner_response = requests.get(owner_url)
                 if owner_response.status_code == 200:
@@ -821,7 +822,7 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
     def declined_booking(self, walkin_id):
         # Update the walk-in appointment request to 'declined'
-        url = f"http://127.0.0.1:8000/api/walkIn/{walkin_id}/"
+        url = f"{API_BASE_URL}/api/walkIn/{walkin_id}/"
 
         response = requests.patch(url, json={"request": "declined"})
 

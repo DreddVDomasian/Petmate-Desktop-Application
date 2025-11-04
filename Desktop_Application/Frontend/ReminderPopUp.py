@@ -3,7 +3,7 @@ from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget,QLabel
 from  shadowEffects import *
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QRect, QTimer
-
+from config_loader import API_BASE_URL
 
 class ReminderPopup(QWidget):
     def __init__(self, parent=None, main_window=None):
@@ -60,7 +60,7 @@ class ReminderPopup(QWidget):
         self.hide()
 
     def load_reminder(self, pet_id):
-        response = requests.get(f"http://127.0.0.1:8000/api/reminders/?pet_id={pet_id}")
+        response = requests.get(f"{API_BASE_URL}/api/reminders/?pet_id={pet_id}")
         if response.status_code == 200:
             reminders = response.json()
 
@@ -98,9 +98,9 @@ class ReminderPopup(QWidget):
     def complete_reminder(self, reminder_id, reminder_type):
         url = ""
         if reminder_type == "appointment":
-            url = f"http://127.0.0.1:8000/api/walkIn/{reminder_id}/"
+            url = f"{API_BASE_URL}/api/walkIn/{reminder_id}/"
         elif reminder_type == "service return":
-            url = f"http://127.0.0.1:8000/api/services/{reminder_id}/"
+            url = f"{API_BASE_URL}/api/services/{reminder_id}/"
 
         if not url:
             return
