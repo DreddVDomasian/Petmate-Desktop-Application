@@ -1,0 +1,20 @@
+# Desktop_Application/Backend/requirements.txt
+Django==5.2.7
+djangorestframework==3.16.1
+django-cors-headers==4.9.0
+mysqlclient==2.2.7
+gunicorn==21.2.0
+weasyprint==66.0
+whitenoise==6.6.0
+pytz==2025.2
+pillow==12.0.0
+asgiref==3.10.0
+sqlparse==0.5.3
+
+# WeasyPrint dependencies
+cairocffi==1.7.1
+cffi==2.0.0
+cssselect2==0.8.0
+pydyf==0.11.0
+pyphen==0.17.2
+
