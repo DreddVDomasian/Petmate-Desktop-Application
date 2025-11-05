@@ -1,9 +1,8 @@
-# Desktop_Application/Backend/Dockerfile
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install system dependencies (ADD THESE FOR WEASYPRINT)
+# Install system dependencies for MySQL AND PostgreSQL
 RUN apt-get update && apt-get install -y \
     gcc \
     default-libmysqlclient-dev \
@@ -13,17 +12,14 @@ RUN apt-get update && apt-get install -y \
     libgobject-2.0-0 \
     libcairo2 \
     libffi-dev \
+    libpq-dev \  \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy Django project
 COPY . .
 
-# Expose port
 EXPOSE 8000
 
-# Start the server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
