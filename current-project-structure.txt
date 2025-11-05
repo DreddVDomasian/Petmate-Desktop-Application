@@ -1,0 +1,36 @@
+Petmate-Desktop-Application/
+│
+├── .venv/
+├── requirements.txt
+├── .gitignore
+│
+├── Desktop_Application/
+│   ├── Backend/
+│   │   ├── __init__.py
+│   │   ├── manage.py
+│   │   ├── myproject/
+│   │   ├── petInfoSys/
+│   │   ├── static/
+│   │   ├── staticfiles/
+│   │   └── templates/
+│   │
+│   └── Frontend/
+│       ├── __init__.py
+│       ├── AddressJSON/
+│       ├── font/
+│       ├── Icons/
+│       ├── image/
+│       ├── ui-files/
+│       ├── config/
+│       │   └── config.json
+│       ├── config_loader.py
+│       ├── app.py
+│       ├── main.py
+│       ├── updateFunction.py
+│       └── ... (other .py files)
+│
+└── Web-Applications/
+    ├── (React project files)
+    ├── node_modules/
+    ├── src/
+    └── public/

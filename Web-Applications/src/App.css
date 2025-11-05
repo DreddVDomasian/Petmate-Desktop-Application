@@ -1,0 +1,192 @@
+/* Global CSS Reset and Base Styles */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Global link styles */
+a {
+    color: inherit;
+    text-decoration: none;
+    color: #ccc;
+}
+
+/* Global button reset */
+button {
+    font-family: inherit;
+}
+
+/* Global form element styles */
+input, textarea, select {
+    font-family: inherit;
+}
+
+    /* ========================================
+    NAVIGATION STYLES (Global)
+   ======================================== */
+
+.login-btn {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.login-btn:hover {
+    color: #ff8c00 !important;
+}
+
+/* ========================================
+    MODAL STYLES (Global - Used by Navigation)
+   ======================================== */
+
+/* Modal Overlay */
+.modal {
+    display: flex; /* Changed from 'none' since React controls visibility */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Content Container */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 0;
+    border: none;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+/* resize register modal */
+
+.owner-details,.owner-contact,.address1,.address2.email-row,.password-row{
+    margin:0;
+
+}
+
+/* Modal Animation */
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 15px 20px 0 0;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #ff8c00;
+}
+
+/* Login Container */
+.login-container {
+    padding: 15px 30px 30px;
+}
+
+.login-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.login-container .form-group {
+    margin-bottom: 20px;
+}
+
+.login-container label {
+    display: block;
+    color: #555;
+    font-weight: 500;
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"],
+.login-container input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: #ff8c00;
+}
+
+
+/* Submit Button */
+.login-submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff8c00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 5px;
+}
+
+.login-submit-btn:hover {
+    background-color: #e67c00;
+}
+
+/* Signup Link */
+.signup-link {
+    text-align: center;
+}
+
+.signup-link p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.signup-link a {
+    color: #ff8c00;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.signup-link a:hover {
+    color: #e67c00;
+}
