@@ -3,11 +3,13 @@ Petmate-Desktop-Application/
 ├── .venv/
 ├── requirements.txt
 ├── .gitignore
+├── docker-compose.yml
 │
 ├── Desktop_Application/
 │   ├── Backend/
 │   │   ├── __init__.py
 │   │   ├── manage.py
+│   │   ├── Dockerfile
 │   │   ├── myproject/
 │   │   ├── petInfoSys/
 │   │   ├── static/
