@@ -308,8 +308,8 @@ const getStatusExplanation = (appointment) => {
                     <span className="detail-label">Pet:</span>
                     <span className="detail-value">
                       {selectedAppointment.pet_name ||
-                       (selectedAppointment.pet && (selectedAppointment.pet.petName || selectedAppointment.pet.pet_name)) ||
-                       "Unknown Pet"}
+                        (selectedAppointment.pet && (selectedAppointment.pet.petName || selectedAppointment.pet.pet_name)) ||
+                         "Unknown Pet"}
                     </span>
                   </div>
                   <div className="detail-item">
