@@ -1278,7 +1278,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -3534,7 +3534,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>30</height>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -10479,7 +10479,7 @@ QLineEdit:disabled{
                                   <number>10</number>
                                  </property>
                                  <property name="rightMargin">
-                                  <number>0</number>
+                                  <number>5</number>
                                  </property>
                                  <property name="bottomMargin">
                                   <number>10</number>
@@ -10544,7 +10544,7 @@ QLineEdit:disabled{
                                   <number>10</number>
                                  </property>
                                  <property name="rightMargin">
-                                  <number>0</number>
+                                  <number>5</number>
                                  </property>
                                  <property name="bottomMargin">
                                   <number>10</number>
@@ -10630,7 +10630,7 @@ QLineEdit:disabled{
                                   <number>10</number>
                                  </property>
                                  <property name="rightMargin">
-                                  <number>0</number>
+                                  <number>5</number>
                                  </property>
                                  <property name="bottomMargin">
                                   <number>10</number>
@@ -10695,7 +10695,7 @@ QLineEdit:disabled{
                                   <number>10</number>
                                  </property>
                                  <property name="rightMargin">
-                                  <number>0</number>
+                                  <number>5</number>
                                  </property>
                                  <property name="bottomMargin">
                                   <number>10</number>

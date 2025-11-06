@@ -344,3 +344,32 @@ other_pageBtn = """
         background-color: #86AEC0;
     }
 """
+
+profile_edit_style = """
+    QLineEdit {
+        background-color: #ffffff;
+        border: 2px solid #d1d5db;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font: 12pt "Montserrat Medium";
+        color: #374151;
+    }
+    QLineEdit:focus {
+        border-color: #FFE9D7;
+        background-color: #f8fafc;
+    }
+"""
+
+profile_view_style = """
+    QLineEdit {
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font: 12pt "Montserrat Medium";
+        color: #6b7280;
+    }
+    QLineEdit:disabled {
+        background-color: #f9fafb;
+        color: #6b7280;
+    }
+"""

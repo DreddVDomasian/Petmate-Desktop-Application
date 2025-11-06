@@ -41,15 +41,14 @@ class MainUI(QMainWindow):
     def __init__(self,user_data=None):
         super(MainUI, self).__init__()
         uic.loadUi("ui-files/Home.ui", self)
-
         # Initialize delete and update functions
         self.deleteFunction = Delete(self)
         self.updateFunction = Update(self)
 
         #users
         self.current_user = user_data
-        print(self.current_user)
         self.load_user_profile(self.current_user)
+
         # Nav
         self.sideNav.setVisible(False)
 
@@ -299,27 +298,17 @@ class MainUI(QMainWindow):
         #profile settings
         self.settingsProfileEditBtn.clicked.connect(self.enableProfileEdit)
 
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.dragPos = event.globalPosition().toPoint()
+    def mouseMoveEvent(self, event):
+        if event.buttons() == Qt.MouseButton.LeftButton:
+            if hasattr(self, 'dragPos'):
+                self.move(self.pos() + event.globalPosition().toPoint() - self.dragPos)
+                self.dragPos = event.globalPosition().toPoint()
+                event.accept()
 
-    def enableProfileEdit(self):
-        self.profileFullName.setEnabled(True)
-        self.profileUserName.setEnabled(True)
-        self.profileEmail.setEnabled(True)
-        self.profilePhone.setEnabled(True)
 
-        self.settingsProfileEditBtn.hide()
-        self.settingsProfileSaveBtn.show()
-        self.settingsProfileCancelBtn.show()
-
-        self.settingsProfileCancelBtn.clicked.connect(self.profileEdit_cancel)
-    def profileEdit_cancel(self):
-        self.settingsProfileEditBtn.show()
-        self.settingsProfileSaveBtn.hide()
-        self.settingsProfileCancelBtn.hide()
-
-        self.profileFullName.setEnabled(False)
-        self.profileUserName.setEnabled(False)
-        self.profileEmail.setEnabled(False)
-        self.profilePhone.setEnabled(False)
 
     def setup_all_back_buttons(self):
         self.all_back_buttons = [
@@ -499,6 +488,10 @@ class MainUI(QMainWindow):
             if inner_line_edit:
                 inner_line_edit.setGraphicsEffect(None)  # remove shadow from text
             dateEdit.setGraphicsEffect(create_card_shadow())
+
+        for settingsLineEdit in self.profileInfoFrame.findChildren(QLineEdit):
+            settingsLineEdit.setGraphicsEffect(create_card_shadow())
+
     def setup_shadow(self):
         self.ProfileCard.setGraphicsEffect(create_card_shadow())
         self.petProfileCard.setGraphicsEffect(create_card_shadow())
@@ -526,6 +519,7 @@ class MainUI(QMainWindow):
 
         #settings shadow
         self.changePassFrame.setGraphicsEffect(create_card_shadow())
+        self.profileInfoFrame.setGraphicsEffect(create_card_shadow())
 
     #FORM INPUT CHECKER
     def setup_phone_validator(self):
@@ -1765,7 +1759,171 @@ class MainUI(QMainWindow):
 
     #SETTINGS PAGE
     #    PROFILE TAB
-    def load_user_profile(self,current_user):
+    def enableProfileEdit(self):
+        self.profileFullName.setEnabled(True)
+        self.profileUserName.setEnabled(True)
+        self.profileEmail.setEnabled(True)
+        self.profilePhone.setEnabled(True)
+
+        # Setup validation and apply edit styles
+        self.setup_profile_validation()
+        self.apply_profile_edit_style()
+
+        self.settingsProfileEditBtn.hide()
+        self.settingsProfileSaveBtn.show()
+        self.settingsProfileCancelBtn.show()
+
+        self.settingsProfileSaveBtn.clicked.connect(self.save_profile_changes)
+        self.settingsProfileCancelBtn.clicked.connect(self.profileEdit_cancel)
+    def setup_profile_validation(self):
+        """Setup validation for profile form fields"""
+        # Phone number validator (numbers only, max 11 digits)
+        phone_validator = QRegularExpressionValidator(QRegularExpression(r'^[0-9]{0,11}$'))
+        self.profilePhone.setValidator(phone_validator)
+
+        # Connect phone formatting
+        self.profilePhone.textChanged.connect(self.on_profile_phone_changed)
+
+        # Email validation will be handled in the save method
+    def on_profile_phone_changed(self, text):
+        """Real-time phone number formatting for profile phone"""
+        if not text:
+            return
+
+        cursor_pos = self.profilePhone.cursorPosition()
+
+        # Auto-format from 09 to +639 in real-time
+        if text.startswith('09') and len(text) >= 2:
+            if len(text) == 11:  # 09 + 9 digits = complete number
+                formatted = '+63' + text[1:]
+                if formatted != text:
+                    self.profilePhone.textChanged.disconnect(self.on_profile_phone_changed)
+                    self.profilePhone.setText(formatted)
+                    self.profilePhone.textChanged.connect(self.on_profile_phone_changed)
+                    self.profilePhone.setCursorPosition(len(formatted))
+
+            # If user tries to type beyond 11 digits, truncate
+            elif len(text) > 11:
+                self.profilePhone.textChanged.disconnect(self.on_profile_phone_changed)
+                self.profilePhone.setText(text[:11])
+                self.profilePhone.textChanged.connect(self.on_profile_phone_changed)
+                self.profilePhone.setCursorPosition(cursor_pos)
+    def validate_profile_fields(self):
+        """Validate profile form fields"""
+        errors = []
+
+        # Validate required fields
+        if not self.profileFullName.text().strip():
+            errors.append("Full name is required")
+            self.profileFullName.setStyleSheet(error_style)
+        else:
+            self.profileFullName.setStyleSheet(default_style)
+
+        if not self.profileUserName.text().strip():
+            errors.append("Username is required")
+            self.profileUserName.setStyleSheet(error_style)
+        else:
+            self.profileUserName.setStyleSheet(default_style)
+
+        # Validate email
+        email = self.profileEmail.text().strip()
+        if not email:
+            errors.append("Email is required")
+            self.profileEmail.setStyleSheet(error_style)
+        elif not self.validate_email(email):
+            errors.append("Please enter a valid email address")
+            self.profileEmail.setStyleSheet(error_style)
+        else:
+            self.profileEmail.setStyleSheet(default_style)
+
+        # Validate phone
+        phone = self.profilePhone.text().strip()
+        if not phone:
+            errors.append("Phone number is required")
+            self.profilePhone.setStyleSheet(error_style)
+        elif not self.validate_phone_number(phone):
+            errors.append("Phone number must be 09XXXXXXXXX or +63XXXXXXXXXX format")
+            self.profilePhone.setStyleSheet(error_style)
+        else:
+            self.profilePhone.setStyleSheet(default_style)
+
+        return errors
+    def save_profile_changes(self):
+        """Save the updated profile data"""
+        # Validate fields
+        errors = self.validate_profile_fields()
+
+        if errors:
+            message = "Please fix the following errors:\n• " + "\n• ".join(errors)
+            toast = Toast(self, message, icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
+        # Prepare data for API
+        profile_data = {
+            "full_name": self.profileFullName.text().strip(),
+            "username": self.profileUserName.text().strip(),
+            "email": self.profileEmail.text().strip(),
+            "phone": self.profilePhone.text().strip()
+        }
+
+        # Send update request
+        if self.update_user_profile(profile_data):
+            toast = Toast(self, "Profile updated successfully!", icon_path="Icons/check.png")
+            toast.show_toast()
+            self.profileEdit_cancel()  # Return to view mode
+        else:
+            toast = Toast(self, "Failed to update profile!", icon_path="Icons/warning.png")
+            toast.show_toast()
+    def update_user_profile(self, profile_data):
+        """Send PATCH request to update user profile"""
+        try:
+            user_id = self.current_user['id']
+            response = requests.patch(
+                f"{API_BASE_URL}/api/desktop-users/{user_id}/",
+                json=profile_data
+            )
+
+            if response.status_code == 200:
+                # Update current user data
+                updated_user = response.json()
+                self.current_user.update(updated_user)
+                return True
+            else:
+                print(f"Update failed: {response.status_code} - {response.text}")
+                return False
+
+        except Exception as e:
+            print(f"Error updating profile: {e}")
+            return False
+    def profileEdit_cancel(self):
+        """Cancel editing and revert to original data"""
+        self.settingsProfileEditBtn.show()
+        self.settingsProfileSaveBtn.hide()
+        self.settingsProfileCancelBtn.hide()
+
+        # Disable fields
+        self.profileFullName.setEnabled(False)
+        self.profileUserName.setEnabled(False)
+        self.profileEmail.setEnabled(False)
+        self.profilePhone.setEnabled(False)
+
+        # Reset styles to default
+        self.profileFullName.setStyleSheet(default_style)
+        self.profileUserName.setStyleSheet(default_style)
+        self.profileEmail.setStyleSheet(default_style)
+        self.profilePhone.setStyleSheet(default_style)
+
+        # Reload original data
+        self.load_user_profile(self.current_user)
+
+        # Disconnect signals to prevent multiple connections
+        try:
+            self.settingsProfileSaveBtn.clicked.disconnect()
+            self.settingsProfileCancelBtn.clicked.disconnect()
+        except:
+            pass
+    def load_user_profile(self, current_user):
         id = current_user['id']
         response = requests.get(f"{API_BASE_URL}/api/desktop-users/{id}")
         userData = response.json()
@@ -1777,6 +1935,17 @@ class MainUI(QMainWindow):
         self.accountRole.setText(f"Role: {userData['role']}")
         date = self.format_date(userData["created_at"])
         self.MemberSince.setText(f"Member Since: {date}")
+
+        # Apply view style when loading
+        self.apply_profile_view_style()
+    def apply_profile_view_style(self):
+        """Apply the view style to profile fields"""
+        for field in [self.profileFullName, self.profileUserName, self.profileEmail, self.profilePhone]:
+            field.setStyleSheet(profile_view_style)
+    def apply_profile_edit_style(self):
+        """Apply the edit style to profile fields"""
+        for field in [self.profileFullName, self.profileUserName, self.profileEmail, self.profilePhone]:
+            field.setStyleSheet(profile_edit_style)
 
 
 if __name__ == "__main__":

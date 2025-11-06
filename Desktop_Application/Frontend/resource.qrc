@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/OTP.png</file>
     <file>Icons/emailIcon.png</file>
     <file>Icons/left-arrow.png</file>
     <file>Icons/lockIcon.png</file>
