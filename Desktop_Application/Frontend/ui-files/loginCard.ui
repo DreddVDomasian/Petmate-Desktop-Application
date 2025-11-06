@@ -129,6 +129,7 @@
 	border-bottom-right-radius:25px;
 	background-color:#ECECEC;
 	font: 63 15pt &quot;Montserrat SemiBold&quot;;
+   color:rgb(54, 54, 54);
 	padding-left:10px;
 }</string>
         </property>
@@ -410,6 +411,9 @@ border-bottom-left-radius:25px;</string>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
                <item>
                 <widget class="QCheckBox" name="staySignedIn">
+                 <property name="styleSheet">
+                  <string notr="true">color:rgb(16, 16, 16);</string>
+                 </property>
                  <property name="text">
                   <string>Stay signed in</string>
                  </property>
@@ -431,6 +435,7 @@ border-bottom-left-radius:25px;</string>
                 <widget class="QLabel" name="label_3">
                  <property name="styleSheet">
                   <string notr="true">font: 57 10pt &quot;Montserrat Medium&quot;;
+color:rgb(29, 29, 29);
 text-decoration: underline;</string>
                  </property>
                  <property name="text">
