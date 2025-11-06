@@ -91,6 +91,9 @@
          </property>
          <item>
           <widget class="QPushButton" name="closeLoginBtn">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="styleSheet">
             <string notr="true">#closeLoginBtn{
 	background:transparent;

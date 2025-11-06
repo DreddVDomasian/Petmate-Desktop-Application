@@ -126,6 +126,7 @@
 	border-bottom-right-radius:25px;
 	background-color:#ECECEC;
 	font: 63 15pt &quot;Montserrat SemiBold&quot;;
+   color:rgb(54, 54, 54);
 	padding-left:10px;
 	padding-right:5px;
 }</string>
