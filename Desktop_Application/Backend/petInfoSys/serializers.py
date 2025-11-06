@@ -2,6 +2,11 @@ from rest_framework import serializers
 from .models import *
 from datetime import date
 
+class DesktopUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DesktopUser
+        fields = '__all__'
+
 class BasicInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = basicInfo

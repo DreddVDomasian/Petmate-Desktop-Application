@@ -52,7 +52,8 @@ class DesktopLoginView(APIView):
                         'email': user.email,
                         'phone': user.phone,
                         'role': user.role,
-                        'force_password_change': user.force_password_change
+                        'force_password_change': user.force_password_change,
+                        'created_at': user.created_at.isoformat(),
                     }
                 }, status=status.HTTP_200_OK)
             else:
@@ -107,7 +108,8 @@ class FirstTimeSetupView(APIView):
                     'email': user.email,
                     'phone': user.phone,
                     'role': user.role,
-                    'force_password_change': user.force_password_change
+                    'force_password_change': user.force_password_change,
+                    'created_at': user.created_at.isoformat(),
                 }
             }, status=status.HTTP_200_OK)
 
@@ -225,6 +227,10 @@ class DesktopUserListView(APIView):
             'success': True,
             'users': user_data
         }, status=status.HTTP_200_OK)
+
+class DesktopUserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DesktopUser.objects.all()
+    serializer_class = DesktopUserSerializer
 
 class StandardPagination(PageNumberPagination):
     page_size = 16

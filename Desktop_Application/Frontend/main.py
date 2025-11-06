@@ -36,25 +36,33 @@ def main():
     stay_signed_in = settings.value("stay_signed_in", False, type=bool)
 
     user_data = None
-
+    if stay_signed_in:
+        # Try to get user data from settings
+        user_data = settings.value("user_data")
+        if not user_data:
+            # No saved user data, show login
+            stay_signed_in = False
+            settings.setValue("stay_signed_in", False)
     # Show login dialog if not staying signed in
     if not stay_signed_in:
         login_dialog = LoginDialog()
         if login_dialog.exec() != QDialog.DialogCode.Accepted:
             sys.exit(0)  # User canceled login
         user_data = login_dialog.user_data
-
+        # Save user data if "Stay Signed In" is checked
+        if login_dialog.staySignedIn.isChecked():
+            settings.setValue("user_data", user_data)
     # Check if first-time setup is required
     if user_data and user_data.get('force_password_change', False):
         setup_dialog = FirstTimeSetupDialog(user_data)
         if setup_dialog.exec() != QDialog.DialogCode.Accepted:
             sys.exit(0)  # User canceled setup
         user_data = setup_dialog.user_data
+        # Update saved user data if staying signed in
+        if stay_signed_in:
+            settings.setValue("user_data", user_data)
 
-    # Now show the main application
-    main_window = MainUI()
-    main_window.current_user = user_data  # Store user data in main window
-
+    main_window = MainUI(user_data=user_data)
     # Add logout functionality
     def handle_logout():
         """Handle logout by showing login dialog again"""

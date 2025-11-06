@@ -1,5 +1,6 @@
 import os
 import sys
+from http.client import responses
 
 # ETO ANG SAGGOT
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +38,7 @@ import webbrowser
 
 
 class MainUI(QMainWindow):
-    def __init__(self):
+    def __init__(self,user_data=None):
         super(MainUI, self).__init__()
         uic.loadUi("ui-files/Home.ui", self)
 
@@ -46,7 +47,9 @@ class MainUI(QMainWindow):
         self.updateFunction = Update(self)
 
         #users
-        self.current_user = None
+        self.current_user = user_data
+        print(self.current_user)
+        self.load_user_profile(self.current_user)
         # Nav
         self.sideNav.setVisible(False)
 
@@ -113,6 +116,8 @@ class MainUI(QMainWindow):
         # Birthday date limits
         self.Bday.setMinimumDate(QDate(1900, 1, 1))
         self.Bday.setMaximumDate(QDate.currentDate())
+
+
 
     #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
@@ -1569,13 +1574,32 @@ class MainUI(QMainWindow):
         # make sure age is editable only when no birthday
         self.age.setReadOnly(True)  # will be flipped in update_bday_display
     def format_date(self, raw):
-        if raw:
+        if not raw:
+            return None
+
+        try:
+            # Use dateutil parser for more flexibility
+            from dateutil import parser
+            dt = parser.isoparse(raw)  # Handles ISO 8601 format
+            return f"{dt.strftime('%b')} {dt.day}, {dt.year}"
+        except ImportError:
+            # Fallback if dateutil is not available
             try:
-                dt = datetime.strptime(raw, "%Y-%m-%d")
-                return f"{dt.strftime('%b')} {dt.day}, {dt.year}"
-            except Exception:
+                if 'T' in raw:
+                    # Handle ISO format manually
+                    date_part = raw.split('T')[0]
+                    dt = datetime.strptime(date_part, "%Y-%m-%d")
+                    return f"{dt.strftime('%b')} {dt.day}, {dt.year}"
+                else:
+                    # Handle regular date format
+                    dt = datetime.strptime(raw, "%Y-%m-%d")
+                    return f"{dt.strftime('%b')} {dt.day}, {dt.year}"
+            except Exception as e:
+                print(f"Date formatting error: {e}")
                 return raw
-        return None
+        except Exception as e:
+            print(f"Date formatting error: {e}")
+            return raw
     def setup_calendar(self):
         self.customCalendar = uic.loadUi("ui-files/customCalendar.ui")
         self.customCalendar.setParent(None)
@@ -1739,6 +1763,20 @@ class MainUI(QMainWindow):
             if card.profileIcon:
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
 
+    #SETTINGS PAGE
+    #    PROFILE TAB
+    def load_user_profile(self,current_user):
+        id = current_user['id']
+        response = requests.get(f"{API_BASE_URL}/api/desktop-users/{id}")
+        userData = response.json()
+
+        self.profileFullName.setText(userData["full_name"])
+        self.profileUserName.setText(userData["username"])
+        self.profileEmail.setText(userData["email"])
+        self.profilePhone.setText(userData["phone"])
+        self.accountRole.setText(f"Role: {userData['role']}")
+        date = self.format_date(userData["created_at"])
+        self.MemberSince.setText(f"Member Since: {date}")
 
 
 if __name__ == "__main__":
