@@ -20,13 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!o_*_w5caj#!(+clkyqu)+xb4juw9@3dti0m&rad7-09^k9=ym'
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-this")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() in ("1", "true", "yes")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 # Application definition
 
@@ -45,6 +44,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,27 +80,31 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
         # =========================== 
         # EMAIL CONFIGURATION (GMAIL)  
         # =========================== 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'petmateanimalclinic@gmail.com'   # <-- your Gmail address 
-EMAIL_HOST_PASSWORD = 'seqwqhnoohgsgkpi'   # <-- 16-character app password NO SPACE Dapat   #petmate
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'informationsystem',
-        'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'db',
-        'PORT': '3306',
+# Database: prefer DATABASE_URL (Railway), otherwise fall back to local settings
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, engine="django.db.backends.mysql")}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv("DB_NAME", "informationsystem"),
+            'USER': os.getenv("DB_USER", "root"),
+            'PASSWORD': os.getenv("DB_PASSWORD", "password"),
+            'HOST': os.getenv("DB_HOST", "db"),
+            'PORT': os.getenv("DB_PORT", "3306"),
+        }
     }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -125,52 +129,35 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = os.getenv("TIME_ZONE", "UTC")
 USE_I18N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # where your working CSS & images are
-]
-STATIC_ROOT = BASE_DIR / "staticfiles"  # where collectstatic will copy them
-TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]  # global templates
-# Default primary key field type
-# https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #-----------------------WEB APP------------------------
 # CORS Settings
-CORS_ALLOWED_ORIGINS = [
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "True").lower() in ("1", "true", "yes")
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.getenv("CORS_ALLOWED_ORIGINS") else [
     "http://localhost:3000",
     "http://127.0.0.1:8000",
-    "http://localhost:63342",
     "http://localhost",
     "file://",
 ]
-
-# Allow credentials so cookies (session, csrf) are accepted from the frontend dev origin
 CORS_ALLOW_CREDENTIALS = True
 
-# In dev it's okay to allow all origins but be explicit for clarity
-CORS_ALLOW_ALL_ORIGINS = True  # Only for development
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
 
-# Add frontend dev origins to CSRF trusted origins so Django accepts X-CSRFToken from them
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5174",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-    "http://127.0.0.1:3000",
-]
 
 CORS_ALLOWED_HEADERS = [
     'accept',
@@ -184,6 +171,16 @@ CORS_ALLOWED_HEADERS = [
     'x-requested-with',
 ]
 
-SESSION_COOKIE_AGE = 3600  # 1 hour
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = int(os.getenv("SESSION_COOKIE_AGE", 3600))
+SESSION_EXPIRE_AT_BROWSER_CLOSE = os.getenv("SESSION_EXPIRE_AT_BROWSER_CLOSE", "True").lower() in ("1", "true", "yes")
+SESSION_SAVE_EVERY_REQUEST = os.getenv("SESSION_SAVE_EVERY_REQUEST", "True").lower() in ("1", "true", "yes")
+
+# Security flags (set to True in real prod)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() in ("1", "true", "yes")
+    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "True").lower() in ("1", "true", "yes")
+    CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "True").lower() in ("1", "true", "yes")
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False

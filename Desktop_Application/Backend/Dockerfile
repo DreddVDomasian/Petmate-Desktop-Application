@@ -1,10 +1,12 @@
-# Desktop_Application/Backend/Dockerfile
+# Desktop_Application/Backend/Dockerfile.prod
 FROM python:3.11-slim
 
+ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
-# Install system dependencies (ADD THESE FOR WEASYPRINT)
+# system packages (needed for mysqlclient & WeasyPrint)
 RUN apt-get update && apt-get install -y \
+    build-essential \
     gcc \
     default-libmysqlclient-dev \
     pkg-config \
@@ -15,15 +17,25 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# copy requirements and install
+COPY requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy Django project
-COPY . .
+# copy project
+COPY . /app
 
-# Expose port
+# collect static
+ENV DJANGO_SETTINGS_MODULE=myproject.settings
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN python manage.py collectstatic --noinput || true
+
+# create a non-root user (optional but good practice)
+RUN useradd -m appuser
+USER appuser
+
 EXPOSE 8000
 
-# Start the server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "myproject.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4", "--log-level", "info", "--access-logfile", "-"]

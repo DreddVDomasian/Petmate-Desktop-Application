@@ -11,6 +11,7 @@ Petmate-Desktop-Application/
 │   │   ├── manage.py
 │   │   ├── Dockerfile
 │   │   ├── myproject/
+│   │   │   └── settings.py  #settings are here
 │   │   ├── petInfoSys/
 │   │   ├── static/
 │   │   ├── staticfiles/
