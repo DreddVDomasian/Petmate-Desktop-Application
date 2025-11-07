@@ -2,7 +2,7 @@
 
 :: Start Django Backend
 
-start cmd /k "cd venv\Scripts && call activate && cd ..\.. && cd Desktop_Application && cd Backend && python manage.py runserver"
+::start cmd /k "cd venv\Scripts && call activate && cd ..\.. && cd Desktop_Application && cd Backend && python manage.py runserver"
 
 
 :: Start PyQt Desktop App
