@@ -33,8 +33,8 @@ export default function Settings() {
             <div className="details-section">
               <h3>Client Details</h3>
               <p><strong>Name:</strong>{userFirstName || ' NOT CONNECTED'}</p>
-              <p><strong>Email:</strong> juan@example.com</p>
-              <p><strong>Contact:</strong> +63 912 345 6789</p>
+              <p><strong>Email:</strong> NOT CONNECTED</p>
+              <p><strong>Contact:</strong> NOT CONNECTED </p>
             </div>
           ) : (
             <div className="password-section">

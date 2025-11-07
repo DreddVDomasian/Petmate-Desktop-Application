@@ -1,5 +1,8 @@
 # Petmate-Desktop-Application/docker-compose.yml
 
+# database connection details:
+# username: root 
+# password: password
 
 services:
   backend:

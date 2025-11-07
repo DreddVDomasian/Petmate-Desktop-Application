@@ -5,8 +5,10 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // 'success' or 'error'
 
   const [isSending, setIsSending] = useState(false);
 
@@ -18,18 +20,27 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
     try {
       await axios.post("http://127.0.0.1:8000/api/send-reset-otp/", { email }, { withCredentials: true });
       setMessage(" OTP sent to your email!");
+      setMessageType("success");
       setStep(2);
     } catch (error) {
       console.error("sendOtp error:", error.response?.status, error.response?.data);
       setMessage(error.response?.data?.error || " Failed to send OTP");
+      setMessageType("error");
     } finally {
       setIsSending(false);
     }
   };
 
-  
   const verifyOtp = async (e) => {
     e.preventDefault();
+
+    // client-side confirm password check
+    if (newPassword !== confirmPassword) {
+      setMessage("Passwords do not match.");
+      setMessageType("error");
+      return;
+    }
+
     try {
       await axios.post("http://127.0.0.1:8000/api/verify-reset-otp/", {
         email,
@@ -37,10 +48,12 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
         new_password: newPassword,
       }, { withCredentials: true });
       setMessage(" Password reset successfully!");
+      setMessageType("success");
       setStep(3);
     } catch (error) {
       console.error("verifyOtp error:", error.response?.status, error.response?.data);
       setMessage(error.response?.data?.error || " Failed to reset password ");
+      setMessageType("error");
     }
   };
 
@@ -97,6 +110,16 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                 />
+
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+
                 <button type="submit" className="reset-btn">
                   Verify & Reset
                 </button>
@@ -111,7 +134,12 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
             </div>
           )}
 
-          {message && <p className="success-msg">{message}</p>}
+          {message && (
+            <p className={messageType === "error" ? "error-msg" : "success-msg"}>
+              {message}
+            </p>
+          )}
+          
         </div>
       </div>
     </div>

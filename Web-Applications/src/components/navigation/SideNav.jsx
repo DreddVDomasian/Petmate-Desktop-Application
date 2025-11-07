@@ -114,7 +114,7 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
   return (
     <aside className="leftside">
       <div className="nav-header">
-        <img src="/assets/hjk-removebg-preview.png" alt="user" className="nav-logo" />
+        <img src="/assets/icons/account.png" alt="user" className="nav-logo" />
         <h1>Welcome</h1>
         <p className="welcome-text">{userFirstName || 'USER'}</p>
       </div>

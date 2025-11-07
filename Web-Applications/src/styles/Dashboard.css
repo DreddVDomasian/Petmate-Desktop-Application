@@ -32,9 +32,8 @@ body {
 .nav-logo {         /*SIDE NAV LOGO */
     width: 100px;
     height: 100px;
-    border-radius: 50%;
+    margin-top: 15px;
     margin-bottom: 15px;
-    border: 2px solid #fff;
     align-items: center;
     transition: all 0.3s ease;
 }

@@ -132,8 +132,8 @@ body {
 }
 
 .forgot-link:hover {
-  color: #e67e00;
-  text-decoration: underline;
+    color: #e67e00;
+    text-decoration: underline;
 }
 
 
@@ -170,6 +170,13 @@ body {
     margin-top: 10px;
 }
 
+.error-msg {
+    color: #e53e3e;
+    margin-top: 10px;
+    font-weight: 500;
+
+}
+
 .back-link {
     align-self: flex-start;
     font-size: 14px;
@@ -190,6 +197,7 @@ body {
     width: 90%;
     padding: 30px 25px;
 }
+
 
 
 /* Custom Checkbox */
