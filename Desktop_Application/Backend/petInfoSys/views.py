@@ -25,8 +25,12 @@ from rest_framework import status as drf_status
 import random
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.contrib.auth.models import User
-from .models import PasswordResetOTP
+
 from django.utils.html import strip_tags
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
+
 
 # Desktop Authentication Views
 class DesktopLoginView(APIView):
@@ -993,7 +997,6 @@ def verify_reset_otp(request):
         return Response({'error': 'Invalid email.'}, status=404)
 
     otp_record = PasswordResetOTP.objects.filter(user=user, otp=otp).last()
-
     if not otp_record:
         return Response({'error': 'Invalid OTP.'}, status=400)
 
@@ -1001,8 +1004,47 @@ def verify_reset_otp(request):
         otp_record.delete()
         return Response({'error': 'OTP expired.'}, status=400)
 
+    # Ensure lang na di magkapareho ng current password
+    if user.check_password(new_password):
+        return Response({'error': 'New password must be different from your current password.'}, status=400)
+
+    # Optionally validate password against Django validators (length, complexity, common password, etc.)
+    try:
+        validate_password(new_password, user=user)
+    except ValidationError as ve:
+        # return validation messages to the client
+        return Response({'error': ve.messages}, status=400)
+
     user.set_password(new_password)
     user.save()
     otp_record.delete()
 
     return Response({'message': 'Password reset successfully.'}, status=200)
+
+
+# GET user info for profile display (Settings)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    user = request.user
+
+    # Safely fetch the related basicInfo record
+    profile = basicInfo.objects.filter(user_account=user).first()
+
+    # Debug logs (will show in Django console)
+    print("DEBUG USER:", user)
+    print("DEBUG PROFILE:", profile)
+
+    response_data = {
+        "first_name": user.first_name or "",
+        "last_name": user.last_name or "",
+        "middle_name": "",
+        "email": user.email or "",
+        "phoneNumber": "",
+    }
+
+    if profile:
+        response_data["middle_name"] = profile.middleName or ""
+        response_data["phoneNumber"] = profile.phoneNumber or ""
+
+    return Response(response_data)

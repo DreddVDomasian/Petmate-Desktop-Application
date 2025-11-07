@@ -53,4 +53,8 @@ urlpatterns = [
     path('send-reset-otp/', views.send_reset_otp, name='send_reset_otp'),
     path('verify-reset-otp/', views.verify_reset_otp, name='verify_reset_otp'),
 
+    #Settings endpoints
+    path('user/profile/', views.user_profile, name='user-profiles'),
+
+
 ]
