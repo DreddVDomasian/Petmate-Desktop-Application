@@ -21,7 +21,7 @@ from uiLogic import UIHandler
 from input_styles import *
 from toast import Toast
 import resources_rc
-from Desktop_Application.Backend.api_client import add_new_patient, add_new_pet, add_new_service
+from Desktop_Application.Backend.api_client import add_new_patient, add_new_pet, add_new_service,desktop_login
 from confirm_card import ConfirmCard
 from ReminderPopUp import ReminderPopup
 from appointmentPopUp import AddAppointmentCard
@@ -47,8 +47,9 @@ class MainUI(QMainWindow):
 
         #users
         self.current_user = user_data
+        #Settings
         self.load_user_profile(self.current_user)
-
+        self.setup_security_tab()
         # Nav
         self.sideNav.setVisible(False)
 
@@ -1761,14 +1762,14 @@ class MainUI(QMainWindow):
     #    PROFILE TAB
     def enableProfileEdit(self):
         self.profileFullName.setEnabled(True)
-        self.profileUserName.setEnabled(True)
         self.profileEmail.setEnabled(True)
         self.profilePhone.setEnabled(True)
 
         # Setup validation and apply edit styles
         self.setup_profile_validation()
         self.apply_profile_edit_style()
-
+        self.passwordFrame.show()
+        self.spacer.hide()
         self.settingsProfileEditBtn.hide()
         self.settingsProfileSaveBtn.show()
         self.settingsProfileCancelBtn.show()
@@ -1848,6 +1849,17 @@ class MainUI(QMainWindow):
             self.profilePhone.setStyleSheet(default_style)
 
         return errors
+    def verify_password(self, password):
+        try:
+            # Get current username from your logged-in user data
+            username = self.current_user['username']
+
+            success, response = desktop_login(username, password)
+            return success
+
+        except Exception as e:
+            print(f"Error verifying password: {e}")
+            return False
     def save_profile_changes(self):
         """Save the updated profile data"""
         # Validate fields
@@ -1858,11 +1870,27 @@ class MainUI(QMainWindow):
             toast = Toast(self, message, icon_path="Icons/warning.png")
             toast.show_toast()
             return
+            # Validate password
+        password = self.passForConfirm.text().strip()
+        if not password:
+            toast = Toast(self, "Please enter your password to confirm changes", icon_path="Icons/warning.png")
+            toast.show_toast()
+            self.passForConfirm.setStyleSheet(error_style)
+            return
+        else:
+            self.passForConfirm.setStyleSheet(default_style)
 
+        # Verify password using the SAME login logic
+        if not self.verify_password(password):
+            toast = Toast(self, "Incorrect password! Please try again.", icon_path="Icons/warning.png")
+            toast.show_toast()
+            self.passForConfirm.setStyleSheet(error_style)
+            self.passForConfirm.clear()
+            self.passForConfirm.setFocus()
+            return
         # Prepare data for API
         profile_data = {
             "full_name": self.profileFullName.text().strip(),
-            "username": self.profileUserName.text().strip(),
             "email": self.profileEmail.text().strip(),
             "phone": self.profilePhone.text().strip()
         }
@@ -1904,13 +1932,13 @@ class MainUI(QMainWindow):
 
         # Disable fields
         self.profileFullName.setEnabled(False)
-        self.profileUserName.setEnabled(False)
         self.profileEmail.setEnabled(False)
         self.profilePhone.setEnabled(False)
 
+        self.passwordFrame.hide()
+        self.spacer.show()
         # Reset styles to default
         self.profileFullName.setStyleSheet(default_style)
-        self.profileUserName.setStyleSheet(default_style)
         self.profileEmail.setStyleSheet(default_style)
         self.profilePhone.setStyleSheet(default_style)
 
@@ -1924,6 +1952,8 @@ class MainUI(QMainWindow):
         except:
             pass
     def load_user_profile(self, current_user):
+        self.passwordFrame.hide()
+        self.spacer.show()
         id = current_user['id']
         response = requests.get(f"{API_BASE_URL}/api/desktop-users/{id}")
         userData = response.json()
@@ -1940,14 +1970,211 @@ class MainUI(QMainWindow):
         self.apply_profile_view_style()
     def apply_profile_view_style(self):
         """Apply the view style to profile fields"""
-        for field in [self.profileFullName, self.profileUserName, self.profileEmail, self.profilePhone]:
+        for field in [self.profileFullName, self.profileEmail,self.profilePhone]:
             field.setStyleSheet(profile_view_style)
     def apply_profile_edit_style(self):
         """Apply the edit style to profile fields"""
-        for field in [self.profileFullName, self.profileUserName, self.profileEmail, self.profilePhone]:
+        for field in [self.profileFullName, self.profileEmail, self.profilePhone, self.passForConfirm]:
             field.setStyleSheet(profile_edit_style)
+    #    SECURITY TAB
+    def setup_security_tab(self):
+        """Initialize security tab connections"""
+        self.changeUsernameBtn.clicked.connect(self.change_username)
+        self.changePasswordBtn.clicked.connect(self.change_password)
 
+        # Clear fields when tab is shown (optional)
+        self.securityTab = self.findChild(QWidget, "securityTab")  # Adjust name as needed
+        if self.securityTab:
+            self.securityTab.installEventFilter(self)
+    def change_username(self):
+        """Handle username change"""
+        new_username = self.profileUserName.text().strip()
+        password = self.changeUsernamePass.text().strip()
 
+        # Validate fields
+        errors = self.validate_username_fields(new_username, password)
+        if errors:
+            self.show_security_error("\n• ".join(errors))
+            return
+
+        # Verify password
+        if not self.verify_password(password):
+            self.show_security_error("Incorrect password!")
+            self.changeUsernamePass.setStyleSheet(error_style)
+            self.changeUsernamePass.clear()
+            self.changeUsernamePass.setFocus()
+            return
+
+        # Update username via API
+        if self.update_username(new_username):
+            self.show_security_success("Username updated successfully!")
+            self.clear_security_fields()
+            self.logout_after_update()
+        else:
+            self.show_security_error("Failed to update username!")
+    def change_password(self):
+        """Handle password change"""
+        current_password = self.currentPassEdit.text().strip()
+        new_password = self.newPassEdit.text().strip()
+        confirm_password = self.confirmPassEdit.text().strip()
+
+        # Validate fields
+        errors = self.validate_password_fields(current_password, new_password, confirm_password)
+        if errors:
+            self.show_security_error("\n• ".join(errors))
+            return
+
+        # Verify current password is now done in the API, but you can keep frontend verification too
+        # Update password via API
+        if self.update_password(new_password):
+            self.show_security_success("Password updated successfully!")
+            self.clear_security_fields()
+            self.logout_after_security_update()
+        else:
+            self.show_security_error("Failed to update password! Current password may be incorrect.")
+    def validate_username_fields(self, new_username, password):
+        """Validate username change fields"""
+        errors = []
+
+        if not new_username:
+            errors.append("New username is required")
+            self.profileUserName.setStyleSheet(error_style)
+        else:
+            self.profileUserName.setStyleSheet(default_style)
+
+        if not password:
+            errors.append("Password is required")
+            self.changeUsernamePass.setStyleSheet(error_style)
+        else:
+            self.changeUsernamePass.setStyleSheet(default_style)
+
+        return errors
+    def validate_password_fields(self, current_password, new_password, confirm_password):
+        """Validate password change fields"""
+        errors = []
+
+        if not current_password:
+            errors.append("Current password is required")
+            self.currentPassEdit.setStyleSheet(error_style)
+        else:
+            self.currentPassEdit.setStyleSheet(default_style)
+
+        if not new_password:
+            errors.append("New password is required")
+            self.newPassEdit.setStyleSheet(error_style)
+        else:
+            self.newPassEdit.setStyleSheet(default_style)
+
+        if not confirm_password:
+            errors.append("Please confirm your new password")
+            self.confirmPassEdit.setStyleSheet(error_style)
+        else:
+            self.confirmPassEdit.setStyleSheet(default_style)
+
+        if new_password and confirm_password and new_password != confirm_password:
+            errors.append("New passwords do not match")
+            self.newPassEdit.setStyleSheet(error_style)
+            self.confirmPassEdit.setStyleSheet(error_style)
+
+        if new_password and len(new_password) < 6:  # Minimum password length
+            errors.append("New password must be at least 6 characters long")
+            self.newPassEdit.setStyleSheet(error_style)
+
+        return errors
+    def update_username(self, new_username):
+        """Send PATCH request to update username"""
+        try:
+            user_id = self.current_user['id']
+            username_data = {
+                "username": new_username
+            }
+
+            response = requests.patch(
+                f"{API_BASE_URL}/api/desktop-users/{user_id}/",
+                json=username_data
+            )
+
+            if response.status_code == 200:
+                # Update current user data
+                updated_user = response.json()
+                self.current_user.update(updated_user)
+                return True
+            else:
+                print(f"Username update failed: {response.status_code} - {response.text}")
+                return False
+
+        except Exception as e:
+            print(f"Error updating username: {e}")
+            return False
+    def update_password(self, new_password):
+        """Send POST request to change password using the dedicated endpoint"""
+        try:
+            user_id = self.current_user['id']
+            current_password = self.currentPassEdit.text().strip()  # Get current password from field
+
+            password_data = {
+                "user_id": user_id,
+                "current_password": current_password,
+                "new_password": new_password
+            }
+
+            response = requests.post(
+                f"{API_BASE_URL}/api/desktop-change-password/",  # Use the dedicated endpoint
+                json=password_data
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success'):
+                    return True
+                else:
+                    print(f"Password update failed: {data.get('error')}")
+                    return False
+            else:
+                data = response.json()
+                print(f"Password update failed: {response.status_code} - {data.get('error')}")
+                return False
+
+        except Exception as e:
+            print(f"Error updating password: {e}")
+            return False
+    def clear_security_fields(self):
+        """Clear all security tab input fields"""
+        self.changeUsernamePass.clear()
+        self.currentPassEdit.clear()
+        self.newPassEdit.clear()
+        self.confirmPassEdit.clear()
+
+        # Reset styles
+        for field in [self.changeUsernamePass, self.currentPassEdit, self.newPassEdit, self.confirmPassEdit]:
+            field.setStyleSheet(default_style)
+    def show_security_success(self, message):
+        """Show success message for security operations"""
+        toast = Toast(self, message, icon_path="Icons/check.png")
+        toast.show_toast()
+    def show_security_error(self, message):
+        """Show error message for security operations"""
+        toast = Toast(self, f"Please fix the following:\n• {message}", icon_path="Icons/warning.png")
+        toast.show_toast()
+    def logout_after_update(self):
+        """Logout user after successful security update"""
+        # Clear all input fields
+        self.clear_security_fields()
+        # Show logout confirmation message
+        self.show_security_success("Please login again with your updated credentials")
+
+        # Add a small delay before logout
+        QTimer.singleShot(2000, self.perform_logout)
+    def perform_logout(self):
+        """Perform logout using the provided handler"""
+        if hasattr(self, 'handle_logout'):
+            self.handle_logout()  # This calls main.py's handle_logout
+        else:
+            # Fallback
+            self.current_user = None
+            self.current_user_id = None
+            self.clear_user_data()
+            self.close()
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 

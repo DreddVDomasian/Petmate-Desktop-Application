@@ -91,6 +91,7 @@ def main():
         else:
             app.quit()
 
+    main_window.handle_logout = handle_logout
     # Connect logout button (you'll need to add this to your Home.ui)
     if hasattr(main_window, 'logoutBtn'):
         main_window.logoutBtn.clicked.connect(handle_logout)
