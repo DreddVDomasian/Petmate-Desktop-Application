@@ -2029,7 +2029,7 @@ class MainUI(QMainWindow):
         if self.update_password(new_password):
             self.show_security_success("Password updated successfully!")
             self.clear_security_fields()
-            self.logout_after_security_update()
+            self.logout_after_update()
         else:
             self.show_security_error("Failed to update password! Current password may be incorrect.")
     def validate_username_fields(self, new_username, password):
