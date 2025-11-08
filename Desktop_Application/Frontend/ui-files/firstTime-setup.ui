@@ -839,6 +839,9 @@ border-bottom-left-radius:25px;</string>
                     <property name="styleSheet">
                      <string notr="true"/>
                     </property>
+                    <property name="echoMode">
+                     <enum>QLineEdit::Password</enum>
+                    </property>
                     <property name="placeholderText">
                      <string>New password</string>
                     </property>
@@ -950,6 +953,9 @@ border-bottom-left-radius:25px;</string>
                       <width>300</width>
                       <height>70</height>
                      </size>
+                    </property>
+                    <property name="echoMode">
+                     <enum>QLineEdit::Password</enum>
                     </property>
                     <property name="dragEnabled">
                      <bool>false</bool>

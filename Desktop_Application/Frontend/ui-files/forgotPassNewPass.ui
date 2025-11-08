@@ -92,7 +92,7 @@
          <item>
           <widget class="QPushButton" name="closeBtn">
            <property name="styleSheet">
-            <string notr="true">#backToLogin{
+            <string notr="true">#closeBtn{
 	background:transparent;
 	border:none;
 }</string>
@@ -240,6 +240,9 @@ border-bottom-left-radius:25px;</string>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
+              </property>
               <property name="placeholderText">
                <string>New Password</string>
               </property>
@@ -345,6 +348,9 @@ border-bottom-left-radius:25px;</string>
                 <width>533</width>
                 <height>70</height>
                </size>
+              </property>
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
               </property>
               <property name="dragEnabled">
                <bool>false</bool>

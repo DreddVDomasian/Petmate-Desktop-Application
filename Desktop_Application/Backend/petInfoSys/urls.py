@@ -48,6 +48,7 @@ urlpatterns = [
     path('desktop-create-staff/', views.CreateStaffView.as_view(), name='desktop_create_staff'),
     path('desktop-users/', views.DesktopUserListView.as_view(), name='desktop_users_list'),
     path('desktop-users/<int:pk>/', views.DesktopUserRetrieveUpdateDestroyView.as_view(), name='desktop-users-detail'),
+    path('desktop-reset-password/', views.ResetStaffPasswordView.as_view(), name='desktop_reset_password'),
 
     #   Password Reset Endpoints
     path('send-reset-otp/', views.send_reset_otp, name='send_reset_otp'),

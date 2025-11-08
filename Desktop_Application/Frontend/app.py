@@ -47,9 +47,7 @@ class MainUI(QMainWindow):
 
         #users
         self.current_user = user_data
-        #Settings
-        self.load_user_profile(self.current_user)
-        self.setup_security_tab()
+
         # Nav
         self.sideNav.setVisible(False)
 
@@ -64,6 +62,11 @@ class MainUI(QMainWindow):
         self.setup_add_appintmentPopUp()
         self.setup_pet_buttons()
 
+        #Settings
+        self.load_user_profile(self.current_user)
+        self.setup_security_tab()
+        self.setup_user_management_tab()
+
         #CRITICAL: Initialize state variables ONCE
         self.selected_patient_id = None
         self.selected_service_id = None
@@ -75,7 +78,7 @@ class MainUI(QMainWindow):
         self.total_patient_pages = 1
         self.total_patient_count = 0
         self.patient_cards = []  # Initialize empty list
-
+        self.accountCards = []
         # Page navigation state
         self.page_history = []
         self.current_page_index = 0
@@ -121,6 +124,10 @@ class MainUI(QMainWindow):
 
     #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
+        self.accountUserLayout = self.accountUserScrollAreaContents.layout()
+        self.accountUserLayout.setSpacing(10)
+        self.accountUserLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
         # patient list layout
         self.patientListLayout = self.scrollAreaWidgetContents.layout()
         self.patientListLayout.setSpacing(10)
@@ -1638,125 +1645,6 @@ class MainUI(QMainWindow):
             self.activeDateEdit.setDate(date)
         self.customCalendar.hide()
 
-    #WIDGET AND FONT SCALING FOR RESPONSIVENESS
-    def scale_widget_font(self, widget, base_size, min_size=8, max_size=20, family=None):
-        w_scale = self.width() / 1280
-        h_scale = self.height() / 720
-        scale = min(w_scale, h_scale)
-
-        scaled_size = int(base_size * scale)
-        final_size = max(min_size, min(scaled_size, max_size))
-
-        f = widget.font()
-        if family:  # if provided, override
-            f.setFamily(family)
-        f.setPointSize(final_size)
-        widget.setFont(f)
-    def scale_label_pixmap(self, label, min_size=32, max_size=256):
-        """
-        Scale a QLabel pixmap relative to window size.
-        Uses the Designer's original size as baseline.
-        """
-        # cache the base size once
-        if not hasattr(label, "_base_size"):
-            base_w = label.maximumWidth() if label.maximumWidth() > 0 else label.width()
-            base_h = label.maximumHeight() if label.maximumHeight() > 0 else label.height()
-            label._base_size = (base_w, base_h)
-
-        base_w, base_h = label._base_size
-
-        # scale relative to baseline window size
-        w_scale = self.width() / 1280
-        h_scale = self.height() / 720
-        scale = min(w_scale, h_scale)
-
-        new_w = int(base_w * scale)
-        new_h = int(base_h * scale)
-
-        # clamp
-        new_w = max(min_size, min(new_w, max_size))
-        new_h = max(min_size, min(new_h, max_size))
-
-        label.setFixedSize(new_w, new_h)
-        label.setScaledContents(True)
-    def scale_cards(self, cards, base_h=90, design_height=720):
-        """Scale the height of a list of cards based on the main window size."""
-        if not cards:
-            return
-
-        h_scale = self.height() / design_height
-        new_h = int(base_h * h_scale)
-
-        for i, card in enumerate(cards, start=1):
-            card.setFixedHeight(new_h)
-            # Debug
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-
-
-        self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
-        self.scale_label_pixmap(self.clinicIconP2, min_size=64, max_size=256)
-        self.scale_label_pixmap(self.clinicIconP3, min_size=64, max_size=256)
-        self.scale_label_pixmap(self.clinicIconP4, min_size=64, max_size=256)
-        self.scale_label_pixmap(self.clinicIconP5, min_size=64, max_size=256)
-        self.scale_label_pixmap(self.clinicIconP6, min_size=64, max_size=256)
-        self.scale_label_pixmap(self.PetmateLogo, min_size=81, max_size=356)
-        self.scale_label_pixmap(self.profileIcon, min_size=120, max_size=200)
-
-        # for Qline Edits
-        for line_edit in self.findChildren(QLineEdit):
-            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
-        #for comboBox
-        for comboBox in self.findChildren(QComboBox):
-            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
-        # for date
-        for dateEdit in self.findChildren(QDateEdit):
-            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
-        #owner details title label
-        for title_label in self.ownerDetailsFrame.findChildren(QLabel):
-            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35,family="Rubik Mono One")
-        #owner details header
-        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35,family="Rubik Mono One")
-        self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-        self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-        self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-        self.scale_widget_font(self.pageHeader5, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-        self.scale_widget_font(self.pageHeader6, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-
-        # pet details title
-        self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
-        for submitBtns in self.findChildren(QPushButton):
-            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
-        #for nav Btns
-        for navBtns in self.Buttons.findChildren(QToolButton):
-            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=55, family="Montserrat Black")
-
-        #Appointment page
-        for pushBtns in self.AppointmentPage.findChildren(QPushButton):
-            self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
-        for toolBtn in self.addWalkinButton.findChildren(QToolButton):
-            self.scale_widget_font(toolBtn, base_size=25, min_size=25, max_size=45, family="Montserrat ExtraBold")
-
-        #Sched page
-        for pushBtns in self.schedFrame.findChildren(QPushButton):
-            self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
-
-        #Profile card
-        for ownerDetail in self.frame_13.findChildren(QLabel):
-            self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
-        self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
-
-        #patientCard
-        self.scale_cards(self.patient_cards, base_h=90)
-        for i, card in enumerate(getattr(self, "patient_cards", []), start=1):
-            for nameLabel in card.findChildren(QLabel, "nameLabel"):
-                self.scale_widget_font(nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
-
-            for emailLabel in card.findChildren(QLabel, "emailLabel"):
-                self.scale_widget_font(emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
-
-            if card.profileIcon:
-                self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
 
     #SETTINGS PAGE
     #    PROFILE TAB
@@ -2175,6 +2063,315 @@ class MainUI(QMainWindow):
             self.current_user_id = None
             self.clear_user_data()
             self.close()
+
+    # USER MANAGEMENT TAB
+    def setup_user_management_tab(self):
+        """Initialize user management tab"""
+        self.addAccountBtn.clicked.connect(self.generate_staff_account)
+        self.load_staff_accounts()
+    def generate_staff_account(self):
+        """Generate a new staff account"""
+        try:
+            if not self.current_user or self.current_user.get('role') != 'admin':
+                toast = Toast(self, "Only administrators can create staff accounts", icon_path="Icons/warning.png")
+                toast.show_toast()
+                return
+
+            # Generate account via API
+            response = requests.post(
+                f"{API_BASE_URL}/api/desktop-create-staff/",
+                json={
+                    'admin_id': self.current_user['id'],
+                    'full_name': f"Staff User"  # Generic name, can be changed later
+                }
+            )
+
+            if response.status_code == 201:
+                data = response.json()
+                staff_account = data['staff_account']
+
+                # Show success message with credentials
+                toast = Toast(self, f"Staff account created!\nUsername: {staff_account['username']}\nPassword: {staff_account['temp_password']}", icon_path="Icons/check.png")
+                toast.show_toast()
+
+                # Refresh the accounts list
+                self.load_staff_accounts()
+            else:
+                toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
+                toast.show_toast()
+
+
+        except Exception as e:
+            print(f"Error generating staff account: {e}")
+            toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
+            toast.show_toast()
+    def load_staff_accounts(self):
+        """Load all staff accounts into the scroll area"""
+        try:
+            # Clear existing content
+            scroll_layout = self.accountUserLayout
+            if scroll_layout:
+                while scroll_layout.count():
+                    child = scroll_layout.takeAt(0)
+                    if child.widget():
+                        child.widget().deleteLater()
+
+            # Fetch staff accounts from API
+            response = requests.get(f"{API_BASE_URL}/api/desktop-users/")
+
+            if response.status_code == 200:
+                data = response.json()
+                staff_accounts = [user for user in data.get('users', []) if user['role'] == 'staff']
+
+                for account in staff_accounts:
+                    self.create_staff_card(account)
+
+            else:
+                toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
+                toast.show_toast()
+
+        except Exception as e:
+            print(f"Error loading staff accounts: {e}")
+            toast = Toast(self, "Error loading staff accounts", icon_path="Icons/warning.png")
+            toast.show_toast()
+    def create_staff_card(self, account):
+        self.accountCards = []
+        try:
+
+            card_ui = uic.loadUi("ui-files/accountUsers.ui")
+
+            if not card_ui:
+                print("Failed to load staff card UI")
+                return
+
+            # Set account data
+            card_ui.userNameLabel.setText(account['username'])
+
+            # Determine password display
+            if account.get('force_password_change', True):
+                # Show actual password for pending setup
+                card_ui.passwordLabel.setText(account.get('temp_password', 'Not set'))
+                card_ui.status.setText("Pending Setup")
+            else:
+                # Show masked password for active accounts
+                card_ui.passwordLabel.setText("••••••••")
+                card_ui.status.setText("Active")
+
+
+            # Set up action buttons
+            card_ui.resetPassBtn.clicked.connect(lambda checked, acc=account: self.reset_staff_password(acc))
+            card_ui.deleteUser.clicked.connect(lambda checked, acc=account: self.delete_staff_account(acc))
+            card_ui.setGraphicsEffect(create_card_shadow())
+            # Add to scroll area
+            scroll_layout = self.accountUserLayout
+            scroll_layout.addWidget(card_ui)
+            self.accountCards.append(card_ui)
+
+        except Exception as e:
+            print(f"Error creating staff card: {e}")
+    def reset_staff_password(self, account):
+        """Reset staff account password"""
+        try:
+            if not self.current_user or self.current_user.get('role') != 'admin':
+                toast = Toast(self, "Only administrators can reset passwords", icon_path="Icons/warning.png")
+                toast.show_toast()
+                return
+
+            reply = QMessageBox.question(
+                self,
+                "Reset Password",
+                f"Reset password for {account['username']}? This will generate new temporary credentials.",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+
+            if reply == QMessageBox.StandardButton.Yes:
+                # Call reset API (you'll need to create this endpoint)
+                response = requests.post(
+                    f"{API_BASE_URL}/api/desktop-reset-password/",  # You'll need to create this
+                    json={
+                        'admin_id': self.current_user['id'],
+                        'staff_id': account['id']
+                    }
+                )
+
+                if response.status_code == 200:
+                    data = response.json()
+                    toast = Toast(self, f"Password reset!\nNew password: {data['new_password']}", icon_path="Icons/check.png")
+                    toast.show_toast()
+                    self.load_staff_accounts()  # Refresh
+                else:
+                    toast = Toast(self, "Reset failed",icon_path="Icons/warning.png")
+                    toast.show_toast()
+
+        except Exception as e:
+            toast = Toast(self, "Failed to reset password", icon_path="Icons/warning.png")
+            toast.show_toast()
+            print(f"Error resetting password: {e}")
+    def delete_staff_account(self, account):
+        """Delete staff account"""
+        try:
+            if not self.current_user or self.current_user.get('role') != 'admin':
+                toast = Toast(self, "Only administrators can delete accounts", icon_path="Icons/warning.png")
+                toast.show_toast()
+                return
+
+            reply = QMessageBox.question(
+                self,
+                "Delete Account",
+                f"Delete {account['username']}? This action cannot be undone.",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+
+            if reply == QMessageBox.StandardButton.Yes:
+                response = requests.delete(f"{API_BASE_URL}/api/desktop-users/{account['id']}/")
+
+                if response.status_code == 204:
+                    toast = Toast(self, "Account deleted successfully", icon_path="Icons/check.png")
+                    toast.show_toast()
+                    self.load_staff_accounts()  # Refresh
+                else:
+                    toast = Toast(self, "Delete Failed", icon_path="Icons/warning.png")
+                    toast.show_toast()
+
+        except Exception as e:
+            print(f"Error deleting account: {e}")
+            toast = Toast(self, "Failed to delete account", icon_path="Icons/warning.png")
+            toast.show_toast()
+
+    #WIDGET AND FONT SCALING FOR RESPONSIVENESS
+    def scale_widget_font(self, widget, base_size, min_size=8, max_size=20, family=None):
+        w_scale = self.width() / 1280
+        h_scale = self.height() / 720
+        scale = min(w_scale, h_scale)
+
+        scaled_size = int(base_size * scale)
+        final_size = max(min_size, min(scaled_size, max_size))
+
+        f = widget.font()
+        if family:  # if provided, override
+            f.setFamily(family)
+        f.setPointSize(final_size)
+        widget.setFont(f)
+    def scale_label_pixmap(self, label, min_size=32, max_size=256):
+        """
+        Scale a QLabel pixmap relative to window size.
+        Uses the Designer's original size as baseline.
+        """
+        # cache the base size once
+        if not hasattr(label, "_base_size"):
+            base_w = label.maximumWidth() if label.maximumWidth() > 0 else label.width()
+            base_h = label.maximumHeight() if label.maximumHeight() > 0 else label.height()
+            label._base_size = (base_w, base_h)
+
+        base_w, base_h = label._base_size
+
+        # scale relative to baseline window size
+        w_scale = self.width() / 1280
+        h_scale = self.height() / 720
+        scale = min(w_scale, h_scale)
+
+        new_w = int(base_w * scale)
+        new_h = int(base_h * scale)
+
+        # clamp
+        new_w = max(min_size, min(new_w, max_size))
+        new_h = max(min_size, min(new_h, max_size))
+
+        label.setFixedSize(new_w, new_h)
+        label.setScaledContents(True)
+    def scale_cards(self, cards, base_h=90, design_height=720):
+        """Scale the height of a list of cards based on the main window size."""
+        if not cards:
+            return
+
+        h_scale = self.height() / design_height
+        new_h = int(base_h * h_scale)
+
+        for i, card in enumerate(cards, start=1):
+            card.setFixedHeight(new_h)
+            # Debug
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+
+
+        self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP2, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP3, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP4, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP5, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.clinicIconP6, min_size=64, max_size=256)
+        self.scale_label_pixmap(self.PetmateLogo, min_size=81, max_size=356)
+        self.scale_label_pixmap(self.profileIcon, min_size=120, max_size=200)
+
+        # for Qline Edits
+        for line_edit in self.findChildren(QLineEdit):
+            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+        #for comboBox
+        for comboBox in self.findChildren(QComboBox):
+            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+        # for date
+        for dateEdit in self.findChildren(QDateEdit):
+            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+        #owner details title label
+        for title_label in self.ownerDetailsFrame.findChildren(QLabel):
+            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35,family="Rubik Mono One")
+        #owner details header
+        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35,family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader5, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader6, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+
+        # pet details title
+        self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
+        for submitBtns in self.findChildren(QPushButton):
+            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
+        #for nav Btns
+        for navBtns in self.Buttons.findChildren(QToolButton):
+            self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=55, family="Montserrat Black")
+
+        #Appointment page
+        for pushBtns in self.AppointmentPage.findChildren(QPushButton):
+            self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
+        for toolBtn in self.addWalkinButton.findChildren(QToolButton):
+            self.scale_widget_font(toolBtn, base_size=25, min_size=25, max_size=45, family="Montserrat ExtraBold")
+
+        #Sched page
+        for pushBtns in self.schedFrame.findChildren(QPushButton):
+            self.scale_widget_font(pushBtns, base_size=12, min_size=10, max_size=35, family="Montserrat SemiBold")
+
+        #Profile card
+        for ownerDetail in self.frame_13.findChildren(QLabel):
+            self.scale_widget_font(ownerDetail, base_size=12, min_size=10, max_size=35, family="Montserrat Light")
+        self.scale_widget_font(self.profileNameLabel, base_size=16, min_size=12, max_size=45, family="Montserrat ExtraBold")
+
+        #patientCard
+        self.scale_cards(self.patient_cards, base_h=90)
+        for i, card in enumerate(getattr(self, "patient_cards", []), start=1):
+            for nameLabel in card.findChildren(QLabel, "nameLabel"):
+                self.scale_widget_font(nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+
+            for emailLabel in card.findChildren(QLabel, "emailLabel"):
+                self.scale_widget_font(emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
+
+            if card.profileIcon:
+                self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
+
+        self.scale_cards(self.accountCards, base_h=90)
+        for i, card in enumerate(getattr(self, "accountCards", []), start=1):
+            for userNameLabel in card.findChildren(QLabel, "userNameLabel"):
+                self.scale_widget_font(userNameLabel,base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+
+            for passwordLabel in card.findChildren(QLabel, "passwordLabel"):
+                self.scale_widget_font(passwordLabel, base_size=14, min_size=8, max_size=35, family="Montserrat Medium")
+
+            for status in card.findChildren(QLabel, "status"):
+                self.scale_widget_font(status, base_size=14, min_size=8, max_size=35, family="Montserrat Medium")
+
+            if card.profileIcon:
+                self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 

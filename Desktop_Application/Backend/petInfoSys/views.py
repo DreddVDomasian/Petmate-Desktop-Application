@@ -159,31 +159,36 @@ class CreateStaffView(APIView):
     def post(self, request):
         admin_id = request.data.get('admin_id')
         full_name = request.data.get('full_name')
-        email = request.data.get('email')
 
         try:
             admin = DesktopUser.objects.get(id=admin_id, role='admin')
 
-            # Generate temporary credentials
-            import random
-            import string
+            # Generate sequential staff username (staff1, staff2, staff3, etc.)
+            last_staff = DesktopUser.objects.filter(
+                username__startswith='staff'
+            ).exclude(username='staff').order_by('username').last()
 
-            # Create base username from full name
-            base_username = full_name.lower().replace(' ', '.')
-            username = base_username
-            counter = 1
+            if last_staff:
+                # Extract number and increment
+                import re
+                match = re.search(r'staff(\d+)', last_staff.username)
+                if match:
+                    next_num = int(match.group(1)) + 1
+                else:
+                    next_num = 1
+            else:
+                next_num = 1
 
-            # Ensure unique username
-            while DesktopUser.objects.filter(username=username).exists():
-                username = f"{base_username}{counter}"
-                counter += 1
+            username = f'staff{next_num}'
 
-            temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+            # Generate temporary password (staff123, staff456, etc.)
+            temp_password = f'staff{random.randint(100, 999)}'
 
             staff = DesktopUser(
                 username=username,
                 full_name=full_name,
-                email=email,
+                email='',  # Empty until first-time setup
+                phone='',  # Empty until first-time setup
                 role='staff',
                 force_password_change=True,
                 created_by=admin
@@ -197,8 +202,9 @@ class CreateStaffView(APIView):
                     'id': staff.id,
                     'username': username,
                     'temp_password': temp_password,
-                    'email': email,
-                    'full_name': full_name
+                    'full_name': full_name,
+                    'force_password_change': staff.force_password_change,
+                    'created_at': staff.created_at
                 }
             }, status=status.HTTP_201_CREATED)
 
@@ -208,6 +214,42 @@ class CreateStaffView(APIView):
                 'error': 'Admin not found or unauthorized'
             }, status=status.HTTP_403_FORBIDDEN)
 
+
+class ResetStaffPasswordView(APIView):
+    def post(self, request):
+        admin_id = request.data.get('admin_id')
+        staff_id = request.data.get('staff_id')
+
+        try:
+            admin = DesktopUser.objects.get(id=admin_id, role='admin')
+            staff = DesktopUser.objects.get(id=staff_id, role='staff')
+
+            # Generate new temporary password
+            temp_password = f'staff{random.randint(100, 999)}'
+
+            # Reset staff account
+            staff.set_password(temp_password)
+            staff.force_password_change = True
+            staff.email = ''  # Clear email to force re-setup
+            staff.phone = ''  # Clear phone to force re-setup
+            staff.full_name = f"Staff User"  # Reset to generic name
+            staff.save()
+
+            return Response({
+                'success': True,
+                'new_password': temp_password,
+                'staff_account': {
+                    'id': staff.id,
+                    'username': staff.username,
+                    'force_password_change': staff.force_password_change
+                }
+            }, status=status.HTTP_200_OK)
+
+        except DesktopUser.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'Admin or staff not found'
+            }, status=status.HTTP_404_NOT_FOUND)
 
 class DesktopUserListView(APIView):
     def get(self, request):

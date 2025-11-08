@@ -350,6 +350,9 @@ border-bottom-left-radius:25px;</string>
                 <height>70</height>
                </size>
               </property>
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
+              </property>
               <property name="dragEnabled">
                <bool>false</bool>
               </property>

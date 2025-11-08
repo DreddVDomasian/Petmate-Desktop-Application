@@ -10367,7 +10367,7 @@ QPushButton:checked {
                     </sizepolicy>
                    </property>
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>3</number>
                    </property>
                    <widget class="QWidget" name="profileTab">
                     <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -10799,6 +10799,9 @@ QLineEdit:disabled{
                                      <width>16777215</width>
                                      <height>80</height>
                                     </size>
+                                   </property>
+                                   <property name="echoMode">
+                                    <enum>QLineEdit::Password</enum>
                                    </property>
                                    <property name="readOnly">
                                     <bool>false</bool>
@@ -11310,6 +11313,9 @@ border-radius: 10px;
                                      <height>80</height>
                                     </size>
                                    </property>
+                                   <property name="echoMode">
+                                    <enum>QLineEdit::Password</enum>
+                                   </property>
                                    <property name="placeholderText">
                                     <string>Current Password</string>
                                    </property>
@@ -11356,6 +11362,9 @@ border-radius: 10px;
                                      <height>80</height>
                                     </size>
                                    </property>
+                                   <property name="echoMode">
+                                    <enum>QLineEdit::Password</enum>
+                                   </property>
                                    <property name="placeholderText">
                                     <string>New Password</string>
                                    </property>
@@ -11401,6 +11410,9 @@ border-radius: 10px;
                                      <width>16777215</width>
                                      <height>80</height>
                                     </size>
+                                   </property>
+                                   <property name="echoMode">
+                                    <enum>QLineEdit::Password</enum>
                                    </property>
                                    <property name="placeholderText">
                                     <string>Confirm Password</string>
@@ -11490,9 +11502,139 @@ border-radius: 10px;
                     <layout class="QVBoxLayout" name="verticalLayout_74">
                      <item>
                       <widget class="QLabel" name="label_9">
-                       <property name="text">
-                        <string>USER MANAGEMENT TAB (ADMIN ONLY)</string>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
                        </property>
+                       <property name="styleSheet">
+                        <string notr="true">font: 87 14pt &quot;Montserrat Black&quot;;
+color:rgb(54,54,54);</string>
+                       </property>
+                       <property name="text">
+                        <string>User Management</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QFrame" name="frame_87">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_99">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <spacer name="horizontalSpacer_8">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="addAccountBtn">
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton{
+	font: 63 14pt &quot;Montserrat SemiBold&quot;;
+	color:rgb(52, 52, 52);
+	background-color: #81BFDA;
+	border-radius: 10px;
+	padding:10px 20px 10px 20px;
+}
+QPushButton:hover{
+	background-color: rgb(117, 173, 197);
+	border-radius: 10px;
+}</string>
+                          </property>
+                          <property name="text">
+                           <string>+ ADD ACCOUNT</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QScrollArea" name="accountUserScrollArea">
+                       <property name="styleSheet">
+                        <string notr="true">#accountUserScrollArea{
+	border:none;
+
+}
+#accountUserScrollArea QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+#accountUserScrollArea QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+#accountUserScrollArea QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+#accountUserScrollArea QScrollBar::add-line:vertical,
+#accountUserScrollArea QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#accountUserScrollArea QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+</string>
+                       </property>
+                       <property name="widgetResizable">
+                        <bool>true</bool>
+                       </property>
+                       <widget class="QWidget" name="accountUserScrollAreaContents">
+                        <property name="geometry">
+                         <rect>
+                          <x>0</x>
+                          <y>0</y>
+                          <width>840</width>
+                          <height>423</height>
+                         </rect>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_80"/>
+                       </widget>
                       </widget>
                      </item>
                     </layout>
