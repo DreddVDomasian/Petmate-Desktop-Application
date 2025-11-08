@@ -2123,52 +2123,48 @@ class MainUI(QMainWindow):
                 data = response.json()
                 staff_accounts = [user for user in data.get('users', []) if user['role'] == 'staff']
 
-                for account in staff_accounts:
-                    self.create_staff_card(account)
+                # Create all staff cards at once (like patient cards)
+                self.create_staff_cards(staff_accounts)  # ✅ Change this line
 
             else:
-                toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
+                toast = Toast(self, "Failed to load staff accounts!", icon_path="Icons/warning.png")
                 toast.show_toast()
 
         except Exception as e:
             print(f"Error loading staff accounts: {e}")
             toast = Toast(self, "Error loading staff accounts", icon_path="Icons/warning.png")
             toast.show_toast()
-    def create_staff_card(self, account):
-        self.accountCards = []
-        try:
+    def create_staff_cards(self, accounts):
+        """Create multiple staff cards from account data"""
+        self.accountCards = []  # ✅ Initialize here, like patient cards
 
+        for account in accounts:
             card_ui = uic.loadUi("ui-files/accountUsers.ui")
 
             if not card_ui:
                 print("Failed to load staff card UI")
-                return
+                continue
 
             # Set account data
             card_ui.userNameLabel.setText(account['username'])
 
             # Determine password display
             if account.get('force_password_change', True):
-                # Show actual password for pending setup
                 card_ui.passwordLabel.setText(account.get('temp_password', 'Not set'))
                 card_ui.status.setText("Pending Setup")
             else:
-                # Show masked password for active accounts
                 card_ui.passwordLabel.setText("••••••••")
                 card_ui.status.setText("Active")
-
 
             # Set up action buttons
             card_ui.resetPassBtn.clicked.connect(lambda checked, acc=account: self.reset_staff_password(acc))
             card_ui.deleteUser.clicked.connect(lambda checked, acc=account: self.delete_staff_account(acc))
             card_ui.setGraphicsEffect(create_card_shadow())
+
             # Add to scroll area
             scroll_layout = self.accountUserLayout
             scroll_layout.addWidget(card_ui)
             self.accountCards.append(card_ui)
-
-        except Exception as e:
-            print(f"Error creating staff card: {e}")
     def reset_staff_password(self, account):
         """Reset staff account password"""
         try:
