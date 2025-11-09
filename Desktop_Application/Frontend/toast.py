@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QHBoxLayout, QGraphicsOpacityEffect
+from PyQt6.QtWidgets import QWidget, QLabel, QHBoxLayout, QGraphicsOpacityEffect, QFrame
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer, QPoint
 from PyQt6.QtGui import QPixmap
 
@@ -59,8 +59,7 @@ class Toast(QWidget):
             parent.installEventFilter(self)
 
     def show_toast(self):
-        x, y = 100, 100  # default fallback position in case content_widget not found
-
+        x, y = 505, 55  # default fallback position in case content_widget not found
         if self.parent():
             content_widget = self.parent().findChild(QWidget, "MainContent")
             if content_widget:
@@ -72,10 +71,9 @@ class Toast(QWidget):
                 y = content_pos.y() + 15
                 self.move(x, y - self.height())
             else:
-                print("[Toast] Warning: MainContent not found, using default position")
                 parent_pos = self.parent().mapToGlobal(QPoint(0, 0))
-                x = parent_pos.x() + 50
-                y = parent_pos.y() + 50
+                x = parent_pos.x() + 350
+                y = parent_pos.y() + 30
                 self.move(x, y - self.height())
 
         else:

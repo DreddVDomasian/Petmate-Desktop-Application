@@ -1,14 +1,31 @@
 import os
 import sys
-from PyQt6.QtWidgets import QDialog, QMessageBox, QLineEdit
+from PyQt6.QtWidgets import QDialog, QMessageBox, QLineEdit, QApplication
 from PyQt6 import uic
-from PyQt6.QtCore import Qt, QSettings, QTimer
+from PyQt6.QtCore import Qt, QSettings, QTimer, QThread, pyqtSignal
 import resources_rc
 from PyQt6.QtGui import QPixmap
+from toast import Toast
 from shadowEffects import create_card_shadow
 from Desktop_Application.Backend.api_client import desktop_login, send_otp, verify_otp_and_reset_password
 import requests
 from config_loader import API_BASE_URL
+
+
+# Worker thread for OTP sending to prevent UI freezing
+class OTPSendWorker(QThread):
+    finished = pyqtSignal(bool, object)  # success, response
+
+    def __init__(self, email):
+        super().__init__()
+        self.email = email
+
+    def run(self):
+        try:
+            success, response = send_otp(self.email)
+            self.finished.emit(success, response)
+        except Exception as e:
+            self.finished.emit(False, {'error': str(e)})
 
 
 class LoginDialog(QDialog):
@@ -55,6 +72,9 @@ class LoginDialog(QDialog):
         self.otp_email = ""
         self.otp_code = ""  # Store OTP for verification
 
+        # Worker thread
+        self.otp_worker = None
+
     def navigate_login(self, index):
         self.LoginStackedWidget.setCurrentIndex(index)
         if index == 1:  # Forgot password page
@@ -79,36 +99,41 @@ class LoginDialog(QDialog):
         email = self.emailOtpEdit.text().strip()
 
         if not email:
-            self.show_error("Please enter your email address")
+            toast = Toast(parent=self, message="Please enter your email address", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             return
 
-        # Show loading state
+        # Show loading state - force UI update
         self.sendOtpBtn.setText("Sending...")
         self.sendOtpBtn.setEnabled(False)
+        self.sendOtpBtn.repaint()  # Force immediate UI update
+        QApplication.processEvents()  # Process pending events to update UI
 
-        try:
-            # Call the API to send OTP
-            success, response = send_otp(email)
+        # Store email for later use
+        self.otp_email = email
 
-            if success:
-                self.otp_email = email
-                self.otpFrame.setVisible(True)
-                self.emailOtp.setVisible(False)
+        # Start worker thread to prevent UI freezing
+        self.otp_worker = OTPSendWorker(email)
+        self.otp_worker.finished.connect(self.on_otp_sent)
+        self.otp_worker.start()
 
-                # Removed timer functionality
-                if hasattr(self, 'otpTimerLabel'):
-                    self.otpTimerLabel.setText("OTP sent successfully!")
+    def on_otp_sent(self, success, response):
+        """Handle OTP sending completion"""
+        if success:
+            self.otpFrame.setVisible(True)
+            self.emailOtp.setVisible(False)
 
-                self.show_success("OTP sent successfully! Check your email.")
-                self.sendOtpBtn.setText("Send OTP")
-                self.sendOtpBtn.setEnabled(True)
-            else:
-                self.show_error(response.get('error', 'Failed to send OTP'))
-                self.sendOtpBtn.setText("Send OTP")
-                self.sendOtpBtn.setEnabled(True)
+            # Removed timer functionality
+            if hasattr(self, 'otpTimerLabel'):
+                self.otpTimerLabel.setText("OTP sent successfully!")
 
-        except Exception as e:
-            self.show_error(f"Error sending OTP: {str(e)}")
+            toast = Toast(parent=self, message="OTP sent successfully! Check your email.", icon_path="Icons/check.png",duration=2000)
+            toast.show_toast()
+            self.sendOtpBtn.setText("Send OTP")
+            self.sendOtpBtn.setEnabled(True)
+        else:
+            toast = Toast(parent=self, message="Failed to send OTP.", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             self.sendOtpBtn.setText("Send OTP")
             self.sendOtpBtn.setEnabled(True)
 
@@ -121,16 +146,20 @@ class LoginDialog(QDialog):
         otp = self.otpEdit.text().strip()
 
         if not otp:
-            self.show_error("Please enter the OTP")
+            toast = Toast(parent=self, message="Please enter the OTP.", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             return
 
         if not self.otp_email:
-            self.show_error("Email not found. Please restart the process.")
+            toast = Toast(parent=self, message="Email not found. Please restart the process.", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             return
 
         # Show loading state
         self.proceedBtn.setText("Verifying...")
         self.proceedBtn.setEnabled(False)
+        self.proceedBtn.repaint()  # Force UI update
+        QApplication.processEvents()  # Process pending events
 
         try:
             # Store OTP for later verification during password reset
@@ -144,7 +173,8 @@ class LoginDialog(QDialog):
             self.otp_timer.stop()
 
         except Exception as e:
-            self.show_error(f"Error verifying OTP: {str(e)}")
+            toast = Toast(parent=self, message="Error verifying OTP", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             self.proceedBtn.setText("Proceed")
             self.proceedBtn.setEnabled(True)
 
@@ -155,20 +185,25 @@ class LoginDialog(QDialog):
         otp = self.otp_code  # Use the stored OTP
 
         if not all([new_password, confirm_password, otp]):
-            self.show_error("Please fill all fields")
+            toast = Toast(parent=self, message="Please fill all fields", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             return
 
         if new_password != confirm_password:
-            self.show_error("Passwords do not match")
+            toast = Toast(parent=self, message="Passwords do not match", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             return
 
         if len(new_password) < 6:
-            self.show_error("Password must be at least 6 characters long")
+            toast = Toast(parent=self, message="Password must be at least 6 characters long", icon_path="Icons/warning.png",duration=2000)
+            toast.show_toast()
             return
 
         # Show loading state
         self.submitNewPass.setText("Resetting...")
         self.submitNewPass.setEnabled(False)
+        self.submitNewPass.repaint()  # Force UI update
+        QApplication.processEvents()  # Process pending events
 
         try:
             # Call the API to verify OTP and reset password
@@ -177,18 +212,21 @@ class LoginDialog(QDialog):
             )
 
             if success:
-                self.show_success("Password reset successfully!")
+                toast = Toast(parent=self, message="Password reset successfully!",icon_path="Icons/check.png", duration=2000)
+                toast.show_toast()
                 # Return to login page
                 self.navigate_login(0)
                 self.clear_otp_fields()
             else:
                 error_msg = response.get('error', 'Failed to reset password')
-                self.show_error(f"Password reset failed: {error_msg}")
+                toast = Toast(parent=self, message=error_msg,icon_path="Icons/warning.png", duration=2000)
+                toast.show_toast()
                 self.submitNewPass.setText("Reset Password")
                 self.submitNewPass.setEnabled(True)
 
         except Exception as e:
-            self.show_error(f"Error resetting password: {str(e)}")
+            toast = Toast(parent=self, message="Error resetting password", icon_path="Icons/warning.png", duration=2000)
+            toast.show_toast()
             self.submitNewPass.setText("Reset Password")
             self.submitNewPass.setEnabled(True)
 
@@ -234,12 +272,15 @@ class LoginDialog(QDialog):
         stay_signed_in = self.staySignedIn.isChecked()
 
         if not username or not password:
-            self.show_error("Please enter both username and password")
+            toast = Toast(parent=self, message="Please enter both username and password", icon_path="Icons/warning.png", duration=2000)
+            toast.show_toast()
             return
 
         # Show loading state
         self.loginBtn.setText("Logging in...")
         self.loginBtn.setEnabled(False)
+        self.loginBtn.repaint()  # Force UI update
+        QApplication.processEvents()  # Process pending events
 
         # Attempt login via API
         success, response = desktop_login(username, password)
@@ -260,15 +301,10 @@ class LoginDialog(QDialog):
             self.user_data = response['user']
             self.accept()  # Login successful
         else:
-            self.show_error(response.get('error', 'Login failed'))
+            toast = Toast(parent=self, message="Login failed", icon_path="Icons/warning.png", duration=2000)
+            toast.show_toast()
             self.loginBtn.setText("Login")
             self.loginBtn.setEnabled(True)
-
-    def show_error(self, message):
-        QMessageBox.warning(self, "Error", message)
-
-    def show_success(self, message):
-        QMessageBox.information(self, "Success", message)
 
     def close_app(self):
         self.reject()  # Close the application
