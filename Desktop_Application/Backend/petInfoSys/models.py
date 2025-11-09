@@ -40,7 +40,8 @@ class DesktopUser(models.Model):
         blank=True,
         related_name='created_users'
     )
-
+    temp_password = models.CharField(max_length=128, blank=True, null=True)
+    temp_password_created_at = models.DateTimeField(null=True, blank=True)
     def __str__(self):
         return f"{self.username} ({self.role})"
 

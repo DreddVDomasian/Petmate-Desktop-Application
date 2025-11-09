@@ -74,59 +74,6 @@ class DesktopLoginView(APIView):
                 'success': False,
                 'error': 'User not found'
             }, status=status.HTTP_404_NOT_FOUND)
-
-
-class FirstTimeSetupView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        user_id = request.data.get('user_id')
-        full_name = request.data.get('full_name')
-        email = request.data.get('email')
-        phone = request.data.get('phone')
-        username = request.data.get('username')
-        new_password = request.data.get('new_password')
-
-        try:
-            user = DesktopUser.objects.get(id=user_id, force_password_change=True)
-
-            # Check if username is already taken (excluding current user)
-            if DesktopUser.objects.filter(username=username).exclude(id=user_id).exists():
-                return Response({
-                    'success': False,
-                    'error': 'Username already taken'
-                }, status=status.HTTP_400_BAD_REQUEST)
-
-            # Update user details
-            user.full_name = full_name
-            user.email = email
-            user.phone = phone
-            user.username = username
-            user.set_password(new_password)
-            user.force_password_change = False
-            user.save()
-
-            return Response({
-                'success': True,
-                'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'full_name': user.full_name,
-                    'email': user.email,
-                    'phone': user.phone,
-                    'role': user.role,
-                    'force_password_change': user.force_password_change,
-                    'created_at': user.created_at.isoformat(),
-                }
-            }, status=status.HTTP_200_OK)
-
-        except DesktopUser.DoesNotExist:
-            return Response({
-                'success': False,
-                'error': 'User not found or already setup'
-            }, status=status.HTTP_404_NOT_FOUND)
-
-
 class ChangePasswordView(APIView):
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -166,14 +113,12 @@ class CreateStaffView(APIView):
         try:
             admin = DesktopUser.objects.get(id=admin_id, role='admin')
 
-            # Generate sequential staff username (staff1, staff2, staff3, etc.)
+            # Generate sequential staff username
             last_staff = DesktopUser.objects.filter(
                 username__startswith='staff'
             ).exclude(username='staff').order_by('username').last()
 
             if last_staff:
-                # Extract number and increment
-                import re
                 match = re.search(r'staff(\d+)', last_staff.username)
                 if match:
                     next_num = int(match.group(1)) + 1
@@ -183,20 +128,20 @@ class CreateStaffView(APIView):
                 next_num = 1
 
             username = f'staff{next_num}'
-
-            # Generate temporary password (staff123, staff456, etc.)
             temp_password = f'staff{random.randint(100, 999)}'
 
             staff = DesktopUser(
                 username=username,
                 full_name=full_name,
-                email='',  # Empty until first-time setup
-                phone='',  # Empty until first-time setup
+                email='',
+                phone='',
                 role='staff',
                 force_password_change=True,
-                created_by=admin
+                created_by=admin,
+                temp_password=temp_password,  # Store temp password
+                temp_password_created_at=timezone.now()
             )
-            staff.set_password(temp_password)
+            staff.set_password(temp_password)  # This hashes the password for auth
             staff.save()
 
             return Response({
@@ -204,7 +149,7 @@ class CreateStaffView(APIView):
                 'staff_account': {
                     'id': staff.id,
                     'username': username,
-                    'temp_password': temp_password,
+                    'temp_password': temp_password,  # Return plain text for display
                     'full_name': full_name,
                     'force_password_change': staff.force_password_change,
                     'created_at': staff.created_at
@@ -216,8 +161,38 @@ class CreateStaffView(APIView):
                 'success': False,
                 'error': 'Admin not found or unauthorized'
             }, status=status.HTTP_403_FORBIDDEN)
+class DesktopUserListView(APIView):
+    def get(self, request):
+        users = DesktopUser.objects.filter(is_active=True).order_by('-created_at')
+        user_data = []
 
+        for user in users:
+            # Show temp password only if it was created recently (e.g., last 24 hours)
+            show_temp_password = (
+                    user.force_password_change and
+                    user.temp_password and
+                    user.temp_password_created_at and
+                    (timezone.now() - user.temp_password_created_at).days < 1
+            )
 
+            user_data.append({
+                'id': user.id,
+                'username': user.username,
+                'full_name': user.full_name,
+                'email': user.email,
+                'phone': user.phone,
+                'role': user.role,
+                'last_login': user.last_login,
+                'created_at': user.created_at,
+                'force_password_change': user.force_password_change,
+                'temp_password': user.temp_password if show_temp_password else None,
+                'show_temp_password': show_temp_password,
+            })
+
+        return Response({
+            'success': True,
+            'users': user_data
+        }, status=status.HTTP_200_OK)
 class ResetStaffPasswordView(APIView):
     def post(self, request):
         admin_id = request.data.get('admin_id')
@@ -233,9 +208,11 @@ class ResetStaffPasswordView(APIView):
             # Reset staff account
             staff.set_password(temp_password)
             staff.force_password_change = True
-            staff.email = ''  # Clear email to force re-setup
-            staff.phone = ''  # Clear phone to force re-setup
-            staff.full_name = f"Staff User"  # Reset to generic name
+            staff.email = ''
+            staff.phone = ''
+            staff.full_name = f"Staff User"
+            staff.temp_password = temp_password  # Store new temp password
+            staff.temp_password_created_at = timezone.now()
             staff.save()
 
             return Response({
@@ -253,29 +230,56 @@ class ResetStaffPasswordView(APIView):
                 'success': False,
                 'error': 'Admin or staff not found'
             }, status=status.HTTP_404_NOT_FOUND)
+class FirstTimeSetupView(APIView):
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        full_name = request.data.get('full_name')
+        email = request.data.get('email')
+        phone = request.data.get('phone')
+        username = request.data.get('username')
+        new_password = request.data.get('new_password')
 
-class DesktopUserListView(APIView):
-    def get(self, request):
-        users = DesktopUser.objects.filter(is_active=True).order_by('-created_at')
-        user_data = []
+        try:
+            user = DesktopUser.objects.get(id=user_id, force_password_change=True)
 
-        for user in users:
-            user_data.append({
-                'id': user.id,
-                'username': user.username,
-                'full_name': user.full_name,
-                'email': user.email,
-                'phone': user.phone,
-                'role': user.role,
-                'last_login': user.last_login,
-                'created_at': user.created_at,
-                'force_password_change': user.force_password_change
-            })
+            # Check if username is already taken
+            if DesktopUser.objects.filter(username=username).exclude(id=user_id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'Username already taken'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({
-            'success': True,
-            'users': user_data
-        }, status=status.HTTP_200_OK)
+            # Update user details and clear temp password
+            user.full_name = full_name
+            user.email = email
+            user.phone = phone
+            user.username = username
+            user.set_password(new_password)
+            user.force_password_change = False
+            user.temp_password = None  # Clear temp password after setup
+            user.temp_password_created_at = None
+            user.save()
+
+            return Response({
+                'success': True,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'full_name': user.full_name,
+                    'email': user.email,
+                    'phone': user.phone,
+                    'role': user.role,
+                    'force_password_change': user.force_password_change,
+                    'created_at': user.created_at.isoformat(),
+                }
+            }, status=status.HTTP_200_OK)
+
+        except DesktopUser.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'User not found or already setup'
+            }, status=status.HTTP_404_NOT_FOUND)
+
 
 class DesktopUserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DesktopUser.objects.all()

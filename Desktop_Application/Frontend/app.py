@@ -120,6 +120,7 @@ class MainUI(QMainWindow):
         self.Bday.setMinimumDate(QDate(1900, 1, 1))
         self.Bday.setMaximumDate(QDate.currentDate())
 
+        self.temp_passwords = {}
 
 
     #LAYOUT FOR SCROLL AREAS FOR CARDS
@@ -2089,7 +2090,7 @@ class MainUI(QMainWindow):
             if response.status_code == 201:
                 data = response.json()
                 staff_account = data['staff_account']
-
+                self.temp_passwords[staff_account['id']] = staff_account['temp_password']
                 # Show success message with credentials
                 toast = Toast(self, f"Staff account created!\nUsername: {staff_account['username']}\nPassword: {staff_account['temp_password']}", icon_path="Icons/check.png")
                 toast.show_toast()
@@ -2124,7 +2125,7 @@ class MainUI(QMainWindow):
                 staff_accounts = [user for user in data.get('users', []) if user['role'] == 'staff']
 
                 # Create all staff cards at once (like patient cards)
-                self.create_staff_cards(staff_accounts)  # ✅ Change this line
+                self.create_staff_cards(staff_accounts)
 
             else:
                 toast = Toast(self, "Failed to load staff accounts!", icon_path="Icons/warning.png")
@@ -2136,26 +2137,33 @@ class MainUI(QMainWindow):
             toast.show_toast()
     def create_staff_cards(self, accounts):
         """Create multiple staff cards from account data"""
-        self.accountCards = []  # ✅ Initialize here, like patient cards
+        self.accountCards = []
 
         for account in accounts:
             card_ui = uic.loadUi("ui-files/accountUsers.ui")
-
+            self.scale_cards([card_ui], base_h=81)
             if not card_ui:
                 print("Failed to load staff card UI")
                 continue
 
             # Set account data
-            card_ui.userNameLabel.setText(account['username'])
+            card_ui.userNameLabel.setText(account.get('username', 'Unknown'))
 
-            # Determine password display
-            if account.get('force_password_change', True):
-                card_ui.passwordLabel.setText(account.get('temp_password', 'Not set'))
+            # ✅ USE THE temp_password FROM BACKEND
+            if account.get('show_temp_password', False) and account.get('temp_password'):
+                card_ui.passwordLabel.setText(account['temp_password'])
+                card_ui.status.setText("Pending Setup")
+            elif account.get('force_password_change', True):
+                card_ui.passwordLabel.setText("Setup required")
                 card_ui.status.setText("Pending Setup")
             else:
+                # Account is active
                 card_ui.passwordLabel.setText("••••••••")
                 card_ui.status.setText("Active")
 
+            self.scale_widget_font(card_ui.userNameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+            self.scale_widget_font(card_ui.passwordLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(card_ui.status, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
             # Set up action buttons
             card_ui.resetPassBtn.clicked.connect(lambda checked, acc=account: self.reset_staff_password(acc))
             card_ui.deleteUser.clicked.connect(lambda checked, acc=account: self.delete_staff_account(acc))
@@ -2367,14 +2375,3 @@ class MainUI(QMainWindow):
 
             if card.profileIcon:
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-
-    font_path = os.path.join(os.path.dirname(__file__), "font/Montserrat/Montserrat-VariableFont_wght.ttf")
-    font_id = QFontDatabase.addApplicationFont(font_path)
-
-    ui = MainUI()
-    ui.show()
-    app.exec()

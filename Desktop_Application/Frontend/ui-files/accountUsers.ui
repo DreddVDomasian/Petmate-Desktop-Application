@@ -39,9 +39,7 @@
 	border-radius:10px;
 	background-color:rgb(231, 231, 231);
 }
-#RecordList:hover{
-	background-color:#FBD496;
-}</string>
+</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
