@@ -18,7 +18,7 @@ from django.conf import settings
 import pytz
 import re
 import os
-from django.contrib.auth import authenticate, login as django_login, logout as django_logout, get_user_model
+from django.contrib.auth import authenticate, login as django_login, logout as django_logout, get_user_model, update_session_auth_hash
 from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
 
@@ -29,6 +29,9 @@ from django.contrib.auth.models import User
 from django.utils.html import strip_tags
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+
+
+
 
 
 
@@ -1090,3 +1093,23 @@ def user_profile(request):
         response_data["phoneNumber"] = profile.phoneNumber or ""
 
     return Response(response_data)
+
+
+
+# POST change password (Settings)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def web_reset_password(request):
+    user = request.user
+    current_password = request.data.get('current_password')
+    new_password = request.data.get('new_password')
+
+    if not user.check_password(current_password):
+        return Response({'error': 'Incorrect current password'}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    update_session_auth_hash(request, user)  # Para di ma-logout agad kung gusto mo
+
+    return Response({'message': 'Password changed successfully!'})
+

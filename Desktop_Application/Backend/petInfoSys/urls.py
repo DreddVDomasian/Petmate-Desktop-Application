@@ -54,8 +54,12 @@ urlpatterns = [
     path('send-reset-otp/', views.send_reset_otp, name='send_reset_otp'),
     path('verify-reset-otp/', views.verify_reset_otp, name='verify_reset_otp'),
 
+    #   WEB PASSWORD RESET VIEW
+    path('web-reset-password/', views.web_reset_password, name='web_reset_password'),
+
+
     #Settings endpoints
-    path('user/profile/', views.user_profile, name='user-profiles'),
+    path('user/profile/', views.user_profile, name='user-profile'),
 
 
 ]

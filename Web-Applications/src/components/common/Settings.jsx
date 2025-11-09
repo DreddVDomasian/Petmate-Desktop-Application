@@ -4,82 +4,94 @@ import axios from "axios";
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("details");
 
-  const [userFirstName, setUserFirstName] = useState('');
-  const [userMiddleName, setUserMiddleName] = useState('');
-  const [userLastName, setUserLastName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [userPhoneNumber, setUserPhoneNumber] = useState('');
+  const [userFirstName, setUserFirstName] = useState("");
+  const [userMiddleName, setUserMiddleName] = useState("");
+  const [userLastName, setUserLastName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhoneNumber, setUserPhoneNumber] = useState("");
 
-  // debug / error states
-  const [rawProfile, setRawProfile] = useState(null);
-  const [fetchError, setFetchError] = useState(null);
+  // For password change
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordMessageType, setPasswordMessageType] = useState(""); // "success" or "error"
 
-  // small helper to read cookie by name
+  // helper for CSRF cookie
   const getCookie = (name) => {
-    const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    const m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
     return m ? decodeURIComponent(m.pop()) : null;
   };
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // build headers: include Bearer token if you store it, and CSRF if present
-        const token = localStorage.getItem("token"); // adjust key if different
-        const csrf = getCookie("csrftoken") || getCookie("csrf") || getCookie("XSRF-TOKEN");
+        //  rely on cookies (withCredentials) and a simple GET
+        const res = await axios.get(
+          "http://localhost:8000/api/user/profile/",
+          { withCredentials: true }
+        );
 
-        const headers = {};
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-        if (csrf) headers["X-CSRFToken"] = csrf;
+        const data = res.data || {};
 
-        const res = await axios.get("http://localhost:8000/api/user/profile/", { // changed 127.0.0.1 -> localhost
-          withCredentials: true,
-          headers,
-        });
-        console.log("document.cookie:", document.cookie);
-        console.log("Profile Data:", res.data);
-        setRawProfile(res.data);
-        setFetchError(null);
-
-        // Normalize different possible API response shapes:
-        let data = res.data || {};
-        if (data.current_user) data = data.current_user;
-        else if (data.user) data = data.user;
-        else if (data.data) data = data.data;
-
-        const firstName = data.first_name || data.firstName || '';
-        const middleName =
-          data.middle_name ||
-          data.middleName ||
-          (data.patient_profile && (data.patient_profile.middle_name || data.patient_profile.middleName)) ||
-          '';
-        const lastName = data.last_name || data.lastName || '';
-        const email = data.email || data.mail || '';
-        let phone = '';
-        if (data.patient_profile) {
-          phone = data.patient_profile.phoneNumber || data.patient_profile.phone || '';
-        }
-        phone = phone || data.phoneNumber || data.phone || '';
+        const firstName = data.first_name || data.firstName || "";
+        const middleName = data.middle_name || data.middleName || "";
+        const lastName = data.last_name || data.lastName || "";
+        const email = data.email || data.mail || "";
+        const phone =
+          data.phoneNumber ||
+          data.phone ||
+          (data.patient_profile && (data.patient_profile.phone || data.patient_profile.phoneNumber)) ||
+          "";
 
         setUserFirstName(firstName);
         setUserMiddleName(middleName);
         setUserLastName(lastName);
         setUserEmail(email);
-        setUserPhoneNumber(phone);
+        setUserPhoneNumber(phone || "");
       } catch (err) {
+        // Keep this minimal — inspect console for details
         console.error("Failed to fetch profile:", err);
-        // capture response if present
-        const info = {
-          message: err.message,
-          status: err.response?.status,
-          data: err.response?.data,
-          headers: err.response?.headers,
-        };
-        setFetchError(info);
-        setRawProfile(err.response?.data || null);
       }
     };
     fetchProfile();
   }, []);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage("Passwords do not match.");
+      setPasswordMessageType("error");
+      return;
+    }
+
+    try {
+      // only send CSRF header (no token header here)
+      const csrf = getCookie("csrftoken") || getCookie("csrf") || getCookie("XSRF-TOKEN");
+      const headers = {};
+      if (csrf) headers["X-CSRFToken"] = csrf;
+
+      const response = await axios.post(
+        "http://localhost:8000/api/web-reset-password/",
+        {
+          current_password: currentPassword,
+          new_password: newPassword,
+        },
+        { withCredentials: true, headers }
+      );
+
+      setPasswordMessage(response.data.message || "Password updated successfully!");
+      setPasswordMessageType("success");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error("Error changing password:", error);
+      setPasswordMessage(error.response?.data?.error || error.response?.data || "Failed to update password.");
+      setPasswordMessageType("error");
+    }
+  };
 
   return (
     <div className="settings-container">
@@ -105,54 +117,60 @@ export default function Settings() {
           {activeTab === "details" ? (
             <div className="details-section">
               <h3>Client Details</h3>
-              {fetchError && (
-                <div style={{ color: "crimson", marginBottom: 12 }}>
-                  Error fetching profile:
-                  <div>Status: {fetchError.status || "n/a"}</div>
-                  <div>Message: {fetchError.message}</div>
-                </div>
-              )}
               <p>
                 <strong>Name:</strong>{" "}
-                {(userFirstName || userMiddleName || userLastName)
-                  ? `${userFirstName}${userMiddleName ? ' ' + userMiddleName : ''}${userLastName ? ' ' + userLastName : ''}`
+                {userFirstName || userMiddleName || userLastName
+                  ? `${userFirstName}${userMiddleName ? " " + userMiddleName : ""}${userLastName ? " " + userLastName : ""}`
                   : "Not available"}
               </p>
-              <p><strong>Email:</strong> {userEmail || "Not available"}</p>
-              <p><strong>Phone Number:</strong> {userPhoneNumber || "Not available"}</p>
-
-              {/* ETO ANG GAMIT KO PANG DEBUG HEHEHE
-                <div style={{ marginTop: 12 }}>
-                  <strong>Debug: raw profile JSON / response</strong>
-                  <pre style={{ maxHeight: 240, overflow: 'auto', background: '#f6f8fa', padding: 8 }}>
-                    {rawProfile ? JSON.stringify(rawProfile, null, 2) : 'No response body'}
-                  </pre>
-                </div>*/}
-
+              <p>
+                <strong>Email:</strong> {userEmail || "Not available"}
+              </p>
+              <p>
+                <strong>Phone Number:</strong> {userPhoneNumber || "Not available"}
+              </p>
             </div>
           ) : (
             <div className="password-section">
               <h3>Change Password</h3>
-              <form>
+              <form onSubmit={handlePasswordChange}>
                 <input
                   type="password"
                   placeholder="Current Password"
                   className="input-box"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
                 />
                 <input
                   type="password"
                   placeholder="New Password"
                   className="input-box"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
                 />
                 <input
                   type="password"
                   placeholder="Confirm New Password"
                   className="input-box"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                 />
                 <button type="submit" className="submit-btn">
                   Update Password
                 </button>
               </form>
+
+              {passwordMessage && (
+                <p
+                  className={passwordMessageType === "error" ? "error-msg" : "success-msg"}
+                  style={{ marginTop: 10, color: passwordMessageType === "error" ? "crimson" : "green" }}
+                >
+                  {passwordMessage}
+                </p>
+              )}
             </div>
           )}
         </div>
