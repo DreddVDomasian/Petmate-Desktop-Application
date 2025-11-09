@@ -7,7 +7,42 @@ from ..Frontend.config_loader import API_BASE_URL
 
 BASE_URL = API_BASE_URL  # later change to your real server url
 
+def send_otp(email):
+    """Send OTP to user's email for password reset"""
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/api/send-reset-otp/",
+            json={'email': email}
+        )
 
+        if response.status_code == 200:
+            return True, response.json()
+        else:
+            return False, response.json()
+
+    except Exception as e:
+        return False, {'error': str(e)}
+
+
+def verify_otp_and_reset_password(email, otp, new_password):
+    """Verify OTP and reset password"""
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/api/verify-reset-otp/",
+            json={
+                'email': email,
+                'otp': otp,
+                'new_password': new_password
+            }
+        )
+
+        if response.status_code == 200:
+            return True, response.json()
+        else:
+            return False, response.json()
+
+    except Exception as e:
+        return False, {'error': str(e)}
 def desktop_login(username, password):
     """Login for desktop users (admin/staff)"""
     try:

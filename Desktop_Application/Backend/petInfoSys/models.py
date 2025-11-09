@@ -1,5 +1,7 @@
 from datetime import date
 import uuid
+
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User #para sa auth_user
@@ -203,12 +205,20 @@ class WalkInAppointment(models.Model):
 
 # Model for Password Reset OTP
 class PasswordResetOTP(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Store both possibilities
+    web_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    desktop_user = models.ForeignKey('DesktopUser', on_delete=models.CASCADE, null=True, blank=True)
+
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
+    user_type = models.CharField(max_length=10, choices=[('web', 'Web'), ('desktop', 'Desktop')], default='web')
+
+    @property
+    def user(self):
+        return self.web_user or self.desktop_user
 
     def is_expired(self):
-        return timezone.now() > self.created_at + timedelta(minutes=5)
+        return timezone.now() > self.created_at + timezone.timedelta(minutes=10)
 
     def __str__(self):
-        return f"{self.user.username} - {self.otp}"
+        return f"OTP for {self.user} ({self.user_type})"

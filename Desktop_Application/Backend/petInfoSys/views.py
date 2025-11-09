@@ -1004,13 +1004,37 @@ def send_reset_otp(request):
     if not email:
         return Response({'error': 'Email is required.'}, status=400)
 
+    user = None
+    user_type = None
+
+    # Check Django User model first (web users)
     try:
         user = User.objects.get(email=email)
+        user_type = 'web'
     except User.DoesNotExist:
-        return Response({'error': 'No account found with this email.'}, status=404)
+        # Check DesktopUser model if not found in User model
+        try:
+            user = DesktopUser.objects.get(email=email, is_active=True)
+            user_type = 'desktop'
+        except DesktopUser.DoesNotExist:
+            return Response({'error': 'No account found with this email.'}, status=404)
 
+    # Generate OTP
     otp = str(random.randint(100000, 999999))
-    PasswordResetOTP.objects.create(user=user, otp=otp)
+
+    # Store OTP based on user type with correct field
+    if user_type == 'web':
+        PasswordResetOTP.objects.create(
+            web_user=user,  # Use web_user field
+            otp=otp,
+            user_type=user_type
+        )
+    else:
+        PasswordResetOTP.objects.create(
+            desktop_user=user,  # Use desktop_user field
+            otp=otp,
+            user_type=user_type
+        )
 
     try:
         subject = "🐾 PetMate Animal Clinic - Password Reset OTP"
@@ -1030,7 +1054,6 @@ def send_reset_otp(request):
         return Response({'error': f'Failed to send email: {str(e)}'}, status=500)
 
 
-# ---- VERIFY OTP + RESET PASSWORD ----
 @api_view(['POST'])
 def verify_reset_otp(request):
     email = request.data.get('email')
@@ -1040,12 +1063,35 @@ def verify_reset_otp(request):
     if not all([email, otp, new_password]):
         return Response({'error': 'All fields are required.'}, status=400)
 
+    # Find user and type
+    user = None
+    user_type = None
+
+    # Check both models
     try:
         user = User.objects.get(email=email)
+        user_type = 'web'
     except User.DoesNotExist:
-        return Response({'error': 'Invalid email.'}, status=404)
+        try:
+            user = DesktopUser.objects.get(email=email, is_active=True)
+            user_type = 'desktop'
+        except DesktopUser.DoesNotExist:
+            return Response({'error': 'Invalid email.'}, status=404)
 
-    otp_record = PasswordResetOTP.objects.filter(user=user, otp=otp).last()
+    # Find OTP record with correct field based on user type
+    if user_type == 'web':
+        otp_record = PasswordResetOTP.objects.filter(
+            web_user=user,  # Use web_user field for web users
+            otp=otp,
+            user_type=user_type
+        ).last()
+    else:
+        otp_record = PasswordResetOTP.objects.filter(
+            desktop_user=user,  # Use desktop_user field for desktop users
+            otp=otp,
+            user_type=user_type
+        ).last()
+
     if not otp_record:
         return Response({'error': 'Invalid OTP.'}, status=400)
 
@@ -1053,23 +1099,22 @@ def verify_reset_otp(request):
         otp_record.delete()
         return Response({'error': 'OTP expired.'}, status=400)
 
-    # Ensure lang na di magkapareho ng current password
+    # Check if new password is different from current
     if user.check_password(new_password):
         return Response({'error': 'New password must be different from your current password.'}, status=400)
 
-    # Optionally validate password against Django validators (length, complexity, common password, etc.)
+    # Validate password strength
     try:
         validate_password(new_password, user=user)
     except ValidationError as ve:
-        # return validation messages to the client
         return Response({'error': ve.messages}, status=400)
 
+    # Reset password based on user type
     user.set_password(new_password)
     user.save()
     otp_record.delete()
 
     return Response({'message': 'Password reset successfully.'}, status=200)
-
 
 # GET user info for profile display (Settings)
 @api_view(['GET'])

@@ -13,7 +13,7 @@ class FirstTimeSetupDialog(QDialog):
     def __init__(self, user_data, parent=None):
         super().__init__(parent)
         uic.loadUi("ui-files/firstTime-setup.ui", self)
-
+        self.close.clicked.connect(self.close_app)
         self.user_data = user_data
         self.setup_ui()
 
@@ -24,6 +24,7 @@ class FirstTimeSetupDialog(QDialog):
         # Apply shadows
         self.firstLoginFrame.setGraphicsEffect(create_card_shadow())
         self.completeSetupBtn.setGraphicsEffect(create_card_shadow())
+        self.label_9.setGraphicsEffect(create_card_shadow())
 
         # Pre-fill username (can be changed)
         self.username.setText(self.user_data['username'])
@@ -77,3 +78,5 @@ class FirstTimeSetupDialog(QDialog):
 
     def show_error(self, message):
         QMessageBox.warning(self, "Setup Failed", message)
+    def close_app(self):
+        self.reject()  # Close the application
