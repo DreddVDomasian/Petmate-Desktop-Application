@@ -113,22 +113,49 @@ class CreateStaffView(APIView):
         try:
             admin = DesktopUser.objects.get(id=admin_id, role='admin')
 
-            # Generate sequential staff username
-            last_staff = DesktopUser.objects.filter(
-                username__startswith='staff'
-            ).exclude(username='staff').order_by('username').last()
+            # Find the highest staff number that currently EXISTS in the database
+            existing_staff = DesktopUser.objects.filter(
+                username__regex=r'^staff\d+$',  # Only match staff followed by numbers
+                role='staff',
+                is_active=True
+            ).order_by('username').last()
 
-            if last_staff:
-                match = re.search(r'staff(\d+)', last_staff.username)
+            if existing_staff:
+                # Extract the number from the username
+                match = re.search(r'staff(\d+)', existing_staff.username)
                 if match:
                     next_num = int(match.group(1)) + 1
                 else:
                     next_num = 1
             else:
+                # No existing staff users found, start from 1
                 next_num = 1
 
             username = f'staff{next_num}'
             temp_password = f'staff{random.randint(100, 999)}'
+
+            # Double-check that the username doesn't already exist (just in case)
+            if DesktopUser.objects.filter(username=username).exists():
+                # If it exists, find the next available number
+                all_staff_usernames = DesktopUser.objects.filter(
+                    username__regex=r'^staff\d+$',
+                    role='staff',
+                    is_active=True
+                ).values_list('username', flat=True)
+
+                # Extract all numbers and find the next available
+                used_numbers = []
+                for uname in all_staff_usernames:
+                    match = re.search(r'staff(\d+)', uname)
+                    if match:
+                        used_numbers.append(int(match.group(1)))
+
+                if used_numbers:
+                    next_num = max(used_numbers) + 1
+                else:
+                    next_num = 1
+
+                username = f'staff{next_num}'
 
             staff = DesktopUser(
                 username=username,

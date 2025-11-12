@@ -1278,7 +1278,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>8</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -3540,7 +3540,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>440</height>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -5375,7 +5375,7 @@ border:none;</string>
               <item>
                <widget class="QStackedWidget" name="profileStackedWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="petCardsPage">
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -5440,8 +5440,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>860</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -7783,7 +7783,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8404,12 +8404,12 @@ background-color: transparent;
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Deworming</string>
+                                  <string>Grooming</string>
                                  </property>
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Tick &amp; Flea Prevention</string>
+                                  <string>Check-up</string>
                                  </property>
                                 </item>
                                 <item>
@@ -8419,7 +8419,12 @@ background-color: transparent;
                                 </item>
                                 <item>
                                  <property name="text">
-                                  <string>Wellness Check</string>
+                                  <string>Deworming</string>
+                                 </property>
+                                </item>
+                                <item>
+                                 <property name="text">
+                                  <string>Tick &amp; Flea Prevention</string>
                                  </property>
                                 </item>
                                 <item>

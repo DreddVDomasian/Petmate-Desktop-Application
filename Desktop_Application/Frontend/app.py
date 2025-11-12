@@ -103,6 +103,7 @@ class MainUI(QMainWindow):
         # Load data AFTER all state is initialized
         self.load_patients(1, search_term=None)
         self.load_scheduled_services()
+        self.load_staff_accounts()
 
         # Setup remaining UI elements
         self.setup_shadow()
@@ -306,17 +307,6 @@ class MainUI(QMainWindow):
 
         #profile settings
         self.settingsProfileEditBtn.clicked.connect(self.enableProfileEdit)
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.dragPos = event.globalPosition().toPoint()
-    def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.MouseButton.LeftButton:
-            if hasattr(self, 'dragPos'):
-                self.move(self.pos() + event.globalPosition().toPoint() - self.dragPos)
-                self.dragPos = event.globalPosition().toPoint()
-                event.accept()
-
 
 
     def setup_all_back_buttons(self):
@@ -2057,12 +2047,9 @@ class MainUI(QMainWindow):
     def perform_logout(self):
         """Perform logout using the provided handler"""
         if hasattr(self, 'handle_logout'):
-            self.handle_logout()  # This calls main.py's handle_logout
+            self.handle_logout()  # This calls main.py's handle_logout which restarts the app
         else:
-            # Fallback
-            self.current_user = None
-            self.current_user_id = None
-            self.clear_user_data()
+            # Fallback - just close
             self.close()
 
     # USER MANAGEMENT TAB

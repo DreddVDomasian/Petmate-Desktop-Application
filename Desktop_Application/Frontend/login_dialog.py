@@ -75,6 +75,8 @@ class LoginDialog(QDialog):
         # Worker thread
         self.otp_worker = None
 
+
+
     def navigate_login(self, index):
         self.LoginStackedWidget.setCurrentIndex(index)
         if index == 1:  # Forgot password page

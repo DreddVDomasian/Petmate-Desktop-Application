@@ -27,77 +27,87 @@ def load_fonts():
     except Exception as e:
         print(f"❌ Error loading font: {e}")
 
+
 def main():
     app = QApplication(sys.argv)
     load_fonts()
-    # Check if user should stay signed in
-    settings = QSettings("PetMate", "DesktopApp")
-    stay_signed_in = settings.value("stay_signed_in", False, type=bool)
 
-    user_data = None
-    if stay_signed_in:
-        # Try to get user data from settings
-        user_data = settings.value("user_data")
-        if not user_data:
-            # No saved user data, show login
-            stay_signed_in = False
-            settings.setValue("stay_signed_in", False)
-    # Show login dialog if not staying signed in
-    if not stay_signed_in:
-        login_dialog = LoginDialog()
-        if login_dialog.exec() != QDialog.DialogCode.Accepted:
-            sys.exit(0)  # User canceled login
-        user_data = login_dialog.user_data
-        # Save user data if "Stay Signed In" is checked
-        if login_dialog.staySignedIn.isChecked():
-            settings.setValue("user_data", user_data)
-    # Check if first-time setup is required
-    if user_data and user_data.get('force_password_change', False):
-        setup_dialog = FirstTimeSetupDialog(user_data)
-        if setup_dialog.exec() != QDialog.DialogCode.Accepted:
-            sys.exit(0)  # User canceled setup
-        user_data = setup_dialog.user_data
-        # Update saved user data if staying signed in
-        if stay_signed_in:
-            settings.setValue("user_data", user_data)
-
-    main_window = MainUI(user_data=user_data)
-    # Add logout functionality
-    def handle_logout():
-        """Handle logout by showing login dialog again"""
-        # Clear saved credentials
+    while True:
+        # Check if user should stay signed in
         settings = QSettings("PetMate", "DesktopApp")
-        settings.remove("username")
-        settings.setValue("stay_signed_in", False)
+        stay_signed_in = settings.value("stay_signed_in", False, type=bool)
 
-        # Close main window
-        main_window.close()
+        user_data = None
+        if stay_signed_in:
+            # Try to get user data from settings
+            user_data = settings.value("user_data")
+            if not user_data:
+                # No saved user data, show login
+                stay_signed_in = False
+                settings.setValue("stay_signed_in", False)
 
-        # Show login dialog again
-        login_dialog = LoginDialog()
-        if login_dialog.exec() == QDialog.DialogCode.Accepted:
+        # Show login dialog if not staying signed in
+        if not stay_signed_in:
+            login_dialog = LoginDialog()
+            result = login_dialog.exec()
+
+            if result != QDialog.DialogCode.Accepted:
+                break  # User wants to quit completely
+
             user_data = login_dialog.user_data
-            # Check if first-time setup needed
-            if user_data and user_data.get('force_password_change', False):
-                setup_dialog = FirstTimeSetupDialog(user_data)
-                if setup_dialog.exec() != QDialog.DialogCode.Accepted:
-                    app.quit()
-                    return
-                user_data = setup_dialog.user_data
 
-            # Update main window with new user
-            main_window.current_user = user_data
-            main_window.show()
+            # Save user data if "Stay Signed In" is checked
+            if login_dialog.staySignedIn.isChecked():
+                settings.setValue("user_data", user_data)
+                settings.setValue("stay_signed_in", True)
+
+        # Check if first-time setup is required
+        if user_data and user_data.get('force_password_change', False):
+            setup_dialog = FirstTimeSetupDialog(user_data)
+            if setup_dialog.exec() != QDialog.DialogCode.Accepted:
+                continue  # Restart login process
+            user_data = setup_dialog.user_data
+            # Update saved user data if staying signed in
+            if stay_signed_in:
+                settings.setValue("user_data", user_data)
+
+        # Create main window
+        main_window = MainUI(user_data=user_data)
+
+        # Add a flag to track logout
+        main_window._user_logged_out = False
+
+        def handle_logout():
+            """Handle logout by clearing credentials and marking for restart"""
+            # Clear saved credentials
+            settings = QSettings("PetMate", "DesktopApp")
+            settings.remove("username")
+            settings.setValue("stay_signed_in", False)
+            settings.remove("user_data")
+
+            # Mark that user explicitly logged out
+            main_window._user_logged_out = True
+
+            # Close main window to return to login loop
+            main_window.close()
+
+        main_window.handle_logout = handle_logout
+
+        # Connect logout button
+        if hasattr(main_window, 'logoutBtn'):
+            main_window.logoutBtn.clicked.connect(handle_logout)
+
+        main_window.show()
+        app.exec()  # This will block until main window is closed
+
+        # After main window closes, check if we should restart
+        # Only restart if user explicitly logged out
+        if hasattr(main_window, '_user_logged_out') and main_window._user_logged_out:
+            continue  # Restart login process
         else:
-            app.quit()
+            break  # Exit completely (X button was pressed)
 
-    main_window.handle_logout = handle_logout
-    # Connect logout button (you'll need to add this to your Home.ui)
-    if hasattr(main_window, 'logoutBtn'):
-        main_window.logoutBtn.clicked.connect(handle_logout)
-
-    main_window.show()
-    sys.exit(app.exec())
+    sys.exit(0)
 
 
 if __name__ == "__main__":
