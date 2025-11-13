@@ -1278,7 +1278,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -8092,8 +8092,8 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>858</width>
-                          <height>213</height>
+                          <width>90</width>
+                          <height>33</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">

@@ -179,6 +179,9 @@ background:transparent;</string>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Reset user</string>
+           </property>
            <property name="styleSheet">
             <string notr="true">background:transparent;
 </string>
@@ -205,6 +208,9 @@ background:transparent;</string>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Delete User</string>
            </property>
            <property name="styleSheet">
             <string notr="true">background:transparent;

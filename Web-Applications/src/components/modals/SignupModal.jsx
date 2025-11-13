@@ -41,7 +41,8 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
       uppercase: /[A-Z]/.test(pwd),
       lowercase: /[a-z]/.test(pwd),
       number: /\d/.test(pwd),
-      special: /[@$!%*?&#]/.test(pwd)
+      // allow a wide set of commonly used special characters including underscore and hyphen
+      special: /[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]/.test(pwd)
     });
   };
 
