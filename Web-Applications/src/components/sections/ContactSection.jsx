@@ -7,8 +7,8 @@ function ContactSection() {
         
         <div className="contact-container">
             <div className="contact-info">
-            <div className="dog-image-container">
-                <img src="/assets/images/pets/dog1.png" alt="Dog" />
+            <div className="logo-image-container">
+                <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
             </div>
             
             <div className="contact-details">
@@ -19,7 +19,7 @@ function ContactSection() {
 
                 <div className="social-contact">
                 <img src="/assets/icons/Email.png" alt="email" />
-                <span>petmate@gmail.com</span>
+                <span>petmateanimalclinic@gmail.com</span>
                 </div>
             </div>
             </div>

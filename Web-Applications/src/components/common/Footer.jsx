@@ -23,7 +23,7 @@ function Footer() {
             <h3>Contact Info</h3>
             <div className="contact-item">
                 <img src="/assets/icons/Email.png" alt="Email" />
-                <a href="mailto:petmate@gmail.com">petmate@gmail.com</a>
+                <a href="mailto:petmate@gmail.com">petmateanimalclinic@gmail.com</a>
             </div>
             <div className="contact-item">
                 <img src="/assets/icons/FACEBOOK.png" alt="Facebook" />
