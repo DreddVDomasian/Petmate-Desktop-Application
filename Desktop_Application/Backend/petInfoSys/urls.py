@@ -61,5 +61,6 @@ urlpatterns = [
     #Settings endpoints
     path('user/profile/', views.user_profile, name='user-profile'),
 
-
+    # CONTACT US MESSAGE ENDPOINT (WEBSITE)
+    path('contact-us_message/', views.contact_us_message, name='contact_us_message'),
 ]

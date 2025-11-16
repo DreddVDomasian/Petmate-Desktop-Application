@@ -23,14 +23,12 @@ from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
 
 import random
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
 from django.contrib.auth.models import User
 
 from django.utils.html import strip_tags
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-
-
 
 
 
@@ -1189,3 +1187,58 @@ def web_reset_password(request):
 
     return Response({'message': 'Password changed successfully!'})
 
+
+# POST contact us message (website)
+
+
+
+@api_view(['POST'])
+def contact_us_message(request):
+    name = request.data.get('name')
+    email = request.data.get('email')
+    message = request.data.get('message')
+
+    if not all([name, email, message]):
+        return Response({'error': 'All fields are required.'}, status=400)
+
+    try:
+        subject = "New Contact Form Message"
+        full_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+
+        clinic_email = getattr(settings, 'EMAIL_HOST_USER', None) or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+
+        # 1) Send incoming message to clinic (from clinic, reply_to = user)
+        email_message = EmailMessage(
+            subject=subject,
+            body=full_message,
+            from_email=clinic_email,
+            to=[clinic_email],
+            reply_to=[email]
+        )
+        email_message.send(fail_silently=False)
+
+        # 2) Send confirmation/acknowledgement to the user
+        try:
+            confirm_subject = "PetMate Animal Clinic — We received your message"
+            confirm_body = (
+                f"Hi {name},\n\n"
+                "Thanks for contacting PetMate Animal Clinic. We received your message and will get back to you shortly.\n\n"
+                "Your message:\n"
+                f"{message}\n\n"
+                "— PetMate Animal Clinic"
+            )
+            confirmation = EmailMessage(
+                subject=confirm_subject,
+                body=confirm_body,
+                from_email=clinic_email,
+                to=[email],
+            )
+            confirmation.send(fail_silently=True)  # don't fail the whole request if confirmation fails
+        except Exception:
+            # swallow confirmation errors; clinic already received the message
+            pass
+
+        return Response({'message': 'Your message has been received. We will get back to you shortly.'}, status=201)
+
+    except Exception as e:
+        return Response({'error': f'Failed to submit message: {str(e)}'}, status=500)
