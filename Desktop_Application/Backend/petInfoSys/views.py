@@ -1207,7 +1207,7 @@ def contact_us_message(request):
 
         clinic_email = getattr(settings, 'EMAIL_HOST_USER', None) or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
 
-        # 1) Send incoming message to clinic (from clinic, reply_to = user)
+        # Send incoming message to clinic (from clinic, reply_to = user)
         email_message = EmailMessage(
             subject=subject,
             body=full_message,
@@ -1217,7 +1217,7 @@ def contact_us_message(request):
         )
         email_message.send(fail_silently=False)
 
-        # 2) Send confirmation/acknowledgement to the user
+        # Send confirmation to the user
         try:
             confirm_subject = "PetMate Animal Clinic — We received your message"
             confirm_body = (
