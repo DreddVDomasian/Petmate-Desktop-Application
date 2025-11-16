@@ -1,7 +1,9 @@
 
 import os
 import sys
-from PyQt6.QtWidgets import QDialog, QMessageBox
+
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QDialog, QMessageBox, QLineEdit
 from PyQt6 import uic
 from PyQt6.QtCore import Qt
 from shadowEffects import create_card_shadow
@@ -16,7 +18,28 @@ class FirstTimeSetupDialog(QDialog):
         self.close.clicked.connect(self.close_app)
         self.user_data = user_data
         self.setup_ui()
+        self.password_toggle()
 
+    def password_toggle(self):
+        self.setup_password_toggle(self.newPassword, self.loginShowPass)
+        self.setup_password_toggle(self.confirmPassword, self.loginShowPass_2)
+
+    def setup_password_toggle(self, line_edit, tool_button, icon_show="Icons/eye.png", icon_hide="Icons/hide.png"):
+
+        # Store toggle state inside the button so it's reusable
+        tool_button.password_visible = False
+
+        def toggle():
+            if tool_button.password_visible:
+                line_edit.setEchoMode(QLineEdit.EchoMode.Password)
+                tool_button.setIcon(QIcon(icon_show))
+            else:
+                line_edit.setEchoMode(QLineEdit.EchoMode.Normal)
+                tool_button.setIcon(QIcon(icon_hide))
+
+            tool_button.password_visible = not tool_button.password_visible
+
+        tool_button.clicked.connect(toggle)
     def setup_ui(self):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
@@ -25,6 +48,24 @@ class FirstTimeSetupDialog(QDialog):
         self.firstLoginFrame.setGraphicsEffect(create_card_shadow())
         self.completeSetupBtn.setGraphicsEffect(create_card_shadow())
         self.label_9.setGraphicsEffect(create_card_shadow())
+
+        self.fullName.setGraphicsEffect(create_card_shadow())
+        self.username.setGraphicsEffect(create_card_shadow())
+        self.email.setGraphicsEffect(create_card_shadow())
+        self.PhoneNum.setGraphicsEffect(create_card_shadow())
+        self.newPassword.setGraphicsEffect(create_card_shadow())
+        self.confirmPassword.setGraphicsEffect(create_card_shadow())
+
+        self.fullnameIcon.setGraphicsEffect(create_card_shadow())
+        self.usernameIcon.setGraphicsEffect(create_card_shadow())
+        self.emailIcon.setGraphicsEffect(create_card_shadow())
+        self.phoneNumIcon.setGraphicsEffect(create_card_shadow())
+        self.newPassIcon.setGraphicsEffect(create_card_shadow())
+        self.confirmpassIcon.setGraphicsEffect(create_card_shadow())
+
+
+        self.togglePassFrame.setGraphicsEffect(create_card_shadow())
+        self.togglePassFrame_2.setGraphicsEffect(create_card_shadow())
 
         # Pre-fill username (can be changed)
         self.username.setText(self.user_data['username'])

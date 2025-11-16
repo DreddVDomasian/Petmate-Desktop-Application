@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/eye.png</file>
+    <file>Icons/hide.png</file>
     <file>Icons/OTP.png</file>
     <file>Icons/emailIcon.png</file>
     <file>Icons/left-arrow.png</file>

@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QDialog, QMessageBox, QLineEdit, QApplication
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QSettings, QTimer, QThread, pyqtSignal
 import resources_rc
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QIcon
 from toast import Toast
 from shadowEffects import create_card_shadow
 from Desktop_Application.Backend.api_client import desktop_login, send_otp, verify_otp_and_reset_password
@@ -75,7 +75,28 @@ class LoginDialog(QDialog):
         # Worker thread
         self.otp_worker = None
 
+        self.password_toggle()
+    def password_toggle(self):
+        self.setup_password_toggle(self.loginPassword,self.loginShowPass)
+        self.setup_password_toggle(self.newPass,self.loginShowPass_2)
+        self.setup_password_toggle(self.confirmPass,self.loginShowPass_3)
 
+    def setup_password_toggle(self, line_edit, tool_button, icon_show="Icons/eye.png", icon_hide="Icons/hide.png"):
+
+        # Store toggle state inside the button so it's reusable
+        tool_button.password_visible = False
+
+        def toggle():
+            if tool_button.password_visible:
+                line_edit.setEchoMode(QLineEdit.EchoMode.Password)
+                tool_button.setIcon(QIcon(icon_show))
+            else:
+                line_edit.setEchoMode(QLineEdit.EchoMode.Normal)
+                tool_button.setIcon(QIcon(icon_hide))
+
+            tool_button.password_visible = not tool_button.password_visible
+
+        tool_button.clicked.connect(toggle)
 
     def navigate_login(self, index):
         self.LoginStackedWidget.setCurrentIndex(index)
@@ -95,6 +116,8 @@ class LoginDialog(QDialog):
         self.sendOtpBtn.setText("Send OTP")
         self.otp_email = ""
         self.otp_code = ""
+
+
 
     def send_otp_request(self):
         """Send OTP to user's email"""
@@ -240,6 +263,10 @@ class LoginDialog(QDialog):
         self.otpIcon.setGraphicsEffect(create_card_shadow())
         self.newPassIcon.setGraphicsEffect(create_card_shadow())
         self.confirmPassIcon.setGraphicsEffect(create_card_shadow())
+
+        self.togglePassFrame.setGraphicsEffect(create_card_shadow())
+        self.togglePassFrame_2.setGraphicsEffect(create_card_shadow())
+        self.togglePassFrame_3.setGraphicsEffect(create_card_shadow())
 
         self.loginUserName.setGraphicsEffect(create_card_shadow())
         self.loginPassword.setGraphicsEffect(create_card_shadow())
