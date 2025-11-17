@@ -1188,10 +1188,8 @@ def web_reset_password(request):
     return Response({'message': 'Password changed successfully!'})
 
 
+
 # POST contact us message (website)
-
-
-
 @api_view(['POST'])
 def contact_us_message(request):
     name = request.data.get('name')
@@ -1217,7 +1215,7 @@ def contact_us_message(request):
         )
         email_message.send(fail_silently=False)
 
-        # Send confirmation to the user
+        # Send Email confirmation sa may user email
         try:
             confirm_subject = "PetMate Animal Clinic — We received your message"
             confirm_body = (
