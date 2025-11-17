@@ -96,7 +96,11 @@ export default function Settings() {
   return (
     <div className="settings-container">
       <div className="settings-box">
-        <h2 className="settings-title">Settings</h2>
+        
+        <div className="settings-header">
+          <h2 className="settings-title">Settings</h2>
+          <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
+        </div>
 
         <div className="button-group">
           <button

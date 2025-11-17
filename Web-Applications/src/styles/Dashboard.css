@@ -1184,90 +1184,131 @@ select option {
 }
 
 
-/*  SETTINGS PAGE */
+/* SETTINGS PAGE */
 .settings-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #020b17, #031325);
   height: 100%;
-  background-color: #e1e5ea;
 }
 
 .settings-box {
-  background: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 380px;
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 18px;
+  width: 100%;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.25);
+  position: relative;
+  overflow: hidden;
 }
 
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* para mapunta sa right yung logo */
+}
+
+/* TITLE */
 .settings-title {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 22px;
-  color: #333;
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-align: left;
+    font-size: 80px;
+    font-weight: bold;
+    margin: 30px 0; 
+    color: #222;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
+.settings-header img {
+  height: 150px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* TAB BUTTONS */
 .button-group {
   display: flex;
-  justify-content: space-between;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 10px 0;
-  margin: 0 5px;
+  padding: 14px 0;        
   border: none;
-  background-color: #ddd;
-  color: #333;
-  font-weight: 500;
-  border-radius: 5px;
+  border-radius: 10px;
+  font-size: 22px;         
+  font-weight: 700;
+  background-color: #d1dde6;
+  color: #1a1a1a;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.tab-btn:hover {
-  background-color: #ccc;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.12);
 }
 
 .tab-btn.active {
-  background-color: #007bff;
-  color: white;
+  background-color: #4aa6ff;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(74, 166, 255, 0.4);
+  transform: translateY(-1.5px);
 }
 
+/* CONTENT BOX */
 .tab-content {
-  font-size: 15px;
-  color: #333;
+  background: #d9efff;
+  padding: 20px 30px;      
+  border-radius: 16px;
+  height: 65%;
+  box-shadow: inset 0px 0px 10px rgba(0,0,0,0.12);
 }
 
 .details-section h3,
 .password-section h3 {
-  margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 50px;         
+  margin-bottom: 14px;
+  margin-top: 8px;
+  font-weight: 700;
+  color: #1a1a1a;
 }
 
+.details-section p {
+  font-size: 30px;         
+  margin: 8px 0;
+  line-height: 1.3;
+  color: #222;
+}
+
+/* INPUT BOXES */
 .input-box {
   width: 100%;
-  padding: 8px 10px;
-  margin: 6px 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  font-size: 18px;         
+  border-radius: 10px;
+  border: 2px solid #aac6d8;
+  background: #f6fbff;
+  transition: all 0.2s ease;
 }
 
+/* SUBMIT BUTTON */
 .submit-btn {
   width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  background-color: #007bff;
+  padding: 14px;           
+  background: linear-gradient(135deg, #4aa6ff, #1c7ed8);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+  font-size: 22px;         
+  margin-top: 16px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 700;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
 }
 
 .submit-btn:hover {
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #1c7ed8, #1668b4);
+  transform: translateY(-2px);
 }
