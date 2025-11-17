@@ -12,7 +12,10 @@ def send_otp(email):
     try:
         response = requests.post(
             f"{API_BASE_URL}/api/send-reset-otp/",
-            json={'email': email}
+            json={
+                'email': email,
+                'source': 'desktop'
+            }
         )
 
         if response.status_code == 200:

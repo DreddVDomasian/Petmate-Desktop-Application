@@ -18,7 +18,10 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
     setIsSending(true);
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/send-reset-otp/", { email }, { withCredentials: true });
+      await axios.post("http://127.0.0.1:8000/api/send-reset-otp/",
+      { email,
+        source: 'web'
+      }, { withCredentials: true });
       setMessage(" OTP sent to your email!");
       setMessageType("success");
       setStep(2);

@@ -1025,6 +1025,7 @@ class PetListView(generics.ListAPIView):
 @api_view(['POST'])
 def send_reset_otp(request):
     email = request.data.get('email')
+    source = request.data.get('source')  # 'web' or 'desktop'
 
     if not email:
         return Response({'error': 'Email is required.'}, status=400)
@@ -1032,17 +1033,23 @@ def send_reset_otp(request):
     user = None
     user_type = None
 
-    # Check Django User model first (web users)
-    try:
-        user = User.objects.get(email=email)
-        user_type = 'web'
-    except User.DoesNotExist:
-        # Check DesktopUser model if not found in User model
+    # Check based on source parameter
+    if source == 'web':
+        try:
+            user = User.objects.get(email=email)
+            user_type = 'web'
+        except User.DoesNotExist:
+            return Response({'error': 'No web account found with this email.'}, status=404)
+
+    elif source == 'desktop':
         try:
             user = DesktopUser.objects.get(email=email, is_active=True)
             user_type = 'desktop'
         except DesktopUser.DoesNotExist:
-            return Response({'error': 'No account found with this email.'}, status=404)
+            return Response({'error': 'No desktop account found with this email.'}, status=404)
+
+    else:
+        return Response({'error': 'Source parameter is required. Use "web" or "desktop".'}, status=400)
 
     # Generate OTP
     otp = str(random.randint(100000, 999999))
@@ -1050,13 +1057,13 @@ def send_reset_otp(request):
     # Store OTP based on user type with correct field
     if user_type == 'web':
         PasswordResetOTP.objects.create(
-            web_user=user,  # Use web_user field
+            web_user=user,
             otp=otp,
             user_type=user_type
         )
     else:
         PasswordResetOTP.objects.create(
-            desktop_user=user,  # Use desktop_user field
+            desktop_user=user,
             otp=otp,
             user_type=user_type
         )
