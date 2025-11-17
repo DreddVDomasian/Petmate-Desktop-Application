@@ -171,12 +171,13 @@ class LoginDialog(QDialog):
         otp = self.otpEdit.text().strip()
 
         if not otp:
-            toast = Toast(parent=self, message="Please enter the OTP.", icon_path="Icons/warning.png",duration=2000)
+            toast = Toast(parent=self, message="Please enter the OTP.", icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             return
 
         if not self.otp_email:
-            toast = Toast(parent=self, message="Email not found. Please restart the process.", icon_path="Icons/warning.png",duration=2000)
+            toast = Toast(parent=self, message="Email not found. Please restart the process.",
+                          icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             return
 
@@ -187,40 +188,51 @@ class LoginDialog(QDialog):
         QApplication.processEvents()  # Process pending events
 
         try:
-            # Store OTP for later verification during password reset
-            self.otp_code = otp
+            # Call API to verify OTP first
+            success, response = verify_otp_and_reset_password(
+                self.otp_email, otp, None  # Send None for password to just verify OTP
+            )
 
-            # For now, proceed directly to password reset page
-            # The actual OTP verification will happen during password reset
-            self.LoginStackedWidget.setCurrentIndex(2)  # Go to new password page
+            if success:
+                # OTP is valid, store it and proceed to password reset
+                self.otp_code = otp
+                toast = Toast(parent=self, message="OTP verified successfully!", icon_path="Icons/check.png",
+                              duration=2000)
+                toast.show_toast()
+                self.LoginStackedWidget.setCurrentIndex(2)  # Go to new password page
+                self.otp_timer.stop()
+            else:
+                error_msg = response.get('error', 'Invalid OTP')
+                toast = Toast(parent=self, message=error_msg, icon_path="Icons/warning.png", duration=2000)
+                toast.show_toast()
+
             self.proceedBtn.setText("Proceed")
             self.proceedBtn.setEnabled(True)
-            self.otp_timer.stop()
 
         except Exception as e:
-            toast = Toast(parent=self, message="Error verifying OTP", icon_path="Icons/warning.png",duration=2000)
+            toast = Toast(parent=self, message="Error verifying OTP", icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             self.proceedBtn.setText("Proceed")
             self.proceedBtn.setEnabled(True)
 
     def reset_password(self):
-        """Reset password with OTP verification"""
+        """Reset password after OTP has been verified"""
         new_password = self.newPass.text().strip()
         confirm_password = self.confirmPass.text().strip()
-        otp = self.otp_code  # Use the stored OTP
 
-        if not all([new_password, confirm_password, otp]):
-            toast = Toast(parent=self, message="Please fill all fields", icon_path="Icons/warning.png",duration=2000)
+        if not all([new_password, confirm_password]):
+            toast = Toast(parent=self, message="Please fill all fields", icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             return
 
         if new_password != confirm_password:
-            toast = Toast(parent=self, message="Passwords do not match", icon_path="Icons/warning.png",duration=2000)
+            toast = Toast(parent=self, message="Passwords do not match", icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             return
 
         if len(new_password) < 6:
-            toast = Toast(parent=self, message="Password must be at least 6 characters long", icon_path="Icons/warning.png",duration=2000)
+            toast = Toast(parent=self, message="Password must be at least 6 characters long",
+                          icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             return
 
@@ -231,23 +243,25 @@ class LoginDialog(QDialog):
         QApplication.processEvents()  # Process pending events
 
         try:
-            # Call the API to verify OTP and reset password
+            # Call the API to reset password with the verified OTP
             success, response = verify_otp_and_reset_password(
-                self.otp_email, otp, new_password
+                self.otp_email, self.otp_code, new_password
             )
 
             if success:
-                toast = Toast(parent=self, message="Password reset successfully!",icon_path="Icons/check.png", duration=2000)
+                toast = Toast(parent=self, message="Password reset successfully!", icon_path="Icons/check.png",
+                              duration=2000)
                 toast.show_toast()
                 # Return to login page
                 self.navigate_login(0)
                 self.clear_otp_fields()
             else:
                 error_msg = response.get('error', 'Failed to reset password')
-                toast = Toast(parent=self, message=error_msg,icon_path="Icons/warning.png", duration=2000)
+                toast = Toast(parent=self, message=error_msg, icon_path="Icons/warning.png", duration=2000)
                 toast.show_toast()
-                self.submitNewPass.setText("Reset Password")
-                self.submitNewPass.setEnabled(True)
+
+            self.submitNewPass.setText("Reset Password")
+            self.submitNewPass.setEnabled(True)
 
         except Exception as e:
             toast = Toast(parent=self, message="Error resetting password", icon_path="Icons/warning.png", duration=2000)

@@ -47,7 +47,6 @@ class MainUI(QMainWindow):
 
         #users
         self.current_user = user_data
-
         # Nav
         self.sideNav.setVisible(False)
 
@@ -63,6 +62,8 @@ class MainUI(QMainWindow):
         self.setup_pet_buttons()
 
         #Settings
+        self.UserManagementTabBtn.hide()
+        self.role_base()
         self.load_user_profile(self.current_user)
         self.setup_security_tab()
         self.setup_user_management_tab()
@@ -166,7 +167,7 @@ class MainUI(QMainWindow):
         # page navigation
         nav = [
             (self.homeBtn, 0), (self.addPatientBtn, 1), (self.petRecordsBtn, 2),
-            (self.appointmentBtn, 3), (self.schedVaxBtn, 4),(self.settingsBtn, 8)
+            (self.appointmentBtn, 3), (self.schedVaxBtn, 4),(self.settingsBtn, 8),(self.webContentBtn, 10)
         ]
         self.navBtnGroup = QButtonGroup(self)
         self.navBtnGroup.setExclusive(True)
@@ -179,7 +180,7 @@ class MainUI(QMainWindow):
 
         nav_2 = [
             (self.homeBtn_2, 0), (self.addPatientBtn_2, 1), (self.petRecordsBtn_2, 2),
-            (self.appointmentBtn_2, 3), (self.schedVaxBtn_2, 4),(self.settings_2, 8)
+            (self.appointmentBtn_2, 3), (self.schedVaxBtn_2, 4),(self.settings_2, 8),(self.webContentBtn_2, 10)
         ]
         self.navBtnGroup_2 = QButtonGroup(self)
         self.navBtnGroup_2.setExclusive(True)
@@ -196,6 +197,7 @@ class MainUI(QMainWindow):
             3: self.appointmentBtn,
             4: self.schedVaxBtn,
             8: self.settingsBtn,
+            10:self.webContentBtn,
             # Profile and Pet Profile pages should highlight Pet Records
             5: self.petRecordsBtn,
             6: self.petRecordsBtn
@@ -270,16 +272,14 @@ class MainUI(QMainWindow):
         # toggle walk-in status Btn
         self.profileTabBtn.setCheckable(True)
         self.securityTabBtn.setCheckable(True)
-        self.preferencesTabBtn.setCheckable(True)
         self.UserManagementTabBtn.setCheckable(True)
         self.settingsStactWidget.setCurrentIndex(0)
         self.settingsBtnGroup = QButtonGroup(self)
-        for btn in [self.profileTabBtn, self.securityTabBtn, self.preferencesTabBtn, self.UserManagementTabBtn]:
+        for btn in [self.profileTabBtn, self.securityTabBtn, self.UserManagementTabBtn]:
             self.settingsBtnGroup.addButton(btn)
         self.profileTabBtn.setChecked(True)
         self.profileTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(0))
         self.securityTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(1))
-        self.preferencesTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(2))
         self.UserManagementTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(3))
 
         #print btn
@@ -1638,6 +1638,12 @@ class MainUI(QMainWindow):
 
 
     #SETTINGS PAGE
+    #Role base settings
+    def role_base(self):
+        UserRole = self.current_user['role']
+        if UserRole == "admin":
+            self.UserManagementTabBtn.show()
+
     #    PROFILE TAB
     def enableProfileEdit(self):
         self.profileFullName.setEnabled(True)
@@ -2147,6 +2153,8 @@ class MainUI(QMainWindow):
                 # Account is active
                 card_ui.passwordLabel.setText("••••••••")
                 card_ui.status.setText("Active")
+                card_ui.tempUser.setText("(Active Username)")
+                card_ui.tempPass.setText("(Active Password)")
 
             self.scale_widget_font(card_ui.userNameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
             self.scale_widget_font(card_ui.passwordLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
@@ -2313,7 +2321,7 @@ class MainUI(QMainWindow):
         self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader5, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader6, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
-
+        self.scale_widget_font(self.pageHeader8, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         # pet details title
         self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
         for submitBtns in self.findChildren(QPushButton):

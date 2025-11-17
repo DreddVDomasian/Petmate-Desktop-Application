@@ -218,7 +218,7 @@ class PasswordResetOTP(models.Model):
         return self.web_user or self.desktop_user
 
     def is_expired(self):
-        return timezone.now() > self.created_at + timezone.timedelta(minutes=10)
+        return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
 
     def __str__(self):
         return f"OTP for {self.user} ({self.user_type})"

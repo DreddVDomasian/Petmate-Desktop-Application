@@ -1030,6 +1030,11 @@ def send_reset_otp(request):
     if not email:
         return Response({'error': 'Email is required.'}, status=400)
 
+    expiry_time = timezone.now() - timezone.timedelta(minutes=10)
+    PasswordResetOTP.objects.filter(
+        Q(web_user__email=email) | Q(desktop_user__email=email),
+        created_at__lt=expiry_time
+    ).delete()
     user = None
     user_type = None
 
@@ -1092,58 +1097,49 @@ def verify_reset_otp(request):
     otp = request.data.get('otp')
     new_password = request.data.get('new_password')
 
-    if not all([email, otp, new_password]):
-        return Response({'error': 'All fields are required.'}, status=400)
+    if not email or not otp:
+        return Response({'error': 'Email and OTP are required.'}, status=400)
 
-    # Find user and type
-    user = None
-    user_type = None
-
-    # Check both models
     try:
-        user = User.objects.get(email=email)
-        user_type = 'web'
+        # Try to find OTP record for web user
+        web_user = User.objects.get(email=email)
+        otp_record = PasswordResetOTP.objects.filter(
+            web_user=web_user,
+            otp=otp
+        ).latest('created_at')
     except User.DoesNotExist:
+        # Try to find OTP record for desktop user
         try:
-            user = DesktopUser.objects.get(email=email, is_active=True)
-            user_type = 'desktop'
+            desktop_user = DesktopUser.objects.get(email=email, is_active=True)
+            otp_record = PasswordResetOTP.objects.filter(
+                desktop_user=desktop_user,
+                otp=otp
+            ).latest('created_at')
         except DesktopUser.DoesNotExist:
-            return Response({'error': 'Invalid email.'}, status=404)
-
-    # Find OTP record with correct field based on user type
-    if user_type == 'web':
-        otp_record = PasswordResetOTP.objects.filter(
-            web_user=user,  # Use web_user field for web users
-            otp=otp,
-            user_type=user_type
-        ).last()
-    else:
-        otp_record = PasswordResetOTP.objects.filter(
-            desktop_user=user,  # Use desktop_user field for desktop users
-            otp=otp,
-            user_type=user_type
-        ).last()
-
-    if not otp_record:
+            return Response({'error': 'No account found with this email.'}, status=404)
+    except PasswordResetOTP.DoesNotExist:
         return Response({'error': 'Invalid OTP.'}, status=400)
 
+    # Check if OTP is expired
     if otp_record.is_expired():
+        return Response({'error': 'OTP has expired.'}, status=400)
+
+    # If just verifying OTP (no new_password provided)
+    if not new_password:
         otp_record.delete()
-        return Response({'error': 'OTP expired.'}, status=400)
+        return Response({'message': 'OTP verified successfully.'}, status=200)
 
-    # Check if new password is different from current
-    if user.check_password(new_password):
-        return Response({'error': 'New password must be different from your current password.'}, status=400)
+    # If resetting password
+    if otp_record.user_type == 'web':
+        user = otp_record.web_user
+        user.set_password(new_password)
+        user.save()
+    else:
+        user = otp_record.desktop_user
+        user.set_password(new_password)
+        user.save()
 
-    # Validate password strength
-    try:
-        validate_password(new_password, user=user)
-    except ValidationError as ve:
-        return Response({'error': ve.messages}, status=400)
-
-    # Reset password based on user type
-    user.set_password(new_password)
-    user.save()
+    # Delete used OTP
     otp_record.delete()
 
     return Response({'message': 'Password reset successfully.'}, status=200)
