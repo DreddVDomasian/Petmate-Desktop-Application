@@ -109,6 +109,10 @@ class ReminderPopup(QWidget):
         if response.status_code in [200, 202]:
             print("Reminder marked as completed")
 
+            # Refresh pet profile UI without navigation
+            if self.main_window:
+                self.main_window.refresh_current_pet_profile()
+
             # Delay UI refresh to avoid deleting active widgets mid-callback
             QTimer.singleShot(100, lambda: self._safe_refresh())
         else:
@@ -119,3 +123,7 @@ class ReminderPopup(QWidget):
         self.load_reminder(self.main_window.selected_pet_id)
         self.main_window.load_scheduled_services()
         self.main_window.appointmentCard.load_appointments(1)
+
+        # ✅ ADD THIS: Reload the services for the current pet
+        if hasattr(self.main_window, 'selected_pet_id') and self.main_window.selected_pet_id:
+            self.main_window.load_services_for_pet(self.main_window.selected_pet_id)

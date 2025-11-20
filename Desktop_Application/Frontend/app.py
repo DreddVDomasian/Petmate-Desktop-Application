@@ -1346,7 +1346,7 @@ class MainUI(QMainWindow):
                 open_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, True,upper_frame))
                 close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False,upper_frame))
 
-            self.serviceListLayout.addWidget(service_card)
+            self.serviceListLayout.insertWidget(0, service_card)
     def make_icon_pulse(self, button):
         # Lock button size so layout won’t move
         button.setFixedSize(button.size())
@@ -1387,6 +1387,45 @@ class MainUI(QMainWindow):
             webbrowser.open(print_url)
         else:
             QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
+    #PET PROFILE RELOAD
+    def refresh_current_pet_profile(self):
+        """Refresh the current pet profile without affecting navigation history"""
+        if hasattr(self, 'selected_pet_id') and self.selected_pet_id:
+            try:
+                response = requests.get(f"{API_BASE_URL}/api/pets/{self.selected_pet_id}/")
+                if response.status_code == 200:
+                    pet = response.json()
+                    # Update the UI elements directly without navigation
+                    self.update_pet_profile_ui(pet)
+            except Exception as e:
+                print(f"Error refreshing pet profile: {e}")
+    def update_pet_profile_ui(self, pet):
+        """Update pet profile UI elements without navigation"""
+        self.petProfileNameLabel.setText((pet.get('petName') or "").title())
+        self.petColorLabel.setText((pet.get('petColor') or "").title())
+        self.petRemarksLabel.setText((pet.get('remarks') or "None"))
+        self.breedLabel.setText((pet.get('breed') or "").title())
+        self.speciesLabel.setText((pet.get('species') or "").title())
+        self.petSexLabel.setText((pet.get('sex') or "").title())
+
+        birthday = self.format_date(pet.get("birthDay"))
+        self.petBirthdayOptional.setText((birthday or "None"))
+        self.petAgeLabel.setText((pet.get('age') or "Unknown"))
+
+        # Update reminder button visibility
+        if pet.get("has_reminder", False):
+            self.reminderBtn.show()
+        else:
+            self.reminderBtn.hide()
+
+        species = pet.get("species", "").lower()
+        if species == "dog":
+            icon_path = "Icons/dog.png"
+        elif species == "cat":
+            icon_path = "Icons/catIcon.png"
+        else:
+            icon_path = "Icons/otherSpecies.png"
+        self.petProfileIcon.setPixmap(QPixmap(icon_path))
 
     #PET SERVICE SUBMIT/EDIT
     def submit_service_data(self):
@@ -1431,6 +1470,10 @@ class MainUI(QMainWindow):
         if add_new_service(service_data):
             toast = Toast(self, "Service added!", icon_path="Icons/check.png")
             toast.show_toast()
+
+            if hasattr(self, 'selected_pet_id') and self.selected_pet_id:
+                self.refresh_current_pet_profile()
+                self.load_services_for_pet(self.selected_pet_id)
 
             self.serviceHistoryBtn.setChecked(True)
             self.serviceHistoryStackedWidget.setCurrentIndex(0)
