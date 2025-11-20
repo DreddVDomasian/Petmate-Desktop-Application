@@ -1308,12 +1308,21 @@ class MainUI(QMainWindow):
             service_type = str(service.get("service_type", "N/A"))
             done_on = self.format_date(service.get("date")) or "N/A"
             return_date = self.format_date(service.get("return_date"))
+            service_status = str(service.get("status", "N/A"))
             notes = str(service.get("notes"))
             # Fill data
             service_card.findChild(QLabel, "serviceLabel").setText(service_type)
             service_card.findChild(QLabel, "doneOnLabel").setText(done_on)
             return_label = service_card.findChild(QLabel, "returnDateLabel")
-            return_label.setText(f"{return_date}" if return_date else "       None")
+            return_label.setText(f"               {return_date}" if return_date else "                       None")
+            service_card.findChild(QLabel, "serviceStatusLabel").setText(service_status.upper())
+
+            if service_status.lower() == "completed":
+                service_card.serviceStatusFrame.setStyleSheet(completedServiceStatus)
+            elif service_status.lower() == "pending":
+                service_card.serviceStatusFrame.setStyleSheet(pendingServiceStatus)
+            elif service_status.lower() == "overdue":
+                service_card.serviceStatusFrame.setStyleSheet(overdueServiceStatus)
 
             note_label = service_card.findChild(QTextEdit, "noteLabel")
             note_label.setPlainText(f"{notes}" if notes else "No Notes")

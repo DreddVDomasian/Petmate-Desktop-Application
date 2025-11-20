@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-!o_*_w5caj#!(+clkyqu)+xb4juw9@3dti0m&rad7-09^k9=ym
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost",
+                 "127.0.0.1",
+                 ".ngrok.io",
+                ".ngrok-free.app","triggerless-brianna-pseudoviperous.ngrok-free.dev"]
 
 
 # Application definition
@@ -126,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -170,6 +173,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
     "http://127.0.0.1:3000",
+    "https://triggerless-brianna-pseudoviperous.ngrok-free.dev",
 ]
 
 CORS_ALLOWED_HEADERS = [

@@ -50,6 +50,10 @@ urlpatterns = [
     path('desktop-users/<int:pk>/', views.DesktopUserRetrieveUpdateDestroyView.as_view(), name='desktop-users-detail'),
     path('desktop-reset-password/', views.ResetStaffPasswordView.as_view(), name='desktop_reset_password'),
 
+    # EMAIL REMINDERS
+    path('desktop-reminder-status/', ReminderStatusView.as_view(), name='desktop_reminder_status'),
+    path('desktop-manual-reminder/', ManualReminderView.as_view(), name='desktop_manual_reminder'),
+
     #   Password Reset Endpoints
     path('send-reset-otp/', views.send_reset_otp, name='send_reset_otp'),
     path('verify-reset-otp/', views.verify_reset_otp, name='verify_reset_otp'),

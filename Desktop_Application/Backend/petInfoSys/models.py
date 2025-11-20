@@ -222,3 +222,22 @@ class PasswordResetOTP(models.Model):
 
     def __str__(self):
         return f"OTP for {self.user} ({self.user_type})"
+
+
+# -----------------EMAIL REMINDER MODEL------------------
+class AppointmentReminder(models.Model):
+    REMINDER_TYPES = [
+        ('next_day', 'Next Day Reminder'),
+        ('same_day', 'Same Day Reminder'),
+        ('service_return', 'Service Return Reminder'),
+    ]
+
+    appointment = models.ForeignKey(WalkInAppointment, on_delete=models.CASCADE, null=True, blank=True)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True)
+    reminder_type = models.CharField(max_length=20, choices=REMINDER_TYPES)
+    scheduled_send_time = models.DateTimeField()
+    sent_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.reminder_type} - {self.scheduled_send_time}"

@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from datetime import date,datetime,time
+from datetime import date,datetime,time,timedelta
 from .models import *
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
@@ -21,7 +21,7 @@ import os
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout, get_user_model, update_session_auth_hash
 from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
-
+import threading
 import random
 from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
 from django.contrib.auth.models import User
@@ -969,10 +969,14 @@ class WalkInListCreateView(generics.ListCreateAPIView):
 
         if self.request.user.is_authenticated and not is_staff_user:
             # Regular web user: pending review
-            serializer.save(request='pending', status='pending')
+            appointment = serializer.save(request='pending', status='pending')
         else:
             # Staff/Desktop: auto-approved
-            serializer.save(request='accepted')
+            appointment = serializer.save(request='accepted')
+
+        # Schedule reminders for the new appointment
+        schedule_reminders_for_appointment(appointment)
+        send_immediate_reminder_for_today(appointment)
 
 
 class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -1243,3 +1247,248 @@ def contact_us_message(request):
 
     except Exception as e:
         return Response({'error': f'Failed to submit message: {str(e)}'}, status=500)
+
+
+# ---------EMAIL REMINDER---------------
+
+def send_appointment_reminder_email(patient_email, patient_name, pet_name, service_type,
+                                    appointment_date, appointment_time, booking_id, reminder_type):
+    """Send appointment reminder email"""
+    try:
+        subject = "🐾 PetMate Animal Clinic - Appointment Reminder"
+        from_email = 'petmateanimalclinic@gmail.com'
+        to = [patient_email]
+
+        # Render HTML template
+        html_content = render_to_string('appointment_reminder.html', {
+            'patient_name': patient_name,
+            'pet_name': pet_name,
+            'service_type': service_type,
+            'appointment_date': appointment_date,
+            'appointment_time': appointment_time,
+            'booking_id': booking_id,
+            'reminder_type': reminder_type
+        })
+        text_content = strip_tags(html_content)
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        return True
+    except Exception as e:
+        print(f"Failed to send reminder email: {str(e)}")
+        return False
+
+
+def schedule_reminders_for_appointment(appointment):
+    """Schedule all reminders for a new appointment"""
+    from .models import AppointmentReminder
+
+    # Calculate reminder times - make sure everything is timezone-aware
+    appointment_datetime = timezone.make_aware(
+        datetime.combine(appointment.date, appointment.prefTime)
+    )
+
+    # Next day reminder (24 hours before)
+    next_day_reminder_time = appointment_datetime - timedelta(days=1)
+
+    # Same day reminder (2 hours before)
+    same_day_reminder_time = appointment_datetime - timedelta(hours=2)
+
+    # Only schedule if reminder time is in the future
+    now = timezone.now()
+
+    if next_day_reminder_time > now:
+        AppointmentReminder.objects.create(
+            appointment=appointment,
+            reminder_type='next_day',
+            scheduled_send_time=next_day_reminder_time
+        )
+
+    if same_day_reminder_time > now:
+        AppointmentReminder.objects.create(
+            appointment=appointment,
+            reminder_type='same_day',
+            scheduled_send_time=same_day_reminder_time
+        )
+
+def check_and_send_reminders():
+    """Check for pending reminders and send them"""
+    from .models import AppointmentReminder
+
+    now = timezone.now()
+    pending_reminders = AppointmentReminder.objects.filter(
+        sent_at__isnull=True,
+        scheduled_send_time__lte=now
+    )
+
+    sent_count = 0
+    for reminder in pending_reminders:
+        if reminder.appointment and reminder.appointment.status not in ['cancelled', 'completed']:
+            appointment = reminder.appointment
+            success = send_appointment_reminder_email(
+                patient_email=appointment.owner.email,
+                patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
+                pet_name=appointment.pet.petName,
+                service_type=appointment.service_name,
+                appointment_date=appointment.date.strftime("%B %d, %Y"),
+                appointment_time=appointment.prefTime.strftime("%I:%M %p"),
+                booking_id=appointment.booking_id,
+                reminder_type=reminder.reminder_type
+            )
+
+            if success:
+                reminder.sent_at = now
+                reminder.save()
+                sent_count += 1
+
+    return sent_count
+
+
+def send_immediate_reminder_for_today(appointment):
+    """Send immediate reminder for appointments booked for today"""
+    now = timezone.now()
+    today = now.date()
+
+    # Check if appointment is for today
+    if appointment.date == today:
+        # Make the appointment datetime timezone-aware
+        appointment_datetime = timezone.make_aware(
+            datetime.combine(appointment.date, appointment.prefTime)
+        )
+
+        # Calculate time difference in hours
+        time_diff = (appointment_datetime - now).total_seconds() / 3600
+
+        # Send immediate reminder if appointment is within the next 4 hours
+        if 1 <= time_diff <= 4:  # 1-4 hours from now
+            patient_email = appointment.owner.email
+            patient_name = f"{appointment.owner.firstName} {appointment.owner.lastName}"
+
+            return send_appointment_reminder_email(
+                patient_email=patient_email,
+                patient_name=patient_name,
+                pet_name=appointment.pet.petName,
+                service_type=appointment.service_name,
+                appointment_date=appointment.date.strftime("%B %d, %Y"),
+                appointment_time=appointment.prefTime.strftime("%I:%M %p"),
+                booking_id=appointment.booking_id,
+                reminder_type='same_day'
+            )
+
+    return False
+
+
+# DESKTOP-ONLY: Reminder monitoring for admin/staff
+class ReminderStatusView(APIView):
+    def get(self, request):
+        """Get reminder system status - Desktop admin only"""
+        try:
+            # Verify desktop admin user
+            admin_user = DesktopUser.objects.get(
+                id=request.query_params.get('admin_id'),
+                role='admin',
+                is_active=True
+            )
+        except DesktopUser.DoesNotExist:
+            return Response({'error': 'Admin access required'}, status=403)
+
+        from datetime import datetime, timedelta
+
+        today = timezone.now().date()
+        last_7_days = today - timedelta(days=7)
+
+        # Stats
+        sent_today = AppointmentReminder.objects.filter(
+            sent_at__date=today
+        ).count()
+
+        sent_this_week = AppointmentReminder.objects.filter(
+            sent_at__date__gte=last_7_days
+        ).count()
+
+        pending_reminders = AppointmentReminder.objects.filter(
+            sent_at__isnull=True,
+            scheduled_send_time__gte=timezone.now()
+        ).count()
+
+        # Recent reminders
+        recent_reminders = AppointmentReminder.objects.filter(
+            sent_at__date__gte=last_7_days
+        ).select_related('appointment', 'appointment__owner', 'appointment__pet').order_by('-sent_at')[:10]
+
+        recent_data = []
+        for reminder in recent_reminders:
+            if reminder.appointment:
+                recent_data.append({
+                    'id': reminder.id,
+                    'patient_name': f"{reminder.appointment.owner.firstName} {reminder.appointment.owner.lastName}",
+                    'pet_name': reminder.appointment.pet.petName,
+                    'appointment_date': reminder.appointment.date.strftime("%Y-%m-%d"),
+                    'appointment_time': reminder.appointment.prefTime.strftime("%I:%M %p"),
+                    'reminder_type': reminder.get_reminder_type_display(),
+                    'sent_at': reminder.sent_at.strftime("%Y-%m-%d %I:%M %p") if reminder.sent_at else None,
+                })
+
+        return Response({
+            'stats': {
+                'sent_today': sent_today,
+                'sent_this_week': sent_this_week,
+                'pending_reminders': pending_reminders,
+                'system_status': 'active'
+            },
+            'recent_reminders': recent_data
+        })
+
+
+# DESKTOP-ONLY: Manual reminder trigger for emergency cases
+class ManualReminderView(APIView):
+    def post(self, request):
+        """Manually send reminder - Desktop admin only for emergency use"""
+        try:
+            admin_user = DesktopUser.objects.get(
+                id=request.data.get('admin_id'),
+                role='admin',
+                is_active=True
+            )
+        except DesktopUser.DoesNotExist:
+            return Response({'error': 'Admin access required'}, status=403)
+
+        appointment_id = request.data.get('appointment_id')
+
+        try:
+            appointment = WalkInAppointment.objects.get(id=appointment_id)
+
+            # Only send if appointment is still valid
+            if appointment.status in ['cancelled', 'completed']:
+                return Response({
+                    'error': 'Cannot send reminder for cancelled/completed appointment'
+                }, status=400)
+
+            success = send_appointment_reminder_email(
+                patient_email=appointment.owner.email,
+                patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
+                pet_name=appointment.pet.petName,
+                service_type=appointment.service_name,
+                appointment_date=appointment.date.strftime("%B %d, %Y"),
+                appointment_time=appointment.prefTime.strftime("%I:%M %p"),
+                booking_id=appointment.booking_id,
+                reminder_type='manual'
+            )
+
+            if success:
+                # Log this manual reminder
+                AppointmentReminder.objects.create(
+                    appointment=appointment,
+                    reminder_type='manual',
+                    scheduled_send_time=timezone.now(),
+                    sent_at=timezone.now()
+                )
+                return Response({'message': 'Manual reminder sent successfully'}, status=200)
+            else:
+                return Response({'error': 'Failed to send reminder'}, status=500)
+
+        except WalkInAppointment.DoesNotExist:
+            return Response({'error': 'Appointment not found'}, status=404)
+

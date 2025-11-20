@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 from faker import Faker
 import random
-from petInfoSys.models import basicInfo, Pet, Service, WalkInAppointment,Client, PetWeb, AppointmentType
+from petInfoSys.models import basicInfo, Pet, Service, WalkInAppointment
 from datetime import timedelta, date
 
 fake = Faker()
@@ -34,7 +34,7 @@ class Command(BaseCommand):
             owners.append(owner)
 
             # Generate 1-3 pets per owner
-            for _ in range(random.randint(1, 5)):
+            for _ in range(random.randint(1, 2)):
                 pet = Pet.objects.create(
                     owner=owner,
                     petName=fake.first_name(),
@@ -46,12 +46,18 @@ class Command(BaseCommand):
                 )
 
                 # Add 0-2 services
-                for _ in range(random.randint(1, 5)):
+                for _ in range(random.randint(1, 2)):
+                    return_date = None if random.choice([True, False]) else fake.date_between(
+                        start_date="today",
+                        end_date="+1y"
+                    )
+
                     Service.objects.create(
                         owner=owner,
                         pet=pet,
                         service_type=random.choice(["Vaccination", "Check-up", "Deworming"]),
                         date=fake.date_between(start_date="-2y", end_date="today"),
+                        return_date=return_date,
                         status=random.choice(["pending", "completed", "overdue"]),
                     )
 
@@ -63,6 +69,7 @@ class Command(BaseCommand):
                         prefTime=fake.time(),
                         service_name=random.choice(["Consultation", "Surgery"]),
                         status=random.choice(["pending", "completed", "overdue", "cancelled"]),
+                        request=random.choice(["pending", "accepted", "declined"]),
                     )
 
         self.stdout.write(self.style.SUCCESS(f"Successfully created {num_records} owners with pets & appointments!"))

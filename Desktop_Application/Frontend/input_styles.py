@@ -373,3 +373,39 @@ profile_view_style = """
         color: #6b7280;
     }
 """
+
+overdueServiceStatus = """
+    QFrame#serviceStatusFrame{
+	background-color:rgba(255, 108, 108, 121);
+	border-radius:10px;
+    }
+    QLabel{
+        
+        font: 87 10pt "Montserrat Black";
+        color:rgb(217, 6, 6);
+    }
+"""
+
+completedServiceStatus = """
+     QFrame#serviceStatusFrame{
+        background-color:rgb(164, 237, 182);
+        border-radius:10px;
+    }
+    QLabel{
+        
+        font: 87 10pt "Montserrat Black";
+        color:rgb(21, 87, 36);
+    }
+"""
+
+pendingServiceStatus = """
+    QFrame#serviceStatusFrame{
+        background-color:rgb(255, 235, 174);
+        border-radius:10px;
+    }
+    QLabel{
+        
+        font: 87 10pt "Montserrat Black";
+        color:rgb(133, 100, 4);
+    }
+"""

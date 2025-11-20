@@ -190,6 +190,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="deleteButton">
+        <property name="toolTip">
+         <string>CANCEL APPOINTMENT</string>
+        </property>
         <property name="styleSheet">
          <string notr="true">background:transparent;
 border:none;</string>
