@@ -1130,7 +1130,6 @@ def verify_reset_otp(request):
 
     # If just verifying OTP (no new_password provided)
     if not new_password:
-        otp_record.delete()
         return Response({'message': 'OTP verified successfully.'}, status=200)
 
     # If resetting password
