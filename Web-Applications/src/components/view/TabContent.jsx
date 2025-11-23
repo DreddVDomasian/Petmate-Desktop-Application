@@ -3,7 +3,8 @@ import PetCard from './PetCard'
 import AppointmentCard from './AppointmentCard'
 
 const TabContent = ({ 
-  activeTab, 
+  activeTab,
+  setActiveTab,
   pets, 
   appointments, 
   onOpenModal, 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-const Header = () => {
+const Header = ({ setActiveTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userFirstName, setUserFirstName] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -96,7 +96,11 @@ const Header = () => {
   const getUserInitial = () => {
     return userFirstName ? userFirstName.charAt(0).toUpperCase() : 'U'
   }
-
+ const handleAvatarClick = () => {
+    if (setActiveTab) {
+      setActiveTab('profile');
+    }
+  };
   return (
     <header>
       <div className="container">
@@ -119,7 +123,12 @@ const Header = () => {
             {isAuthenticated ? (
               <>
                 <div className="user-info">
-                  <div className="user-avatar" style={{cursor: 'pointer'}}>
+                  <div 
+                    className="user-avatar" 
+                    style={{cursor: 'pointer'}}
+                    onClick={handleAvatarClick}
+                    title="View Profile"
+                  >
                     {getUserInitial()}
                   </div>
                 </div>

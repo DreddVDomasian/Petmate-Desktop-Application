@@ -44,7 +44,7 @@ import '../styles/Dashboard.css';
 function Dashboard(props) {
   const [activeModal, setActiveModal] = useState(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
-
+ const [activeTab, setActiveTab] = useState('pets')
   const openModal = (modalName) => setActiveModal(modalName)
   const closeModal = () => setActiveModal(null)
 
@@ -127,14 +127,16 @@ function Dashboard(props) {
 
   return (
     <div className="dashboard-new">
-      <Header />
+      <Header setActiveTab={setActiveTab} />
       <ProfileContent 
         onOpenModal={openModal} 
         pets={pets}
         appointments={appointments}
         loading={loading}
         onRefresh={triggerRefresh}
-        onViewPetDetails={handleViewPetDetails} // Pass the handler
+        onViewPetDetails={handleViewPetDetails}
+        activeTab={activeTab}           // Pass activeTab
+        setActiveTab={setActiveTab}     // Pass setActiveTab
       />
       
       {/* Modals */}

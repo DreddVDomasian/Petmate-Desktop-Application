@@ -7,9 +7,11 @@ const ProfileContent = ({
   appointments,   
   loading,        
   onRefresh,
-  onViewPetDetails  // Receive from Dashboard
+  onViewPetDetails,
+  activeTab,
+  setActiveTab   // Receive from Dashboard
 }) => {
-  const [activeTab, setActiveTab] = useState('pets')
+  
 
   return (
     <div className="container">
@@ -46,6 +48,7 @@ const ProfileContent = ({
 
         <TabContent 
           activeTab={activeTab}
+          setActiveTab={setActiveTab}
           pets={pets}
           appointments={appointments}
           onOpenModal={onOpenModal}
