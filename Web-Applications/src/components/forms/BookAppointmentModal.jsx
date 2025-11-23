@@ -250,14 +250,14 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
 
   return (
     <div className="modal active">
-      <div className="modal-content">
-        <div className="modal-header">
+      <div className="new-modal-content">
+        <div className="new-modal-header">
           <h3 className="modal-title">Book Appointment</h3>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
+            <div className="new-form-group">
               <label htmlFor="appointmentPet">Select Pet</label>
               <select
                 name="pet"
@@ -278,7 +278,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
               </select>
             </div>
             
-            <div className="form-group">
+            <div className="new-form-group">
               <label htmlFor="appointmentService">Service</label>
               <select
                 name="service"
@@ -297,8 +297,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
               </select>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
+            <div className="new-form-row">
+              <div className="new-form-group">
                 <label htmlFor="appointmentDate">Preferred Date</label>
                 <input 
                   ref={dateRef}
@@ -352,10 +352,10 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
               </div>
             )}
             
-            <div className="form-group">
+            <div className="new-form-group bookBtns">
               <button 
                 type="submit" 
-                className="btn btn-primary" 
+                className="btn new-btn-primary" 
                 disabled={submitting || checkingAvailability}
               >
                 {submitting ? "Booking Appointment..." : "Book Appointment"}
