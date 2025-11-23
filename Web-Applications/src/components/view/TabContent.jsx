@@ -45,7 +45,7 @@ const TabContent = ({
       <h3>No Pets Yet</h3>
       <p>Add your first pet to get started</p>
       <button 
-        className="btn btn-primary" 
+        className="btn new-btn-primary" 
         onClick={() => onOpenModal('addPet')}
         style={{ marginTop: '15px' }}
       >
@@ -57,7 +57,7 @@ const TabContent = ({
   // Empty state component for appointments
   const EmptyAppointmentsState = () => (
     <div className="empty-state">
-      <img src="/assets/icons/calendar-empty.gif" alt="No appointments" className="empty-icon" />
+      <img src="/assets/icons/dog-walking.gif" alt="No appointments" className="empty-icon" />
       <h3>No Appointments Yet</h3>
       <p>Schedule your first appointment to get started</p>
       <button 

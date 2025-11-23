@@ -8,7 +8,7 @@ const PetCard = ({ pet, onClick }) => {
   };
 
   return (
-    <div className="pet-card" onClick={onClick} style={{ cursor: 'pointer' }}>
+    <div className="pet-card" onClick={() => onClick(pet)} style={{ cursor: 'pointer' }}>
       <div className="pet-image">
         <i className={getSpeciesIcon(pet.species)}></i>
       </div>
@@ -21,12 +21,10 @@ const PetCard = ({ pet, onClick }) => {
         </div>
         <p>{pet.remarks || 'No additional information'}</p>
         <div className="pet-actions">
-          <button className="btn new-btn-small" onClick={(e) => { e.stopPropagation(); onClick(); }}>
+          <button className="btn new-btn-small" onClick={(e) => { e.stopPropagation(); onClick(pet); }}>
             View Details
           </button>
-          <button className="editbtn new-btn-small new-btn-primary edit-pet" onClick={(e) => e.stopPropagation()}>
-            Edit
-          </button>
+
         </div>
       </div>
     </div>

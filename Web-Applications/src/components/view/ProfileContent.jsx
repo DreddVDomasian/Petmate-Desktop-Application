@@ -3,26 +3,13 @@ import TabContent from './TabContent'
 
 const ProfileContent = ({ 
   onOpenModal, 
-  pets,           // Receive from props
-  appointments,   // Receive from props
-  loading,        // Receive from props
-  onRefresh       // Receive from props
+  pets,           
+  appointments,   
+  loading,        
+  onRefresh,
+  onViewPetDetails  // Receive from Dashboard
 }) => {
   const [activeTab, setActiveTab] = useState('pets')
-  const [selectedPet, setSelectedPet] = useState(null)
-  const [selectedAppointment, setSelectedAppointment] = useState(null)
-
-  // Handle pet details view
-  const handleViewPetDetails = (pet) => {
-    setSelectedPet(pet)
-    console.log('View pet details:', pet)
-  }
-
-  // Handle appointment details view
-  const handleViewAppointmentDetails = (appointment) => {
-    setSelectedAppointment(appointment)
-    console.log('View appointment details:', appointment)
-  }
 
   return (
     <div className="container">
@@ -64,8 +51,7 @@ const ProfileContent = ({
           onOpenModal={onOpenModal}
           loading={loading}
           onRefresh={onRefresh}
-          onViewPetDetails={handleViewPetDetails}
-          onViewAppointmentDetails={handleViewAppointmentDetails}
+          onViewPetDetails={onViewPetDetails} // Pass the prop from Dashboard directly
         />
       </div>
     </div>

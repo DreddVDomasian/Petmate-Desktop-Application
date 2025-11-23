@@ -38,6 +38,7 @@ import Header from '../components/navigation/Header'
 import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
+import PetDetailsModal from '../components/modals/PetDetailsModal' // Add this import
 import '../styles/Dashboard.css';
 
 function Dashboard(props) {
@@ -51,6 +52,10 @@ function Dashboard(props) {
   const [pets, setPets] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Add state for pet details modal
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [showPetModal, setShowPetModal] = useState(false);
 
   const fetchPets = async () => {
     setLoading(true);
@@ -72,13 +77,8 @@ function Dashboard(props) {
       if (!res.ok) throw new Error('Failed to fetch appointments');
       const data = await res.json();
       
-      console.log('Appointments data:', data);
-      
       // Extract the actual appointments array from the paginated response
       const appointmentsList = data.results || [];
-      
-      console.log('Appointments list:', appointmentsList);
-      console.log('Number of appointments:', appointmentsList.length);
       
       setAppointments(Array.isArray(appointmentsList) ? appointmentsList : []);
     } catch (err) {
@@ -104,6 +104,27 @@ function Dashboard(props) {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  // Add handlers for pet details modal
+  const handleViewPetDetails = (pet) => {
+    setSelectedPet(pet);
+    setShowPetModal(true);
+  };
+
+  const handleClosePetModal = () => {
+    setSelectedPet(null);
+    setShowPetModal(false);
+  };
+
+  const handlePetUpdated = () => {
+    fetchPets(); // Refresh pets list after update
+    triggerRefresh();
+  };
+
+  const handlePetDeleted = () => {
+    fetchPets(); // Refresh pets list after delete
+    triggerRefresh();
+  };
+
   return (
     <div className="dashboard-new">
       <Header />
@@ -112,8 +133,8 @@ function Dashboard(props) {
         pets={pets}
         appointments={appointments}
         loading={loading}
-        onRefresh={triggerRefresh} // Only pass the refresh function
-        // Remove onRegisterRefresh since we're not using it
+        onRefresh={triggerRefresh}
+        onViewPetDetails={handleViewPetDetails} // Pass the handler
       />
       
       {/* Modals */}
@@ -121,8 +142,8 @@ function Dashboard(props) {
         isOpen={activeModal === 'addPet'} 
         onClose={closeModal}
         onPetAdded={() => {
-          fetchPets(); // Refresh pets list
-          triggerRefresh(); // Trigger general refresh
+          fetchPets();
+          triggerRefresh();
         }}
       />
       
@@ -130,9 +151,18 @@ function Dashboard(props) {
         isOpen={activeModal === 'bookAppointment'} 
         onClose={closeModal}
         onAppointmentBooked={() => {
-          fetchAppointments(); // Refresh appointments list
-          triggerRefresh(); // Trigger general refresh
+          fetchAppointments();
+          triggerRefresh();
         }}
+      />
+
+      {/* Pet Details Modal */}
+      <PetDetailsModal 
+        isOpen={showPetModal}
+        onClose={handleClosePetModal}
+        pet={selectedPet}
+        onPetUpdated={handlePetUpdated}
+        onPetDeleted={handlePetDeleted}
       />
     </div>
   )
