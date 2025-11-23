@@ -77,8 +77,7 @@ const TabContent = ({
         <div className="profile-card">
           <h3><i className="fas fa-paw"></i> My Pets</h3>
           <p>Manage your pets' information and view their medical history.</p>
-          
-          {/* Refresh Button */}
+     
           <div style={{ height: '12px', marginBottom: '20px' }} />
           {loading ? (
             <LoadingState />
