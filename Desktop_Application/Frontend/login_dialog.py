@@ -344,7 +344,7 @@ class LoginDialog(QDialog):
             self.user_data = response['user']
             self.accept()  # Login successful
         else:
-            toast = Toast(parent=self, message="Login failed", icon_path="Icons/warning.png", duration=2000)
+            toast = Toast(parent=self, message="Username or password not found", icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             self.loginBtn.setText("Login")
             self.loginBtn.setEnabled(True)
