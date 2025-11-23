@@ -119,7 +119,7 @@ const Header = () => {
             {isAuthenticated ? (
               <>
                 <div className="user-info">
-                  <div className="user-avatar" onClick={handleLogout} style={{cursor: 'pointer'}}>
+                  <div className="user-avatar" style={{cursor: 'pointer'}}>
                     {getUserInitial()}
                   </div>
                 </div>
@@ -129,9 +129,9 @@ const Header = () => {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#ff4757',
+                    color: '#ffa946ff',
                     cursor: 'pointer',
-                    fontSize: '14px',
+                    fontSize: '25px',
                     marginLeft: '10px'
                   }}
                 >
