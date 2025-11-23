@@ -35,52 +35,12 @@
 
 
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Header from '../components/navigation/Header'
 import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
 import '../styles/Dashboard.css';
 
-// Create a Protected Route wrapper
-const ProtectedRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(null)
-  const [loading, setLoading] = React.useState(true)
-
-  React.useEffect(() => {
-    checkAuth()
-  }, [])
-
-  const checkAuth = async () => {
-    try {
-      const res = await fetch('/api/user/', {
-        credentials: 'include',
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        setIsAuthenticated(data.is_authenticated)
-      } else {
-        setIsAuthenticated(false)
-      }
-    } catch (error) {
-      setIsAuthenticated(false)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return <div className="loading">Loading...</div>
-  }
-
-  return isAuthenticated ? children : <Navigate to="/" replace />
-}
-
-// Dashboard component with modals
 function Dashboard() {
   const [activeModal, setActiveModal] = useState(null)
 
@@ -114,36 +74,4 @@ function Dashboard() {
   )
 }
 
-// Your existing Index page (public facing)
-function Index() {
-  return (
-    <div>
-      {/* Your existing Index page content */}
-      <h1>Welcome to PetMate</h1>
-      <p>This is the public facing page</p>
-    </div>
-  )
-}
-
-function App() {
-  return (
-    <Router>
-      <div className="app">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route
-            path="/dashboard/*"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
-    </Router>
-  )
-}
-
-export default App
+export default Dashboard
