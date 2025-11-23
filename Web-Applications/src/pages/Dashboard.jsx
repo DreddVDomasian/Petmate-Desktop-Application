@@ -34,31 +34,85 @@
 // export default Dashboard;
 
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../components/navigation/Header'
 import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
 import '../styles/Dashboard.css';
 
-function Dashboard() {
+function Dashboard(props) {
   const [activeModal, setActiveModal] = useState(null)
+  const [profileRefresh, setProfileRefresh] = useState(null)
 
   const openModal = (modalName) => setActiveModal(modalName)
   const closeModal = () => setActiveModal(null)
 
+  // new state for lists & loading
+  const [pets, setPets] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPets = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/pets/', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch pets');
+      const data = await res.json();
+      setPets(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('fetchPets error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAppointments = async () => {
+    try {
+      const res = await fetch('/api/appointments/', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch appointments');
+      const data = await res.json();
+      setAppointments(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('fetchAppointments error', err);
+    }
+  };
+
+  // initial load
+  useEffect(() => {
+    fetchPets();
+    fetchAppointments();
+  }, []);
+
+  // handler passed into AddPetModal — called after successful add
+  const handlePetAdded = () => {
+    fetchPets();
+    // optional: switch to pets tab if you want
+  };
+
+  // unified refresh if you kept onRefresh prop usage
+  const handleRefresh = () => {
+    fetchPets();
+    fetchAppointments();
+  };
+
   return (
     <div className="dashboard-new">
       <Header />
-      <ProfileContent onOpenModal={openModal} />
+      <ProfileContent onOpenModal={openModal} onRegisterRefresh={setProfileRefresh} />
       
       {/* Modals */}
       <AddPetModal 
         isOpen={activeModal === 'addPet'} 
         onClose={closeModal}
         onPetAdded={() => {
-          closeModal()
-          // Data will be refreshed by ProfileContent
+          // modal already closed by AddPetModal, trigger profile refresh
+          if (profileRefresh) {
+            console.log('Dashboard: calling profileRefresh after pet added')
+            profileRefresh();
+          } else {
+            console.warn('Dashboard: profileRefresh not registered')
+          }
         }}
       />
       
@@ -66,8 +120,12 @@ function Dashboard() {
         isOpen={activeModal === 'bookAppointment'} 
         onClose={closeModal}
         onAppointmentBooked={() => {
-          closeModal()
-          // Data will be refreshed by ProfileContent
+          if (profileRefresh) {
+            console.log('Dashboard: calling profileRefresh after appointment booked')
+            profileRefresh();
+          } else {
+            console.warn('Dashboard: profileRefresh not registered')
+          }
         }}
       />
     </div>

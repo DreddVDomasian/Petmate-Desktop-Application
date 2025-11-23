@@ -61,7 +61,7 @@ const TabContent = ({
       <h3>No Appointments Yet</h3>
       <p>Schedule your first appointment to get started</p>
       <button 
-        className="btn btn-primary" 
+        className="btn new-btn-primary" 
         onClick={() => onOpenModal('bookAppointment')}
         style={{ marginTop: '15px' }}
       >
@@ -79,22 +79,7 @@ const TabContent = ({
           <p>Manage your pets' information and view their medical history.</p>
           
           {/* Refresh Button */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <button 
-              className="btn" 
-              onClick={onRefresh}
-              disabled={loading}
-            >
-              <i className="fas fa-sync-alt"></i> Refresh
-            </button>
-            <button 
-              className="btn btn-primary" 
-              onClick={() => onOpenModal('addPet')}
-            >
-              <i className="fas fa-plus"></i> Add New Pet
-            </button>
-          </div>
-
+          <div style={{ height: '12px', marginBottom: '20px' }} />
           {loading ? (
             <LoadingState />
           ) : pets.length === 0 ? (
@@ -119,7 +104,7 @@ const TabContent = ({
           <div className="appointment-card-header">
             <h3><i className="fas fa-calendar-alt"></i> My Appointments</h3>
             <button 
-              className="btn btn-primary" 
+              className="btn new-btn-primary" 
               onClick={() => onOpenModal('bookAppointment')}
             >
               <i className="fas fa-calendar-plus"></i> Book New Appointment

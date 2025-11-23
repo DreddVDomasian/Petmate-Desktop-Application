@@ -119,7 +119,6 @@ const Header = () => {
             {isAuthenticated ? (
               <>
                 <div className="user-info">
-                  <span className="welcome-text">Welcome, {userFirstName}</span>
                   <div className="user-avatar" onClick={handleLogout} style={{cursor: 'pointer'}}>
                     {getUserInitial()}
                   </div>

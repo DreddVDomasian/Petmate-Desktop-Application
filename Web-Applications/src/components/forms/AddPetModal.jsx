@@ -162,14 +162,14 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
 
   return (
     <div className="modal active" id="addPetModal">
-      <div className="modal-content">
-        <div className="modal-header">
+      <div className="new-modal-content">
+        <div className="new-modal-header">
           <h3 className="modal-title">Add New Pet</h3>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
+            <div className="new-form-group">
               <label htmlFor="petName">Pet Name</label>
               <input 
                 name="name"
@@ -182,8 +182,8 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               />
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
+            <div className="new-form-row">
+              <div className="new-form-group">
                 <label htmlFor="species">Species</label>
                 <select 
                   name="species"
@@ -198,7 +198,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
                   <option value="others">Others</option>
                 </select>
               </div>
-              <div className="form-group">
+              <div className="new-form-group">
                 <label htmlFor="breed">Breed</label>
                 <input 
                   name="breed"
@@ -214,7 +214,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
 
             {/* ADD CUSTOM SPECIES FIELD */}
             {form.species === "others" && (
-              <div className="form-group">
+              <div className="new-form-group">
                 <label htmlFor="customSpecies">Specify Species</label>
                 <input 
                   name="customSpecies"
@@ -228,8 +228,8 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               </div>
             )}
             
-            <div className="form-row">
-              <div className="form-group">
+            <div className="new-form-row">
+              <div className="new-form-group">
                 <label htmlFor="birthday">Birthday</label>
                 <input 
                   ref={birthdayRef}
@@ -239,7 +239,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
                   readOnly
                 />
               </div>
-              <div className="form-group">
+              <div className="new-form-group">
                 <label htmlFor="age">Age</label>
                 <input 
                   name="age"
@@ -252,8 +252,8 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               </div>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
+            <div className="new-form-row">
+              <div className="new-form-group">
                 <label htmlFor="color">Color</label>
                 <input 
                   name="color"
@@ -265,7 +265,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="new-form-group">
                 <label htmlFor="sex">Sex</label>
                 <select 
                   name="sex"
@@ -281,7 +281,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               </div>
             </div>
             
-            <div className="form-group">
+            <div className="new-form-group">
               <label htmlFor="remarks">Remarks</label>
               <textarea 
                 name="remarks"
@@ -293,7 +293,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               ></textarea>
             </div>
             
-            <div className="form-group">
+            <div className="new-form-group">
               <button type="submit" className="btn btn-primary">Add Pet</button>
               <button type="button" className="btn" onClick={onClose}>Cancel</button>
             </div>

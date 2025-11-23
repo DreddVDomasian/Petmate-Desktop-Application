@@ -21,10 +21,10 @@ const PetCard = ({ pet, onClick }) => {
         </div>
         <p>{pet.remarks || 'No additional information'}</p>
         <div className="pet-actions">
-          <button className="btn btn-small" onClick={(e) => { e.stopPropagation(); onClick(); }}>
+          <button className="btn new-btn-small" onClick={(e) => { e.stopPropagation(); onClick(); }}>
             View Details
           </button>
-          <button className="btn btn-small btn-primary" onClick={(e) => e.stopPropagation()}>
+          <button className="editbtn new-btn-small new-btn-primary edit-pet" onClick={(e) => e.stopPropagation()}>
             Edit
           </button>
         </div>

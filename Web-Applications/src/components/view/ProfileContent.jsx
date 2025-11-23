@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { getCookie } from '../../utils/csrf'
 import TabContent from './TabContent'
 
-const ProfileContent = ({ onOpenModal }) => {
+const ProfileContent = ({ onOpenModal, onRegisterRefresh }) => {
   const [activeTab, setActiveTab] = useState('pets')
   const [pets, setPets] = useState([])
   const [appointments, setAppointments] = useState([])
@@ -62,6 +62,19 @@ const ProfileContent = ({ onOpenModal }) => {
     refreshData();
   }, []);
 
+  // Register refresh handler with parent so parent can trigger data reload
+  // (Dashboard will pass a setter to receive this function)
+  useEffect(() => {
+    if (onRegisterRefresh && typeof onRegisterRefresh === 'function') {
+      onRegisterRefresh(refreshData)
+    }
+    return () => {
+      if (onRegisterRefresh && typeof onRegisterRefresh === 'function') {
+        onRegisterRefresh(null)
+      }
+    }
+  }, [onRegisterRefresh]);
+
   const refreshData = () => {
     setLoading(true);
     fetchUserPets();
@@ -100,7 +113,7 @@ const ProfileContent = ({ onOpenModal }) => {
         <div className="profile-header">
           <h1 className="profile-title">My Profile</h1>
           <div>
-            <button className="btn btn-primary" onClick={() => onOpenModal('addPet')}>
+            <button className="btn new-btn-primary" onClick={() => onOpenModal('addPet')}>
               <i className="fas fa-plus"></i> Add New Pet
             </button>
           </div>
