@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { getCookie } from '../utils/csrf'; // Make sure this path is correct
+import { getCookie } from '../../utils/csrf'; // Make sure this path is correct
 
 const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
   // COPY STATE FROM OLD AddPets.jsx

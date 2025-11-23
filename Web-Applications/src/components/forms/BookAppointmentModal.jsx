@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { getCookie } from "../utils/csrf";
+import { getCookie } from '../../utils/csrf';
 
 const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY STATE FROM OLD SetAppointment.jsx

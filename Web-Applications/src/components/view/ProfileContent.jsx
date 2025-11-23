@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getCookie } from '../utils/csrf'
+import { getCookie } from '../../utils/csrf'
 import TabContent from './TabContent'
 
 const ProfileContent = ({ onOpenModal }) => {

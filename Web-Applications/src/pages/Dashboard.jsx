@@ -37,10 +37,10 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Header from '../components/navigation/Header'
-import ProfileContent from './components/view/ProfileContent'
+import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
-import './App.css'
+import '../styles/Dashboard.css';
 
 // Create a Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
