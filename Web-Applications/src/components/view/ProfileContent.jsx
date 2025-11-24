@@ -8,6 +8,7 @@ const ProfileContent = ({
   loading,        
   onRefresh,
   onViewPetDetails,
+  onViewAppointmentDetails, 
   activeTab,
   setActiveTab   // Receive from Dashboard
 }) => {
@@ -54,7 +55,8 @@ const ProfileContent = ({
           onOpenModal={onOpenModal}
           loading={loading}
           onRefresh={onRefresh}
-          onViewPetDetails={onViewPetDetails} // Pass the prop from Dashboard directly
+          onViewPetDetails={onViewPetDetails}
+           onViewAppointmentDetails={onViewAppointmentDetails} // Pass the prop from Dashboard directly
         />
       </div>
     </div>

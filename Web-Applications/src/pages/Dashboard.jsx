@@ -39,15 +39,18 @@ import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
 import PetDetailsModal from '../components/modals/PetDetailsModal' // Add this import
+import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal' 
 import '../styles/Dashboard.css';
 
 function Dashboard(props) {
   const [activeModal, setActiveModal] = useState(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
- const [activeTab, setActiveTab] = useState('pets')
+  const [activeTab, setActiveTab] = useState('pets')
   const openModal = (modalName) => setActiveModal(modalName)
   const closeModal = () => setActiveModal(null)
 
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   // new state for lists & loading
   const [pets, setPets] = useState([]);
   const [appointments, setAppointments] = useState([]);
@@ -57,6 +60,15 @@ function Dashboard(props) {
   const [selectedPet, setSelectedPet] = useState(null);
   const [showPetModal, setShowPetModal] = useState(false);
 
+  const handleViewAppointmentDetails = (appointment) => {
+  setSelectedAppointment(appointment);
+  setShowAppointmentModal(true);
+  };
+
+  const handleCloseAppointmentModal = () => {
+    setSelectedAppointment(null);
+    setShowAppointmentModal(false);
+  };
   const fetchPets = async () => {
     setLoading(true);
     try {
@@ -135,6 +147,7 @@ function Dashboard(props) {
         loading={loading}
         onRefresh={triggerRefresh}
         onViewPetDetails={handleViewPetDetails}
+        onViewAppointmentDetails={handleViewAppointmentDetails}
         activeTab={activeTab}           // Pass activeTab
         setActiveTab={setActiveTab}     // Pass setActiveTab
       />
@@ -148,7 +161,11 @@ function Dashboard(props) {
           triggerRefresh();
         }}
       />
-      
+      <AppointmentDetailsModal 
+        isOpen={showAppointmentModal}
+        onClose={handleCloseAppointmentModal}
+        appointment={selectedAppointment}
+      />
       <BookAppointmentModal 
         isOpen={activeModal === 'bookAppointment'} 
         onClose={closeModal}

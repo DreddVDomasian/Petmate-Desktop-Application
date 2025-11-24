@@ -293,8 +293,8 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               ></textarea>
             </div>
             
-            <div className="new-form-group">
-              <button type="submit" className="btn btn-primary">Add Pet</button>
+            <div className="new-form-group modal-actions">
+              <button type="submit" className="btn new-btn-primary">Add Pet</button>
               <button type="button" className="btn" onClick={onClose}>Cancel</button>
             </div>
           </form>

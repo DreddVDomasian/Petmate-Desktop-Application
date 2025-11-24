@@ -270,7 +270,7 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
             <button className="modal-close" onClick={onClose}>&times;</button>
           </div>
           <div className="modal-body">
-            <div className="modal-tabs" style={{ marginBottom: '20px' }}>
+            <div className="modal-tabs" style={{ marginBottom: '10x' }}>
               <button
                 className={`tab ${activeTab === 'details' ? 'active' : ''}`}
                 onClick={() => handleTabClick('details')}
@@ -356,7 +356,7 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
                   )}
                 </div>
 
-                <div className="modal-actions" style={{ display: 'flex', gap: '15px', justifyContent: 'flex-end', marginTop: '30px' }}>
+                <div className="modal-actions">
                   <button
                     className="btn"
                     onClick={handleDeleteClick}

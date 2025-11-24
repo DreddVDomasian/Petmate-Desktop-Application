@@ -352,7 +352,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
               </div>
             )}
             
-            <div className="new-form-group bookBtns">
+            <div className="new-form-group bookBtns modal-actions">
               <button 
                 type="submit" 
                 className="btn new-btn-primary" 
