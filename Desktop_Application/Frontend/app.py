@@ -35,12 +35,18 @@ from config_loader import API_BASE_URL
 import requests
 import webbrowser
 
+import pyqtgraph as pg
+from PyQt6.QtWidgets import QVBoxLayout
+from PyQt6.QtCore import QTimer
+from analytics import fetch_daily_analytics
 
 
 class MainUI(QMainWindow):
     def __init__(self,user_data=None):
         super(MainUI, self).__init__()
         uic.loadUi("ui-files/Home.ui", self)
+
+
         # Initialize delete and update functions
         self.deleteFunction = Delete(self)
         self.updateFunction = Update(self)
@@ -123,6 +129,11 @@ class MainUI(QMainWindow):
         self.Bday.setMaximumDate(QDate.currentDate())
 
         self.temp_passwords = {}
+
+        # Analytics/Homepage
+        self.stackedWidget.setCurrentIndex(0)
+        self.setup_analytics()
+
 
 
     #LAYOUT FOR SCROLL AREAS FOR CARDS
@@ -2422,3 +2433,58 @@ class MainUI(QMainWindow):
 
             if card.profileIcon:
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
+
+    def setup_analytics(self):
+        # Clear frame layout
+        for i in reversed(range(self.DailyAnalyticsFrame.layout().count())):
+            widget = self.DailyAnalyticsFrame.layout().itemAt(i).widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        # Create layout if none
+        layout = self.DailyAnalyticsFrame.layout()
+        if layout is None:
+            layout = QVBoxLayout(self.DailyAnalyticsFrame)
+            self.DailyAnalyticsFrame.setLayout(layout)
+
+
+        self.graphWidget = pg.PlotWidget()
+        layout.addWidget(self.graphWidget)
+
+        # Set background to LIGHT GRAY (so white lines won't disappear)
+        self.graphWidget.setBackground('#F0F0F0')
+
+        # Enable grid
+        self.graphWidget.showGrid(x=True, y=True, alpha=0.4)
+
+        # Title + Axis Colors
+        self.graphWidget.setTitle("Daily Appointments", color="black", size="16pt")
+        styles = {'color': 'black', 'font-size': '12pt'}
+        self.graphWidget.setLabel('left', 'Appointments', **styles)
+        self.graphWidget.setLabel('bottom', 'Days', **styles)
+        self.graphWidget.getAxis('left').setPen(pg.mkPen(color='black'))
+        self.graphWidget.getAxis('bottom').setPen(pg.mkPen(color='black'))
+
+
+        try:
+            res = requests.get("http://127.0.0.1:8000/api/analyticsAppointments")
+            data = res.json()
+        except:
+            data = {"Mon": 0, "Tue": 0, "Wed": 0, "Thu": 0, "Fri": 0, "Sat": 0, "Sun": 0}
+
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        counts = [data.get(d, 0) for d in days]
+
+
+        self.graphWidget.plot(
+            list(range(len(days))),
+            counts,
+            pen=pg.mkPen(color="green", width=4),
+            symbol='o',
+            symbolBrush='darkgray',
+            symbolSize=10,
+        )
+
+        # Set x-axis day labels
+        axis = self.graphWidget.getPlotItem().getAxis('bottom')
+        axis.setTicks([[(i, days[i]) for i in range(len(days))]])
