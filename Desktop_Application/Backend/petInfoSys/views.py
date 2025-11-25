@@ -683,7 +683,9 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-
+class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = basicInfo.objects.all()
+    serializer_class = BasicInfoSerializer
 class PatientSearchView(generics.ListAPIView):
     serializer_class = BasicInfoSerializer
     pagination_class = StandardPagination
@@ -713,9 +715,7 @@ class PatientSearchView(generics.ListAPIView):
         return queryset
 
 # GET / PUT / DELETE single patient by id
-class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = basicInfo.objects.all()
-    serializer_class = BasicInfoSerializer
+
 
 
 @api_view(['GET'])
@@ -1148,31 +1148,111 @@ def verify_reset_otp(request):
     return Response({'message': 'Password reset successfully.'}, status=200)
 
 # GET user info for profile display (Settings)
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 def user_profile(request):
     user = request.user
-
-    # Safely fetch the related basicInfo record
     profile = basicInfo.objects.filter(user_account=user).first()
 
-    # Debug logs (will show in Django console)
-    print("DEBUG USER:", user)
-    print("DEBUG PROFILE:", profile)
+    if request.method == 'GET':
+        # Debug logs
+        print("DEBUG USER:", user)
+        print("DEBUG PROFILE:", profile)
 
-    response_data = {
-        "first_name": user.first_name or "",
-        "last_name": user.last_name or "",
-        "middle_name": "",
-        "email": user.email or "",
-        "phoneNumber": "",
-    }
+        response_data = {
+            "first_name": user.first_name or "",
+            "last_name": user.last_name or "",
+            "middle_name": "",
+            "email": user.email or "",
+            "phoneNumber": "",
+            "province": "",
+            "city": "", 
+            "barangay": "",
+            "detailedAddress": "",
+            "SecondaryNumber": ""
+        }
 
-    if profile:
-        response_data["middle_name"] = profile.middleName or ""
-        response_data["phoneNumber"] = profile.phoneNumber or ""
+        if profile:
+            response_data.update({
+                "middle_name": profile.middleName or "",
+                "phoneNumber": profile.phoneNumber or "",
+                "SecondaryNumber": profile.SecondaryNumber or "",
+                "province": profile.province or "",
+                "city": profile.city or "",
+                "barangay": profile.barangay or "",
+                "detailedAddress": profile.detailedAddress or ""
+            })
 
-    return Response(response_data)
+        return Response(response_data)
+
+    elif request.method == 'PUT':
+            try:
+                data = request.data
+                
+                # Extract core fields
+                first_name = data.get('first_name', '').strip()
+                last_name = data.get('last_name', '').strip()
+                email = data.get('email', '').strip()
+
+                # Validate required fields
+                if not first_name or not last_name or not email:
+                    return Response({"error": "First name, last name, and email are required"}, 
+                                status=status.HTTP_400_BAD_REQUEST)
+
+                # Update User model (auth_user)
+                user.first_name = first_name
+                user.last_name = last_name
+                user.email = email
+                user.save()
+
+                # Update or create basicInfo - it already knows the user via user_account
+                if profile:
+                    # Update all basicInfo fields
+                    profile.firstName = first_name
+                    profile.lastName = last_name
+                    profile.email = email
+                    profile.middleName = data.get('middle_name', profile.middleName)
+                    profile.phoneNumber = data.get('phoneNumber', profile.phoneNumber)
+                    profile.SecondaryNumber = data.get('SecondaryNumber', profile.SecondaryNumber)
+                    profile.province = data.get('province', profile.province)
+                    profile.city = data.get('city', profile.city)
+                    profile.barangay = data.get('barangay', profile.barangay)
+                    profile.detailedAddress = data.get('detailedAddress', profile.detailedAddress)
+                    profile.save()
+                else:
+                    # Create new basicInfo - user_account automatically links to current user
+                    profile = basicInfo.objects.create(
+                        firstName=first_name,
+                        lastName=last_name,
+                        email=email,
+                        middleName=data.get('middle_name', ''),
+                        phoneNumber=data.get('phoneNumber', ''),
+                        SecondaryNumber=data.get('SecondaryNumber', ''),
+                        province=data.get('province', ''),
+                        city=data.get('city', ''),
+                        barangay=data.get('barangay', ''),
+                        detailedAddress=data.get('detailedAddress', ''),
+                        user_account=user,  # This links it to the current user
+                        source='web',
+                        desktop_record='show'
+                    )
+
+                return Response({
+                    "message": "Profile updated successfully",
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "email": user.email,
+                    "middle_name": profile.middleName,
+                    "phoneNumber": profile.phoneNumber,
+                    "SecondaryNumber": profile.SecondaryNumber,
+                    "province": profile.province,
+                    "city": profile.city,
+                    "barangay": profile.barangay,
+                    "detailedAddress": profile.detailedAddress
+                })
+
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

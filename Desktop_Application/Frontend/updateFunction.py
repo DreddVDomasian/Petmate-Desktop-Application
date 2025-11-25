@@ -31,7 +31,7 @@ class Update:
         self.set_combobox_value(self.ui.barangayComboBox, patient.get("barangay"))
         self.ui.detailedAddressEdit.setText(patient.get("detailedAddress"))
         self.ui.emailEdit.setText(patient.get("email"))
-        self.ui.emergencyNoEdit.setText(patient.get("emergencyNumber"))
+        self.ui.secondaryPhoneEdit.setText(patient.get("SecondaryNumber"))
         self.ui.selected_patient_id = patient.get("id")
 
     def update_patient_info(self, owner_id):
@@ -60,7 +60,7 @@ class Update:
             "city": self.ui.cityComboBox.currentText(),
             "barangay": self.ui.barangayComboBox.currentText(),
             "detailedAddress": self.ui.detailedAddressEdit.text().strip() or None,
-            "emergencyNumber": self.ui.emergencyNoEdit.text().strip() or None
+            "SecondaryNumber": self.ui.secondaryPhoneEdit.text().strip() or None
         }
 
         # Validate combo boxes
