@@ -3,6 +3,19 @@ html {
     scroll-behavior: smooth;
 }
 
+:root {
+    --primary: #78B3CE;
+    --secondary: #FCD597;
+    --light: #FCFCFC;
+    --dark: #333333;
+    --accent: #5a9bb8;
+    --gray: #f5f5f5;
+
+
+    --orange: #ff8c00;
+}
+
+
 body {
     margin: 0;
     padding: 0;
@@ -14,6 +27,8 @@ body {
 }
 
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -21,7 +36,7 @@ body {
 a {
     color: inherit;
     text-decoration: none;
-    color: #ccc;
+    color: #360a0a;
 }
 
 /* Global button reset */
@@ -34,18 +49,6 @@ input, textarea, select {
     font-family: inherit;
 }
 
-    /* ========================================
-    NAVIGATION STYLES (Global)
-   ======================================== */
-
-.login-btn {
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.login-btn:hover {
-    color: #ff8c00 !important;
-}
 
 /* ========================================
     MODAL STYLES (Global - Used by Navigation)

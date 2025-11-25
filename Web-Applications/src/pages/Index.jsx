@@ -8,19 +8,22 @@ import ServicesSection from '../components/sections/ServicesSection';
 import OfficeHours from '../components/common/OfficeHours';
 import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/common/Footer';
-import LandingPage from '../components/view/HomePage';
+import HomePage from '../components/view/HomePage';
 
 function Index() {
   return (
-    <div className="index-page"> 
-      <Navigation />
-      <LandingPage />
-      <AboutSection />
-      <ServicesSection />
-      <OfficeHours />
-      <ContactSection />
-      <Footer />
-    </div>
+    <>
+
+      <div className="index-page">
+        <Navigation />
+        <HomePage />
+        <AboutSection />
+        <ServicesSection />
+        <OfficeHours />
+        <ContactSection />
+        <Footer />
+      </div>
+    </>
   );
 }
 
