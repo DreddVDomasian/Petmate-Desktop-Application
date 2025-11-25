@@ -49,7 +49,7 @@ class Update:
             Toast(self.ui, "No patient selected!", icon_path="Icons/warning.png").show_toast()
             return
 
-        # Collect data from widgets safely
+        # Collect data from widgets (same as before)
         data = {
             "firstName": self.ui.firstNameEdit.text().strip(),
             "lastName": self.ui.lastNameEdit.text().strip(),
@@ -63,7 +63,7 @@ class Update:
             "SecondaryNumber": self.ui.secondaryPhoneEdit.text().strip() or None
         }
 
-        # Validate combo boxes
+        # Validate combo boxes (same as before)
         for combo, name in [
             (self.ui.provinceComboBox, "province"),
             (self.ui.cityComboBox, "city"),
@@ -78,22 +78,109 @@ class Update:
         try:
             response = requests.put(url, json=data)
             if response.status_code == 200:
-                # ✅ Use safe page number - fallback to page 1 if invalid
+                self.sync_to_auth_user_if_linked(patient_id, data)
+
+                # ✅ Continue with UI updates
                 safe_page = getattr(self.ui, 'patient_currentPage', None) or 1
 
                 def post_update_ui():
                     self.ui.clearInputs()
                     self.ui.navigate_to_page(2)
-                    # ✅ Reload with safe page number
                     self.ui.load_patients(safe_page, search_term=None)
                     Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
 
-                QTimer.singleShot(100, post_update_ui)  # ✅ Increased delay for safety
+                QTimer.singleShot(100, post_update_ui)
             else:
                 Toast(self.ui, f"Update failed! {response.text}", icon_path="Icons/warning.png").show_toast()
         except Exception as e:
             Toast(self.ui, f"Unexpected error: {str(e)}", icon_path="Icons/warning.png").show_toast()
+            patient_id = getattr(self.ui, "selected_patient_id", None)
+            if not patient_id:
+                Toast(self.ui, "No patient selected!", icon_path="Icons/warning.png").show_toast()
+                return
 
+            # Collect data from widgets safely
+            data = {
+                "firstName": self.ui.firstNameEdit.text().strip(),
+                "lastName": self.ui.lastNameEdit.text().strip(),
+                "middleName": self.ui.middleNameEdit.text().strip() or None,
+                "email": self.ui.emailEdit.text().strip() or None,
+                "phoneNumber": self.ui.phoneNumberEdit.text().strip(),
+                "province": self.ui.provinceComboBox.currentText(),
+                "city": self.ui.cityComboBox.currentText(),
+                "barangay": self.ui.barangayComboBox.currentText(),
+                "detailedAddress": self.ui.detailedAddressEdit.text().strip() or None,
+                "SecondaryNumber": self.ui.secondaryPhoneEdit.text().strip() or None
+            }
+
+            # Validate combo boxes
+            for combo, name in [
+                (self.ui.provinceComboBox, "province"),
+                (self.ui.cityComboBox, "city"),
+                (self.ui.barangayComboBox, "barangay")
+            ]:
+                if combo.currentIndex() == 0 or combo.currentText().strip() == "":
+                    Toast(self.ui, f"Invalid {name} selected!", icon_path="Icons/warning.png").show_toast()
+                    return
+
+            url = f"{API_BASE_URL}/api/patients/{patient_id}/"
+
+            try:
+                response = requests.put(url, json=data)
+                if response.status_code == 200:
+                    safe_page = getattr(self.ui, 'patient_currentPage', None) or 1
+
+                    def post_update_ui():
+                        self.ui.clearInputs()
+                        self.ui.navigate_to_page(2)
+                        self.ui.load_patients(safe_page, search_term=None)
+                        Toast(self.ui, "Patient updated successfully!", icon_path="Icons/check.png").show_toast()
+
+                    QTimer.singleShot(100, post_update_ui)  # ✅ Increased delay for safety
+                else:
+                    Toast(self.ui, f"Update failed! {response.text}", icon_path="Icons/warning.png").show_toast()
+            except Exception as e:
+                Toast(self.ui, f"Unexpected error: {str(e)}", icon_path="Icons/warning.png").show_toast()
+
+    def sync_to_auth_user_if_linked(self, patient_id, patient_data):
+        """Sync patient data to auth_user only if a linked account exists"""
+        try:
+            # Get patient to check for linked user
+            patient_response = requests.get(f"{API_BASE_URL}/api/patients/{patient_id}/")
+            if patient_response.status_code == 200:
+                patient_info = patient_response.json()
+                user_account_id = patient_info.get('user_account')
+
+                if user_account_id:
+                    # Update the linked User
+                    user_update_data = {
+                        "first_name": patient_data["firstName"],
+                        "last_name": patient_data["lastName"],
+                        "email": patient_data["email"]
+                    }
+
+                    # Use the new endpoint
+                    user_url = f"{API_BASE_URL}/api/user/{user_account_id}/"
+                    print(f"Attempting to update user at: {user_url}")
+                    print(f"With data: {user_update_data}")
+
+                    user_response = requests.patch(user_url, json=user_update_data)
+
+                    if user_response.status_code == 200:
+                        print(f"SYNC: Successfully updated User {user_account_id}")
+                        print(f"Response: {user_response.json()}")
+                    else:
+                        print(f"SYNC: Failed to update User {user_account_id}")
+                        print(f"Status: {user_response.status_code}")
+                        print(f"Response: {user_response.text}")
+                else:
+                    print("SYNC: No linked user - skipping")
+            else:
+                print(f"SYNC: Failed to get patient data - Status: {patient_response.status_code}")
+        except Exception as e:
+            print(f"SYNC ERROR: {e}")
+            import traceback
+            print(f"Traceback: {traceback.format_exc()}")
     # UPDATE PET INFO
     def populate_pet_form(self, pet):
         self.ui.petName.setText(pet["petName"])

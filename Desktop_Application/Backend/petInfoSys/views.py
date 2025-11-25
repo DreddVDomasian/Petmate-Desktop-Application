@@ -683,9 +683,29 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+
 class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = basicInfo.objects.all()
     serializer_class = BasicInfoSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        serializer.is_valid(raise_exception=True)
+
+        # Save the basicInfo first
+        self.perform_update(serializer)
+
+        # Then sync to linked User if exists
+        if instance.user_account:
+            user = instance.user_account
+            user.first_name = instance.firstName
+            user.last_name = instance.lastName
+            user.email = instance.email
+            user.save()
+            print(f"Auto-synced to User {user.id}")
+
+        return Response(serializer.data)
 class PatientSearchView(generics.ListAPIView):
     serializer_class = BasicInfoSerializer
     pagination_class = StandardPagination
@@ -1203,6 +1223,7 @@ def user_profile(request):
                 user.first_name = first_name
                 user.last_name = last_name
                 user.email = email
+                user.username = email
                 user.save()
 
                 # Update or create basicInfo - it already knows the user via user_account
@@ -1255,6 +1276,37 @@ def user_profile(request):
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Add this to your views.py - for desktop app to update users by ID
+@api_view(['PUT', 'PATCH'])
+def update_user_by_id(request, user_id):
+    """Endpoint for desktop app to update user by ID"""
+    try:
+        user = User.objects.get(id=user_id)
+        data = request.data
+
+        print(f"=== DESKTOP UPDATE USER {user_id} ===")
+        print(f"Data: {data}")
+
+        # Update user fields
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.email = data.get('email', user.email)
+        user.save()
+
+        print(f"User {user_id} updated: {user.first_name} {user.last_name}")
+
+        return Response({
+            "message": "User updated successfully",
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email
+        })
+
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    except Exception as e:
+        print(f"ERROR updating user {user_id}: {str(e)}")
+        return Response({"error": str(e)}, status=400)
 
 # POST change password (Settings)
 @api_view(['POST'])
