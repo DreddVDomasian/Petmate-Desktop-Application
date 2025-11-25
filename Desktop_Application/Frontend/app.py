@@ -2451,11 +2451,13 @@ class MainUI(QMainWindow):
         self.graphWidget = pg.PlotWidget()
         layout.addWidget(self.graphWidget)
 
+        self.graphWidget.setXRange(0, 7)
+        self.graphWidget.setYRange(0, 10)
         # Set background to LIGHT GRAY (so white lines won't disappear)
         self.graphWidget.setBackground('#F0F0F0')
 
         # Enable grid
-        self.graphWidget.showGrid(x=True, y=True, alpha=0.4)
+        self.graphWidget.showGrid(x=True, y=True, alpha=0.1)
 
         # Title + Axis Colors
         self.graphWidget.setTitle("Daily Appointments", color="black", size="16pt")
