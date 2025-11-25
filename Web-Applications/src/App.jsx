@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Index from './pages/Index'
 import Dashboard from './pages/Dashboard'
 import './App.css'
+// import { Helmet } from "react-helmet";
 
 // Create a Protected Route wrapper
 const ProtectedRoute = ({ children }) => {

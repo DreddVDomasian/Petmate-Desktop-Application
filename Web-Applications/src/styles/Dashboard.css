@@ -983,7 +983,7 @@ select option {
   font-size: 3rem;
   margin-bottom: 1rem;
   opacity: 0.5;
-  align-item:center;
+  align-items:center;
 }
 
 .no-appointments h3 {
