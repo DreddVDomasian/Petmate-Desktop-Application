@@ -7,6 +7,11 @@ body {
     font-family: 'Poppins', sans-serif;
 
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
 .container {
     width: 100%;
@@ -131,7 +136,7 @@ header {
     box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     background: var(--primary);
     color: rgb(17, 42, 30);
-    border-radius: 4px;
+    border-radius: 25px;
 }
 
 .login-btn:hover {
@@ -477,6 +482,18 @@ header {
     .password-checklist.vertical { gap: 8px; font-size: 13px; }
 }
 
+/* Home Section */
+.home-section {
+    margin-top: 80px !important; /* Match your header height */
+    height: calc(100vh - 80px) !important; /* Full viewport minus header */
+    min-height: calc(100vh - 80px) !important;
+    position: relative;
+    background-color: #4885CC;
+    background-size: cover;
+    background-position: center;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    overflow: hidden; /* Prevent any overflow causing gaps */
+}
 
 
 
@@ -503,6 +520,8 @@ header {
     justify-content: space-between;
     gap: 60px;
     position: relative;
+    z-index: 2;
+    padding: 0; /* Remove any padding that might cause gaps */
 }
 
 .doctor-image {
@@ -594,6 +613,8 @@ header {
 
     min-width: 180px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: var(--light);
+}
 
 }
 
@@ -607,8 +628,8 @@ header {
 .about-section {
     padding: 90px 0;
     background-color: var(--light);
+    max-height: 100dvh;
 }
-
 .section-title {
     text-align: center;
     margin-bottom: 50px;

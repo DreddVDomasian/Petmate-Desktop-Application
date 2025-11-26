@@ -34,7 +34,6 @@
 // export default Dashboard;
 
 import React, { useState, useEffect } from 'react'
-import Header from '../components/navigation/Header'
 import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
@@ -139,7 +138,6 @@ function Dashboard(props) {
 
   return (
     <div className="dashboard-new">
-      <Header setActiveTab={setActiveTab} />
       <ProfileContent 
         onOpenModal={openModal} 
         pets={pets}

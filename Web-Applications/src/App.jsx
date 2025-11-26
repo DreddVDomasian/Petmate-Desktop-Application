@@ -1,9 +1,11 @@
+// App.jsx (updated)
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Index from './pages/Index'
 import Dashboard from './pages/Dashboard'
+import Header from './components/navigation/Header' // Import the unified Header
 import './App.css'
-// import { Helmet } from "react-helmet";
+import './styles/Dashboard.css' // Make sure Dashboard.css is imported for global styles
 
 // Create a Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -37,7 +39,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (loading) {
-    return <div className="loading">Loading...</div> // Add your loading component
+    return <div className="loading">Loading...</div>
   }
 
   return isAuthenticated ? children : <Navigate to="/" replace />
@@ -47,6 +49,9 @@ function App() {
   return (
     <Router>
       <div className="app">
+        {/* Unified Header for all pages */}
+        <Header />
+        
         <Routes>
           <Route path="/" element={<Index />} />
           <Route
@@ -57,7 +62,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Optional: Catch all route for 404 */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
