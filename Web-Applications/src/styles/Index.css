@@ -21,7 +21,6 @@ html, body {
 }
 
 
-
 /* Navbar - scope to index page */
 header {
     background-color: var(--light);
@@ -615,7 +614,6 @@ header {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     color: var(--light);
 }
-
 
 
 .btn-primary:hover {
