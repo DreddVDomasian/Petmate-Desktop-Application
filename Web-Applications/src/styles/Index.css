@@ -616,7 +616,6 @@ header {
     color: var(--light);
 }
 
-}
 
 .btn-primary:hover {
     background: linear-gradient(135deg, #e55a00, #e67b00);
