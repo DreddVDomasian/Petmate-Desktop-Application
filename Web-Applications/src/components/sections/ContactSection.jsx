@@ -46,64 +46,97 @@ export default function ContactSection() {
     };
 
     return (
-        <section className="contact" id="contact">
-            <h1>CONTACT US</h1>
-            <div className="contact-container">
-                <div className="contact-info">
-                    <div className="logo-image-container">
-                        <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
+<section className="contact" id="contact">
+    <div className="container">
+        <h2 className="section-title">CONTACT US</h2>
+        <div className="contact-content">
+            <div className="contact-info">
+                <div className="contact-item">
+                    <div className="contact-icon">
+                        <i className="fas fa-map-marker-alt"></i>
                     </div>
-                    <div className="contact-details">
-                        <div className="email-contact">
-                            <img src="/assets/icons/FACEBOOK.png" alt="clinic" />
-                            <span>PETMATE ANIMAL CLINIC</span>
-                        </div>
-                        <div className="social-contact">
-                            <img src="/assets/icons/Email.png" alt="email" />
-                            <span>petmateanimalclinic@gmail.com</span>
-                        </div>
+                    <div>
+                        <h3>Our Location</h3>
+                        <p>Imus, Cavite</p>
                     </div>
                 </div>
-                <div className="contact-form">
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="name">Name</label>
-                            <input
-                                type="text"
-                                id="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
+                <div className="contact-item">
+                    <div className="contact-icon">
+                        <i className="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <h3>Phone Number</h3>
+                        <p>0922-623-5529</p>
+                    </div>
+                </div>
+                <div className="contact-item">
+                    <div className="contact-icon">
+                        <i className="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h3>Email Address</h3>
+                        <p>petmateanimalclinic@gmail.com</p>
+                    </div>
+                </div>
+                <div className="contact-item">
+                    <div className="contact-icon">
+                        <i className="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3>Emergency Contact</h3>
+                        <p> 0922-623-5529 </p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div className="contact-form">
+                <form>
+                    <div className="form-group">
+                        <label htmlFor="name">Your Name</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            className="form-control" 
+                            placeholder="Enter your name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="message">Message</label>
-                        <textarea
-                            id="message"
+                        <label htmlFor="email">Your Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            className="form-control" 
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="message">Your Message</label>
+                        <textarea 
+                            id="message" 
+                            className="form-control" 
+                            placeholder="Enter your message"
                             rows="9"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                         ></textarea>
                     </div>
-                    <button
-                        className="send-message-btn"
+                    <button 
+                        type="button" 
+                        className="btn" 
                         onClick={handleSend}
                         disabled={isSending}
-                        aria-busy={isSending}
                     >
                         {isSending ? "SENDING..." : "SEND MESSAGE"}
                     </button>
-                </div>
+                </form>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
     );
 }

@@ -2,43 +2,35 @@ import React from 'react';
 
 function Footer() {
     return (
-        <footer className="footer">
-        <div className="footer-content">
-            <div className="footer-left">
-            <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" className="footer-logo" />
-            <p className="footer-description">Providing exceptional veterinary care with compassion and expertise for your beloved pets.</p>
+        <footer>
+        <div className="container">
+            <div className="footer-content">
+                <div className="footer-column">
+                    <h3>PetMate Animal Clinic</h3>
+                    <p>Your trusted partner in pet healthcare. We provide compassionate, comprehensive veterinary care for your beloved companions.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        {/* <!-- ADD NG SOCIALS NILA HERE --> */}
+                    </div>
+                </div>
+                <div className="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul className="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#hours">Office Hours</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                
             </div>
-            
-            <div className="footer-center">
-            <h3>Quick Links</h3>
-            <ul className="footer-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact Us</a></li>
-            </ul>
-            </div>
-            
-            <div className="footer-right">
-            <h3>Contact Info</h3>
-            <div className="contact-item">
-                <img src="/assets/icons/Email.png" alt="Email" />
-                <a href="mailto:petmate@gmail.com">petmateanimalclinic@gmail.com</a>
-            </div>
-            <div className="contact-item">
-                <img src="/assets/icons/FACEBOOK.png" alt="Facebook" />
-                <a href="https://www.facebook.com/PetmateAnimalClinic" target="_blank" rel="noopener noreferrer">Petmate Animal Clinic</a>
-            </div>
+            <div className="copyright">
+                <p>&copy; 2023 PetMate Animal Clinic. All rights reserved.</p>
             </div>
         </div>
-        
-        <div className="footer-bottom">
-            <p>©2024 PetMate Animal Clinic. All rights reserved.</p>
-            <a href="#nav" className="back-to-top">
-            <img src="/assets/icons/up-arrow.png" alt="Back to Top" className="arrowup" />
-            </a>
-        </div>
-        </footer>
+    </footer>
     );
     }
 

@@ -31,8 +31,8 @@ const Navigation = () => {
                 <li><a href="#home" onClick={closeMenu}>Home</a></li>
                 <li><a href="#about" onClick={closeMenu}>About</a></li>
                 <li><a href="#services" onClick={closeMenu}>Services</a></li>
-                {/* <li><a href="#office-hours" onClick={closeMenu}>Hours</a></li> */}
-                <li><a href="#contact" onClick={closeMenu}>Contact</a></li>
+                <li><a href="#hours" onClick={closeMenu}>Hours</a></li>
+                <li><a href="#contact" onClick={closeMenu}>Contact Us</a></li>
                 <li>
                     <a href="#" className="login-btn" onClick={() => { closeMenu(); setShowLogin(true); }}>
                     LOG IN
