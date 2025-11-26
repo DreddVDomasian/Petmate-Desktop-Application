@@ -16,49 +16,28 @@ function HomePage() {
   return (
     <section className="home-section" id="home">
       <div className="home-container">
-        <div className="doctor-image">
-          <img src="/assets/images/misc/doc.png" alt="Veterinarian" />
-        </div>
+        <div className="content-wrapper">
 
-        <div className="content">
-          <h1>Your pet's health<br />is our priority.</h1>
-          <p>Expert care, advanced treatments,<br />and a loving touch for your pets.<br />Keeping tails wagging and hearts happy!</p>
-          
-          <div className="action-buttons">
-            <button type="button" className="btn btn-primary" onClick={openLogin}>BOOK NOW</button>
+          <div className="doctor-image">
+            <img src="/assets/images/misc/doc.png" alt="Veterinarian with dog" />
           </div>
 
+          <div className="content">
+            <h1>Your pet's health<br />is our priority.</h1>
+            <p>Expert care, advanced treatments,<br />and a loving touch for your pets.<br />Keeping tails wagging and hearts happy!</p>
+            
+            <div className="action-buttons">
+              <button type="button" className="btn-primary" onClick={openLogin}>BOOK NOW</button>
+            </div>
+          </div>
         </div>
+        
       </div>
 
       <LoginModal visible={showLogin} onClose={closeLogin} onOpenSignup={openSignup} />
       <SignupModal visible={showSignup} onClose={closeSignup} onOpenLogin={openLogin} />
-    
-    
     </section>
   );
-  
 }
 
 export default HomePage;
-
-
-    <section className="hero" id="home">
-      <div className="container">
-        <div className="hero-content">
-          <h1>
-            Your pet's health
-            <br />
-            is our priority.
-          </h1>
-          <p>
-            Expert care, advanced treatments, and a loving touch for your pets.
-            <br />
-            Keeping tails wagging and hearts happy!
-          </p>
-          <a href="#contact" className="btn">
-            Schedule an Appointment
-          </a>
-        </div>
-      </div>
-    </section>
