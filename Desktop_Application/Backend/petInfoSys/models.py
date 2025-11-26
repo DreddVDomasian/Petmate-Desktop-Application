@@ -241,3 +241,4 @@ class AppointmentReminder(models.Model):
 
     def __str__(self):
         return f"{self.reminder_type} - {self.scheduled_send_time}"
+

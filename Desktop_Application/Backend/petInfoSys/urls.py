@@ -6,6 +6,8 @@ from . import views
 
 
 urlpatterns = [
+    path("analyticsAppointments", analytics_appointments),
+
     path('patients/', BasicInfoListCreateView.as_view(), name='patients-list-create'),
     path('patients/<int:pk>/', BasicInfoRetrieveUpdateDestroyView.as_view(), name='patients-detail'),
     path('patient-search/', PatientSearchView.as_view(), name='patient-search'),
