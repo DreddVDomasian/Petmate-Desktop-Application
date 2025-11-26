@@ -141,49 +141,44 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
               </div>
             </div>
 
-            <div className="form-row owner-contact">
-                <div className="form-group">
-                  <label htmlFor="signupEmail">Phone number</label>
-                  <div className="phone-input">
-                    <span className="prefix">+63</span>
-                    <input
-                      type="text"
-                      id="phoneNum"
-                      name="phoneNum"
-                      required
-                      placeholder="9123456789"
-                      maxLength="10"
-                      value={phoneNum}
-                      onInput={(e) => {
-                        const digits = e.target.value.replace(/\D/g, ""); // numeric only
-                        setPhoneNum(digits);
-                      }}
-                    />
-</div>
-
+            <div className="owner-contact">
+              <div className="form-group">
+                <label htmlFor="signupEmail">Phone number</label>
+                <div className="phone-input">
+                  <span className="prefix">+63</span>
+                  <input
+                    type="text"
+                    id="phoneNum"
+                    name="phoneNum"
+                    required
+                    placeholder="9123456789"
+                    maxLength="10"
+                    value={phoneNum}
+                    onInput={(e) => {
+                      const digits = e.target.value.replace(/\D/g, ""); // numeric only
+                      setPhoneNum(digits);
+                    }}
+                  />
                 </div>
-
-                <div className="form-row owner-contact">
-                  <div className="form-group">
-                    <label htmlFor="phoneNum2">Secondary Phone (Optional)</label>
-                    <div className="phone-input">
-                      <span className="prefix">+63</span>
-                      <input
-                        type="text"
-                        id="phoneNum2"
-                        name="phoneNum2"
-                        placeholder="9123456789"
-                        maxLength="10"
-                        value={phoneNum2}
-                        onInput={(e) => {
-                          const digits = e.target.value.replace(/\D/g, ""); // numbers only
-                          setPhoneNum2(digits);
-                        }}
-                      />
-                    </div>
-                  </div>
+              </div>
+              <div className="form-group">
+                <label htmlFor="phoneNum2">Secondary Phone (Optional)</label>
+                <div className="phone-input">
+                  <span className="prefix">+63</span>
+                  <input
+                    type="text"
+                    id="phoneNum2"
+                    name="phoneNum2"
+                    placeholder="9123456789"
+                    maxLength="10"
+                    value={phoneNum2}
+                    onInput={(e) => {
+                      const digits = e.target.value.replace(/\D/g, ""); // numbers only
+                      setPhoneNum2(digits);
+                    }}
+                  />
                 </div>
-
+              </div>
             </div>
 
             <p className="addressTitle" >Address</p>

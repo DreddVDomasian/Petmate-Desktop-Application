@@ -230,7 +230,7 @@ class MainUI(QMainWindow):
         self.websiteBtn.setCheckable(True)
         self.walkInOrWeb.setCurrentIndex(0)
         self.sourceBtnGroup = QButtonGroup(self)
-        self.sourceBtnGroup.setExclusive(True)
+        self.sourceBtnGroup.setExclusive(True) 
         for btn in [self.walkInBtn, self.websiteBtn]:
             self.sourceBtnGroup.addButton(btn)
         self.websiteBtn.setChecked(True)
@@ -1498,6 +1498,7 @@ class MainUI(QMainWindow):
             toast.show_toast()
     def service_stackedWidget(self,index):
         self.serviceHistoryBtn.setChecked(True)
+        self.dateEdit.setEnabled(True)
         self.serviceHistoryStackedWidget.setCurrentIndex(index)
         self.addNewServiceBtn.setText("Add New service")
         self.clearInputs()
