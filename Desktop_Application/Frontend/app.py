@@ -357,8 +357,6 @@ class MainUI(QMainWindow):
     def navigate_to_page(self, index, is_update=False, **kwargs):
         # Save current page & parameters
         self.page_history.append((self.current_page_index, self.current_params))
-
-
         self.current_page_index = index
         self.current_params = kwargs
 
@@ -370,14 +368,19 @@ class MainUI(QMainWindow):
         # Your existing Add Patient logic
         if index == 1:
             if is_update:
+                self.updateFunction.is_email_enable(self.selected_patient_id)
                 self.updateBasicInfo.show()
                 self.cancelButton.show()
                 self.confirmButton.hide()
             else:
+                self.emailEdit.setReadOnly(False)
                 self.clearInputs()
                 self.updateBasicInfo.hide()
                 self.cancelButton.hide()
                 self.confirmButton.show()
+        if index == 2:
+            self.emailEdit.setReadOnly(False)
+
 
     #SIDE NAV ANIMATIONS
     def slide_in_sideNav(self):

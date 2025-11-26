@@ -40,9 +40,19 @@ class Update:
             patient = response.json()
             self.populate_patient_form(patient)
             self.ui.navigate_to_page(1, is_update=True)
+            self.is_email_enable(owner_id)
         else:
             Toast(self.ui, "Failed to load patient!", icon_path="Icons/warning.png").show_toast()
 
+    def is_email_enable(self,owner_id):
+        response = requests.get(f"{API_BASE_URL}/api/patients/{owner_id}/")
+        if response.status_code == 200:
+            patient = response.json()
+            if patient.get('user_account') is not None:
+                self.ui.emailEdit.setReadOnly(True)
+
+        else:
+            Toast(self.ui, "Failed to check patient email!", icon_path="Icons/warning.png").show_toast()
     def update_patient_to_api(self):
         patient_id = getattr(self.ui, "selected_patient_id", None)
         if not patient_id:
