@@ -51,19 +51,52 @@ const TabContent = ({
 
   // Load address data
   useEffect(() => {
-    // Load provinces, cities, barangays data
-    // You can import these or fetch from your API
-    import('../../data/provinces.json').then(data => setProvinces(data.default || data));
-    import('../../data/cities.json').then(data => setCities(data.default || data));
-    import('../../data/barangays.json').then(data => setBarangays(data.default || data));
+    const loadAddressData = async () => {
+      try {
+        const provincesModule = await import('../../data/provinces.json');
+        const citiesModule = await import('../../data/cities.json');
+        const barangaysModule = await import('../../data/barangays.json');
+        
+        const provincesData = provincesModule.default || provincesModule;
+        const citiesData = citiesModule.default || citiesModule;
+        const barangaysData = barangaysModule.default || barangaysModule;
+        
+        setProvinces(provincesData || []);
+        setCities(citiesData || []);
+        setBarangays(barangaysData || []);
+        
+      } catch (error) {
+        console.error('Error loading address data:', error);
+        setProvinces([]);
+        setCities([]);
+        setBarangays([]);
+      }
+    };
+
+    loadAddressData();
   }, []);
 
+  // NEW: Find the correct province code based on the stored province name
+  const findProvinceCode = (provinceName) => {
+    const province = provinces.find(p => 
+      p.name.toLowerCase() === provinceName.toLowerCase()
+    );
+    return province ? province.prov_code : "";
+  };
+
+  // NEW: Find the correct city code based on the stored city name
+  const findCityCode = (cityName) => {
+    const city = cities.find(c => 
+      c.name.toLowerCase() === cityName.toLowerCase()
+    );
+    return city ? city.mun_code : "";
+  };
   // Filter cities and barangays based on selection
   const filteredCities = cities.filter(city => city.prov_code === selectedProvince);
   const filteredBarangays = barangays.filter(brgy => brgy.mun_code === selectedCity);
 
-  // Fetch user profile data
-  useEffect(() => {
+  // Fetch user profile data - UPDATED TO SET CORRECT SELECTIONS
+   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const res = await fetch("/api/user/profile/", {
@@ -75,6 +108,8 @@ const TabContent = ({
 
         if (res.ok) {
           const data = await res.json();
+          console.log('Fetched profile data:', data);
+          
           setUserFirstName(data.first_name || "");
           setUserMiddleName(data.middle_name || "");
           setUserLastName(data.last_name || "");
@@ -86,9 +121,21 @@ const TabContent = ({
           setUserBarangay(data.barangay || "");
           setUserDetailedAddress(data.detailedAddress || "");
           
-          // Set selected province/city for dropdowns
-          setSelectedProvince(data.province || "");
-          setSelectedCity(data.city || "");
+          // NEW: Set selected province/city codes with case-insensitive matching
+          if (data.province) {
+            const provinceCode = findProvinceCode(data.province);
+            console.log(`Finding province: "${data.province}" -> code: "${provinceCode}"`);
+            setSelectedProvince(provinceCode);
+          }
+          
+          if (data.city) {
+            const cityCode = findCityCode(data.city);
+            console.log(`Finding city: "${data.city}" -> code: "${cityCode}"`);
+            setSelectedCity(cityCode);
+          }
+
+        } else {
+          console.error('Failed to fetch profile, status:', res.status);
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -98,74 +145,84 @@ const TabContent = ({
     if (activeTab === 'profile') {
       fetchProfileData();
     }
-  }, [activeTab]);
+  }, [activeTab, provinces, cities]);// Added dependencies to re-run when address data loads
 
-  // Handle profile update with address fields
-const handleProfileUpdate = async (e) => {
-  e.preventDefault();
-  
-  if (!userFirstName.trim()) {
-    alert("First name is required");
-    return;
-  }
-
-  try {
-    const csrf = getCookie("csrftoken");
+  // Handle profile update with address fields - UPDATED TO STORE NAMES, NOT CODES
+   const handleProfileUpdate = async (e) => {
+    e.preventDefault();
     
-    // Prepare the data
-    const updateData = {
-      first_name: userFirstName.trim(),
-      middle_name: userMiddleName.trim(),
-      last_name: userLastName.trim(),
-      email: userEmail.trim(),
-      phoneNumber: userPhoneNumber.trim(),
-      SecondaryNumber: userSecondaryNumber.trim(),
-      province: userProvince.trim(),
-      city: userCity.trim(),
-      barangay: userBarangay.trim(),
-      detailedAddress: userDetailedAddress.trim(),
-    };
-
-    console.log("=== FRONTEND DEBUG: Sending update data ===", updateData);
-
-    const response = await fetch("/api/user/profile/", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf,
-      },
-      credentials: "include",
-      body: JSON.stringify(updateData),
-    });
-
-    console.log("=== FRONTEND DEBUG: Response status ===", response.status);
-
-    if (response.ok) {
-      const updatedData = await response.json();
-      console.log("=== FRONTEND DEBUG: Update successful ===", updatedData);
-      alert("Profile updated successfully!");
-      setIsEditingProfile(false);
-      
-      // Update local state
-      setUserFirstName(updatedData.first_name || userFirstName);
-      setUserLastName(updatedData.last_name || userLastName);
-      setUserEmail(updatedData.email || userEmail);
-      setUserPhoneNumber(updatedData.phoneNumber || userPhoneNumber);
-      setUserSecondaryNumber(updatedData.SecondaryNumber || userSecondaryNumber);
-      setUserProvince(updatedData.province || userProvince);
-      setUserCity(updatedData.city || userCity);
-      setUserBarangay(updatedData.barangay || userBarangay);
-      setUserDetailedAddress(updatedData.detailedAddress || userDetailedAddress);
-    } else {
-      const errorText = await response.text();
-      console.log("=== FRONTEND DEBUG: Update failed ===", response.status, errorText);
-      throw new Error(`Failed with status: ${response.status}`);
+    if (!userFirstName.trim()) {
+      alert("First name is required");
+      return;
     }
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    alert(`Error updating profile: ${error.message}`);
-  }
-};
+
+    try {
+      const csrf = getCookie("csrftoken");
+      
+      // NEW: Get the display names with proper case handling
+      const selectedProvinceObj = provinces.find(p => p.prov_code === selectedProvince);
+      const selectedCityObj = cities.find(c => c.mun_code === selectedCity);
+      
+      const selectedProvinceName = selectedProvinceObj ? selectedProvinceObj.name : userProvince;
+      const selectedCityName = selectedCityObj ? selectedCityObj.name : userCity;
+      
+      console.log('Selected province:', { code: selectedProvince, name: selectedProvinceName });
+      console.log('Selected city:', { code: selectedCity, name: selectedCityName });
+
+      // Prepare the data - store the display names, not the codes
+      const updateData = {
+        first_name: userFirstName.trim(),
+        middle_name: userMiddleName.trim(),
+        last_name: userLastName.trim(),
+        email: userEmail.trim(),
+        phoneNumber: userPhoneNumber.trim(),
+        SecondaryNumber: userSecondaryNumber.trim(),
+        province: selectedProvinceName,
+        city: selectedCityName,
+        barangay: userBarangay.trim(),
+        detailedAddress: userDetailedAddress.trim(),
+      };
+
+      console.log("=== FRONTEND DEBUG: Sending update data ===", updateData);
+
+      const response = await fetch("/api/user/profile/", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf,
+        },
+        credentials: "include",
+        body: JSON.stringify(updateData),
+      });
+
+      console.log("=== FRONTEND DEBUG: Response status ===", response.status);
+
+      if (response.ok) {
+        const updatedData = await response.json();
+        console.log("=== FRONTEND DEBUG: Update successful ===", updatedData);
+        alert("Profile updated successfully!");
+        setIsEditingProfile(false);
+        
+        // Update local state with the names (not codes)
+        setUserFirstName(updatedData.first_name || userFirstName);
+        setUserLastName(updatedData.last_name || userLastName);
+        setUserEmail(updatedData.email || userEmail);
+        setUserPhoneNumber(updatedData.phoneNumber || userPhoneNumber);
+        setUserSecondaryNumber(updatedData.SecondaryNumber || userSecondaryNumber);
+        setUserProvince(selectedProvinceName);
+        setUserCity(selectedCityName);
+        setUserBarangay(updatedData.barangay || userBarangay);
+        setUserDetailedAddress(updatedData.detailedAddress || userDetailedAddress);
+      } else {
+        const errorText = await response.text();
+        console.log("=== FRONTEND DEBUG: Update failed ===", response.status, errorText);
+        throw new Error(`Failed with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert(`Error updating profile: ${error.message}`);
+    }
+  };
 
   // Password change handler from old Settings.jsx
   const handlePasswordChange = async (e) => {
@@ -343,7 +400,7 @@ const handleProfileUpdate = async (e) => {
         </div>
       </div>
       
-      {/* Profile Info Tab */}
+ {/* Profile Info Tab */}
       <div className={`tab-content ${activeTab === 'profile' ? 'active' : ''}`} id="profile-tab">
         {/* Personal Information Card */}
         <div className="profile-card">
@@ -426,24 +483,23 @@ const handleProfileUpdate = async (e) => {
                   </div>
                 </div>
 
-                {/* Address Row - Province & City */}
+                {/* Address Row - Province & City - UPDATED FOR PROPER PRE-SELECTION */}
                 <div className="form-row">
                   <div className="form-group">
                     <label>Province</label>
                     <select 
                       className="form-control"
-                      value={userProvince}
+                      value={selectedProvince} // Use the code for selection
                       onChange={(e) => {
-                        setUserProvince(e.target.value);
                         setSelectedProvince(e.target.value);
-                        setUserCity(""); // Reset city when province changes
+                        setSelectedCity(""); // Reset city when province changes
                         setUserBarangay(""); // Reset barangay when province changes
                       }}
                     >
                       <option value="">Select Province</option>
                       {provinces.map(province => (
-                        <option key={province.prov_code} value={province.prov_name}>
-                          {province.prov_name}
+                        <option key={province.prov_code} value={province.prov_code}>
+                          {province.name}
                         </option>
                       ))}
                     </select>
@@ -452,18 +508,17 @@ const handleProfileUpdate = async (e) => {
                     <label>City/Municipality</label>
                     <select 
                       className="form-control"
-                      value={userCity}
+                      value={selectedCity} // Use the code for selection
                       onChange={(e) => {
-                        setUserCity(e.target.value);
                         setSelectedCity(e.target.value);
                         setUserBarangay(""); // Reset barangay when city changes
                       }}
-                      disabled={!userProvince}
+                      disabled={!selectedProvince}
                     >
                       <option value="">Select City</option>
                       {filteredCities.map(city => (
-                        <option key={city.mun_code} value={city.mun_name}>
-                          {city.mun_name}
+                        <option key={city.mun_code} value={city.mun_code}>
+                          {city.name}
                         </option>
                       ))}
                     </select>
@@ -474,12 +529,12 @@ const handleProfileUpdate = async (e) => {
                       className="form-control"
                       value={userBarangay}
                       onChange={(e) => setUserBarangay(e.target.value)}
-                      disabled={!userCity}
+                      disabled={!selectedCity}
                     >
                       <option value="">Select Barangay</option>
                       {filteredBarangays.map(barangay => (
-                        <option key={barangay.brgy_code} value={barangay.brgy_name}>
-                          {barangay.brgy_name}
+                        <option key={barangay.name} value={barangay.name}>
+                          {barangay.name}
                         </option>
                       ))}
                     </select>
