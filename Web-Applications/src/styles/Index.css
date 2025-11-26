@@ -628,7 +628,7 @@ header {
 
 /* About Section */
 .about-section {
-    padding: 90px 0;
+    padding: 170px 0;
     background-color: var(--light);
     max-height: 100dvh;
 }
