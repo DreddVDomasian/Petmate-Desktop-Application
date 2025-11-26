@@ -461,7 +461,13 @@ def check_duplicate_patient(request):
         first = (request.data.get("firstName") or "").strip()
         last = (request.data.get("lastName") or "").strip()
         middle = (request.data.get("middleName") or "").strip()
+        email = (request.data.get("email") or "").strip().lower()
+        current_id = request.data.get("current_id")
 
+        email_conflict = None
+        patients = []
+
+        # NAME MATCH CHECK
         query = Q(firstName__iexact=first, lastName__iexact=last)
 
         if middle:
@@ -471,15 +477,25 @@ def check_duplicate_patient(request):
                 Q(middleName__exact="")
             )
 
-        duplicates = basicInfo.objects.filter(query).filter(desktop_record='show')
+        duplicates = basicInfo.objects.filter(query, desktop_record='show')
 
-        patients = []
+        if current_id:
+            duplicates = duplicates.exclude(id=current_id)
+
+        # EMAIL MATCH CHECK (strict unique)
+        email_conflict = basicInfo.objects.filter(email__iexact=email)
+
+        if current_id:
+            email_conflict = email_conflict.exclude(id=current_id)
+
+        email_conflict = email_conflict.first()
+
+        # Build name-duplicate list
         for patient in duplicates:
-            # ✅ handle related_name properly
             try:
-                pets_qs = patient.pets.all()   # if you used related_name="pets"
+                pets_qs = patient.pets.all()
             except AttributeError:
-                pets_qs = patient.pet_set.all()  # fallback to default
+                pets_qs = patient.pet_set.all()
 
             pets = PetSerializer(pets_qs, many=True).data
             patients.append({
@@ -487,11 +503,15 @@ def check_duplicate_patient(request):
                 "pets": pets
             })
 
-        return Response({"duplicates": patients}, status=200)
+        return Response({
+            "duplicates": patients,
+            "email_conflict": BasicInfoSerializer(email_conflict).data if email_conflict else None
+        }, status=200)
 
     except Exception as e:
-        print("Error checking duplicates:", e)  # will show full error in console
+        print("Error checking duplicates:", e)
         return Response({"error": str(e)}, status=500)
+
 
 
 # -------------------- Auth endpoints (JSON + session) --------------------

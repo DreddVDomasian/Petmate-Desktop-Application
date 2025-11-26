@@ -689,11 +689,22 @@ class MainUI(QMainWindow):
             return
 
         if not self.ignore_duplicates:
-            duplicates = self.check_duplicate_patient(data)
+            duplicate_result = self.check_duplicate_patient(data)
+            duplicates = duplicate_result.get("duplicates", [])
+            email_conflict = duplicate_result.get("email_conflict", None)
+            if email_conflict:
+                Toast(self, "This email is already used by another patient.",
+                      icon_path="Icons/warning.png").show_toast()
+                return
+
             if duplicates:
                 if self.duplicateDialog is None:
-                    self.duplicateDialog = DuplicateDialog(duplicates, parent=self, main_window=self)
-                    self.duplicateDialog.destroyed.connect(lambda: setattr(self, "duplicateDialog", None))
+                    self.duplicateDialog = DuplicateDialog(
+                        duplicates, parent=self, main_window=self
+                    )
+                    self.duplicateDialog.destroyed.connect(
+                        lambda: setattr(self, "duplicateDialog", None)
+                    )
                 else:
                     self.duplicateDialog.populate_cards(duplicates)
 
@@ -781,18 +792,22 @@ class MainUI(QMainWindow):
                 # Reconnect the signal
                 self.secondaryPhoneEdit.textChanged.connect(self.on_secondary_phone_changed)
                 self.secondaryPhoneEdit.setCursorPosition(cursor_pos)
+
     def check_duplicate_patient(self, data):
         try:
             response = requests.post(f"{API_BASE_URL}/api/check-duplicate/", json=data)
             if response.status_code == 200:
                 result = response.json()
-                return result.get("duplicates", [])
+                return {
+                    "duplicates": result.get("duplicates", []),
+                    "email_conflict": result.get("email_conflict", None)
+                }
             else:
                 print("Error checking duplicates:", response.status_code, response.text)
-                return []
+                return {"duplicates": [], "email_conflict": None}
         except Exception as e:
             print("Error:", e)
-            return []
+            return {"duplicates": [], "email_conflict": None}
 
     #CLIENT RECORD PAGE
     def load_patients(self, page=1, search_term=None):
