@@ -7,6 +7,11 @@ body {
     font-family: 'Poppins', sans-serif;
 
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
 .container {
     width: 100%;
@@ -479,14 +484,15 @@ header {
 
 /* Home Section */
 .home-section {
-    height: calc(100vh - 70px);
+    margin-top: 80px !important; /* Match your header height */
+    height: calc(100vh - 80px) !important; /* Full viewport minus header */
+    min-height: calc(100vh - 80px) !important;
     position: relative;
     background-color: #4885CC;
-    margin-top: 120px;
-    min-height: 100vh;
     background-size: cover;
     background-position: center;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    overflow: hidden; /* Prevent any overflow causing gaps */
 }
 
 .home-section:before {
@@ -509,6 +515,7 @@ header {
     align-items: center;
     position: relative;
     z-index: 2;
+    padding: 0; /* Remove any padding that might cause gaps */
 }
 
 .doctor-image {
@@ -595,8 +602,8 @@ header {
 .about-section {
     padding: 90px 0;
     background-color: var(--light);
+    max-height: 100dvh;
 }
-
 .section-title {
     text-align: center;
     margin-bottom: 50px;

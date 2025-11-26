@@ -1,14 +1,19 @@
+// Header.jsx (fixed with proper home and section navigation)
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import LoginModal from "../modals/LoginModal";
+import SignupModal from "../modals/SignupModal";
 
-const Header = ({ setActiveTab }) => {
+const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userFirstName, setUserFirstName] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+  const [activeSection, setActiveSection] = useState('home'); // Track active section
   const navigate = useNavigate()
   const location = useLocation()
 
-  // COPY AUTH CHECK FROM OLD SIDENAV
   const checkAuth = async () => {
     try {
       const res = await fetch('/api/user/', {
@@ -27,14 +32,8 @@ const Header = ({ setActiveTab }) => {
         }
       }
 
-      // If not authenticated, redirect to login
       setIsAuthenticated(false)
       setUserFirstName('')
-
-      // Only redirect if we're not already on login page
-      if (!location.pathname.includes('/login') && location.pathname !== '/') {
-        navigate('/?session_expired=true')
-      }
       return false
     } catch (error) {
       console.error('Auth check failed:', error)
@@ -47,12 +46,42 @@ const Header = ({ setActiveTab }) => {
     checkAuth()
   }, [location.pathname])
 
-  // COPY LOGOUT FUNCTION FROM OLD SIDENAV
+  // Add scroll spy to detect active section
+  useEffect(() => {
+    if (location.pathname === '/') {
+      const handleScroll = () => {
+        const sections = ['home', 'about', 'services', 'hours', 'contact'];
+        const scrollY = window.pageYOffset + 100; // Offset for better detection
+        const headerHeight = 80;
+
+        let currentSection = 'home';
+        
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const elementTop = element.offsetTop - headerHeight;
+            
+            // Check if we've scrolled past this section's start
+            if (scrollY >= elementTop) {
+              currentSection = section;
+            }
+          }
+        }
+        
+        setActiveSection(currentSection);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initial check
+
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [location.pathname]);
+
   const handleLogout = async () => {
     if (!window.confirm('Are you sure you want to logout?')) return
 
     try {
-      // Call logout API
       await fetch('/api/logout/', {
         method: 'POST',
         credentials: 'include',
@@ -63,20 +92,14 @@ const Header = ({ setActiveTab }) => {
     } catch (error) {
       console.error('Logout API call failed:', error)
     } finally {
-      // Clear client-side storage
       localStorage.clear()
       sessionStorage.clear()
-
-      // Reset state
       setIsAuthenticated(false)
       setUserFirstName('')
-
-      // Force navigation to home and clear history
-      window.location.replace('/?logout=true')
+      navigate('/?logout=true')
     }
   }
 
-  // COPY GETCOOKIE FUNCTION FROM OLD SIDENAV
   function getCookie(name) {
     let cookieValue = null
     if (document.cookie && document.cookie !== '') {
@@ -92,47 +115,152 @@ const Header = ({ setActiveTab }) => {
     return cookieValue
   }
 
-  // Get user initial for avatar
   const getUserInitial = () => {
     return userFirstName ? userFirstName.charAt(0).toUpperCase() : 'U'
   }
- const handleAvatarClick = () => {
-    if (setActiveTab) {
-      setActiveTab('profile');
+
+  const handleNavigation = (path) => {
+    navigate(path)
+    setMobileMenuOpen(false)
+  }
+
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    setShowLogin(true);
+    setMobileMenuOpen(false);
+  }
+
+  // Handle Home click - scroll to top if on home page, otherwise navigate to home
+  const handleHomeClick = (e) => {
+    e.preventDefault();
+    
+    if (location.pathname === '/') {
+      // Already on home page - scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      setActiveSection('home');
+    } else {
+      // Not on home page - navigate to home
+      navigate('/');
     }
-  };
+    
+    setMobileMenuOpen(false);
+  }
+
+  // Handle section clicks
+  const handleSectionClick = (e, sectionId) => {
+    e.preventDefault();
+    
+    // If we're not on the home page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Wait for navigation to complete, then scroll to section
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+    } else {
+      // We're already on home page, just scroll to section
+      scrollToSection(sectionId);
+    }
+    
+    setActiveSection(sectionId);
+    setMobileMenuOpen(false);
+  }
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 80; // Adjust for fixed header height
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  // Check if a section is active
+  const isSectionActive = (section) => {
+    if (location.pathname !== '/') return false;
+    return activeSection === section;
+  }
+
   return (
     <header>
       <div className="container">
         <nav className="navbar">
-          <div className="logo header-profile" >
-            <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
+          <div className="logo header-profile">
+            <img 
+              src="/assets/images/logo/PETMATE LOGO.png" 
+              alt="PetMate Logo" 
+              onClick={handleHomeClick}
+              style={{ cursor: 'pointer' }}
+            />
           </div>
+          
           <div className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-            <a href="/">Home</a>
-            <a href="/#about">About</a>
-            <a href="/#services">Services</a>
-            <a href="/#hours">Hours</a>
-            <a href="/#contact">Contact</a>
+            <a 
+              href="/" 
+              onClick={handleHomeClick}
+              className={location.pathname === '/' && activeSection === 'home' ? 'active' : ''}
+            >
+              Home
+            </a>
+            <a 
+              href="#about" 
+              onClick={(e) => handleSectionClick(e, 'about')}
+              className={isSectionActive('about') ? 'active' : ''}
+            >
+              About
+            </a>
+            <a 
+              href="#services" 
+              onClick={(e) => handleSectionClick(e, 'services')}
+              className={isSectionActive('services') ? 'active' : ''}
+            >
+              Services
+            </a>
+            <a 
+              href="#hours" 
+              onClick={(e) => handleSectionClick(e, 'hours')}
+              className={isSectionActive('hours') ? 'active' : ''}
+            >
+              Hours
+            </a>
+            <a 
+              href="#contact" 
+              onClick={(e) => handleSectionClick(e, 'contact')}
+              className={isSectionActive('contact') ? 'active' : ''}
+            >
+              Contact
+            </a>
+            
             {isAuthenticated && (
-              <a href="/dashboard" className="active">My Profile</a>
+              <a 
+                href="/dashboard" 
+                onClick={(e) => { e.preventDefault(); handleNavigation('/dashboard'); }}
+                className={location.pathname === '/dashboard' ? 'active' : ''}
+              >
+                My Profile
+              </a>
             )}
           </div>
+          
           <div className="user-menu">
             {isAuthenticated ? (
               <>
                 <div className="user-info">
                   <div 
                     className="user-avatar" 
-                    style={{cursor: 'pointer'}}
-                    onClick={handleAvatarClick}
+                    onClick={() => handleNavigation('/dashboard')}
                     title="View Profile"
                   >
                     {getUserInitial()}
                   </div>
                 </div>
                 <button 
-                  className="logout-btn-mobile" 
+                  className="logout-btn" 
                   onClick={handleLogout}
                   style={{
                     background: 'none',
@@ -147,13 +275,46 @@ const Header = ({ setActiveTab }) => {
                 </button>
               </>
             ) : (
-              <a href="/" className="login-btn">Login</a>
+              <a 
+                href="#" 
+                className="login-btn"
+                onClick={handleLoginClick}
+              >
+                Login
+              </a>
             )}
+            
             <div className="mobile-menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               <i className="fas fa-bars"></i>
             </div>
           </div>
         </nav>
+
+        {/* Modals */}
+        <LoginModal
+          visible={showLogin}
+          onClose={() => setShowLogin(false)}
+          onOpenSignup={() => {
+            setShowLogin(false);
+            setShowSignup(true);
+          }}
+          onLoginSuccess={() => {
+            setShowLogin(false);
+            checkAuth();
+            navigate('/dashboard');
+          }}
+        />
+        <SignupModal
+          visible={showSignup}
+          onClose={() => setShowSignup(false)}
+          onOpenLogin={() => {
+            setShowSignup(false);
+            setShowLogin(true);
+          }}
+          onSignupSuccess={() => {
+            setShowSignup(false);
+          }}
+        />
       </div>
     </header>
   )
