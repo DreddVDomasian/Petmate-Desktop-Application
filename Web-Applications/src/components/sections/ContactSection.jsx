@@ -49,7 +49,6 @@ export default function ContactSection() {
     <section className="contact" id="contact">
         <div className="container">
             <h2 className="section-title">CONTACT US</h2>
-
             <div className="contact-content">
                 <div className="contact-info">
                     
@@ -91,54 +90,55 @@ export default function ContactSection() {
                     </div>
                     
                 </div>
+
+                <div className="contact-form">
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="name">Your Name</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                className="form-control" 
+                                placeholder="Enter your name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="email">Your Email</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                className="form-control" 
+                                placeholder="Enter your email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="message">Your Message</label>
+                            <textarea 
+                                id="message" 
+                                className="form-control" 
+                                placeholder="Enter your message"
+                                rows="9"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                            ></textarea>
+                        </div>
+                        <button 
+                            type="button" 
+                            className="btn send-message-btn" 
+                            onClick={handleSend}
+                            disabled={isSending}
+                        >
+                            {isSending ? "SENDING..." : "SEND MESSAGE"}
+                        </button>
+                    </form>
+                </div>
                 
             </div>
             
-            <div className="contact-form">
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="name">Your Name</label>
-                        <input 
-                            type="text" 
-                            id="name" 
-                            className="form-control" 
-                            placeholder="Enter your name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="email">Your Email</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            className="form-control" 
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="message">Your Message</label>
-                        <textarea 
-                            id="message" 
-                            className="form-control" 
-                            placeholder="Enter your message"
-                            rows="9"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                        ></textarea>
-                    </div>
-                    <button 
-                        type="button" 
-                        className="btn send-message-btn" 
-                        onClick={handleSend}
-                        disabled={isSending}
-                    >
-                        {isSending ? "SENDING..." : "SEND MESSAGE"}
-                    </button>
-                </form>
-            </div>
         </div>
     </section>
     );
