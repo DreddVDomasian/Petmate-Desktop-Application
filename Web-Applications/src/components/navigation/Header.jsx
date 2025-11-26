@@ -105,10 +105,9 @@ const Header = ({ setActiveTab }) => {
     <header>
       <div className="container">
         <nav className="navbar">
-          <a href="/" className="logo">
-            <i className="fas fa-paw"></i>
-            <span>PetMate</span>
-          </a>
+          <div className="logo header-profile" >
+            <img src="/assets/images/logo/PETMATE LOGO.png" alt="PetMate Logo" />
+          </div>
           <div className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
             <a href="/">Home</a>
             <a href="/#about">About</a>

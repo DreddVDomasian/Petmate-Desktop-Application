@@ -576,7 +576,6 @@ header {
     min-width: 180px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     color: var(--light);
-    background: linear-gradient(135deg, #ff6b00, #ff8c00);
 }
 
 /* Primary Button (Book Now) */

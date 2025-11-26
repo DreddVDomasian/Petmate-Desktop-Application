@@ -127,7 +127,7 @@ export default function ContactSection() {
                     </div>
                     <button 
                         type="button" 
-                        className="btn" 
+                        className="btn send-message-btn" 
                         onClick={handleSend}
                         disabled={isSending}
                     >
