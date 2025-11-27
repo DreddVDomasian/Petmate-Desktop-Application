@@ -8,9 +8,9 @@ body {
 
 }
 html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 .container {
@@ -31,29 +31,6 @@ header {
     z-index: 1000;
 }
 
-
-header {
-    background-color: var(--light);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-}
-
-.nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 0;
-}
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-
 .logo img {
     width: 160px; /* SA NAV LOGO */
     height: auto;
@@ -62,41 +39,6 @@ header {
 }
 
 
-.logo i {
-    font-size: 1.8rem;
-}
-
-.nav-links {
-    display: flex;
-    gap: 30px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: var(--dark);
-    font-weight: 500;
-    transition: color 0.3s;
-    position: relative;
-}
-
-.nav-links a:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -5px;
-    left: 0;
-    background-color: var(--secondary);
-    transition: width 0.3s;
-}
-
-.nav-links a:hover {
-    color: var(--primary);
-}
-
-.nav-links a:hover:after {
-    width: 100%;
-}
 
 .mobile-menu {
     display: none;
@@ -497,7 +439,8 @@ header {
 
 
 
-/* Home Section */.home-section {
+/* Home Section */
+.home-section {
     padding: 120px 0 90px;
     background: var(--grey);
     position: relative;
@@ -513,11 +456,7 @@ header {
     padding: 0 20px;
     width: 100%;
 }
-.home-content{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
+
 .content-wrapper {
     display: flex;
     align-items: center;
@@ -613,7 +552,6 @@ header {
     font-size: 20px;
     border-radius: 30px;
     text-transform: uppercase;
-
     min-width: 180px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     color: var(--light);
