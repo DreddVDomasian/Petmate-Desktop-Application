@@ -8,9 +8,9 @@ body {
 
 }
 html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 .container {
@@ -380,6 +380,8 @@ header {
     width: 95%;
 }
 
+
+
 .close {
     position: absolute;
     top: 15px;
@@ -402,11 +404,16 @@ header {
 }
 
 .phone-input .prefix {
-    background: #ffffff;
-    padding: 8px;
+    background: #f0f0f0;
+    padding: 13px;
     border: 1px solid #ccc;
     border-right: none;
-    border-radius: 5px 0 0 5px;
+    border-radius: 8px 0px 0px 8px ;
+}
+
+.login-container input[type="text"] {
+    /* Nasa APP.CSS TO eh loko! */
+    border-radius: 0 !important;
 }
 
 .phone-input input {
@@ -987,7 +994,7 @@ header {
 
 .form-group input:focus, .form-group textarea:focus {
     outline: none;
-    border-color: #4885CC;
+    border-color: #ff8c00;
     box-shadow: 0 0 0 3px rgba(72,133,204,0.1);
     transform: translateY(-2px);
 }
