@@ -21,6 +21,7 @@ html, body {
 }
 
 
+
 /* Navbar - scope to index page */
 header {
     background-color: var(--light);
@@ -168,14 +169,50 @@ header {
     align-items: center;
     text-align: center;
     padding: 10px 0;
+    width: 100%;
 }
 
 .forgot-container h2 {
     margin-top: 10px;
-    color: #333;
-    font-size: 22px;
+    color: var(--dark);
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
 }
 
+.forgot-container .subtitle {
+    font-size: 14px;
+    color: var(--dark);
+    margin: 0 0 25px 0;
+    max-width: 320px;
+    line-height: 1.4;
+}
+
+.forgot-container .form-group {
+    position: relative;
+    width: 100%;
+    margin: 20px 0px;
+}
+
+.forgot-container .form-group label {
+    /* Tinago ang dpaat itago haahaha */
+    position: absolute;
+    z-index: 0;
+
+}
+
+.forgot-container .form-group input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    background: #fff;
+    position: relative;
+}
+
+
+/* word "forgot password" */
 .forgot-link{
     color: #ff8c00;
     text-decoration: none;
@@ -191,15 +228,6 @@ header {
 .forgot-link:hover {
     color: #e67e00;
     text-decoration: underline;
-}
-
-
-
-.subtitle {
-    font-size: 14px;
-    color: #777;
-    margin: 10px 0 20px;
-    max-width: 320px;
 }
 
 .reset-btn {
@@ -497,7 +525,8 @@ header {
 
 
 
-/* Home Section */.home-section {
+/* Home Section */
+.home-section {
     padding: 120px 0 90px;
     background: var(--grey);
     position: relative;
@@ -614,6 +643,7 @@ header {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     color: var(--light);
 }
+
 
 
 .btn-primary:hover {
@@ -940,6 +970,12 @@ header {
     font-size: 16px;
 }
 
+/* Remove the default placeholder when we have the label */
+/* .forgot-container .form-group input::placeholder {
+    color: transparent;
+} */
+
+
 .form-group input, .form-group textarea,.form-group select,.forgot-container input {
     padding: 15px;
     border: 2px solid #e0e0e0;
@@ -985,33 +1021,6 @@ header {
 
 .send-message-btn:active {
     transform: translateY(-1px);
-}
-
-.contact-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s;
-    border-left: 4px solid var(--orange);
-}
-
-.contact-item:hover {
-    transform: translateY(-5px);
-}
-
-.contact-icon {
-    font-size: 1.5rem;
-    color: var(--primary);
-    margin-top: 5px;
-}
-
-.form-group {
-    margin-bottom: 20px;
 }
 
 
@@ -1103,7 +1112,32 @@ footer {
     color: #aaa;
 }
 
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+    border-left: 4px solid var(--orange);
+}
 
+.contact-item:hover {
+    transform: translateY(-5px);
+}
+
+.contact-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-top: 5px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
 
 
 /* Responsive Design */

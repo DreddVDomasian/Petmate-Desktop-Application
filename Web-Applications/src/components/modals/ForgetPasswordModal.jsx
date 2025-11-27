@@ -61,90 +61,87 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
   };
 
   return (
-    <div className="modal" onClick={onClose}>
-      <div className="modal-content forgot" onClick={(e) => e.stopPropagation()}>
-        <span className="close" onClick={onClose}>
-          &times;
-        </span>
-
-        <div className="forgot-container">
-          <a className="back-link" onClick={onBack}>
-            ← Back to Login
-          </a>
-
-          {step === 1 && (
-            <>
-              <h2>Forgot Password</h2>
-              <p>Enter your registered email to receive an OTP.</p>
-              <form onSubmit={sendOtp}>
+  <div className="modal" onClick={onClose}>
+    <div className="modal-content forgot" onClick={(e) => e.stopPropagation()}>
+      <span className="close" onClick={onClose}> &times; </span>
+      <div className="forgot-container">
+        <a className="back-link" onClick={onBack}> ← Back to Login </a>
+        
+        {step === 1 && (
+          <>
+            <h2>Forgot Password</h2>
+            <p className="subtitle">Enter your registered email to receive an OTP.</p>
+            <form onSubmit={sendOtp}>
+              <div className="form-group">
                 <label>Email</label>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
                 />
-                <button type="submit" className="reset-btn">
-                  Send OTP
-                </button>
-              </form>
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <h2>Reset Password</h2>
-              <form onSubmit={verifyOtp}>
+              </div>
+              <button type="submit" className="reset-btn">Send OTP</button>
+            </form>
+          </>
+        )}
+        
+        {step === 2 && (
+          <>
+            <h2>Reset Password</h2>
+            <p className="otp-notice">OTP sent to your email!</p>
+            <form onSubmit={verifyOtp}>
+              <div className="form-group">
                 <label>OTP Code</label>
-                <input
-                  type="text"
-                  placeholder="Enter OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  required
+                <input 
+                  type="text" 
+                  placeholder="Enter OTP" 
+                  value={otp} 
+                  onChange={(e) => setOtp(e.target.value)} 
+                  required 
                 />
-
+              </div>
+              <div className="form-group">
                 <label>New Password</label>
-                <input
-                  type="password"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
+                <input 
+                  type="password" 
+                  placeholder="Enter new password" 
+                  value={newPassword} 
+                  onChange={(e) => setNewPassword(e.target.value)} 
+                  required 
                 />
-
+              </div>
+              <div className="form-group">
                 <label>Confirm New Password</label>
-                <input
-                  type="password"
-                  placeholder="Confirm new password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
+                <input 
+                  type="password" 
+                  placeholder="Confirm new password" 
+                  value={confirmPassword} 
+                  onChange={(e) => setConfirmPassword(e.target.value)} 
+                  required 
                 />
+              </div>
+              <button type="submit" className="reset-btn">Verify & Reset</button>
+            </form>
+          </>
+        )}
+        
+        {step === 3 && (
+          <div className="success-container">
+            <h2>Success!</h2>
+            <p>Your password has been reset. You can now log in.</p>
+          </div>
+        )}
+        
+        {message && (
+          <p className={messageType === "error" ? "error-msg" : "success-msg"}>
+            {message}
+          </p>
+        )}
 
-                <button type="submit" className="reset-btn">
-                  Verify & Reset
-                </button>
-              </form>
-            </>
-          )}
-
-          {step === 3 && (
-            <div>
-              <h2>Success!</h2>
-              <p>Your password has been reset. You can now log in.</p>
-            </div>
-          )}
-
-          {message && (
-            <p className={messageType === "error" ? "error-msg" : "success-msg"}>
-              {message}
-            </p>
-          )}
-          
-        </div>
       </div>
     </div>
+</div>
   );
 }
