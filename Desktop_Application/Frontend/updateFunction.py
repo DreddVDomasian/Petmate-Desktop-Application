@@ -40,9 +40,19 @@ class Update:
             patient = response.json()
             self.populate_patient_form(patient)
             self.ui.navigate_to_page(1, is_update=True)
+            self.is_email_enable(owner_id)
         else:
             Toast(self.ui, "Failed to load patient!", icon_path="Icons/warning.png").show_toast()
 
+    def is_email_enable(self,owner_id):
+        response = requests.get(f"{API_BASE_URL}/api/patients/{owner_id}/")
+        if response.status_code == 200:
+            patient = response.json()
+            if patient.get('user_account') is not None:
+                self.ui.emailEdit.setReadOnly(True)
+
+        else:
+            Toast(self.ui, "Failed to check patient email!", icon_path="Icons/warning.png").show_toast()
     def update_patient_to_api(self):
         patient_id = getattr(self.ui, "selected_patient_id", None)
         if not patient_id:
@@ -62,7 +72,6 @@ class Update:
             "detailedAddress": self.ui.detailedAddressEdit.text().strip() or None,
             "SecondaryNumber": self.ui.secondaryPhoneEdit.text().strip() or None
         }
-
         # Validate combo boxes (same as before)
         for combo, name in [
             (self.ui.provinceComboBox, "province"),
@@ -76,6 +85,20 @@ class Update:
         url = f"{API_BASE_URL}/api/patients/{patient_id}/"
 
         try:
+            duplicate_payload = data.copy()
+            duplicate_payload["current_id"] = patient_id
+            dup_response = requests.post(f"{API_BASE_URL}/api/check-duplicate/", json=duplicate_payload).json()
+
+            # Email conflict
+            if dup_response.get("email_conflict"):
+                Toast(self.ui, "This email is already used by another patient.",
+                      icon_path="Icons/warning.png").show_toast()
+                return
+            # Name conflict
+            if dup_response.get("duplicates"):
+                Toast(self.ui, "Another patient already has this name.",
+                      icon_path="Icons/warning.png").show_toast()
+                return
             response = requests.put(url, json=data)
             if response.status_code == 200:
                 self.sync_to_auth_user_if_linked(patient_id, data)

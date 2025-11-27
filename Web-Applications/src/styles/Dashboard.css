@@ -60,7 +60,7 @@ body {
 /* Header & Navigation */
 header {
   background-color: var(--light);
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.205);
   position: fixed;
   width: 100%;
   top: 0;
@@ -73,7 +73,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 0;
+  padding: 20px 0;
 }
 
 .logo {
@@ -98,7 +98,8 @@ header {
 .nav-links a {
   text-decoration: none;
   color: var(--dark);
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: 600;
   transition: color 0.3s;
   position: relative;
 }
@@ -137,8 +138,8 @@ header {
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: var(--primary);
   display: flex;
@@ -146,6 +147,7 @@ header {
   justify-content: center;
   color: white;
   font-weight: 600;
+  font-size: 1.2rem;
 }
 
 .mobile-menu {

@@ -16,7 +16,6 @@ function HomePage() {
     <section className="home-section" id="home">
       <div className="home-container">
         <div className="content-wrapper">
-
           <div className="doctor-image">
             <img src="/assets/images/misc/doc.png" alt="Veterinarian with dog" />
           </div>
@@ -31,6 +30,13 @@ function HomePage() {
           </div>
         </div>
 
+         <div className="content home-content">
+            <h1>Your pet's health<br />is our priority.</h1>
+            <p>Expert care, advanced treatments,<br />and a loving touch for your pets.<br />Keeping tails wagging and hearts happy!</p>
+            <div className="action-buttons">
+              <button type="button" className="btn-primary" onClick={openLogin}>BOOK NOW</button>
+            </div>
+         </div>
       </div>
 
       <LoginModal visible={showLogin} onClose={closeLogin} onOpenSignup={openSignup} />

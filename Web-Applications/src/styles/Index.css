@@ -507,12 +507,17 @@ header {
 }
 
 .home-container {
+    display: flex;
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
     width: 100%;
 }
-
+.home-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
 .content-wrapper {
     display: flex;
     align-items: center;
@@ -520,7 +525,7 @@ header {
     gap: 60px;
     position: relative;
     z-index: 2;
-    padding: 0; /* Remove any padding that might cause gaps */
+    padding: 0;
 }
 
 .doctor-image {
@@ -536,11 +541,10 @@ header {
 .doctor-image img {
     max-width: 100%;
     height: auto;
-    max-height: 750px;
+    max-height: 800px;
     width: auto;
     object-fit: contain;
     border-radius: 15px;
-
 }
 
 .content {
@@ -607,7 +611,7 @@ header {
     font-weight: bold;
     cursor: pointer;
     font-size: 20px;
-    border-radius: 8px;
+    border-radius: 30px;
     text-transform: uppercase;
 
     min-width: 180px;
@@ -624,7 +628,7 @@ header {
 
 /* About Section */
 .about-section {
-    padding: 90px 0;
+    padding: 170px 0;
     background-color: var(--light);
     max-height: 100dvh;
 }
