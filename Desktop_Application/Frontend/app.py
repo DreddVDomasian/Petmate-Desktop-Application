@@ -35,10 +35,11 @@ from config_loader import API_BASE_URL
 import requests
 import webbrowser
 
-import pyqtgraph as pg
+from PyQt6.QtCharts import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QPieSeries
+from PyQt6.QtGui import QColor, QPainter
 from PyQt6.QtWidgets import QVBoxLayout
-from PyQt6.QtCore import QTimer
-from analytics import fetch_daily_analytics
+from analytics import fetch_json
+
 
 
 class MainUI(QMainWindow):
@@ -132,11 +133,15 @@ class MainUI(QMainWindow):
 
         # Analytics/Homepage
         self.stackedWidget.setCurrentIndex(0)
-        self.setup_analytics()
+        self.setup_bar_graph()
+        self.setup_pie_graph()
+
+        self.analyticsTimer = QTimer()
+        self.analyticsTimer.timeout.connect(self.refresh_analytics)
+        self.analyticsTimer.start(15000)
 
 
-
-    #LAYOUT FOR SCROLL AREAS FOR CARDS
+        #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
         self.accountUserLayout = self.accountUserScrollAreaContents.layout()
         self.accountUserLayout.setSpacing(10)
@@ -2453,59 +2458,79 @@ class MainUI(QMainWindow):
             if card.profileIcon:
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
 
-    def setup_analytics(self):
-        # Clear frame layout
-        for i in reversed(range(self.DailyAnalyticsFrame.layout().count())):
-            widget = self.DailyAnalyticsFrame.layout().itemAt(i).widget()
-            if widget is not None:
-                widget.deleteLater()
+    def refresh_analytics(self):
+        print("Refreshing analytics...")
+        self.setup_bar_graph()
+        self.setup_pie_graph()
 
-        # Create layout if none
-        layout = self.DailyAnalyticsFrame.layout()
+    def setup_bar_graph(self):
+
+        data = fetch_json("http://127.0.0.1:8000/api/serviceCounts")
+        if data is None:
+            print("BAR GRAPH ERROR — No data")
+            return
+
+        set0 = QBarSet("Services")
+        values = list(data.values())
+        categories = list(data.keys())
+        for v in values:
+            set0.append(v)
+
+        series = QBarSeries()
+        series.append(set0)
+
+        chart = QChart()
+        chart.addSeries(series)
+        chart.setTitle("Total every service")
+
+        axis_x = QBarCategoryAxis()
+        axis_x.append(categories)
+        chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
+        series.attachAxis(axis_x)
+
+        chart_view = QChartView(chart)
+        chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        layout = self.ServiceBarGraph.layout()
         if layout is None:
-            layout = QVBoxLayout(self.DailyAnalyticsFrame)
-            self.DailyAnalyticsFrame.setLayout(layout)
+            layout = QVBoxLayout(self.ServiceBarGraph)
+
+        # Remove previous charts
+        while layout.count():
+            old = layout.takeAt(0)
+            if old.widget():
+                old.widget().deleteLater()
+
+        layout.addWidget(chart_view)
+
+    def setup_pie_graph(self):
+
+        data = fetch_json("http://127.0.0.1:8000/api/speciesCounts")
+        if data is None:
+            print("PIE GRAPH ERROR — No data")
+            return
+
+        series = QPieSeries()
+        series.append(f"Dogs: {data.get('dogs', 0)}", data.get("dogs", 0))
+        series.append(f"Cats: {data.get('cats', 0)}", data.get("cats", 0))
+        series.append(f"Others: {data.get('others', 0)}", data.get("others", 0))
+
+        chart = QChart()
+        chart.addSeries(series)
+        chart.setTitle("Species Distribution")
+
+        chart_view = QChartView(chart)
+        chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
 
-        self.graphWidget = pg.PlotWidget()
-        layout.addWidget(self.graphWidget)
+        layout = self.SpeciesPieGraph.layout()
+        if layout is None:
+            layout = QVBoxLayout(self.SpeciesPieGraph)
 
-        self.graphWidget.setXRange(0, 7)
-        self.graphWidget.setYRange(0, 10)
-        # Set background to LIGHT GRAY (so white lines won't disappear)
-        self.graphWidget.setBackground('#F0F0F0')
+        # Remove previous charts
+        while layout.count():
+            old = layout.takeAt(0)
+            if old.widget():
+                old.widget().deleteLater()
 
-        # Enable grid
-        self.graphWidget.showGrid(x=True, y=True, alpha=0.1)
-
-        # Title + Axis Colors
-        self.graphWidget.setTitle("Daily Appointments", color="black", size="16pt")
-        styles = {'color': 'black', 'font-size': '12pt'}
-        self.graphWidget.setLabel('left', 'Appointments', **styles)
-        self.graphWidget.setLabel('bottom', 'Days', **styles)
-        self.graphWidget.getAxis('left').setPen(pg.mkPen(color='black'))
-        self.graphWidget.getAxis('bottom').setPen(pg.mkPen(color='black'))
-
-
-        try:
-            res = requests.get("http://127.0.0.1:8000/api/analyticsAppointments")
-            data = res.json()
-        except:
-            data = {"Mon": 0, "Tue": 0, "Wed": 0, "Thu": 0, "Fri": 0, "Sat": 0, "Sun": 0}
-
-        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        counts = [data.get(d, 0) for d in days]
-
-
-        self.graphWidget.plot(
-            list(range(len(days))),
-            counts,
-            pen=pg.mkPen(color="green", width=4),
-            symbol='o',
-            symbolBrush='darkgray',
-            symbolSize=10,
-        )
-
-        # Set x-axis day labels
-        axis = self.graphWidget.getPlotItem().getAxis('bottom')
-        axis.setTicks([[(i, days[i]) for i in range(len(days))]])
+        layout.addWidget(chart_view)

@@ -30,29 +30,11 @@ from django.utils.html import strip_tags
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from collections import Counter
-from .models import WalkInAppointment
+from django.http import JsonResponse
+from .models import Service, Pet
+from django.db.models import Count
+from datetime import datetime
 
-@api_view(["GET"])
-def analytics_appointments(request):
-    appts = WalkInAppointment.objects.exclude(status__iexact="cancelled")
-
-    daily = Counter()
-    for a in appts:
-        # a.date is a DateField; format day name
-        dayname = a.date.strftime("%a")  # Mon, Tue, Wed ...
-        daily[dayname] += 1
-
-    output = {
-        "Mon": daily.get("Mon", 0),
-        "Tue": daily.get("Tue", 0),
-        "Wed": daily.get("Wed", 0),
-        "Thu": daily.get("Thu", 0),
-        "Fri": daily.get("Fri", 0),
-        "Sat": daily.get("Sat", 0),
-        "Sun": daily.get("Sun", 0),
-    }
-    return Response(output)
 
 # Desktop Authentication Views
 class DesktopLoginView(APIView):
@@ -1664,3 +1646,25 @@ class ManualReminderView(APIView):
         except WalkInAppointment.DoesNotExist:
             return Response({'error': 'Appointment not found'}, status=404)
 
+def api_service_counts(request):
+    data = (
+        Service.objects.values('service_type')
+        .annotate(total=Count('service_type'))
+        .order_by('service_type')
+    )
+
+    formatted = {item['service_type']: item['total'] for item in data}
+    return JsonResponse(formatted)
+
+def api_species_counts(request):
+    month = datetime.today().month
+
+    cats = Pet.objects.filter(species__icontains="cat", date_added__month=month).count()
+    dogs = Pet.objects.filter(species__icontains="dog", date_added__month=month).count()
+    others = Pet.objects.exclude(species__icontains="cat").exclude(species__icontains="dog").count()
+
+    return JsonResponse({
+        "cats": cats,
+        "dogs": dogs,
+        "others": others
+    })

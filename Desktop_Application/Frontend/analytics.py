@@ -2,21 +2,28 @@
 import requests
 from config_loader import API_BASE_URL  # your app uses this already (from your upload)
 
-def fetch_daily_analytics():
-
-    url = f"{API_BASE_URL}/api/analyticsAppointments"
+def fetch_json(url):
     try:
-        resp = requests.get(url, timeout=2)
-        resp.raise_for_status()
-        data = resp.json()
-    except Exception as e:
-        # fallback to zeros if API fails
-        days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
-        values = [0]*7
-        return days, values
+        print(f"\nFetching: {url}")
 
-    days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
-    values = [int(data.get(d, 0)) for d in days]
-    return days, values
+        response = requests.get(url, timeout=5)
+
+        print("STATUS:", response.status_code)
+        print("RAW TEXT:", response.text)
+
+        # Try decoding JSON
+        try:
+            data = response.json()
+        except Exception as e:
+            print("❌ ERROR: Response is NOT JSON!", e)
+            return None
+
+        print("PARSED JSON:", data)
+        return data
+
+    except Exception as e:
+        print("❌ REQUEST FAILED:", e)
+        return None
+
 
 
