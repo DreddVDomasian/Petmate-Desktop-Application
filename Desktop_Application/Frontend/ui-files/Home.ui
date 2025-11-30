@@ -12374,7 +12374,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame">
+                                <widget class="QFrame" name="monStartTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">#timeFrame{
 	background-color:rgb(245, 245, 245);
@@ -12391,7 +12391,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox">
+                                   <widget class="QComboBox" name="monHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12490,7 +12490,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_2">
+                                   <widget class="QComboBox" name="monMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12513,7 +12513,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_3">
+                                   <widget class="QComboBox" name="monAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12552,7 +12552,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_2">
+                                <widget class="QFrame" name="monEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">#timeFrame_2{
 	background-color:rgb(245, 245, 245);
@@ -12569,7 +12569,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_7">
+                                   <widget class="QComboBox" name="endMonHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12668,7 +12668,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_8">
+                                   <widget class="QComboBox" name="endMonMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12691,7 +12691,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_9">
+                                   <widget class="QComboBox" name="endMonAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12832,7 +12832,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame_3">
+                                <widget class="QFrame" name="teusStartTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -12849,7 +12849,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_10">
+                                   <widget class="QComboBox" name="teusHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12948,7 +12948,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_11">
+                                   <widget class="QComboBox" name="teusMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -12971,7 +12971,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_12">
+                                   <widget class="QComboBox" name="teusAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13010,7 +13010,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_4">
+                                <widget class="QFrame" name="teusEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -13027,7 +13027,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_13">
+                                   <widget class="QComboBox" name="endTeusHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13126,7 +13126,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_14">
+                                   <widget class="QComboBox" name="endTeusMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13149,7 +13149,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_15">
+                                   <widget class="QComboBox" name="endTeusAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13290,7 +13290,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame_5">
+                                <widget class="QFrame" name="weStartTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -13307,7 +13307,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_16">
+                                   <widget class="QComboBox" name="wedHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13406,7 +13406,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_17">
+                                   <widget class="QComboBox" name="wedMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13429,7 +13429,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_18">
+                                   <widget class="QComboBox" name="wedAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13468,7 +13468,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_6">
+                                <widget class="QFrame" name="wedEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -13485,7 +13485,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_19">
+                                   <widget class="QComboBox" name="endWedHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13584,7 +13584,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_20">
+                                   <widget class="QComboBox" name="endWedMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13607,7 +13607,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_21">
+                                   <widget class="QComboBox" name="endWedAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13748,7 +13748,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame_7">
+                                <widget class="QFrame" name="thursStartTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -13765,7 +13765,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_22">
+                                   <widget class="QComboBox" name="thursHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13864,7 +13864,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_23">
+                                   <widget class="QComboBox" name="thursMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13887,7 +13887,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_24">
+                                   <widget class="QComboBox" name="thursAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -13926,7 +13926,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_8">
+                                <widget class="QFrame" name="thursEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -13943,7 +13943,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_25">
+                                   <widget class="QComboBox" name="endThursHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14042,7 +14042,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_26">
+                                   <widget class="QComboBox" name="endThursMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14065,7 +14065,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_27">
+                                   <widget class="QComboBox" name="endThursAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14206,7 +14206,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame_9">
+                                <widget class="QFrame" name="friStartTImeFramae">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -14223,7 +14223,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_28">
+                                   <widget class="QComboBox" name="friHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14322,7 +14322,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_29">
+                                   <widget class="QComboBox" name="friMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14345,7 +14345,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_30">
+                                   <widget class="QComboBox" name="friAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14384,7 +14384,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_10">
+                                <widget class="QFrame" name="friEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -14401,7 +14401,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_31">
+                                   <widget class="QComboBox" name="endFriHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14500,7 +14500,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_32">
+                                   <widget class="QComboBox" name="endFriMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14523,7 +14523,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_33">
+                                   <widget class="QComboBox" name="endFriAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14664,7 +14664,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame_11">
+                                <widget class="QFrame" name="satStartTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -14681,7 +14681,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_34">
+                                   <widget class="QComboBox" name="satHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14780,7 +14780,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_35">
+                                   <widget class="QComboBox" name="satMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14803,7 +14803,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_36">
+                                   <widget class="QComboBox" name="satAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14842,7 +14842,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_12">
+                                <widget class="QFrame" name="satEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -14859,7 +14859,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_37">
+                                   <widget class="QComboBox" name="endSatHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14958,7 +14958,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_38">
+                                   <widget class="QComboBox" name="endSatMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -14981,7 +14981,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_39">
+                                   <widget class="QComboBox" name="endSatAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -15122,7 +15122,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QFrame" name="timeFrame_13">
+                                <widget class="QFrame" name="sunStartTImeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -15139,7 +15139,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_40">
+                                   <widget class="QComboBox" name="sunHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -15238,7 +15238,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_41">
+                                   <widget class="QComboBox" name="sunMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -15261,7 +15261,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_42">
+                                   <widget class="QComboBox" name="sunAmPm">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -15300,7 +15300,7 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QFrame" name="timeFrame_14">
+                                <widget class="QFrame" name="sunEndTimeFrame">
                                  <property name="styleSheet">
                                   <string notr="true">QFrame{
 	background-color:rgb(245, 245, 245);
@@ -15317,7 +15317,7 @@ font-size:14px;</string>
                                    <number>0</number>
                                   </property>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_43">
+                                   <widget class="QComboBox" name="endSunHrs">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -15416,7 +15416,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_44">
+                                   <widget class="QComboBox" name="endSunMins">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -15439,7 +15439,7 @@ font-size:14px;</string>
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QComboBox" name="comboBox_45">
+                                   <widget class="QComboBox" name="endSunAmPM">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
