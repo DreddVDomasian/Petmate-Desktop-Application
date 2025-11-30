@@ -21,11 +21,8 @@
     <widget class="QFrame" name="remidersChecklists">
      <property name="styleSheet">
       <string notr="true">#remidersChecklists{
-	border-radius:15px;	background-color: qlineargradient(
-		 y1: 0, x1: 0, y2: 1, x2: 0,
-		 stop: 0 #78B3CE, 
-    	 stop: 1 #D0F0FF
-	);
+	background-color:#81BFDA;
+	border-radius:15px;
 }</string>
      </property>
      <property name="frameShape">
@@ -173,6 +170,9 @@ QScrollBar::groove:vertical {
       </item>
       <item>
        <widget class="QFrame" name="frame">
+        <property name="styleSheet">
+         <string notr="true">background:transparent;</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>

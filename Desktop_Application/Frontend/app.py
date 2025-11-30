@@ -25,6 +25,7 @@ from Desktop_Application.Backend.api_client import add_new_patient, add_new_pet,
 from confirm_card import ConfirmCard
 from ReminderPopUp import ReminderPopup
 from appointmentPopUp import AddAppointmentCard
+from addServicePopUp import AddServicePopUp
 from functools import partial
 from datetime import datetime
 from shadowEffects import *
@@ -66,6 +67,7 @@ class MainUI(QMainWindow):
         self.setup_dates()
         self.setup_confirm_card()
         self.setup_add_appintmentPopUp()
+        self.setup_add_service()
         self.setup_pet_buttons()
 
         #Settings
@@ -224,6 +226,8 @@ class MainUI(QMainWindow):
         self.petConfirmButton.clicked.connect(self.submit_pet_data)
         self.addServiceBtn.clicked.connect(self.submit_service_data)
 
+        #add service
+        self.addNewServices.mousePressEvent = lambda event: self.open_add_service()
 
         # add appointment
         for tb in [self.toolButton_2, self.toolButton_3]:
@@ -282,6 +286,17 @@ class MainUI(QMainWindow):
         self.pendingReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(0))
         self.completeReurnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(1))
         self.overdueReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(2))
+
+        #Web management stackwidget
+        self.serviceTab.setChecked(True)
+        self.officeHoursTab.setChecked(True)
+        self.webManagementStackedWidget.setCurrentIndex(0)
+        self.webManagementStatusBtnGroup = QButtonGroup(self)
+        for btn in [ self.serviceTab, self.officeHoursTab]:
+            self.webManagementStatusBtnGroup.addButton(btn)
+        self.serviceTab.setChecked(True)
+        self.serviceTab.clicked.connect(lambda: self.webManagementStackedWidget.setCurrentIndex(0))
+        self.officeHoursTab.clicked.connect(lambda: self.webManagementStackedWidget.setCurrentIndex(1))
 
 
         #Settings Stack widget
@@ -1540,6 +1555,19 @@ class MainUI(QMainWindow):
             self.returnDateEdit.hide()
             self.returnDatePlaceholder.show()
 
+    #add service
+    def setup_add_service(self):
+        self.addServiceCard = AddServicePopUp(
+            parent=self.findChild(QWidget, "MainContent"),
+            main_window=self  # pass the MainUI instance
+        )
+        self.addServiceCard.hide()
+        self.addServiceCard.closePopUpBtn.clicked.connect(self.cancel_add_service)
+        self.addServiceCard.cancelAddServiceBtn.clicked.connect(self.cancel_add_service)
+    def cancel_add_service(self):
+        self.addServiceCard.hide()
+    def open_add_service(self):
+        self.addServiceCard.show_card()
     #WALKIN PAGE
     def setup_add_appintmentPopUp(self):
         self.appointmentCard = AddAppointmentCard(
@@ -2462,7 +2490,6 @@ class MainUI(QMainWindow):
         print("Refreshing analytics...")
         self.setup_bar_graph()
         self.setup_pie_graph()
-
     def setup_bar_graph(self):
 
         data = fetch_json("http://127.0.0.1:8000/api/serviceCounts")
@@ -2502,7 +2529,6 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
-
     def setup_pie_graph(self):
 
         data = fetch_json("http://127.0.0.1:8000/api/speciesCounts")

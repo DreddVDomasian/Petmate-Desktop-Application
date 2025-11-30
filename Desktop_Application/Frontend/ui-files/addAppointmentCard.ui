@@ -21,11 +21,7 @@
     <widget class="QFrame" name="addPopUPFrame">
      <property name="styleSheet">
       <string notr="true">#addPopUPFrame{
-	background-color: qlineargradient(
-		 y1: 0, x1: 0, y2: 1, x2: 0,
-		 stop: 0 #78B3CE, 
-    	 stop: 1 #D0F0FF
-	);
+	background-color:#81BFDA;
 	border-radius:15px;
 }
 
@@ -33,7 +29,7 @@ QDateEdit {
 	background-color:rgb(245, 245, 245);
     border-radius: 10px;
     font: 57 12pt &quot;Montserrat Medium&quot;;
-    color: rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
     padding-left: 10px;
 }
 
@@ -55,13 +51,13 @@ QComboBox {
 	background-color:rgb(245, 245, 245);
     border-radius: 10px;
 	font: 57 12pt &quot;Montserrat Medium&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
 	padding-left: 10px;
 
 }
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
     border: none; 
 }
 QComboBox:focus{
@@ -93,14 +89,14 @@ QComboBox QAbstractItemView {
 /* List items */
 QComboBox QAbstractItemView::item {
     background-color:  rgb(232, 232, 232);
-	color:rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
     height: 25px;
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
 }
 
 QComboBox QAbstractItemView::item:hover {
     background-color: rgb(193, 193, 193);
-    color: black;
+	color:rgb(66, 66, 66);
 }
 
 /* Scrollbar inside dropdown */
@@ -141,7 +137,7 @@ QComboBox QAbstractItemView QScrollBar::groove {
 
 QComboBox QLineEdit {
     font: 63 12pt &quot;Montserrat SemiBold&quot;;
-    color: rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
     border: none; /* optional para di mag mukhang double border */
     background: transparent;
 }
@@ -228,7 +224,7 @@ QTimeEdit::down-button {
             <string notr="true">QLabel{
 	
 	font: 18pt &quot;Rubik Mono One&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
 
 }</string>
            </property>
@@ -344,7 +340,7 @@ QTimeEdit::down-button {
              <widget class="QLabel" name="label_141">
               <property name="styleSheet">
                <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
+color:rgb(66, 66, 66);</string>
               </property>
               <property name="text">
                <string>Select Patient</string>
@@ -409,7 +405,7 @@ color:rgb(39, 39, 39);</string>
              <widget class="QLabel" name="label_142">
               <property name="styleSheet">
                <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
+color:rgb(66, 66, 66);</string>
               </property>
               <property name="text">
                <string>Select Pet</string>
@@ -496,7 +492,7 @@ color:rgb(39, 39, 39);</string>
           <widget class="QLabel" name="label_137">
            <property name="styleSheet">
             <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
+color:rgb(66, 66, 66);</string>
            </property>
            <property name="text">
             <string>Service Type</string>
@@ -662,7 +658,7 @@ color:rgb(39, 39, 39);</string>
              <widget class="QLabel" name="label_139">
               <property name="styleSheet">
                <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
+color:rgb(66, 66, 66);</string>
               </property>
               <property name="text">
                <string>Preffered Date</string>
@@ -720,7 +716,7 @@ color:rgb(39, 39, 39);</string>
              <widget class="QLabel" name="label_140">
               <property name="styleSheet">
                <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
-color:rgb(39, 39, 39);</string>
+color:rgb(66, 66, 66);</string>
               </property>
               <property name="text">
                <string>Preffered Time</string>
@@ -791,41 +787,6 @@ color:rgb(39, 39, 39);</string>
           <number>20</number>
          </property>
          <item>
-          <widget class="QPushButton" name="cancelAddAppointment">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>174</width>
-             <height>45</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
-	font: 63 15pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
-	background-color:	rgb(220, 90, 90);
-	border-radius: 5px;
-}
-
-QPushButton:hover{
-	background-color:rgb(180, 120, 125);
-
-}</string>
-           </property>
-           <property name="text">
-            <string>CANCEL</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="addAppointmentBtn">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -845,7 +806,7 @@ QPushButton:hover{
            <property name="styleSheet">
             <string notr="true">QPushButton{
 	font: 63 15pt &quot;Montserrat SemiBold&quot;;
-	color:rgb(39, 39, 39);
+	color:rgb(66, 66, 66);
 	background-color:#FCD597;
 	border-radius: 5px;
 }
@@ -856,7 +817,42 @@ QPushButton:hover{
 }</string>
            </property>
            <property name="text">
-            <string>ADD</string>
+            <string>SET APPOINTMENT</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cancelAddAppointment">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>174</width>
+             <height>45</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+	font: 63 15pt &quot;Montserrat SemiBold&quot;;
+	color:rgb(66, 66, 66);
+	background-color:	rgb(220, 90, 90);
+	border-radius: 5px;
+}
+
+QPushButton:hover{
+	background-color:rgb(180, 120, 125);
+
+}</string>
+           </property>
+           <property name="text">
+            <string>CANCEL</string>
            </property>
           </widget>
          </item>

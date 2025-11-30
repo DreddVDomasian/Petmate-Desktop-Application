@@ -30,12 +30,8 @@
     <widget class="QFrame" name="confirmation">
      <property name="styleSheet">
       <string notr="true">#confirmation{
+	background-color:#81BFDA;
 	border-radius:15px;
-	background-color: qlineargradient(
-		 y1: 0, x1: 0, y2: 1, x2: 0,
-		 stop: 0 #78B3CE, 
-    	 stop: 1 #D0F0FF
-	);
 	border-bottom:1px solid rgb(199, 199, 199);
 }</string>
      </property>
