@@ -30,10 +30,7 @@ class AddServicePopUp(QWidget):
         self.addServiceBtn.setGraphicsEffect(create_card_shadow())
         self.cancelAddServiceBtn.setGraphicsEffect(create_card_shadow())
 
-        self.setup_style()
 
-    def setup_style(self):
-        self.serviceDescription.setStyleSheet(serviceDescription)
     def show_card(self):
         if self.parent():
             parent_widget = self.parent()

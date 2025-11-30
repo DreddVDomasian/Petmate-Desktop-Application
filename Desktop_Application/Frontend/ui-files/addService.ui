@@ -43,18 +43,19 @@ QLineEdit:focus{
 	background-color:rgb(227, 227, 227);
 }
 
-#serviceDescription{
-    border-radius: 5px;
-	font-family: &quot;Montserrat Medium&quot;;
-	font-weight: 57;
-	font-size:14px;
-	color:rgb(66, 66, 66);
-	padding-left: 10px;
-	background-color:rgb(245, 245, 245);
+QTextEdit {
+    border: 2px solid #cccccc;  /* Add this line */
+    border-radius: 10px;
+    font-family: &quot;Montserrat Medium&quot;;
+    font-weight: 57;
+    font-size: 14px;
+    color: rgb(66, 66, 66);
+    padding-left: 10px;
+    background-color: rgb(245, 245, 245);
 }
-#serviceDescription QTextEdit:focus{
-    border: 1px solid rgb(235, 235, 235);
-	background-color:rgb(227, 227, 227);
+QTextEdit:focus {
+    border: 2px solid #78B3CE;  /* Use your theme color */
+    background-color: rgb(227, 227, 227);
 }</string>
      </property>
      <property name="frameShape">

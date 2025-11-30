@@ -409,19 +409,3 @@ pendingServiceStatus = """
         color:rgb(133, 100, 4);
     }
 """
-
-serviceDescription = """
-    QTextEdit{
-        border-radius: 10px;
-        font-family: "Montserrat Medium";
-        font-weight: 57;
-        font-size:14px;
-        color:rgb(66, 66, 66);
-        padding-left: 10px;
-        background-color:rgb(245, 245, 245);
-    }
-    QTextEdit:focus{
-        border: 1px solid rgb(235, 235, 235);
-        background-color:rgb(227, 227, 227);
-    }
-"""
