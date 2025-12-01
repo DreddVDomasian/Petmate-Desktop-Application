@@ -833,7 +833,7 @@ class MainUI(QMainWindow):
     #CLIENT RECORD PAGE
     def load_patients(self, page=1, search_term=None):
         try:
-            # ✅ Safe layout clearing - avoid crashes on empty layouts
+
             items_to_delete = []
             while self.patientListLayout.count():
                 child = self.patientListLayout.takeAt(0)

@@ -1321,7 +1321,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>10</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -5418,8 +5418,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>860</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -11984,7 +11984,7 @@ QTimeEdit {
 </string>
                    </property>
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="serviceManagementPage">
                     <layout class="QVBoxLayout" name="verticalLayout_86">
@@ -12120,8 +12120,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>93</width>
-                             <height>51</height>
+                             <width>820</width>
+                             <height>399</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">

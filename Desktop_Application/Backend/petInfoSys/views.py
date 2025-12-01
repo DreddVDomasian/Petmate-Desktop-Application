@@ -1767,7 +1767,7 @@ class ServiceTypeListCreateView(generics.ListCreateAPIView):
     """List all service types and create new ones"""
     serializer_class = ServiceTypeSerializer
     permission_classes = [AllowAny]
-
+    pagination_class = StandardPagination
     def get_queryset(self):
         queryset = ServiceType.objects.all()
 
