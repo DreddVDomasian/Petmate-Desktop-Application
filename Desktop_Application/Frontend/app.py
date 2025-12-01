@@ -2812,7 +2812,7 @@ class MainUI(QMainWindow):
                 {'day': 'thursday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
                 {'day': 'friday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
                 {'day': 'saturday', 'status': 'open', 'start_time': '09:00:00', 'end_time': '16:00:00'},
-                {'day': 'sunday', 'status': 'closed', 'start_time': None, 'end_time': None}
+                {'day': 'sunday', 'status': 'appointment_only', 'start_time': None, 'end_time': None}
             ]
 
             # Populate UI with default values
