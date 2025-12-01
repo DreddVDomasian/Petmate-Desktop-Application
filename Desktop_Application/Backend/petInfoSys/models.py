@@ -273,3 +273,24 @@ class OfficeHours(models.Model):
 
     def __str__(self):
         return f"{self.get_day_display()} - {self.get_status_display()}"
+
+
+class ServiceType(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    is_default = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = "Service Types"
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.strip().title()
+        super().save(*args, **kwargs)

@@ -1321,7 +1321,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2685,8 +2685,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>860</width>
+                   <height>506</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3976,7 +3976,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>82</width>
+                           <width>860</width>
                            <height>362</height>
                           </rect>
                          </property>
@@ -4974,7 +4974,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>80</width>
+                          <width>858</width>
                           <height>450</height>
                          </rect>
                         </property>

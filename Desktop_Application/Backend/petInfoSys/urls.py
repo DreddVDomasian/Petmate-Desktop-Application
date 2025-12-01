@@ -75,4 +75,8 @@ urlpatterns = [
 
     path('office-hours/', views.get_office_hours, name='get-office-hours'),
     path('office-hours/update/', views.update_office_hours, name='update-office-hours'),
+
+    # Service Type endpoints
+    path('service-types/', ServiceTypeListCreateView.as_view(), name='service-types-list-create'),
+    path('service-types/<int:pk>/', ServiceTypeRetrieveUpdateDestroyView.as_view(), name='service-types-detail'),
 ]

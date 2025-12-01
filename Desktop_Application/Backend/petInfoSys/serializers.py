@@ -123,3 +123,24 @@ class OfficeHoursSerializer(serializers.ModelSerializer):
     class Meta:
         model = OfficeHours
         fields = ['id', 'day', 'status', 'start_time', 'end_time']
+
+
+class ServiceTypeSerializer(serializers.ModelSerializer):
+    can_delete = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ServiceType
+        fields = ['id', 'name', 'description', 'is_default', 'is_active', 'can_delete', 'created_at', 'updated_at']
+        read_only_fields = ['is_default', 'created_at', 'updated_at']
+
+    def get_can_delete(self, obj):
+        # You can add logic here if needed
+        return True
+
+    def validate_name(self, value):
+        # Check for duplicate names (case-insensitive)
+        if ServiceType.objects.filter(name__iexact=value).exists():
+            if self.instance and self.instance.name.lower() == value.lower():
+                return value
+            raise serializers.ValidationError("A service type with this name already exists.")
+        return value.strip().title()

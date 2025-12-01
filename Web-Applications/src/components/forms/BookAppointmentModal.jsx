@@ -187,13 +187,18 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     }
   };
 
-  // NEW: Get day name from date
   const getDayName = (dateString) => {
-    const date = new Date(dateString);
-    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    return days[date.getDay()];
+    try {
+      const date = new Date(dateString);
+      const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const dayIndex = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      console.log("getDayName input:", dateString, "output:", days[dayIndex]); // Debug
+      return days[dayIndex];
+    } catch (error) {
+      console.error("Error in getDayName:", error);
+      return '';
+    }
   };
-
   // NEW: Get time slots for specific day
   const getTimeSlotsForDay = (dateString) => {
     const dayName = getDayName(dateString);

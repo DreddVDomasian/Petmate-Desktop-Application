@@ -1761,3 +1761,37 @@ def update_office_hours(request):
             continue
 
     return Response({'message': 'Office hours updated successfully'})
+
+
+class ServiceTypeListCreateView(generics.ListCreateAPIView):
+    """List all service types and create new ones"""
+    serializer_class = ServiceTypeSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = ServiceType.objects.all()
+
+        # Filter by active status if provided
+        is_active = self.request.query_params.get('is_active', '')
+        if is_active.lower() == 'true':
+            queryset = queryset.filter(is_active=True)
+        elif is_active.lower() == 'false':
+            queryset = queryset.filter(is_active=False)
+
+        # Search by name
+        search = self.request.query_params.get('search', '')
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
+        return queryset.order_by('name')
+
+
+class ServiceTypeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, or delete a service type"""
+    queryset = ServiceType.objects.all()
+    serializer_class = ServiceTypeSerializer
+
+    def perform_destroy(self, instance):
+        # Soft delete by setting is_active to False
+        instance.is_active = False
+        instance.save()
