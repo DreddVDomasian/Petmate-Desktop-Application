@@ -242,3 +242,34 @@ class AppointmentReminder(models.Model):
     def __str__(self):
         return f"{self.reminder_type} - {self.scheduled_send_time}"
 
+# -----------------DYNAMIC WEB DETAILS------------------
+class OfficeHours(models.Model):
+    DAY_CHOICES = [
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ]
+
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('appointment_only', 'Appointment Only'),
+        ('closed', 'Closed'),
+    ]
+
+    day = models.CharField(max_length=10, choices=DAY_CHOICES, unique=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Office Hours"
+        ordering = ['id']
+
+    def __str__(self):
+        return f"{self.get_day_display()} - {self.get_status_display()}"

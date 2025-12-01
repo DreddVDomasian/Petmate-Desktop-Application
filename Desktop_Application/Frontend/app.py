@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidge
     QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
-    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings
+    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime
 from PyQt6.QtGui import QFontDatabase, QPixmap,QIntValidator, QRegularExpressionValidator
 from uiLogic import UIHandler
 from input_styles import *
@@ -142,6 +142,7 @@ class MainUI(QMainWindow):
         self.analyticsTimer.timeout.connect(self.refresh_analytics)
         self.analyticsTimer.start(15000)
 
+        self.setup_office_hours()
 
         #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
@@ -2492,7 +2493,7 @@ class MainUI(QMainWindow):
         self.setup_pie_graph()
     def setup_bar_graph(self):
 
-        data = fetch_json("http://127.0.0.1:8000/api/serviceCounts")
+        data = fetch_json(f"{API_BASE_URL}/api/serviceCounts")
         if data is None:
             print("BAR GRAPH ERROR — No data")
             return
@@ -2531,7 +2532,7 @@ class MainUI(QMainWindow):
         layout.addWidget(chart_view)
     def setup_pie_graph(self):
 
-        data = fetch_json("http://127.0.0.1:8000/api/speciesCounts")
+        data = fetch_json(f"{API_BASE_URL}/api/speciesCounts")
         if data is None:
             print("PIE GRAPH ERROR — No data")
             return
@@ -2560,3 +2561,301 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
+
+
+    def setup_day_radio_groups(self):
+        """Setup radio button groups for each day with 3 options"""
+        # NEW: Map of day prefixes to their 3 radio buttons
+        day_radio_mapping = {
+            'mon': [self.radioButton_open_mon, self.radioButton_appt_mon, self.radioButton_closed_mon],
+            'teus': [self.radioButton_open_teus, self.radioButton_appt_teus, self.radioButton_closed_teus],
+            'wed': [self.radioButton_open_wed, self.radioButton_appt_wed, self.radioButton_closed_wed],
+            'thurs': [self.radioButton_open_thurs, self.radioButton_appt_thurs, self.radioButton_closed_thurs],
+            'fri': [self.radioButton_open_fri, self.radioButton_appt_fri, self.radioButton_closed_fri],
+            'sat': [self.radioButton_open_sat, self.radioButton_appt_sat, self.radioButton_closed_sat],
+            'sun': [self.radioButton_open_sun, self.radioButton_appt_sun, self.radioButton_closed_sun]
+        }
+
+        for day_prefix, radio_buttons in day_radio_mapping.items():
+            btn_group = QButtonGroup(self)
+            btn_group.setExclusive(True)  # CHANGE: Set to True for proper radio behavior
+            for radio_btn in radio_buttons:
+                if radio_btn:
+                    btn_group.addButton(radio_btn)
+                    # Connect to update time picker state
+                    radio_btn.toggled.connect(lambda checked, prefix=day_prefix:
+                                              self.on_day_status_changed(prefix, checked))
+    def on_day_status_changed(self, day_prefix, checked):
+        """Update time picker state when day status changes"""
+        if checked:
+            # Enable/disable time pickers based on status
+            status = self.get_day_status(day_prefix)
+            if status == 'open':
+                self.set_time_pickers_enabled(day_prefix, True)
+            else:
+                self.set_time_pickers_enabled(day_prefix, False)
+    def load_office_hours(self):
+        """Load office hours from API"""
+        try:
+            response = requests.get(
+                f"{API_BASE_URL}/api/office-hours/",
+                headers={'Content-Type': 'application/json'}
+            )
+
+            if response.status_code == 200:
+                office_hours = response.json()
+                self.populate_office_hours(office_hours)
+            else:
+                QMessageBox.warning(self, "Error", "Failed to load office hours")
+
+        except Exception as e:
+            print(f"Error loading office hours: {e}")
+            QMessageBox.warning(self, "Error", f"Failed to load office hours: {str(e)}")
+    def setup_office_hours(self):
+        """Initialize office hours tab"""
+        # Connect buttons
+        self.saveHrsBtn.clicked.connect(self.save_office_hours)
+        self.resetHrsBtn.clicked.connect(self.reset_office_hours)
+
+        # Setup radio button groups for each day
+        self.setup_day_radio_groups()
+
+        # Setup QTimeEdit display format for all days
+        self.setup_time_edit_formats()
+
+        # Load current office hours
+        self.load_office_hours()
+    def setup_time_edit_formats(self):
+        """Set display format for all QTimeEdit widgets"""
+        days = ['mon', 'teus', 'wed', 'thurs', 'fri', 'sat', 'sun']
+
+        for day in days:
+            start_edit = getattr(self, f'{day}Start', None)
+            end_edit = getattr(self, f'{day}End', None)
+
+            for time_edit in [start_edit, end_edit]:
+                if time_edit:
+                    # Set 12-hour format with AM/PM
+                    time_edit.setDisplayFormat("h:mm AP")
+                    # Set time range (optional)
+                    time_edit.setMinimumTime(QTime(0, 0))
+                    time_edit.setMaximumTime(QTime(23, 59))
+    def populate_office_hours(self, office_hours):
+        """Populate UI with office hours data"""
+        day_mapping = {
+            'monday': 'mon',
+            'tuesday': 'teus',
+            'wednesday': 'wed',
+            'thursday': 'thurs',
+            'friday': 'fri',
+            'saturday': 'sat',
+            'sunday': 'sun'
+        }
+
+        for day_data in office_hours:
+            day_code = day_data.get('day')
+            ui_prefix = day_mapping.get(day_code)
+
+            if not ui_prefix:
+                continue
+
+            # Set status
+            status = day_data.get('status', 'open')
+
+            # Get all 3 radio buttons for this day
+            open_btn = getattr(self, f'radioButton_open_{ui_prefix}', None)
+            appt_btn = getattr(self, f'radioButton_appt_{ui_prefix}', None)
+            closed_btn = getattr(self, f'radioButton_closed_{ui_prefix}', None)
+
+            # Uncheck all first
+            for btn in [open_btn, appt_btn, closed_btn]:
+                if btn:
+                    btn.setChecked(False)
+
+            # Check the appropriate radio button based on status
+            if status == 'open' and open_btn:
+                open_btn.setChecked(True)
+                self.set_time_pickers_enabled(ui_prefix, True)
+            elif status == 'appointment_only' and appt_btn:
+                appt_btn.setChecked(True)
+                self.set_time_pickers_enabled(ui_prefix, False)
+            elif status == 'closed' and closed_btn:
+                closed_btn.setChecked(True)
+                self.set_time_pickers_enabled(ui_prefix, False)
+
+            # Set time values if status is open
+            if status == 'open':
+                start_time = day_data.get('start_time')
+                end_time = day_data.get('end_time')
+                if start_time and end_time:
+                    self.set_time_values(ui_prefix, start_time, end_time)
+    def set_time_values(self, day_prefix, start_time, end_time):
+        """Set time values in the UI QTimeEdit widgets"""
+        # Get QTimeEdit widgets
+        start_time_edit = getattr(self, f'{day_prefix}Start', None)
+        end_time_edit = getattr(self, f'{day_prefix}End', None)
+
+        if start_time_edit and end_time_edit:
+            # Parse time strings to QTime
+            start_qtime = self.time_from_string(start_time)
+            end_qtime = self.time_from_string(end_time)
+
+            # Set the times
+            start_time_edit.setTime(start_qtime)
+            end_time_edit.setTime(end_qtime)
+    def time_from_string(self, time_str):
+        """Convert time string (HH:MM:SS) to QTime"""
+        if not time_str:
+            return QTime(8, 0)  # Default 8:00 AM
+
+        try:
+            # Parse HH:MM:SS
+            if ':' in time_str:
+                parts = time_str.split(':')
+                if len(parts) >= 2:
+                    hours = int(parts[0])
+                    minutes = int(parts[1])
+                    return QTime(hours, minutes)
+        except (ValueError, TypeError):
+            pass
+
+        return QTime(8, 0)  # Default fallback
+    def get_time_from_widgets(self, day_prefix):
+        """Get start and end times from QTimeEdit widgets"""
+        start_time_edit = getattr(self, f'{day_prefix}Start', None)
+        end_time_edit = getattr(self, f'{day_prefix}End', None)
+
+        if not start_time_edit or not end_time_edit:
+            return None, None
+
+        start_time = start_time_edit.time()
+        end_time = end_time_edit.time()
+
+        return start_time, end_time
+    def set_time_pickers_enabled(self, day_prefix, enabled):
+        """Enable or disable time pickers for a day"""
+        # Get QTimeEdit widgets
+        start_time_edit = getattr(self, f'{day_prefix}Start', None)
+        end_time_edit = getattr(self, f'{day_prefix}End', None)
+
+        for widget in [start_time_edit, end_time_edit]:
+            if widget:
+                widget.setEnabled(enabled)
+                # Visual feedback
+                if enabled:
+                    widget.setStyleSheet("")
+                else:
+                    widget.setStyleSheet("background-color: #f0f0f0; color: #888;")
+    def collect_office_hours_data(self):
+        """Collect office hours data from UI"""
+        day_mapping = {
+            'mon': 'monday',
+            'teus': 'tuesday',
+            'wed': 'wednesday',
+            'thurs': 'thursday',
+            'fri': 'friday',
+            'sat': 'saturday',
+            'sun': 'sunday'
+        }
+
+        office_hours = []
+
+        for ui_prefix, day_name in day_mapping.items():
+            # Determine status based on radio buttons
+            status = self.get_day_status(ui_prefix)
+
+            day_data = {
+                'day': day_name,
+                'status': status,
+                'start_time': None,
+                'end_time': None
+            }
+
+            # If status is open, get times from QTimeEdit widgets
+            if status == 'open':
+                start_time, end_time = self.get_time_from_widgets(ui_prefix)
+
+                if start_time and end_time:
+                    # Convert QTime to string format HH:MM:SS
+                    day_data['start_time'] = start_time.toString('HH:mm:ss')
+                    day_data['end_time'] = end_time.toString('HH:mm:ss')
+
+            office_hours.append(day_data)
+
+        return office_hours
+    def reset_office_hours(self):
+        """Reset office hours to default values"""
+        reply = QMessageBox.question(
+            self,
+            "Reset Office Hours",
+            "Are you sure you want to reset office hours to default values?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            try:
+                # Define default hours
+                default_hours = [
+                    {'day': 'monday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
+                    {'day': 'tuesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
+                    {'day': 'wednesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
+                    {'day': 'thursday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
+                    {'day': 'friday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
+                    {'day': 'saturday', 'status': 'open', 'start_time': '09:00:00', 'end_time': '16:00:00'},
+                    {'day': 'sunday', 'status': 'closed', 'start_time': None, 'end_time': None}
+                ]
+
+                # Populate UI with default values
+                self.populate_office_hours(default_hours)
+
+                # Save defaults to database
+                response = requests.post(
+                    f"{API_BASE_URL}/api/office-hours/update/",
+                    json=default_hours,
+                    headers={'Content-Type': 'application/json'}
+                )
+
+                if response.status_code == 200:
+                    QMessageBox.information(self, "Success", "Office hours reset to default values!")
+                else:
+                    QMessageBox.warning(self, "Error", f"Failed to save default office hours: {response.status_code}")
+
+            except Exception as e:
+                QMessageBox.warning(self, "Error", f"Failed to reset office hours: {str(e)}")
+    def save_office_hours(self):
+        """Save office hours to API"""
+        try:
+            office_hours_data = self.collect_office_hours_data()
+
+            response = requests.post(
+                f"{API_BASE_URL}/api/office-hours/update/",
+                json=office_hours_data,
+                headers={'Content-Type': 'application/json'}
+            )
+
+            if response.status_code == 200:
+                QMessageBox.information(self, "Success", "Office hours saved successfully!")
+                self.load_office_hours()  # Reload to confirm
+            else:
+                QMessageBox.warning(self, "Error", "Failed to save office hours")
+
+        except Exception as e:
+            print(f"Error saving office hours: {e}")
+            QMessageBox.warning(self, "Error", f"Failed to save office hours: {str(e)}")
+    def get_day_status(self, day_prefix):
+        """Get status for a specific day from radio buttons"""
+        # NEW: Get all 3 radio buttons
+        open_btn = getattr(self, f'radioButton_open_{day_prefix}', None)
+        appt_btn = getattr(self, f'radioButton_appt_{day_prefix}', None)
+        closed_btn = getattr(self, f'radioButton_closed_{day_prefix}', None)
+
+        if open_btn and open_btn.isChecked():
+            return 'open'
+        elif appt_btn and appt_btn.isChecked():
+            return 'appointment_only'
+        elif closed_btn and closed_btn.isChecked():
+            return 'closed'
+        else:
+            return 'open'  # Default if nothing is checked
+

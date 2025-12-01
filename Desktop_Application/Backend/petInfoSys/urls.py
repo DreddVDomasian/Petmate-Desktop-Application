@@ -71,4 +71,8 @@ urlpatterns = [
     path('user/<int:user_id>/', views.update_user_by_id, name='update-user-by-id'),
     # CONTACT US MESSAGE ENDPOINT (WEBSITE)
     path('contact-us_message/', views.contact_us_message, name='contact_us_message'),
+
+
+    path('office-hours/', views.get_office_hours, name='get-office-hours'),
+    path('office-hours/update/', views.update_office_hours, name='update-office-hours'),
 ]

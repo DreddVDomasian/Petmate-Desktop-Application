@@ -1668,3 +1668,96 @@ def api_species_counts(request):
         "dogs": dogs,
         "others": others
     })
+
+
+# Add these views to views.py
+@api_view(['GET'])
+def get_office_hours(request):
+    """Get all office hours"""
+    try:
+        hours = OfficeHours.objects.all().order_by('id')
+
+        # Create default entries if they don't exist
+        if hours.count() == 0:
+            for day_code, day_name in OfficeHours.DAY_CHOICES:
+                default_start = time(8, 0) if day_code not in ['saturday', 'sunday'] else time(9, 0)
+                default_end = time(17, 0) if day_code not in ['saturday', 'sunday'] else (
+                    time(16, 0) if day_code == 'saturday' else None
+                )
+                default_status = 'closed' if day_code == 'sunday' else 'open'
+
+                OfficeHours.objects.get_or_create(
+                    day=day_code,
+                    defaults={
+                        'status': default_status,
+                        'start_time': default_start,
+                        'end_time': default_end
+                    }
+                )
+            hours = OfficeHours.objects.all().order_by('id')
+
+        serializer = OfficeHoursSerializer(hours, many=True)
+        return Response(serializer.data)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def update_office_hours(request):
+    """Update office hours - for desktop app"""
+    data = request.data
+
+    for day_data in data:
+        day_name = day_data.get('day')
+        try:
+            office_hour = OfficeHours.objects.get(day=day_name)
+
+            status = day_data.get('status', 'open')
+            office_hour.status = status
+
+            if status == 'open':
+                # Parse time from desktop app
+                start_time_str = day_data.get('start_time')
+                end_time_str = day_data.get('end_time')
+
+                if start_time_str:
+                    # Handle different time formats
+                    try:
+                        # Try HH:MM:SS format
+                        office_hour.start_time = datetime.strptime(start_time_str, '%H:%M:%S').time()
+                    except ValueError:
+                        try:
+                            # Try HH:MM format
+                            office_hour.start_time = datetime.strptime(start_time_str, '%H:%M').time()
+                        except ValueError:
+                            # Default to 8:00 AM if parsing fails
+                            office_hour.start_time = time(8, 0)
+                else:
+                    office_hour.start_time = None
+
+                if end_time_str:
+                    try:
+                        # Try HH:MM:SS format
+                        office_hour.end_time = datetime.strptime(end_time_str, '%H:%M:%S').time()
+                    except ValueError:
+                        try:
+                            # Try HH:MM format
+                            office_hour.end_time = datetime.strptime(end_time_str, '%H:%M').time()
+                        except ValueError:
+                            # Default to 5:00 PM if parsing fails
+                            office_hour.end_time = time(17, 0)
+                else:
+                    office_hour.end_time = None
+            else:
+                # Clear times for closed/appointment_only
+                office_hour.start_time = None
+                office_hour.end_time = None
+
+            office_hour.save()
+
+        except OfficeHours.DoesNotExist:
+            continue
+
+    return Response({'message': 'Office hours updated successfully'})

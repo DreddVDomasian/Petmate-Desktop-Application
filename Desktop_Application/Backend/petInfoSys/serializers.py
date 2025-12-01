@@ -116,3 +116,10 @@ class WalkInSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class OfficeHoursSerializer(serializers.ModelSerializer):
+    start_time = serializers.TimeField(format='%H:%M:%S', required=False, allow_null=True)
+    end_time = serializers.TimeField(format='%H:%M:%S', required=False, allow_null=True)
+
+    class Meta:
+        model = OfficeHours
+        fields = ['id', 'day', 'status', 'start_time', 'end_time']
