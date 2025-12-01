@@ -12195,7 +12195,7 @@ color:rgb(168, 168, 168);</string>
                         <property name="geometry">
                          <rect>
                           <x>0</x>
-                          <y>-168</y>
+                          <y>-183</y>
                           <width>830</width>
                           <height>706</height>
                          </rect>
@@ -12388,7 +12388,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12537,7 +12537,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12694,7 +12694,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12837,7 +12837,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12980,7 +12980,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -13123,7 +13123,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -13266,7 +13266,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>60</number>
+                                <number>90</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>

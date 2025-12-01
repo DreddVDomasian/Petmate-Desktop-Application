@@ -1058,11 +1058,23 @@ class MainUI(QMainWindow):
         self.confirmCard = ConfirmCard(self.findChild(QWidget, "MainContent"))
         self.confirmCard.hide()
         self.confirmCard.setGraphicsEffect(create_card_shadow())
+
+        # Store the default delete action
         self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete)
         self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
+
         self.confirmCard.yesButton.setGraphicsEffect(create_card_shadow())
         self.confirmCard.noButton.setGraphicsEffect(create_card_shadow())
         self.patientToDelete = None
+
+        # Store original configuration
+        self.confirmCard_original_config = {
+            'message': "Are you sure you want to delete this record?",
+            'yes_text': "YES",
+            'no_text': "NO",
+            'yes_style': "rgb(220, 90, 90)",
+            'no_style': "#FCD597"
+        }
 
         # delete buttons sa profile patient/pet
         self.profileDeleteBtn.clicked.connect(self.deleteFunction.delete_selected_patient)
@@ -2563,6 +2575,7 @@ class MainUI(QMainWindow):
         layout.addWidget(chart_view)
 
 
+
     def setup_day_radio_groups(self):
         """Setup radio button groups for each day with 3 options"""
         # NEW: Map of day prefixes to their 3 radio buttons
@@ -2606,16 +2619,21 @@ class MainUI(QMainWindow):
                 office_hours = response.json()
                 self.populate_office_hours(office_hours)
             else:
-                QMessageBox.warning(self, "Error", "Failed to load office hours")
+                # Show error toast
+                toast = Toast(self, "Failed to load office hours",
+                              icon_path="Icons/error.png", is_error=True)
+                toast.show_toast()
 
         except Exception as e:
-            print(f"Error loading office hours: {e}")
-            QMessageBox.warning(self, "Error", f"Failed to load office hours: {str(e)}")
+            # Show error toast
+            toast = Toast(self, f"Failed to load office hours: {str(e)}",
+                          icon_path="Icons/error.png", is_error=True)
+            toast.show_toast()
     def setup_office_hours(self):
         """Initialize office hours tab"""
         # Connect buttons
         self.saveHrsBtn.clicked.connect(self.save_office_hours)
-        self.resetHrsBtn.clicked.connect(self.reset_office_hours)
+        self.resetHrsBtn.clicked.connect(self.show_reset_confirmation)  # Changed to show confirmation
 
         # Setup radio button groups for each day
         self.setup_day_radio_groups()
@@ -2784,45 +2802,46 @@ class MainUI(QMainWindow):
 
         return office_hours
     def reset_office_hours(self):
-        """Reset office hours to default values"""
-        reply = QMessageBox.question(
-            self,
-            "Reset Office Hours",
-            "Are you sure you want to reset office hours to default values?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
+        """Perform the actual reset of office hours"""
+        try:
+            # Define default hours
+            default_hours = [
+                {'day': 'monday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+                {'day': 'tuesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+                {'day': 'wednesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+                {'day': 'thursday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+                {'day': 'friday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+                {'day': 'saturday', 'status': 'open', 'start_time': '09:00:00', 'end_time': '16:00:00'},
+                {'day': 'sunday', 'status': 'closed', 'start_time': None, 'end_time': None}
+            ]
 
-        if reply == QMessageBox.Yes:
-            try:
-                # Define default hours
-                default_hours = [
-                    {'day': 'monday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
-                    {'day': 'tuesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
-                    {'day': 'wednesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
-                    {'day': 'thursday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
-                    {'day': 'friday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '17:00:00'},
-                    {'day': 'saturday', 'status': 'open', 'start_time': '09:00:00', 'end_time': '16:00:00'},
-                    {'day': 'sunday', 'status': 'closed', 'start_time': None, 'end_time': None}
-                ]
+            # Populate UI with default values
+            self.populate_office_hours(default_hours)
 
-                # Populate UI with default values
-                self.populate_office_hours(default_hours)
+            # Save defaults to database
+            response = requests.post(
+                f"{API_BASE_URL}/api/office-hours/update/",
+                json=default_hours,
+                headers={'Content-Type': 'application/json'}
+            )
 
-                # Save defaults to database
-                response = requests.post(
-                    f"{API_BASE_URL}/api/office-hours/update/",
-                    json=default_hours,
-                    headers={'Content-Type': 'application/json'}
-                )
+            if response.status_code == 200:
+                # SUCCESS TOAST - No buttons, auto-dismiss
+                toast = Toast(self, "Office hours reset to default values!", icon_path="Icons/check.png")
+                toast.show_toast()
+            else:
+                # ERROR TOAST - Use whatever error styling you have
+                toast = Toast(self, "Failed to reset office hours")
+                toast.show_toast()
 
-                if response.status_code == 200:
-                    QMessageBox.information(self, "Success", "Office hours reset to default values!")
-                else:
-                    QMessageBox.warning(self, "Error", f"Failed to save default office hours: {response.status_code}")
+        except Exception as e:
+            # ERROR TOAST
+            toast = Toast(self, "Failed to reset office hours")
+            toast.show_toast()
 
-            except Exception as e:
-                QMessageBox.warning(self, "Error", f"Failed to reset office hours: {str(e)}")
+        # Always restore card and close it
+        self.restore_confirm_card_default()
+        self.confirmCard.close()
     def save_office_hours(self):
         """Save office hours to API"""
         try:
@@ -2835,14 +2854,19 @@ class MainUI(QMainWindow):
             )
 
             if response.status_code == 200:
-                QMessageBox.information(self, "Success", "Office hours saved successfully!")
+                # SUCCESS TOAST
+                toast = Toast(self, "Office hours saved successfully!", icon_path="Icons/check.png")
+                toast.show_toast()
                 self.load_office_hours()  # Reload to confirm
             else:
-                QMessageBox.warning(self, "Error", "Failed to save office hours")
+                # ERROR TOAST
+                toast = Toast(self, "Failed to save office hours")
+                toast.show_toast()
 
         except Exception as e:
-            print(f"Error saving office hours: {e}")
-            QMessageBox.warning(self, "Error", f"Failed to save office hours: {str(e)}")
+            # ERROR TOAST
+            toast = Toast(self, "Failed to save office hours")
+            toast.show_toast()
     def get_day_status(self, day_prefix):
         """Get status for a specific day from radio buttons"""
         # NEW: Get all 3 radio buttons
@@ -2858,4 +2882,60 @@ class MainUI(QMainWindow):
             return 'closed'
         else:
             return 'open'  # Default if nothing is checked
+    def show_reset_confirmation(self):
+        """Show confirmation for resetting office hours"""
+        # Configure for reset
+        self.confirmCard.confirmationMessage.setText(
+            "Are you sure you want to reset office hours to default values?"
+        )
+
+        # Change button texts
+        self.confirmCard.yesButton.setText("RESET")
+        self.confirmCard.noButton.setText("CANCEL")
+
+
+        self.confirmCard.yesButton.setStyleSheet(reset_yes_style)
+        self.confirmCard.noButton.setStyleSheet(reset_no_style)
+
+        # Disconnect old signals
+        try:
+            self.confirmCard.yesButton.clicked.disconnect()
+            self.confirmCard.noButton.clicked.disconnect()
+        except:
+            pass
+
+        # Connect reset actions
+        self.confirmCard.yesButton.clicked.connect(self.reset_office_hours)
+        self.confirmCard.noButton.clicked.connect(self.cancel_reset_and_restore)
+
+        # Show the card
+        self.confirmCard.show_card()
+    def cancel_reset_and_restore(self):
+        """Cancel reset and restore original configuration"""
+        self.confirmCard.close()
+        self.restore_confirm_card_default()
+    def restore_confirm_card_default(self):
+        """Restore confirm card to default delete configuration"""
+        # Restore message
+        self.confirmCard.confirmationMessage.setText(
+            self.confirmCard_original_config['message']
+        )
+
+        # Restore button texts
+        self.confirmCard.yesButton.setText(self.confirmCard_original_config['yes_text'])
+        self.confirmCard.noButton.setText(self.confirmCard_original_config['no_text'])
+
+
+        self.confirmCard.yesButton.setStyleSheet(original_yes_style)
+        self.confirmCard.noButton.setStyleSheet(original_no_style)
+
+        # Reconnect original delete actions
+        try:
+            self.confirmCard.yesButton.clicked.disconnect()
+            self.confirmCard.noButton.clicked.disconnect()
+        except:
+            pass
+
+        self.confirmCard.yesButton.clicked.connect(self.deleteFunction.really_delete)
+        self.confirmCard.noButton.clicked.connect(self.deleteFunction.cancel_delete)
 

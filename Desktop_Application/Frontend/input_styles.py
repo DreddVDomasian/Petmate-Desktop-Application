@@ -409,3 +409,60 @@ pendingServiceStatus = """
         color:rgb(133, 100, 4);
     }
 """
+
+reset_yes_style = """
+      #yesButton{
+        padding:5px 25px;
+        font: 57 12pt "Montserrat Medium";
+        color:rgb(39, 39, 39);
+        border:none;
+        border-radius:5px;
+        background-color:#FCD597;
+      }
+      #yesButton:hover{
+        background-color:rgb(230, 193, 137);
+      }
+  """
+reset_no_style = """
+      #noButton{
+        padding:5px 25px;
+        font: 57 12pt "Montserrat Medium";
+        color:rgb(39, 39, 39);
+        border:none;
+        border-radius:5px;
+        background-color:	rgb(220, 90, 90);
+      }	
+      #noButton:hover{
+        background-color:rgb(180, 120, 125);
+      }
+  """
+
+# Restore button styles
+original_yes_style = """
+    #yesButton{
+        padding:5px 25px;
+        font: 57 12pt "Montserrat Medium";
+        color:rgb(39, 39, 39);
+        border:none;
+        border-radius:5px;
+        background-color:	rgb(220, 90, 90);
+    }
+    #yesButton:hover{
+        background-color:rgb(180, 120, 125);
+    }
+  """
+original_no_style = """
+    #noButton{
+        padding:5px 25px;
+        font: 57 12pt "Montserrat Medium";
+        color:rgb(39, 39, 39);
+        border:none;
+        border-radius:5px;
+        background-color:#FCD597;
+    }	
+    
+    #noButton:hover{
+        background-color:rgb(230, 193, 137);
+    }
+
+  """
