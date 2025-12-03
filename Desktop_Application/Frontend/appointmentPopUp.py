@@ -52,10 +52,10 @@ class AddAppointmentCard(QWidget):
         # load data
         self.load_appointments(1,"pending", search_term=None)
         self.setup_status_filters()
-        self.web_Appointment()
+        self.web_Appointment(1, "pending")
         self.status_filter_global = None
-        self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment())
-        self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment())
+        self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
+        self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
         self.setup_search()
 
         self.setup_time_combo_box()
@@ -599,58 +599,127 @@ class AddAppointmentCard(QWidget):
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
 
 
-    #-------------------------------------------WEB APPOINTMENT---------------------------------------
+    #-------------------------------------------WEB REQUEST---------------------------------------
 
-    def web_Appointment(self):
-        # Fetch all walk-in appointments with different request statuses
-        pending_response = requests.get("http://127.0.0.1:8000/api/walkIn/?request=pending")
-        accepted_response = requests.get("http://127.0.0.1:8000/api/walkIn/?request=accepted")
-        declined_response = requests.get("http://127.0.0.1:8000/api/walkIn/?request=declined")
+    def web_Appointment(self, page=1, request_filter="pending"):
+        """Paginated loader for web appointment requests."""
 
-        # Helper function to safely extract data
-        def get_appointments(response):
-            if response.status_code == 200:
-                data = response.json()
-                # Handle paginated response
-                if isinstance(data, dict) and 'results' in data:
-                    return data['results']
-                else:
-                    return data
-            return []
+        # Build URL
+        url = f"{API_BASE_URL}/api/walkIn/?request={request_filter}&page={page}"
 
-        pending_appointments = get_appointments(pending_response)
-        accepted_appointments = get_appointments(accepted_response)
-        declined_appointments = get_appointments(declined_response)
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code != 200:
+                print("Failed to load web appointments")
+                return
 
-        # Clear all layouts first
-        for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
-            while layout.count():
-                child = layout.takeAt(0)
+            data = response.json()
+
+            # Extract pagination
+            results = data.get("results", [])
+            current_page = data.get("current_page", 1)
+            total_pages = data.get("total_pages", 1)
+            total_count = data.get("count", 0)
+
+            # Rollback if empty page
+            if not results and page > 1:
+                return self.web_Appointment(page - 1, request_filter)
+
+            # Select layout based on request_filter
+            layout_map = {
+                "pending": self.pendingWebLayout,
+                "accepted": self.acceptedWebLayout,
+                "declined": self.declinedWebLayout,
+            }
+            target_layout = layout_map[request_filter]
+
+            # Clear layout
+            while target_layout.count():
+                child = target_layout.takeAt(0)
                 if child.widget():
                     child.widget().deleteLater()
 
-        # Process pending appointments
-        for appoint in pending_appointments:
-            card = self.create_walkin_card(appoint)
-            if card:
-                self.pendingWebLayout.addWidget(card)
+            # Add cards
+            for appoint in results:
+                card = self.create_walkin_card(appoint)
+                target_layout.addWidget(card)
 
-        # Process accepted appointments
-        for appoint in accepted_appointments:
-            card = self.create_walkin_card(appoint)
-            if card:
-                self.acceptedWebLayout.addWidget(card)
+            # If empty
+            if not results:
+                self.add_empty_label(target_layout)
 
-        # Process declined appointments
-        for appoint in declined_appointments:
-            card = self.create_walkin_card(appoint)
-            if card:
-                self.declinedWebLayout.addWidget(card)
+            # Add pagination controls
+            self.add_web_pagination_controls(
+                target_layout,
+                current_page,
+                total_pages,
+                request_filter
+            )
 
-        # Add empty labels if no appointments
-        for layout in [self.pendingWebLayout, self.acceptedWebLayout, self.declinedWebLayout]:
-            if layout.count() == 0:
-                self.add_empty_label(layout)
+        except Exception as e:
+            print(f"Error loading web appointments: {e}")
+
+    def add_web_pagination_controls(self, layout, current_page, total_pages, request_filter):
+        # Remove old pagination widget
+        try:
+            if hasattr(self, "web_pagination_widget"):
+                self.web_pagination_widget.deleteLater()
+        except:
+            pass
+
+        if total_pages <= 1:
+            return
+
+        # Load pagination UI
+        self.web_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
+
+        # Prev / Next
+        self.web_pagination_widget.PrevPage.clicked.connect(
+            lambda: self.web_Appointment(current_page - 1, request_filter)
+        )
+        self.web_pagination_widget.NextPage.clicked.connect(
+            lambda: self.web_Appointment(current_page + 1, request_filter)
+        )
+
+        self.web_pagination_widget.PrevPage.setEnabled(current_page > 1)
+        self.web_pagination_widget.NextPage.setEnabled(current_page < total_pages)
+
+        # Page numbers
+        page_layout = self.web_pagination_widget.pageButtonsLayout
+        while page_layout.count():
+            child = page_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        max_visible_pages = 7
+
+        if total_pages <= max_visible_pages:
+            start_page = 1
+            end_page = total_pages
+        else:
+            if current_page <= 4:
+                start_page = 1
+                end_page = 7
+            elif current_page >= total_pages - 3:
+                start_page = total_pages - 6
+                end_page = total_pages
+            else:
+                start_page = current_page - 3
+                end_page = current_page + 3
+
+        for p in range(start_page, end_page + 1):
+            btn = QPushButton(str(p))
+            btn.setFixedSize(40, 40)
+
+            if p == current_page:
+                btn.setStyleSheet(current_pageBtn)
+            else:
+                btn.setStyleSheet(other_pageBtn)
+                btn.clicked.connect(lambda _, x=p: self.web_Appointment(x, request_filter))
+
+            page_layout.addWidget(btn)
+
+        layout.addWidget(self.web_pagination_widget)
     def create_walkin_card(self, appoint):
         """Helper method to create a walk-in appointment card"""
         try:
