@@ -877,6 +877,9 @@ class MainUI(QMainWindow):
                 self.show_empty_state(search_term is not None, error=True)
                 return
 
+            if not patients and page > 1:
+                return self.load_patients(page - 1, search_term)
+
             # Handle empty results
             if not patients:
                 self.show_empty_state(search_term is not None)

@@ -21,7 +21,6 @@ def add_default_services(apps, schema_editor):
         ('Dental Care', 'Oral health and dental treatments', True),
         ('Emergency Care', 'Urgent and emergency veterinary services', True),
         ('Check-up', 'Routine health check-up', True),
-        ('Consultations', 'Professional veterinary consultations', True),
         ('Tick & Flea Prevention', 'Preventive treatment for parasites', True),
     ]
 

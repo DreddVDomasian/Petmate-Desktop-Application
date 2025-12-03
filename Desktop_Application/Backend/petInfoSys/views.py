@@ -1778,12 +1778,8 @@ class ServiceTypeListCreateView(generics.ListCreateAPIView):
         elif is_active.lower() == 'false':
             queryset = queryset.filter(is_active=False)
 
-        # Search by name
-        search = self.request.query_params.get('search', '')
-        if search:
-            queryset = queryset.filter(name__icontains=search)
 
-        return queryset.order_by('name')
+        return queryset.order_by('-created_at')
 
 
 class ServiceTypeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

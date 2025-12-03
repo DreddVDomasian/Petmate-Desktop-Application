@@ -373,6 +373,37 @@ class Update:
         else:
             Toast(self.ui, "Failed to update service!", icon_path="Icons/warning.png").show_toast()
 
+    # SERVICE TYPE UPDATE METHODS
+    def update_service_type_info(self, service_type_id):
+        """Load service type info into addServiceCard for editing."""
+        try:
+            url = f"{API_BASE_URL}/api/service-types/{service_type_id}/"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                service = response.json()
+
+                # SHOW POPUP
+                self.ui.addServiceCard.show_card()
+
+                # ENABLE EDIT MODE
+                self.ui.addServiceCard.is_edit_mode = True
+                self.ui.addServiceCard.selected_service_type_id = service_type_id
+
+                # POPULATE FIELDS
+                self.ui.addServiceCard.serviceNameLineEdit.setText(service.get("name", ""))
+                self.ui.addServiceCard.serviceDescription.setText(service.get("description", ""))
+
+                # CHANGE BUTTON TEXT
+                self.ui.addServiceCard.addServiceBtn.setText("UPDATE SERVICE")
+
+            else:
+                Toast(self.ui, "Failed to load service type", icon_path="Icons/warning.png").show_toast()
+
+        except Exception as e:
+            print(f"Error loading service type: {e}")
+            Toast(self.ui, "Error loading service type", icon_path="Icons/warning.png").show_toast()
+
 
 def is_valid_combobox_input(combo: QComboBox) -> bool:
     text = combo.currentText()

@@ -458,6 +458,9 @@ class AddAppointmentCard(QWidget):
                 total_count = len(appointments)
                 current_page = page
 
+            if not appointments and page > 1:
+                return self.load_appointments(page - 1, status_filter, search_term)
+
             # Update card_manager pagination state
             self.card_manager.current_appointment_page = current_page
             self.card_manager.total_appointment_pages = max(1, total_pages)

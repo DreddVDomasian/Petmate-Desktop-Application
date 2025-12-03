@@ -42,6 +42,7 @@ class Delete:
             "patient": f"{API_BASE_URL}/api/patients/{self.delete_id}/",
             "pet": f"{API_BASE_URL}/api/pets/{self.delete_id}/",
             "service": f"{API_BASE_URL}/api/services/{self.delete_id}/",
+            "service_type": f"{API_BASE_URL}/api/service-types/{self.delete_id}/",
         }
 
         url = url_map.get(self.delete_type)
@@ -75,6 +76,8 @@ class Delete:
             elif self.delete_type == "service":
                 self.ui.load_scheduled_services()
                 self.ui.load_services_for_pet(self.ui.selected_pet_id)
+            elif self.delete_type == "service_type":
+                self.ui.addServiceCard.load_service_types(self.ui.addServiceCard.service_currentPage)
 
         else:
             Toast(self.ui, f"Failed to delete {self.delete_type}.", icon_path="Icons/warning.png").show_toast()
@@ -129,3 +132,30 @@ class Delete:
         self.delete_id = None
         self.delete_type = None
         self.ui.confirmCard.reject_dialog()
+
+    def start_service_type_delete(self, service_type_id):
+        self.delete_type = "service_type"
+        self.delete_id = service_type_id
+        self.ui.confirmCard.show_card()
+
+    def delete_service_type(self, service_type_id, service_name=None):
+        """Delete a service type"""
+        try:
+            # Perform soft delete
+            delete_response = requests.delete(f"{API_BASE_URL}/api/service-types/{service_type_id}/")
+
+            if delete_response.status_code == 204 or delete_response.status_code == 200:
+                Toast(self.ui, f"Service type '{service_name}' deleted",
+                      icon_path="Icons/check.png").show_toast()
+
+                # Refresh service types list if popup is open
+                if hasattr(self.ui, 'addServiceCard') and self.ui.addServiceCard.isVisible():
+                    self.ui.addServiceCard.load_service_types(self.ui.addServiceCard.service_currentPage)
+            else:
+                Toast(self.ui, "Failed to delete service type",
+                      icon_path="Icons/warning.png").show_toast()
+
+        except Exception as e:
+            print(f"Error deleting service type: {e}")
+            Toast(self.ui, "Error deleting service type",
+                  icon_path="Icons/warning.png").show_toast()

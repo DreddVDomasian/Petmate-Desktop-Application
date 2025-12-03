@@ -11,7 +11,8 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QHBoxLayout, QPushButton, QVBoxLayout, QToolButton
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QHBoxLayout, QPushButton, QVBoxLayout, QFrame, \
+    QToolButton, QSizePolicy
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate, QTimer
 from PyQt6.QtGui import QPixmap
 from shadowEffects import *
@@ -26,15 +27,12 @@ class AddServicePopUp(QWidget):
         super().__init__(parent)
         self.main_window = main_window
         uic.loadUi("ui-files/addService.ui", self)
-        self.setGraphicsEffect(create_card_shadow())
-        self.serviceDescription.setGraphicsEffect(create_card_shadow())
-        self.serviceNameLineEdit.setGraphicsEffect(create_card_shadow())
-        self.addServiceBtn.setGraphicsEffect(create_card_shadow())
-        self.cancelAddServiceBtn.setGraphicsEffect(create_card_shadow())
 
         # Initialize service type state
         self.service_cards = []
         self.service_pagination_widget = None
+        self.selected_service_type_id = None  # For edit mode
+        self.is_edit_mode = False  # Track if we're adding or editing
 
         # Pagination state
         self.service_currentPage = 1
@@ -47,8 +45,20 @@ class AddServicePopUp(QWidget):
         self._service_search_timer.setSingleShot(True)
         self._service_search_timer.timeout.connect(self.perform_service_search)
 
+        # Setup graphics effects
+        self.setGraphicsEffect(create_card_shadow())
+        self.serviceDescription.setGraphicsEffect(create_card_shadow())
+        self.serviceNameLineEdit.setGraphicsEffect(create_card_shadow())
+        self.addServiceBtn.setGraphicsEffect(create_card_shadow())
+        self.cancelAddServiceBtn.setGraphicsEffect(create_card_shadow())
+
+        # Connect buttons
+        self.addServiceBtn.clicked.connect(self.handle_add_edit_service)
+        self.cancelAddServiceBtn.clicked.connect(self.cancel_operation)
+        self.closePopUpBtn.clicked.connect(self.cancel_operation)
+
         # Initialize the layout
-        self.setup_stackLayout()
+        self.setup_layout_structure()
 
         # Setup search functionality
         self.setup_service_search()
@@ -56,11 +66,43 @@ class AddServicePopUp(QWidget):
         # Load service types when the popup is initialized
         self.load_service_types(1)
 
-    def setup_stackLayout(self):
-        """Setup the layout for service type cards"""
-        self.serviceLayout = self.main_window.availableServicesContents.layout()
+    def setup_layout_structure(self):
+        """Setup a proper layout structure with fixed pagination at bottom"""
+        # Get the scroll area widget
+        scroll_widget = self.main_window.availableServicesContents
+
+        # Clear any existing layout
+        QWidget().setLayout(scroll_widget.layout()) if scroll_widget.layout() else None
+
+        # Create a main vertical layout
+        main_layout = QVBoxLayout(scroll_widget)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # Create a container for the cards (this will expand)
+        self.cards_container = QWidget()
+        self.serviceLayout = QVBoxLayout(self.cards_container)
         self.serviceLayout.setSpacing(10)
         self.serviceLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.serviceLayout.setContentsMargins(0, 0, 0, 0)
+
+        # Add the cards container to main layout (with stretch factor to take available space)
+        main_layout.addWidget(self.cards_container, 1)  # The '1' makes it expand
+
+        # Create a fixed container for pagination at the bottom
+        self.pagination_container = QWidget()
+        pagination_container_layout = QVBoxLayout(self.pagination_container)
+        pagination_container_layout.setContentsMargins(0, 20, 0, 20)  # Add top and bottom margin
+        pagination_container_layout.setSpacing(0)
+
+        # Add pagination container to main layout (no stretch factor)
+        main_layout.addWidget(self.pagination_container, 0, Qt.AlignmentFlag.AlignHCenter)
+
+        # Set the cards container to expand vertically
+        self.cards_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        # Set the pagination container to fixed height
+        self.pagination_container.setFixedHeight(120)  # Fixed height for pagination area
 
     def setup_service_search(self):
         """Setup search functionality for service types"""
@@ -83,19 +125,11 @@ class AddServicePopUp(QWidget):
     def load_service_types(self, page=1, search_term=None):
         """Load service types from API and display them in cards"""
         try:
-            # Clear existing content
-            while self.serviceLayout.count():
-                child = self.serviceLayout.takeAt(0)
-                if child and child.widget():
-                    child.widget().deleteLater()
+            # Clear existing cards
+            self.clear_service_cards()
 
-            # Clear existing pagination widget
-            if self.service_pagination_widget:
-                try:
-                    self.service_pagination_widget.deleteLater()
-                except RuntimeError:
-                    pass
-                self.service_pagination_widget = None
+            # Clear existing pagination
+            self.clear_pagination_widget()
 
             # Build API URL with pagination and search
             url = f"{API_BASE_URL}/api/service-types/"
@@ -128,17 +162,18 @@ class AddServicePopUp(QWidget):
 
                 # Get service types
                 service_types = data.get('results', [])
-
+                if not service_types and page > 1:
+                    return self.load_service_types(page - 1, search_term)
                 # Handle empty response
                 if not service_types:
                     self.show_empty_state(search_term is not None)
+                    # Still add pagination if there are multiple pages
+                    if self.total_service_pages > 1:
+                        self.create_pagination_controls(search_term)
                     return
 
                 # Create service type cards
                 self.create_service_cards(service_types)
-
-                # Add pagination controls
-                self.add_service_pagination_controls(search_term)
 
             else:
                 self.show_error_state()
@@ -146,6 +181,36 @@ class AddServicePopUp(QWidget):
         except Exception as e:
             print(f"Error loading service types: {e}")
             self.show_error_state()
+
+        # Always create pagination controls (if needed)
+        if self.total_service_pages > 1:
+            self.create_pagination_controls(search_term)
+
+    def clear_service_cards(self):
+        """Clear all service cards from the layout"""
+        # Clear all cards from the cards layout
+        while self.serviceLayout.count():
+            child = self.serviceLayout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+
+        # Clear the cards list
+        self.service_cards = []
+
+    def clear_pagination_widget(self):
+        """Clear the pagination widget"""
+        if self.service_pagination_widget:
+            try:
+                # Clear the pagination container layout
+                layout = self.pagination_container.layout()
+                while layout.count():
+                    child = layout.takeAt(0)
+                    if child and child.widget():
+                        child.widget().deleteLater()
+
+                self.service_pagination_widget = None
+            except RuntimeError:
+                pass
 
     def create_service_cards(self, service_types):
         """Create multiple service cards from service type data"""
@@ -197,13 +262,15 @@ class AddServicePopUp(QWidget):
                 if edit_btn:
                     # Connect edit button
                     edit_btn.clicked.connect(
-                        lambda checked, s_id=service_type.get('id'): self.edit_service_type(s_id)
+                        lambda checked, s_id=service_type.get('id'):
+                            self.main_window.updateFunction.update_service_type_info(s_id)
                     )
 
                 if delete_btn:
-                    # Connect delete button
+                    # Connect delete button to Delete class
                     delete_btn.clicked.connect(
-                        lambda checked, s_id=service_type.get('id'): self.delete_service_type(s_id)
+                        lambda checked, s_id=service_type.get('id'):
+                        self.main_window.deleteFunction.start_service_type_delete(s_id)
                     )
 
                 # Add shadow effect to card
@@ -217,12 +284,45 @@ class AddServicePopUp(QWidget):
                 print(f"Error creating service card: {e}")
                 continue
 
-    def add_service_pagination_controls(self, search_term=None):
-        """Add pagination controls for service types"""
-        if self.total_service_pages <= 1:
-            return
-
+    def delete_service_type_with_confirmation(self, service_type_id):
+        """Handle service type deletion using the Delete class pattern"""
         try:
+            # First get service type name for confirmation
+            response = requests.get(f"{API_BASE_URL}/api/service-types/{service_type_id}/")
+
+            if response.status_code == 200:
+                service_type = response.json()
+                service_name = service_type.get('name', 'this service type')
+
+                # Use the Delete class from main window
+                if hasattr(self.main_window, 'deleteFunction'):
+                    # Show confirmation dialog
+                    from PyQt6.QtWidgets import QMessageBox
+                    reply = QMessageBox.question(
+                        self.main_window,
+                        "Delete Service Type",
+                        f"Are you sure you want to delete '{service_name}'?",
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                        QMessageBox.StandardButton.No
+                    )
+
+                    if reply == QMessageBox.StandardButton.Yes:
+                        # Call Delete class method
+                        self.main_window.deleteFunction.delete_service_type(service_type_id, service_name)
+            else:
+                if self.main_window:
+                    Toast(self.main_window, "Failed to load service type",
+                          icon_path="Icons/warning.png").show_toast()
+
+        except Exception as e:
+            print(f"Error in delete confirmation: {e}")
+            if self.main_window:
+                Toast(self.main_window, "Error processing delete",
+                      icon_path="Icons/warning.png").show_toast()
+    def create_pagination_controls(self, search_term=None):
+        """Create pagination controls in the fixed bottom container"""
+        try:
+            # Create pagination widget
             self.service_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
 
             # Connect prev/next buttons with search term
@@ -241,7 +341,10 @@ class AddServicePopUp(QWidget):
             self.create_service_page_buttons(search_term)
 
             self.service_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
-            self.serviceLayout.addWidget(self.service_pagination_widget)
+
+            # Add to pagination container layout
+            pagination_layout = self.pagination_container.layout()
+            pagination_layout.addWidget(self.service_pagination_widget, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         except Exception as e:
             print(f"Error creating service pagination: {e}")
@@ -309,6 +412,7 @@ class AddServicePopUp(QWidget):
             empty_label.setText("NO SERVICE TYPES")
             empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
 
+        # Add to cards container with stretch to center it
         self.serviceLayout.addStretch()
         self.serviceLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.serviceLayout.addStretch()
@@ -317,23 +421,159 @@ class AddServicePopUp(QWidget):
         """Show error state when loading fails"""
         error_label = QLabel("ERROR LOADING SERVICE TYPES")
         error_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(255,100,100);")
+
+        # Add to cards container with stretch to center it
         self.serviceLayout.addStretch()
         self.serviceLayout.addWidget(error_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.serviceLayout.addStretch()
 
     def edit_service_type(self, service_type_id):
-        """Handle service type edit"""
-        print(f"Editing service type {service_type_id}")
-        # TODO: Implement edit functionality
-        toast = Toast(self, f"Edit service type {service_type_id}", icon_path="Icons/info.png")
-        toast.show_toast()
+        """Handle service type edit - populate the form with existing data"""
+        try:
+            # Fetch service type details
+            response = requests.get(f"{API_BASE_URL}/api/service-types/{service_type_id}/")
 
-    def delete_service_type(self, service_type_id):
-        """Handle service type deletion"""
-        print(f"Deleting service type {service_type_id}")
-        # TODO: Implement delete functionality with confirmation
-        toast = Toast(self, f"Delete service type {service_type_id}", icon_path="Icons/warning.png")
-        toast.show_toast()
+            if response.status_code == 200:
+                service_type = response.json()
+
+                # Populate the form
+                self.serviceNameLineEdit.setText(service_type.get('name', ''))
+                self.serviceDescription.setPlainText(service_type.get('description', ''))
+
+                # Set edit mode
+                self.selected_service_type_id = service_type_id
+                self.is_edit_mode = True
+
+                # Update UI for edit mode
+                self.addServiceBtn.setText("UPDATE SERVICE")
+                self.newServiceHeader.setText("EDIT SERVICE TYPE")
+
+                # Set focus to name field
+                self.serviceNameLineEdit.setFocus()
+
+                # Show success message (use main window for toast)
+                if self.main_window:
+                    Toast(self.main_window, f"Editing '{service_type.get('name')}'",
+                          icon_path="Icons/info.png").show_toast()
+            else:
+                if self.main_window:
+                    Toast(self.main_window, "Failed to load service type details",
+                          icon_path="Icons/warning.png").show_toast()
+
+        except Exception as e:
+            print(f"Error loading service type: {e}")
+            if self.main_window:
+                Toast(self.main_window, "Error loading service type",
+                      icon_path="Icons/warning.png").show_toast()
+
+
+
+    def handle_add_edit_service(self):
+        name = self.serviceNameLineEdit.text().strip()
+        desc = self.serviceDescription.toPlainText().strip()
+
+        if not name:
+            Toast(self, "Service name is required", icon_path="Icons/warning.png").show_toast()
+            return
+
+        # --------------------------
+        # EDIT MODE
+        # --------------------------
+        if self.is_edit_mode and self.selected_service_type_id:
+            payload = {"name": name, "description": desc}
+
+            url = f"{API_BASE_URL}/api/service-types/{self.selected_service_type_id}/"
+
+            response = requests.put(url, json=payload)
+
+            if response.status_code == 200:
+                Toast(self, "Service updated!", icon_path="Icons/check.png").show_toast()
+                self.reset_add_form()
+                self.load_service_types(1)
+                return
+
+            Toast(self, "Failed to update service", icon_path="Icons/warning.png").show_toast()
+            return
+
+        # --------------------------
+        # ADD MODE
+        # --------------------------
+        payload = {"name": name, "description": desc}
+
+        response = requests.post(f"{API_BASE_URL}/api/service-types/", json=payload)
+
+        if response.status_code == 201:
+            Toast(self, "Service added!", icon_path="Icons/check.png").show_toast()
+            self.reset_add_form()
+            self.load_service_types(1)
+        else:
+            Toast(self, "Failed to add service", icon_path="Icons/warning.png").show_toast()
+
+    def reset_add_form(self):
+        self.is_edit_mode = False
+        self.selected_service_type_id = None
+        self.addServiceBtn.setText("ADD SERVICE")
+        self.serviceNameLineEdit.clear()
+        self.serviceDescription.clear()
+        self.hide()
+
+    def create_service_type(self, service_data):
+        """Create a new service type"""
+        response = requests.post(
+            f"{API_BASE_URL}/api/service-types/",
+            json=service_data
+        )
+
+        if response.status_code == 201:
+            # Success - clear form and reload list
+            self.clear_form()
+            self.load_service_types(self.service_currentPage)
+            Toast(self.main_window, "Service type created successfully!", icon_path="Icons/check.png").show_toast()
+        else:
+            # Handle validation errors
+            error_data = response.json()
+            if 'name' in error_data:
+                Toast(self.main_window, f"Error: {error_data['name'][0]}", icon_path="Icons/warning.png").show_toast()
+            else:
+                Toast(self.main_window, "Failed to create service type", icon_path="Icons/warning.png").show_toast()
+
+    def update_service_type(self, service_data):
+        """Update an existing service type"""
+        response = requests.put(
+            f"{API_BASE_URL}/api/service-types/{self.selected_service_type_id}/",
+            json=service_data
+        )
+
+        if response.status_code == 200:
+            # Success - reset form and reload list
+            self.reset_form()
+            self.load_service_types(self.service_currentPage)
+            Toast(self.main_window, "Service type updated successfully!", icon_path="Icons/check.png").show_toast()
+        else:
+            # Handle validation errors
+            error_data = response.json()
+            if 'name' in error_data:
+                Toast(self.main_window, f"Error: {error_data['name'][0]}", icon_path="Icons/warning.png").show_toast()
+            else:
+                Toast(self.main_window, "Failed to update service type", icon_path="Icons/warning.png").show_toast()
+
+    def cancel_operation(self):
+        """Cancel the current operation (add or edit)"""
+        self.reset_form()
+        self.hide()
+
+    def clear_form(self):
+        """Clear the form fields"""
+        self.serviceNameLineEdit.clear()
+        self.serviceDescription.clear()
+
+    def reset_form(self):
+        """Reset the form to add mode"""
+        self.clear_form()
+        self.selected_service_type_id = None
+        self.is_edit_mode = False
+        self.addServiceBtn.setText("ADD SERVICE")
+        self.newServiceHeader.setText("ADD NEW SERVICE")
 
     def scale_cards(self, cards, base_h=83, design_height=720):
         """Scale the height of a list of cards based on window size"""
@@ -367,7 +607,10 @@ class AddServicePopUp(QWidget):
 
     def show_card(self):
         """Show the popup card with animation"""
-        # Reload service types each time the popup is shown
+        # Reset form to add mode each time we show the popup
+        self.reset_form()
+
+        # Reload service types
         self.load_service_types(1)
 
         if self.parent():

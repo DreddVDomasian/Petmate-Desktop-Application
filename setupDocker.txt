@@ -3,4 +3,4 @@ docker-compose up --build
 docker-compose exec backend python manage.py makemigrations
 docker-compose exec backend python manage.py migrate
 
-docker-compose exec backend python manage.py create_default_admin
+docker-compose exec backend python create_default_admin
