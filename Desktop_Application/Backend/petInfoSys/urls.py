@@ -6,9 +6,9 @@ from . import views
 
 
 urlpatterns = [
-     path('serviceCounts', api_service_counts),
-     path('speciesCounts', api_species_counts),
-
+    path('serviceCounts/', api_service_counts),
+    path('speciesCounts/', api_species_counts),
+    path('todaysAppointments/', todays_appointments),
 
     path('patients/', BasicInfoListCreateView.as_view(), name='patients-list-create'),
     path('patients/<int:pk>/', BasicInfoRetrieveUpdateDestroyView.as_view(), name='patients-detail'),

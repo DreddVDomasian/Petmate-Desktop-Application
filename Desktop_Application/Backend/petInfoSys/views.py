@@ -30,8 +30,7 @@ from django.utils.html import strip_tags
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from django.http import JsonResponse
-from .models import Service, Pet
+from .models import WalkInAppointment, Pet
 from django.db.models import Count
 from datetime import datetime
 
@@ -1646,29 +1645,56 @@ class ManualReminderView(APIView):
         except WalkInAppointment.DoesNotExist:
             return Response({'error': 'Appointment not found'}, status=404)
 
+@api_view(['GET'])
 def api_service_counts(request):
     data = (
-        Service.objects.values('service_type')
-        .annotate(total=Count('service_type'))
-        .order_by('service_type')
+        WalkInAppointment.objects.values('service_name')
+        .annotate(total=Count('service_name'))
+        .order_by('service_name')
     )
 
-    formatted = {item['service_type']: item['total'] for item in data}
+    formatted = {item['service_name']: item['total'] for item in data}
     return JsonResponse(formatted)
 
+@api_view(['GET'])
 def api_species_counts(request):
-    month = datetime.today().month
+    # ✅ Allow optional month from query param (?month=12)
+    month = request.GET.get("month")
 
-    cats = Pet.objects.filter(species__icontains="cat", date_added__month=month).count()
-    dogs = Pet.objects.filter(species__icontains="dog", date_added__month=month).count()
-    others = Pet.objects.exclude(species__icontains="cat").exclude(species__icontains="dog").count()
+    if month:
+        month = int(month)
+    else:
+        month = datetime.today().month  # ✅ Default = current month
 
-    return JsonResponse({
+    # ✅ Monthly filtering (ALL species now respect the selected month)
+    cats = Pet.objects.filter(species__icontains="cat",date_added__month=month).count()
+    dogs = Pet.objects.filter(species__icontains="dog",date_added__month=month).count()
+    others = Pet.objects.filter(date_added__month=month).exclude(species__icontains="cat").exclude(species__icontains="dog").count()
+
+    return Response({
+        "month": month,
         "cats": cats,
         "dogs": dogs,
         "others": others
     })
 
+
+@api_view(["GET"])
+def todays_appointments(request):
+    today = date.today()
+    appointments = WalkInAppointment.objects.filter(date=today).exclude(
+        status__in=["cancelled", "completed"]
+    )
+    result = []
+    for a in appointments:
+        result.append({
+            "owner": str(a.owner),
+            "pet_name": str(a.pet.petName),
+            "service": str(a.service_name),
+            "prefTime": str(a.prefTime)
+        })
+
+    return Response(result)
 
 # Add these views to views.py
 @api_view(['GET'])
