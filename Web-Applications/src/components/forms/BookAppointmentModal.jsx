@@ -13,7 +13,10 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   });
 
   const [pets, setPets] = useState([]);
+  const [services, setServices] = useState([]);
   const [loadingPets, setLoadingPets] = useState(true);
+  const [loadingServices, setLoadingServices] = useState(true);
+  const [servicesError, setServicesError] = useState(null); // Add this
   const [submitting, setSubmitting] = useState(false);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
@@ -87,7 +90,77 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
       fetchPets();
     }
   }, [isOpen]);
-
+  useEffect(() => {
+    const fetchServices = async () => {
+      if (!isOpen) return;
+      
+      try {
+        setLoadingServices(true);
+        setServicesError(null);
+        
+        // Use relative path since your API is on the same domain
+        const res = await fetch("/api/service-types/?is_active=true", {
+          credentials: "include",
+          headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          console.log("Services API response:", data); // Debug log
+          
+          // Get the services array from results
+          const servicesData = data.results || [];
+          console.log("Parsed services:", servicesData); // Debug log
+          
+          // Filter to only include active services
+          const activeServices = servicesData.filter(service => 
+            service.is_active !== false && service.name
+          );
+          
+          console.log("Active services:", activeServices); // Debug log
+          
+          if (activeServices.length === 0) {
+            setServicesError("No services available at the moment.");
+            // Still set empty array to show dropdown
+            setServices([]);
+          } else {
+            setServices(activeServices);
+          }
+          
+        } else {
+          console.error("Failed to fetch services:", res.status);
+          setServicesError("Failed to load services. Please try again.");
+          // Fallback to default services
+          setServices([
+            { id: 1, name: "Vaccination" },
+            { id: 2, name: "Grooming" },
+            { id: 3, name: "Check-up" },
+            { id: 4, name: "Consultation" },
+            { id: 5, name: "Deworming" },
+            { id: 6, name: "Tick & Flea Prevention" },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+        setServicesError("Network error. Please check your connection.");
+        // Fallback to default services
+        setServices([
+          { id: 1, name: "Vaccination" },
+          { id: 2, name: "Grooming" },
+          { id: 3, name: "Check-up" },
+          { id: 4, name: "Consultation" },
+          { id: 5, name: "Deworming" },
+          { id: 6, name: "Tick & Flea Prevention" },
+        ]);
+      } finally {
+        setLoadingServices(false);
+      }
+    };
+    
+    if (isOpen) {
+      fetchServices();
+    }
+  }, [isOpen]);
   // NEW: Fetch office hours
   useEffect(() => {
     const fetchOfficeHours = async () => {
@@ -456,16 +529,23 @@ useEffect(() => {
                 className="form-control"
                 value={form.service}
                 onChange={handleChange}
+                disabled={loadingServices}
                 required
               >
-                <option value="">Select Service</option>
-                <option value="Vaccination">Vaccination</option>
-                <option value="Grooming">Grooming</option>
-                <option value="Check-up">Check-up</option>
-                <option value="Consultations">Consultations</option>
-                <option value="Deworming">Deworming</option>
-                <option value="Tick & Flea Prevention">Tick & Flea Prevention</option>
+                <option value="">
+                  {loadingServices ? "Loading services..." : "Select Service"}
+                </option>
+                {services.map((service) => (
+                  <option key={service.id} value={service.name}>
+                    {service.name}
+                  </option>
+                ))}
               </select>
+              {services.length === 0 && !loadingServices && (
+                <div className="form-text" style={{ color: '#ff6b6b', fontSize: '12px' }}>
+                  No services available. Please contact the clinic.
+                </div>
+              )}
             </div>
             
             <div className="new-form-row">
