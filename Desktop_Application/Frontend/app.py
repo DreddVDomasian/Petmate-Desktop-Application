@@ -143,6 +143,7 @@ class MainUI(QMainWindow):
         self.analyticsTimer.start(15000)
 
         self.setup_office_hours()
+        self.load_service_types_to_main_combobox()
 
         #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
@@ -1498,6 +1499,51 @@ class MainUI(QMainWindow):
         self.petProfileIcon.setPixmap(QPixmap(icon_path))
 
     #PET SERVICE SUBMIT/EDIT
+    def load_service_types_to_main_combobox(self):
+        """Load service types into the main UI's serviceTypeComboBox"""
+        try:
+            # Fetch only active service types
+            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true")
+
+            if response.status_code == 200:
+                data = response.json()
+                service_types = data.get('results', [])
+
+                # Get the combobox from your main UI
+                service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
+
+                if service_combo:
+                    service_combo.clear()
+                    service_combo.addItem("Select Service", None)  # Add placeholder
+
+                    # Add service types to combobox
+                    for service_type in service_types:
+                        if service_type.get('is_active', True):
+                            name = service_type.get('name', '')
+                            if name:  # Only add if name exists
+                                service_combo.addItem(name, service_type.get('id'))
+
+                    # If no service types were added (only placeholder)
+                    if service_combo.count() == 1:
+                        service_combo.addItem("No service types available", None)
+
+                    print(f"Loaded {service_combo.count() - 1} service types to main combobox")
+
+            else:
+                print(f"Failed to load service types for main UI: {response.status_code}")
+                service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
+                if service_combo:
+                    service_combo.clear()
+                    service_combo.addItem("Select Service", None)
+                    service_combo.addItem("Error loading services", None)
+
+        except Exception as e:
+            print(f"Error loading service types for main UI combobox: {e}")
+            service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
+            if service_combo:
+                service_combo.clear()
+                service_combo.addItem("Select Service", None)
+                service_combo.addItem("Error loading services", None)
     def submit_service_data(self):
         service_type = self.serviceTypeComboBox.currentText().strip()
         date = self.dateEdit.date().toString("yyyy-MM-dd")
@@ -1602,6 +1648,7 @@ class MainUI(QMainWindow):
         self.appointmentCard.hide()
     def open_addAppointment(self):
         self.appointmentCard.load_patients_to_combobox()
+        self.appointmentCard.load_service_types_to_combobox()
         self.appointmentCard.show_card()
 
     #SCHEDULED RETURN VIST PAGE

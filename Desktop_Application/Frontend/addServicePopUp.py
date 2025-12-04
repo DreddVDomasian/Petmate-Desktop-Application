@@ -466,14 +466,12 @@ class AddServicePopUp(QWidget):
                 Toast(self.main_window, "Error loading service type",
                       icon_path="Icons/warning.png").show_toast()
 
-
-
     def handle_add_edit_service(self):
         name = self.serviceNameLineEdit.text().strip()
         desc = self.serviceDescription.toPlainText().strip()
 
         if not name:
-            Toast(self, "Service name is required", icon_path="Icons/warning.png").show_toast()
+            Toast(self.main_window, "Service name is required", icon_path="Icons/warning.png").show_toast()
             return
 
         # --------------------------
@@ -487,12 +485,15 @@ class AddServicePopUp(QWidget):
             response = requests.put(url, json=payload)
 
             if response.status_code == 200:
-                Toast(self, "Service updated!", icon_path="Icons/check.png").show_toast()
+                Toast(self.main_window, "Service updated!", icon_path="Icons/check.png").show_toast()
                 self.reset_add_form()
                 self.load_service_types(1)
+                # Refresh the appointment card's combobox if it exists
+                if hasattr(self.main_window, 'addAppointmentCard'):
+                    self.main_window.addAppointmentCard.load_service_types_to_combobox()
                 return
 
-            Toast(self, "Failed to update service", icon_path="Icons/warning.png").show_toast()
+            Toast(self.main_window, "Failed to update service", icon_path="Icons/warning.png").show_toast()
             return
 
         # --------------------------
@@ -503,11 +504,20 @@ class AddServicePopUp(QWidget):
         response = requests.post(f"{API_BASE_URL}/api/service-types/", json=payload)
 
         if response.status_code == 201:
-            Toast(self, "Service added!", icon_path="Icons/check.png").show_toast()
+            Toast(self.main_window, "Service added!", icon_path="Icons/check.png").show_toast()
             self.reset_add_form()
             self.load_service_types(1)
+            # Refresh the appointment card's combobox if it exists
+            if hasattr(self.main_window, 'addAppointmentCard'):
+                self.main_window.addAppointmentCard.load_service_types_to_combobox()
         else:
-            Toast(self, "Failed to add service", icon_path="Icons/warning.png").show_toast()
+            # Check if there's an error response from the server
+            try:
+                error_data = response.json()
+                error_msg = error_data.get('error') or str(error_data)
+                Toast(self.main_window, f"Failed: {error_msg}", icon_path="Icons/warning.png").show_toast()
+            except:
+                Toast(self, "Failed to add service", icon_path="Icons/warning.png").show_toast()
 
     def reset_add_form(self):
         self.is_edit_mode = False

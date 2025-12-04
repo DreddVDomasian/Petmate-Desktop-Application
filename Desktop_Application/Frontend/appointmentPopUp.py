@@ -148,6 +148,43 @@ class AddAppointmentCard(QWidget):
         return super().eventFilter(obj, event)
 
     #SET UP COMBO BOXES AND DATA SUBMITTING
+    def load_service_types_to_combobox(self):
+        """Load ALL service types for the combobox"""
+        try:
+            # Fetch only active service types
+            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true")
+
+            if response.status_code == 200:
+                data = response.json()
+                service_types = data.get('results', [])  # Get the results array
+
+                self.serviceTypeComboBox.clear()
+                self.serviceTypeComboBox.addItem("Select Service Type", None)  # Add placeholder
+
+                # Add service types to combobox
+                for service_type in service_types:
+                    if service_type.get('is_active', True):
+                        name = service_type.get('name', '')
+                        if name:  # Only add if name exists
+                            self.serviceTypeComboBox.addItem(name, service_type.get('id'))
+
+                # If no service types were added (only placeholder)
+                if self.serviceTypeComboBox.count() == 1:
+                    self.serviceTypeComboBox.addItem("No service types available", None)
+
+                print(f"Loaded {self.serviceTypeComboBox.count() - 1} service types to combobox")
+
+            else:
+                print(f"Failed to load service types: {response.status_code}")
+                self.serviceTypeComboBox.clear()
+                self.serviceTypeComboBox.addItem("Select Service Type", None)
+                self.serviceTypeComboBox.addItem("Error loading services", None)
+
+        except Exception as e:
+            print(f"Error loading service types for combobox: {e}")
+            self.serviceTypeComboBox.clear()
+            self.serviceTypeComboBox.addItem("Select Service Type", None)
+            self.serviceTypeComboBox.addItem("Error loading services", None)
     def load_patients_to_combobox(self):
         """Load ALL patients for the combobox without pagination"""
         try:

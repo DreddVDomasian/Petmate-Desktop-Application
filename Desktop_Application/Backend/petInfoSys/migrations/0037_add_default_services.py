@@ -6,7 +6,6 @@ def add_default_services(apps, schema_editor):
 
     default_services = [
         ('Consultation', 'General veterinary consultation and examination', True),
-        ('Wellness Check', 'Comprehensive health assessment and preventive care', True),
         ('Vaccinations', 'Immunization against common diseases', True),
         ('Deworming', 'Parasite control and prevention treatments', True),
         ('Surgery', 'Various surgical procedures', True),
@@ -19,7 +18,6 @@ def add_default_services(apps, schema_editor):
         ('Antigen/Antibody Rapid Test Kits', 'Rapid diagnostic testing', True),
         ('Grooming', 'Pet grooming and hygiene services', True),
         ('Dental Care', 'Oral health and dental treatments', True),
-        ('Emergency Care', 'Urgent and emergency veterinary services', True),
         ('Check-up', 'Routine health check-up', True),
         ('Tick & Flea Prevention', 'Preventive treatment for parasites', True),
     ]

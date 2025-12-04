@@ -1768,8 +1768,16 @@ class ServiceTypeListCreateView(generics.ListCreateAPIView):
     serializer_class = ServiceTypeSerializer
     permission_classes = [AllowAny]
     pagination_class = StandardPagination
+
     def get_queryset(self):
         queryset = ServiceType.objects.all()
+
+        # Check if no_pagination parameter is passed (for combobox)
+        no_pagination = self.request.query_params.get('no_pagination')
+        if no_pagination:
+            self.pagination_class = None
+            # For combobox, return all active service types
+            return queryset.filter(is_active=True).order_by('name')
 
         # Filter by active status if provided
         is_active = self.request.query_params.get('is_active', '')
@@ -1777,7 +1785,6 @@ class ServiceTypeListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(is_active=True)
         elif is_active.lower() == 'false':
             queryset = queryset.filter(is_active=False)
-
 
         return queryset.order_by('-created_at')
 
