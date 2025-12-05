@@ -156,7 +156,7 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
                   />
                 </div>
 
-                                {/* Password checklist UI */}
+                {/* Password checklist UI */}
                 <ul className="password-checklist vertical">
                   <li className={passwordValid.uppercase ? "valid" : ""}>
                     <span className="icon">{passwordValid.uppercase ? "✔" : "✖"}</span> At least 1 uppercase
