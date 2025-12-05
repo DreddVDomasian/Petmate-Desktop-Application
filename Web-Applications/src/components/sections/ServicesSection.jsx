@@ -12,8 +12,8 @@ function ServicesSection() {
 
     const fetchServices = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/service-types/?is_active=true');
-            const serviceData = response.data.results || response.data;
+            const response = await axios.get('http://127.0.0.1:8000/api/service-types/?is_active=true&no_pagination=true');
+            const serviceData = Array.isArray(response.data) ? response.data : (response.data.results || []);
             
             // Map API data to include icons based on service name
             const servicesWithIcons = serviceData.map(service => ({

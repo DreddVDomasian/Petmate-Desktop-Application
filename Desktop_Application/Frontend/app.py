@@ -1503,11 +1503,16 @@ class MainUI(QMainWindow):
         """Load service types into the main UI's serviceTypeComboBox"""
         try:
             # Fetch only active service types
-            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true")
+            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true&no_pagination=true")
 
             if response.status_code == 200:
                 data = response.json()
-                service_types = data.get('results', [])
+                if isinstance(data, list):
+                    service_types = data  # Direct list from no_pagination
+                elif isinstance(data, dict) and 'results' in data:
+                    service_types = data['results']  # Paginated response
+                else:
+                    service_types = []  # Get the results array
 
                 # Get the combobox from your main UI
                 service_combo = self.findChild(QComboBox, "serviceTypeComboBox")

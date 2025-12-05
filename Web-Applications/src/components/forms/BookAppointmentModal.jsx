@@ -99,7 +99,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setServicesError(null);
         
         // Use relative path since your API is on the same domain
-        const res = await fetch("/api/service-types/?is_active=true", {
+        const res = await fetch("/api/service-types/?is_active=true&no_pagination=true", {
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -109,7 +109,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
           console.log("Services API response:", data); // Debug log
           
           // Get the services array from results
-          const servicesData = data.results || [];
+          const servicesData = Array.isArray(data) ? data : (data.results || []);
           console.log("Parsed services:", servicesData); // Debug log
           
           // Filter to only include active services

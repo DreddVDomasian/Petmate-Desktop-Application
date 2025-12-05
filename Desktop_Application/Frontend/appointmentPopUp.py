@@ -152,11 +152,16 @@ class AddAppointmentCard(QWidget):
         """Load ALL service types for the combobox"""
         try:
             # Fetch only active service types
-            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true")
+            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true&no_pagination=true")
 
             if response.status_code == 200:
                 data = response.json()
-                service_types = data.get('results', [])  # Get the results array
+                if isinstance(data, list):
+                    service_types = data  # Direct list from no_pagination
+                elif isinstance(data, dict) and 'results' in data:
+                    service_types = data['results']  # Paginated response
+                else:
+                    service_types = []  # Get the results array
 
                 self.serviceTypeComboBox.clear()
                 self.serviceTypeComboBox.addItem("Select Service Type", None)  # Add placeholder
@@ -322,6 +327,8 @@ class AddAppointmentCard(QWidget):
             cb.lineEdit().setReadOnly(False)
             cb.lineEdit().setPlaceholderText(text)
             cb.lineEdit().setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+        self.serviceTypeComboBox.setEditable(False)
     def set_dynamic_completer(self, comboBox):
         completer = QCompleter(comboBox.model())
         completer.setCompletionColumn(0)
