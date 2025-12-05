@@ -8,6 +8,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from datetime import date,datetime,time,timedelta
 from .models import *
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .serializers import *
@@ -1857,3 +1859,176 @@ class ServiceTypeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
         # Soft delete by setting is_active to False
         instance.is_active = False
         instance.save()
+# -----------------WALKIN TO NEW ACCOUNT SYNC---------------------
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def check_existing_patient(request):
+    """Check if a walk-in patient exists with the given email"""
+    email = request.data.get('email', '').strip().lower()
+
+    if not email:
+        return Response({'error': 'Email is required'}, status=400)
+
+    try:
+        # Validate email format
+        validate_email(email)
+    except ValidationError:
+        return Response({'error': 'Invalid email format'}, status=400)
+
+    # Check if email already has a web account
+    if User.objects.filter(email=email).exists():
+        return Response({
+            'has_account': True,
+            'message': 'An account already exists with this email. Please login instead.'
+        })
+
+    # Check for walk-in patient with this email
+    patient = basicInfo.objects.filter(
+        email=email,
+        source='desktop',
+        user_account__isnull=True
+    ).first()
+
+    if patient:
+        # Check if verification is already pending
+        existing_verification = EmailVerification.objects.filter(
+            email=email,
+            patient=patient,
+            verified=False,
+            expires_at__gt=timezone.now()
+        ).first()
+
+        if existing_verification:
+            # Resend OTP
+            otp = existing_verification.otp
+            verification = existing_verification
+        else:
+            # Generate new OTP
+            otp = str(random.randint(100000, 999999))
+            verification = EmailVerification.objects.create(
+                email=email,
+                otp=otp,
+                patient=patient,
+                expires_at=timezone.now() + timedelta(minutes=10)
+            )
+
+        # Send OTP email
+        try:
+            subject = "🐾 PetMate Animal Clinic - Verify Your Email"
+            html_content = render_to_string('claim_account_email.html', {
+                'otp': otp,
+                'patient_name': f"{patient.firstName} {patient.lastName}",
+                'expiry_minutes': 10
+            })
+            text_content = strip_tags(html_content)
+
+            msg = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email='petmateanimalclinic@gmail.com',
+                to=[email]
+            )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+            return Response({
+                'has_existing_record': True,
+                'patient_id': patient.id,
+                'patient_name': f"{patient.firstName} {patient.lastName}",
+                'verification_id': verification.id,
+                'message': 'We found an existing walk-in record. OTP sent to your email.'
+            })
+
+        except Exception as e:
+            print(f"Error sending email: {e}")
+            return Response({
+                'error': 'Failed to send verification email'
+            }, status=500)
+
+    return Response({
+        'has_existing_record': False,
+        'message': 'No existing walk-in record found. You can create a new account.'
+    })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_and_claim_account(request):
+    """Verify OTP and create web account for walk-in patient"""
+    data = request.data
+    verification_id = data.get('verification_id')
+    otp = data.get('otp')
+    password = data.get('password')
+
+    if not all([verification_id, otp, password]):
+        return Response({'error': 'All fields are required'}, status=400)
+
+    try:
+        verification = EmailVerification.objects.get(
+            id=verification_id,
+            otp=otp,
+            verified=False
+        )
+
+        # Check if OTP is expired
+        if verification.is_expired():
+            return Response({'error': 'OTP has expired. Please request a new one.'}, status=400)
+
+        # Check if patient still exists and hasn't been claimed
+        patient = verification.patient
+        if patient.user_account:
+            return Response({'error': 'This record has already been claimed.'}, status=400)
+
+        # Create User account
+        User = get_user_model()
+        try:
+            with transaction.atomic():
+                # Create user with email as username
+                user = User.objects.create_user(
+                    username=verification.email,
+                    email=verification.email,
+                    password=password
+                )
+                user.first_name = patient.firstName
+                user.last_name = patient.lastName
+                user.save()
+
+                # Link patient to user account
+                patient.user_account = user
+                patient.source = 'web'  # Update source
+                patient.desktop_record = 'show'  # Show in both systems
+                patient.save()
+
+                # Mark verification as complete
+                verification.verified = True
+                verification.user_account_created = True
+                verification.save()
+
+                # Log the user in
+                try:
+                    auth_request = request._request if hasattr(request, '_request') else request
+                    django_login(auth_request, user)
+                except Exception as e:
+                    print(f"Login failed but account created: {e}")
+
+                return Response({
+                    'success': True,
+                    'message': 'Account created successfully! Your walk-in records have been linked.',
+                    'user': {
+                        'id': user.id,
+                        'email': user.email,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name
+                    },
+                    'patient': {
+                        'id': patient.id,
+                        'full_name': f"{patient.firstName} {patient.lastName}"
+                    }
+                })
+
+        except Exception as e:
+            return Response({'error': f'Failed to create account: {str(e)}'}, status=500)
+
+    except EmailVerification.DoesNotExist:
+        return Response({'error': 'Invalid or expired verification code.'}, status=400)

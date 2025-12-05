@@ -31,6 +31,8 @@ urlpatterns = [
 
     path("print/<int:owner_id>/<int:pet_id>/", views.print_record, name="print_record"),
     path("reminders/", views.reminders, name="reminders"),
+
+
     
     
 
@@ -61,6 +63,9 @@ urlpatterns = [
     #   Password Reset Endpoints
     path('send-reset-otp/', views.send_reset_otp, name='send_reset_otp'),
     path('verify-reset-otp/', views.verify_reset_otp, name='verify_reset_otp'),
+    #   CLAIM ACC TO SYNC RECORDS
+    path('check-existing-patient/', check_existing_patient, name='check-existing-patient'),
+    path('verify-claim-account/', verify_and_claim_account, name='verify-claim-account'),
 
     #   WEB PASSWORD RESET VIEW
     path('web-reset-password/', views.web_reset_password, name='web_reset_password'),

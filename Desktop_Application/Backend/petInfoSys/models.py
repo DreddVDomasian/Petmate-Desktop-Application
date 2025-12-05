@@ -307,3 +307,22 @@ class ServiceType(models.Model):
         if self.name:
             self.name = self.name.strip().title()
         super().save(*args, **kwargs)
+
+
+# -----------------WALKIN TO NEW ACCOUNT SYNC---------------------
+
+class EmailVerification(models.Model):
+    """Model for verifying walk-in patients who want to create web accounts"""
+    email = models.EmailField()
+    otp = models.CharField(max_length=6)
+    patient = models.ForeignKey(basicInfo, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    verified = models.BooleanField(default=False)
+    user_account_created = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"Verification for {self.email}"

@@ -164,3 +164,34 @@ class ServiceTypeSerializer(serializers.ModelSerializer):
                 return value
             raise serializers.ValidationError("A service type with this name already exists.")
         return value.strip().title()
+
+
+# -----------------WALKIN TO NEW ACCOUNT SYNC---------------------
+
+class EmailVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailVerification
+        fields = ['email', 'otp', 'patient_id']
+        read_only_fields = ['otp', 'created_at', 'expires_at', 'verified', 'user_account_created']
+
+
+class ClaimAccountSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(max_length=6)
+    password = serializers.CharField(write_only=True, min_length=8)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+
+        # Password strength validation
+        password = data['password']
+        if len(password) < 8:
+            raise serializers.ValidationError({"password": "Password must be at least 8 characters long."})
+        if not any(char.isupper() for char in password):
+            raise serializers.ValidationError({"password": "Password must contain at least one uppercase letter."})
+        if not any(char.isdigit() for char in password):
+            raise serializers.ValidationError({"password": "Password must contain at least one number."})
+
+        return data
