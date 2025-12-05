@@ -950,6 +950,7 @@ class AddAppointmentCard(QWidget):
             self.main_window.walkInOrWeb.setCurrentIndex(0)
             self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
             self.main_window.DeclinedBtn.setChecked(True)
+            self.web_Appointment(1, "declined")
 
             # Refresh time slot availability
             if hasattr(self, 'setup_time_combo_box'):

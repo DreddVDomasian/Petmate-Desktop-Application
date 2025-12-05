@@ -28,32 +28,32 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // NEW: Dynamic time slots generation
   const generateTimeSlots = (startTime, endTime) => {
     if (!startTime || !endTime) return [];
-    
+
     const slots = [];
     let current = parseTimeString(startTime);
     const end = parseTimeString(endTime);
-    
+
     // Ensure we have at least 30 minutes before closing
     const maxEndTime = new Date(end.getTime() - 30 * 60000);
-    
+
     // Generate slots every 30 minutes
     while (current <= maxEndTime) {
       const hours = current.getHours();
       const minutes = current.getMinutes();
       const timeValue = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
-      
+
       // Format for display
       const ampm = hours >= 12 ? 'PM' : 'AM';
       const displayHours = hours % 12 || 12;
       const displayMinutes = minutes.toString().padStart(2, '0');
       const label = `${displayHours}:${displayMinutes} ${ampm}`;
-      
+
       slots.push({ label, value: timeValue });
-      
+
       // Add 30 minutes
       current = new Date(current.getTime() + 30 * 60000);
     }
-    
+
     return slots;
   };
 
@@ -85,7 +85,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setLoadingPets(false);
       }
     };
-    
+
     if (isOpen) {
       fetchPets();
     }
@@ -93,32 +93,32 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   useEffect(() => {
     const fetchServices = async () => {
       if (!isOpen) return;
-      
+
       try {
         setLoadingServices(true);
         setServicesError(null);
-        
+
         // Use relative path since your API is on the same domain
         const res = await fetch("/api/service-types/?is_active=true&no_pagination=true", {
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
-        
+
         if (res.ok) {
           const data = await res.json();
           console.log("Services API response:", data); // Debug log
-          
+
           // Get the services array from results
           const servicesData = Array.isArray(data) ? data : (data.results || []);
           console.log("Parsed services:", servicesData); // Debug log
-          
+
           // Filter to only include active services
-          const activeServices = servicesData.filter(service => 
+          const activeServices = servicesData.filter(service =>
             service.is_active !== false && service.name
           );
-          
+
           console.log("Active services:", activeServices); // Debug log
-          
+
           if (activeServices.length === 0) {
             setServicesError("No services available at the moment.");
             // Still set empty array to show dropdown
@@ -126,7 +126,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
           } else {
             setServices(activeServices);
           }
-          
+
         } else {
           console.error("Failed to fetch services:", res.status);
           setServicesError("Failed to load services. Please try again.");
@@ -156,7 +156,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setLoadingServices(false);
       }
     };
-    
+
     if (isOpen) {
       fetchServices();
     }
@@ -191,7 +191,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setLoadingHours(false);
       }
     };
-    
+
     if (isOpen) {
       fetchOfficeHours();
     }
@@ -276,100 +276,100 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   const getTimeSlotsForDay = (dateString) => {
     const dayName = getDayName(dateString);
     const dayHours = officeHours[dayName];
-    
+
     if (!dayHours) return [];
-    
+
     if (dayHours.status === 'closed' || dayHours.status === 'appointment_only') {
       return [];
     }
-    
+
     if (dayHours.start_time && dayHours.end_time) {
       return generateTimeSlots(dayHours.start_time, dayHours.end_time);
     }
-    
+
     return [];
   };
 
-// COPY Flatpickr initialization FROM OLD SetAppointment.jsx (FIXED VERSION)
-useEffect(() => {
-  if (isOpen && dateRef.current && !loadingHours && Object.keys(officeHours).length > 0) {
-    console.log("Office hours loaded:", officeHours); // Debug log
-    
-    // Enable/disable dates based on office hours
-    const enableDates = (date) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const selectedDate = new Date(date);
-      selectedDate.setHours(0, 0, 0, 0);
-      
-      console.log("Checking date:", date, "vs today:", today); // Debug
-      
-      // Disable past dates
-      if (selectedDate < today) {
-        console.log("Disabling - date is in past"); // Debug
-        return false;
+  // COPY Flatpickr initialization FROM OLD SetAppointment.jsx (FIXED VERSION)
+  useEffect(() => {
+    if (isOpen && dateRef.current && !loadingHours && Object.keys(officeHours).length > 0) {
+      console.log("Office hours loaded:", officeHours); // Debug log
+
+      // Enable/disable dates based on office hours
+      const enableDates = (date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const selectedDate = new Date(date);
+        selectedDate.setHours(0, 0, 0, 0);
+
+        console.log("Checking date:", date, "vs today:", today); // Debug
+
+        // Disable past dates
+        if (selectedDate < today) {
+          console.log("Disabling - date is in past"); // Debug
+          return false;
+        }
+
+        // Get day name (lowercase)
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        const dayHours = officeHours[dayName];
+
+        console.log("Day name:", dayName, "Office hours:", dayHours); // Debug
+
+        if (!dayHours) {
+          console.log("No office hours data - enabling by default"); // Debug
+          return true; // If no data, allow by default
+        }
+
+        // Check if day should be enabled
+        const isEnabled = dayHours.status === 'open' &&
+          dayHours.start_time &&
+          dayHours.end_time;
+
+        console.log("Day enabled status:", isEnabled); // Debug
+        return isEnabled;
+      };
+
+      // Destroy existing flatpickr instance if any
+      if (dateRef.current._flatpickr) {
+        dateRef.current._flatpickr.destroy();
       }
-      
-      // Get day name (lowercase)
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-      const dayHours = officeHours[dayName];
-      
-      console.log("Day name:", dayName, "Office hours:", dayHours); // Debug
-      
-      if (!dayHours) {
-        console.log("No office hours data - enabling by default"); // Debug
-        return true; // If no data, allow by default
+
+      flatpickr(dateRef.current, {
+        dateFormat: "M d, Y",
+        minDate: "today",
+        disable: [
+          function (date) {
+            const result = !enableDates(date);
+            console.log("Flatpickr disable check for", date, ":", result); // Debug
+            return result;
+          }
+        ],
+        onChange: (selectedDates) => {
+          if (selectedDates.length > 0) {
+            const date = selectedDates[0];
+            const dateString = date.toLocaleDateString("en-CA");
+            console.log("Date selected:", dateString); // Debug
+            setForm((prev) => ({
+              ...prev,
+              preferredDate: dateString,
+              preferredTime: "" // Reset time when date changes
+            }));
+          }
+        },
+      });
+    }
+  }, [isOpen, officeHours, loadingHours]);
+
+  // Add cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (window.flatpickrInstances && window.flatpickrInstances.datePicker) {
+        window.flatpickrInstances.datePicker.destroy();
+        delete window.flatpickrInstances.datePicker;
       }
-      
-      // Check if day should be enabled
-      const isEnabled = dayHours.status === 'open' && 
-                       dayHours.start_time && 
-                       dayHours.end_time;
-      
-      console.log("Day enabled status:", isEnabled); // Debug
-      return isEnabled;
     };
-
-    // Destroy existing flatpickr instance if any
-    if (dateRef.current._flatpickr) {
-      dateRef.current._flatpickr.destroy();
-    }
-
-    flatpickr(dateRef.current, {
-      dateFormat: "M d, Y",
-      minDate: "today",
-      disable: [
-        function(date) {
-          const result = !enableDates(date);
-          console.log("Flatpickr disable check for", date, ":", result); // Debug
-          return result;
-        }
-      ],
-      onChange: (selectedDates) => {
-        if (selectedDates.length > 0) {
-          const date = selectedDates[0];
-          const dateString = date.toLocaleDateString("en-CA");
-          console.log("Date selected:", dateString); // Debug
-          setForm((prev) => ({
-            ...prev,
-            preferredDate: dateString,
-            preferredTime: "" // Reset time when date changes
-          }));
-        }
-      },
-    });
-  }
-}, [isOpen, officeHours, loadingHours]);
-
-// Add cleanup on unmount
-useEffect(() => {
-  return () => {
-    if (window.flatpickrInstances && window.flatpickrInstances.datePicker) {
-      window.flatpickrInstances.datePicker.destroy();
-      delete window.flatpickrInstances.datePicker;
-    }
-  };
-}, []);
+  }, []);
 
   // COPY handleChange FROM OLD SetAppointment.jsx
   const handleChange = (e) => {
@@ -391,7 +391,7 @@ useEffect(() => {
     // NEW: Check if day is open before submitting
     const dayName = getDayName(form.preferredDate);
     const dayHours = officeHours[dayName];
-    
+
     if (!dayHours || dayHours.status !== 'open') {
       alert("This day is not available for appointments. Please choose another day.");
       setSubmitting(false);
@@ -411,15 +411,15 @@ useEffect(() => {
         setSubmitting(false);
         return;
       }
-        const serviceTypeId = form.service; // Assuming this now stores ID
-        const appointmentData = {
-            pet_id: parseInt(form.pet),
-            service_type_id: serviceTypeId,  // CHANGED: Send ID
-            date: form.preferredDate,
-            prefTime: form.preferredTime,
-            request: "pending",
-            status: "pending",
-        };
+      const serviceTypeId = form.service; // Assuming this now stores ID
+      const appointmentData = {
+        pet_id: parseInt(form.pet),
+        service_type_id: serviceTypeId,  // CHANGED: Send ID
+        date: form.preferredDate,
+        prefTime: form.preferredTime,
+        request: "pending",
+        status: "pending",
+      };
 
       const res = await fetch("/api/walkIn/", {
         method: "POST",
@@ -434,11 +434,11 @@ useEffect(() => {
       if (res.status === 201) {
         const newAppointment = await res.json();
         alert("Appointment set successfully! Waiting for admin approval.");
-        
+
         // Reset form
         setForm({ pet: "", service: "", preferredDate: "", preferredTime: "" });
         setAvailableTimes([]);
-        
+
         // Close modal and callback
         onClose();
         if (onAppointmentBooked) {
@@ -521,40 +521,40 @@ useEffect(() => {
                 ))}
               </select>
             </div>
-            
+
             <div className="new-form-group">
               <label htmlFor="appointmentService">Service</label>
-                <select
-                    name="service"
-                    value={form.service}
-                    className="form-control"
-                    onChange={handleChange}
-                    disabled={loadingServices}
-                    required
-                >
-                    <option value="">
-                      {loadingServices ? "Loading services..." : "Select Service"}
-                    </option>
-                    {services.map((service) => (
-                        <option key={service.id} value={service.id}>  {/* Store ID in value */}
-                            {service.name}
-                        </option>
-                    ))}
-                </select>
+              <select
+                name="service"
+                value={form.service}
+                className="form-control"
+                onChange={handleChange}
+                disabled={loadingServices}
+                required
+              >
+                <option value="">
+                  {loadingServices ? "Loading services..." : "Select Service"}
+                </option>
+                {services.map((service) => (
+                  <option key={service.id} value={service.id}>  {/* Store ID in value */}
+                    {service.name}
+                  </option>
+                ))}
+              </select>
               {services.length === 0 && !loadingServices && (
                 <div className="form-text" style={{ color: '#ff6b6b', fontSize: '12px' }}>
                   No services available. Please contact the clinic.
                 </div>
               )}
             </div>
-            
+
             <div className="new-form-row">
               <div className="new-form-group">
                 <label htmlFor="appointmentDate">Preferred Date</label>
-                <input 
+                <input
                   ref={dateRef}
-                  type="text" 
-                  className="form-control" 
+                  type="text"
+                  className="form-control"
                   placeholder="Preferred Date"
                   readOnly
                 />
@@ -570,10 +570,10 @@ useEffect(() => {
                   required
                 >
                   <option value="">
-                    {loadingHours ? "Loading hours..." : 
-                     checkingAvailability ? "Checking availability..." : 
-                     !form.preferredDate ? "Select date first" :
-                     "Select Time"}
+                    {loadingHours ? "Loading hours..." :
+                      checkingAvailability ? "Checking availability..." :
+                        !form.preferredDate ? "Select date first" :
+                          "Select Time"}
                   </option>
                   {availableTimes.map((slot, index) => (
                     <option
@@ -596,7 +596,7 @@ useEffect(() => {
               (() => {
                 const dayName = getDayName(form.preferredDate);
                 const dayHours = officeHours[dayName];
-                
+
                 if (!dayHours || dayHours.status === 'closed') {
                   return (
                     <div className="day-status-message closed">
@@ -605,7 +605,7 @@ useEffect(() => {
                     </div>
                   );
                 }
-                
+
                 if (dayHours.status === 'appointment_only') {
                   return (
                     <div className="day-status-message appointment-only">
@@ -614,7 +614,7 @@ useEffect(() => {
                     </div>
                   );
                 }
-                
+
                 if (dayHours.status === 'open' && availableTimes.length === 0) {
                   return (
                     <div className="day-status-message no-slots">
@@ -623,7 +623,7 @@ useEffect(() => {
                     </div>
                   );
                 }
-                
+
                 return null;
               })()
             )}
@@ -642,14 +642,14 @@ useEffect(() => {
                 }
               </div>
             )}
-            
+
             <div className="new-form-group bookBtns modal-actions">
-              <button 
-                type="submit" 
-                className="btn new-btn-primary" 
-                disabled={submitting || checkingAvailability || loadingHours || 
-                         (form.preferredDate && (!officeHours[getDayName(form.preferredDate)] || 
-                          officeHours[getDayName(form.preferredDate)].status !== 'open'))}
+              <button
+                type="submit"
+                className="btn new-btn-primary"
+                disabled={submitting || checkingAvailability || loadingHours ||
+                  (form.preferredDate && (!officeHours[getDayName(form.preferredDate)] ||
+                    officeHours[getDayName(form.preferredDate)].status !== 'open'))}
               >
                 {submitting ? "Booking Appointment..." : "Book Appointment"}
               </button>

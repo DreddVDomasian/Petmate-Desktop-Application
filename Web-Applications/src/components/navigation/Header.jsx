@@ -55,19 +55,19 @@ const Header = () => {
         const headerHeight = 80;
 
         let currentSection = 'home';
-        
+
         for (const section of sections) {
           const element = document.getElementById(section);
           if (element) {
             const elementTop = element.offsetTop - headerHeight;
-            
+
             // Check if we've scrolled past this section's start
             if (scrollY >= elementTop) {
               currentSection = section;
             }
           }
         }
-        
+
         setActiveSection(currentSection);
       };
 
@@ -133,7 +133,7 @@ const Header = () => {
   // Handle Home click - scroll to top if on home page, otherwise navigate to home
   const handleHomeClick = (e) => {
     e.preventDefault();
-    
+
     if (location.pathname === '/') {
       // Already on home page - scroll to top
       window.scrollTo({
@@ -145,14 +145,14 @@ const Header = () => {
       // Not on home page - navigate to home
       navigate('/');
     }
-    
+
     setMobileMenuOpen(false);
   }
 
   // Handle section clicks
   const handleSectionClick = (e, sectionId) => {
     e.preventDefault();
-    
+
     // If we're not on the home page, navigate to home first
     if (location.pathname !== '/') {
       navigate('/');
@@ -164,7 +164,7 @@ const Header = () => {
       // We're already on home page, just scroll to section
       scrollToSection(sectionId);
     }
-    
+
     setActiveSection(sectionId);
     setMobileMenuOpen(false);
   }
@@ -191,54 +191,54 @@ const Header = () => {
       <div className="container">
         <nav className="navbar">
           <div className="logo header-profile">
-            <img 
-              src="/assets/images/logo/PETMATE LOGO.png" 
-              alt="PetMate Logo" 
+            <img
+              src="/assets/images/logo/PETMATE LOGO.png"
+              alt="PetMate Logo"
               onClick={handleHomeClick}
               style={{ cursor: 'pointer' }}
             />
           </div>
-          
+
           <div className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-            <a 
-              href="/" 
+            <a
+              href="/"
               onClick={handleHomeClick}
               className={location.pathname === '/' && activeSection === 'home' ? 'active' : ''}
             >
               Home
             </a>
-            <a 
-              href="#about" 
+            <a
+              href="#about"
               onClick={(e) => handleSectionClick(e, 'about')}
               className={isSectionActive('about') ? 'active' : ''}
             >
               About
             </a>
-            <a 
-              href="#services" 
+            <a
+              href="#services"
               onClick={(e) => handleSectionClick(e, 'services')}
               className={isSectionActive('services') ? 'active' : ''}
             >
               Services
             </a>
-            <a 
-              href="#hours" 
+            <a
+              href="#hours"
               onClick={(e) => handleSectionClick(e, 'hours')}
               className={isSectionActive('hours') ? 'active' : ''}
             >
               Hours
             </a>
-            <a 
-              href="#contact" 
+            <a
+              href="#contact"
               onClick={(e) => handleSectionClick(e, 'contact')}
               className={isSectionActive('contact') ? 'active' : ''}
             >
               Contact
             </a>
-            
+
             {isAuthenticated && (
-              <a 
-                href="/dashboard" 
+              <a
+                href="/dashboard"
                 onClick={(e) => { e.preventDefault(); handleNavigation('/dashboard'); }}
                 className={location.pathname === '/dashboard' ? 'active' : ''}
               >
@@ -246,21 +246,21 @@ const Header = () => {
               </a>
             )}
           </div>
-          
+
           <div className="user-menu">
             {isAuthenticated ? (
               <>
                 <div className="user-info">
-                  <div 
-                    className="user-avatar" 
+                  <div
+                    className="user-avatar"
                     onClick={() => handleNavigation('/dashboard')}
                     title="View Profile"
                   >
                     {getUserInitial()}
                   </div>
                 </div>
-                <button 
-                  className="logout-btn" 
+                <button
+                  className="logout-btn"
                   onClick={handleLogout}
                   style={{
                     background: 'none',
@@ -275,15 +275,15 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              <a 
-                href="#" 
+              <a
+                href="#"
                 className="login-btn"
                 onClick={handleLoginClick}
               >
                 Login
               </a>
             )}
-            
+
             <div className="mobile-menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               <i className="fas fa-bars"></i>
             </div>

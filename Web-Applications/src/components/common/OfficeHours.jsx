@@ -31,7 +31,7 @@ const OfficeHours = () => {
     const groupOfficeHours = (hours) => {
         const groups = [];
         let currentGroup = null;
-        
+
         // Sort by status and times to group properly
         const sortedHours = [...hours].sort((a, b) => {
             if (a.status !== b.status) {
@@ -53,7 +53,7 @@ const OfficeHours = () => {
         for (let i = 0; i < sortedHours.length; i++) {
             const hour = sortedHours[i];
             const dayName = getFullDayName(hour.day);
-            
+
             // If current group exists and this hour can join it
             if (currentGroup && canJoinGroup(currentGroup, hour)) {
                 currentGroup.days.push(dayName);
@@ -63,7 +63,7 @@ const OfficeHours = () => {
                 if (currentGroup) {
                     groups.push(formatGroup(currentGroup, sortedHours));
                 }
-                
+
                 currentGroup = {
                     days: [dayName],
                     status: hour.status,
@@ -74,12 +74,12 @@ const OfficeHours = () => {
                 };
             }
         }
-        
+
         // Don't forget the last group
         if (currentGroup) {
             groups.push(formatGroup(currentGroup, sortedHours));
         }
-        
+
         setGroupedHours(groups);
     };
 
@@ -88,15 +88,15 @@ const OfficeHours = () => {
         if (group.status !== hour.status) return false;
         if (group.start_time !== hour.start_time) return false;
         if (group.end_time !== hour.end_time) return false;
-        
+
         // Check if days are consecutive in the original order
         const originalOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         const groupLastDay = group.days[group.days.length - 1].toLowerCase();
         const newDay = getFullDayName(hour.day).toLowerCase();
-        
+
         const groupIndex = originalOrder.indexOf(groupLastDay);
         const newIndex = originalOrder.indexOf(newDay);
-        
+
         // Allow grouping even if not strictly consecutive
         return true; // Changed to allow non-consecutive days with same schedule
     };
@@ -110,22 +110,22 @@ const OfficeHours = () => {
                 displayTime: formatDisplayTime(group.status, group.start_time, group.end_time)
             };
         }
-        
+
         // Try to create a compact range
         const days = group.days;
         const originalOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        
+
         // Sort days in original order
         days.sort((a, b) => originalOrder.indexOf(a.toLowerCase()) - originalOrder.indexOf(b.toLowerCase()));
-        
+
         // Find consecutive ranges
         const ranges = [];
         let startIndex = 0;
-        
+
         for (let i = 0; i < days.length; i++) {
             const currentIndex = originalOrder.indexOf(days[i].toLowerCase());
-            const prevIndex = i > 0 ? originalOrder.indexOf(days[i-1].toLowerCase()) : null;
-            
+            const prevIndex = i > 0 ? originalOrder.indexOf(days[i - 1].toLowerCase()) : null;
+
             if (prevIndex !== null && currentIndex !== prevIndex + 1) {
                 // Not consecutive, end previous range
                 ranges.push(days.slice(startIndex, i));
@@ -133,16 +133,16 @@ const OfficeHours = () => {
             }
         }
         ranges.push(days.slice(startIndex));
-        
+
         // Create labels for each range
         const rangeLabels = ranges.map(range => {
             if (range.length === 1) return range[0];
             if (range.length === 2) return `${range[0]} & ${range[1]}`;
             return `${range[0]} - ${range[range.length - 1]}`;
         });
-        
+
         const label = rangeLabels.join(', ');
-        
+
         return {
             label,
             status: group.status,
@@ -168,7 +168,7 @@ const OfficeHours = () => {
         if (status === 'closed') return 'Closed';
         if (status === 'appointment_only') return 'Appointment Only';
         if (!startTime || !endTime) return 'Appointment Only';
-        
+
         const start = formatTimeForDisplay(startTime);
         const end = formatTimeForDisplay(endTime);
         return `${start} - ${end}`;
@@ -178,7 +178,7 @@ const OfficeHours = () => {
         if (status === 'closed') return 'Closed';
         if (status === 'appointment_only') return 'Appointment Only';
         if (!startTime || !endTime) return 'Appointment Only';
-        
+
         const start = formatTimeForDisplay(startTime);
         const end = formatTimeForDisplay(endTime);
         return `${start} - ${end}`;
@@ -186,16 +186,16 @@ const OfficeHours = () => {
 
     const formatTimeForDisplay = (timeString) => {
         if (!timeString) return '';
-        
+
         try {
             const [hours, minutes] = timeString.split(':').slice(0, 2);
             const hour = parseInt(hours, 10);
             const minute = parseInt(minutes, 10);
-            
+
             const ampm = hour >= 12 ? 'PM' : 'AM';
             const displayHour = hour % 12 || 12;
             const displayMinute = minute.toString().padStart(2, '0');
-            
+
             return `${displayHour}:${displayMinute} ${ampm}`;
         } catch (error) {
             return timeString;
@@ -239,7 +239,7 @@ const OfficeHours = () => {
     }
 
     // Check if we have emergency services (sunday appointment only)
-    const hasEmergency = officeHours.some(hour => 
+    const hasEmergency = officeHours.some(hour =>
         hour.day === 'sunday' && hour.status === 'appointment_only'
     );
 

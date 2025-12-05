@@ -160,7 +160,7 @@ export default function ViewAppointments() {
     return badges;
   };
 
-const getStatusExplanation = (appointment) => {
+  const getStatusExplanation = (appointment) => {
     const { request, status, date, prefTime } = appointment;
 
     if (request === 'pending') return 'Your appointment request is under review by our staff.';
@@ -213,11 +213,11 @@ const getStatusExplanation = (appointment) => {
       {!loading && !error && (
         <div className="appointments-card-grid">
           {appointments.length === 0 ? (
-          <div className="empty-state">
-            <img src="/assets/icons/dog-walking.gif" alt="No pets" className="empty-icon" />
-            <h3>No Appointment Yet</h3>
-            <p>Schedule your appointment to get started.</p>
-          </div>
+            <div className="empty-state">
+              <img src="/assets/icons/dog-walking.gif" alt="No pets" className="empty-icon" />
+              <h3>No Appointment Yet</h3>
+              <p>Schedule your appointment to get started.</p>
+            </div>
           ) : (
             appointments.map((appointment) => {
               const petName = appointment.pet_name ||
@@ -309,7 +309,7 @@ const getStatusExplanation = (appointment) => {
                     <span className="detail-value">
                       {selectedAppointment.pet_name ||
                         (selectedAppointment.pet && (selectedAppointment.pet.petName || selectedAppointment.pet.pet_name)) ||
-                         "Unknown Pet"}
+                        "Unknown Pet"}
                     </span>
                   </div>
                   <div className="detail-item">

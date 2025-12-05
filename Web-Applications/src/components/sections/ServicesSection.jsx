@@ -14,7 +14,7 @@ function ServicesSection() {
         try {
             const response = await axios.get('http://127.0.0.1:8000/api/service-types/?is_active=true&no_pagination=true');
             const serviceData = Array.isArray(response.data) ? response.data : (response.data.results || []);
-            
+
             // Map API data to include icons based on service name
             const servicesWithIcons = serviceData.map(service => ({
                 id: service.id,
@@ -22,14 +22,14 @@ function ServicesSection() {
                 desc: service.description || 'Professional service for your pet',
                 icon: getIconForService(service.name)
             }));
-            
+
             setServices(servicesWithIcons);
             setLoading(false);
         } catch (err) {
             console.error('Error fetching services:', err);
             setError('Failed to load services');
             setLoading(false);
-            
+
             // Fallback to default services if API fails
             setServices(getDefaultServices());
         }
@@ -38,7 +38,7 @@ function ServicesSection() {
     // Function to map service names to icons
     const getIconForService = (serviceName) => {
         const serviceNameLower = serviceName.toLowerCase();
-        
+
         // Mapping of keywords to Font Awesome icons
         if (serviceNameLower.includes('vaccin')) return 'fas fa-syringe';
         if (serviceNameLower.includes('wellness') || serviceNameLower.includes('check')) return 'fas fa-stethoscope';
@@ -57,12 +57,12 @@ function ServicesSection() {
         if (serviceNameLower.includes('nutrition')) return 'fas fa-apple-alt';
         if (serviceNameLower.includes('behavior')) return 'fas fa-brain';
         if (serviceNameLower.includes('boarding') || serviceNameLower.includes('hotel')) return 'fas fa-bed';
-        
+
         // Default icons for common service categories
         if (serviceNameLower.includes('care') || serviceNameLower.includes('health')) return 'fas fa-heartbeat';
         if (serviceNameLower.includes('exam') || serviceNameLower.includes('checkup')) return 'fas fa-stethoscope';
         if (serviceNameLower.includes('treatment')) return 'fas fa-first-aid';
-        
+
         // Default icon if no match
         return 'fas fa-clinic-medical';
     };

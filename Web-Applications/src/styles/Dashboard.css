@@ -9,7 +9,7 @@
 }
 
 ::-webkit-scrollbar {
-  width: 5px;     
+  width: 5px;
 }
 
 
@@ -28,6 +28,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
 * {
   margin: 0;
   padding: 0;
@@ -39,7 +40,7 @@ body {
   color: var(--dark);
   line-height: 1.6;
   font-family: 'Poppins', sans-serif;
-  background-image: 
+  background-image:
     url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" preserveAspectRatio="none"><path fill="%2378B3CE" fill-opacity="0.35" d="M0,600 C200,400 400,800 600,600 S1000,400 1200,600 L1200,1200 L0,1200 Z"/><path fill="%23FCD597" fill-opacity="0.03" d="M0,800 C300,600 500,1000 800,800 S1100,600 1200,800 L1200,1200 L0,1200 Z"/></svg>'),
     url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" preserveAspectRatio="none"><path fill="%2378B3CE" fill-opacity="0.30" d="M0,400 C150,200 250,700 400,400 S800,200 1200,400 L1200,1200 L0,1200 Z"/></svg>');
   background-size: cover;
@@ -66,9 +67,11 @@ header {
   top: 0;
   z-index: 1000;
 }
-.header-profile{
+
+.header-profile {
   height: 40px;
 }
+
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -269,7 +272,7 @@ header {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.btn:hover{
+.btn:hover {
   background-color: #f8c67a;
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -351,6 +354,7 @@ header {
   position: relative;
   overflow: hidden;
 }
+
 .empty-state {
   grid-column: 1 / -1;
   display: flex;
@@ -361,12 +365,14 @@ header {
   padding: 3rem;
   color: #666;
 }
+
 .empty-icon {
   width: 80px;
   height: 80px;
   margin-bottom: 1rem;
   opacity: 0.5;
 }
+
 .pet-image:before {
   content: '';
   position: absolute;
@@ -405,18 +411,21 @@ header {
   color: var(--accent);
 }
 
-.petCardActions{
+.petCardActions {
   display: flex;
   justify-content: center;
   gap: 10px;
 
 }
-.viewPetDetails{
+
+.viewPetDetails {
   width: 100%;
 }
-.pet-info p{
+
+.pet-info p {
   margin-bottom: 15px;
 }
+
 .new-btn-small {
   padding: 8px 15px;
   font-size: 0.85rem;
@@ -424,10 +433,11 @@ header {
   border-radius: 30px;
 }
 
-.bookBtns{
+.bookBtns {
   display: flex;
   gap: 10px;
 }
+
 /* Appointments */
 .appointments-list {
   margin-top: 20px;
@@ -554,6 +564,7 @@ header {
 .modal-body {
   padding: 15px 25px 30px 25px;
 }
+
 .modal-actions {
   display: flex;
   gap: 5px;
@@ -561,10 +572,11 @@ header {
   margin-top: 30px;
 }
 
-.close-appointment-details{
+.close-appointment-details {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .new-form-row {
@@ -583,38 +595,41 @@ header {
     background: white;
     flex-direction: column;
     padding: 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
-  .modal-actions{
+
+  .modal-actions {
     scale: 0.9;
     justify-content: center;
   }
-  .new-btn-primary{
+
+  .new-btn-primary {
     scale: 0.7;
   }
-  .btn{
+
+  .btn {
     scale: 0.9;
   }
 
   .nav-links.active {
     display: flex;
   }
-  
+
   .mobile-menu {
     display: block;
   }
-  
+
   .profile-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
-  
+
   .profile-tabs {
     overflow-x: auto;
     width: 100%;
   }
-  
+
   body {
     background-size: 800px 400px, 800px 400px;
   }
@@ -829,12 +844,13 @@ header {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+
   .form-row,
   .info-row {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .form-group.full-width {
     grid-column: 1;
   }

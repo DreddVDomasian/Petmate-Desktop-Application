@@ -44,7 +44,8 @@ class PetSerializer(serializers.ModelSerializer):
 
         has_appointment = WalkInAppointment.objects.filter(
             pet=obj,
-            status__in=["pending", "overdue"]
+            status__in=["pending", "overdue"],
+            request="accepted"
         ).exists()
 
         has_service = Service.objects.filter(

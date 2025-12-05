@@ -38,7 +38,7 @@ import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
 import PetDetailsModal from '../components/modals/PetDetailsModal' // Add this import
-import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal' 
+import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal'
 import '../styles/Dashboard.css';
 
 function Dashboard(props) {
@@ -60,8 +60,8 @@ function Dashboard(props) {
   const [showPetModal, setShowPetModal] = useState(false);
 
   const handleViewAppointmentDetails = (appointment) => {
-  setSelectedAppointment(appointment);
-  setShowAppointmentModal(true);
+    setSelectedAppointment(appointment);
+    setShowAppointmentModal(true);
   };
 
   const handleCloseAppointmentModal = () => {
@@ -87,10 +87,10 @@ function Dashboard(props) {
       const res = await fetch('/api/walkIn/', { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch appointments');
       const data = await res.json();
-      
+
       // Extract the actual appointments array from the paginated response
       const appointmentsList = data.results || [];
-      
+
       setAppointments(Array.isArray(appointmentsList) ? appointmentsList : []);
     } catch (err) {
       console.error('fetchAppointments error', err);
@@ -138,8 +138,8 @@ function Dashboard(props) {
 
   return (
     <div className="dashboard-new">
-      <ProfileContent 
-        onOpenModal={openModal} 
+      <ProfileContent
+        onOpenModal={openModal}
         pets={pets}
         appointments={appointments}
         loading={loading}
@@ -149,23 +149,23 @@ function Dashboard(props) {
         activeTab={activeTab}           // Pass activeTab
         setActiveTab={setActiveTab}     // Pass setActiveTab
       />
-      
+
       {/* Modals */}
-      <AddPetModal 
-        isOpen={activeModal === 'addPet'} 
+      <AddPetModal
+        isOpen={activeModal === 'addPet'}
         onClose={closeModal}
         onPetAdded={() => {
           fetchPets();
           triggerRefresh();
         }}
       />
-      <AppointmentDetailsModal 
+      <AppointmentDetailsModal
         isOpen={showAppointmentModal}
         onClose={handleCloseAppointmentModal}
         appointment={selectedAppointment}
       />
-      <BookAppointmentModal 
-        isOpen={activeModal === 'bookAppointment'} 
+      <BookAppointmentModal
+        isOpen={activeModal === 'bookAppointment'}
         onClose={closeModal}
         onAppointmentBooked={() => {
           fetchAppointments();
@@ -174,7 +174,7 @@ function Dashboard(props) {
       />
 
       {/* Pet Details Modal */}
-      <PetDetailsModal 
+      <PetDetailsModal
         isOpen={showPetModal}
         onClose={handleClosePetModal}
         pet={selectedPet}

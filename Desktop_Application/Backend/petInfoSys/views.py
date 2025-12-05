@@ -381,60 +381,76 @@ def print_record(request, owner_id, pet_id):
     return response
 
 
+
 @api_view(['GET'])
 def reminders(request):
     reminders = []
 
     pet_id = request.query_params.get("pet_id", None)
 
-    # Appointments (only show pending/overdue)
-    appointments = WalkInAppointment.objects.filter(status__in=["pending", "overdue"])
-    if pet_id:
-        appointments = appointments.filter(pet_id=pet_id)
+    try:
+        # Appointments (only show pending/overdue)
+        appointments = WalkInAppointment.objects.filter(
+            status__in=["pending", "overdue"],
+            request="accepted"
+        ).select_related('service_type', 'pet')
 
-    for appt in appointments:
-        reminders.append({
-            "id": appt.id,
-            "type": "Appointment",
-            "date": appt.date.strftime("%Y-%m-%d"),
-            "time": appt.prefTime.strftime("%I:%M %p") if appt.prefTime else None,
-            "service": appt.service_name,
-            "pet_id": appt.pet.id,
-            "pet_name": appt.pet.petName,
-            "status": appt.status
-        })
+        if pet_id:
+            appointments = appointments.filter(pet_id=pet_id)
 
-    # Services
-    services = Service.objects.filter(return_date__isnull=False)
+        for appt in appointments:
+            reminders.append({
+                "id": appt.id,
+                "type": "Appointment",
+                "date": appt.date.strftime("%Y-%m-%d"),
+                "time": appt.prefTime.strftime("%I:%M %p") if appt.prefTime else None,
+                "service": appt.service_type.name if appt.service_type else "Unknown",
+                "pet_id": appt.pet.id,
+                "pet_name": appt.pet.petName,
+                "status": appt.status
+            })
 
-    if pet_id:
-        services = services.filter(pet_id=pet_id)
+        # Services
+        services = Service.objects.filter(
+            return_date__isnull=False
+        ).select_related('service_type', 'pet')
 
-    for svc in services:
-        # if already completed, skip it
-        if svc.status == "completed":
-            continue
+        if pet_id:
+            services = services.filter(pet_id=pet_id)
 
-            # otherwise, dynamically calculate
-        if svc.return_date < date.today():
-            status = "overdue"
-        else:
-            status = "pending"
+        for svc in services:
+            if svc.status == "completed":
+                continue
 
-        reminders.append({
-            "id": svc.id,
-            "type": "Service Return",
-            "date": svc.return_date.strftime("%Y-%m-%d"),
-            "time": None,
-            "service": svc.service_type,
-            "pet_id": svc.pet.id,
-            "pet_name": svc.pet.petName,
-            "status": status
-        })
+            if svc.return_date < date.today():
+                status = "overdue"
+            else:
+                status = "pending"
 
-    # Sort by date
-    reminders = sorted(reminders, key=lambda x: x["date"])
-    return Response(reminders)
+            # Get service name with fallback
+            service_name = "Unknown"
+            if svc.service_type:
+                service_name = svc.service_type.name
+            elif hasattr(svc, 'service_type_name') and svc.service_type_name:
+                service_name = svc.service_type_name
+
+            reminders.append({
+                "id": svc.id,
+                "type": "Service Return",
+                "date": svc.return_date.strftime("%Y-%m-%d"),
+                "time": None,
+                "service": service_name,
+                "pet_id": svc.pet.id,
+                "pet_name": svc.pet.petName,
+                "status": status
+            })
+
+        # Sort by date
+        reminders = sorted(reminders, key=lambda x: x["date"])
+        return Response(reminders)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(["POST"])
 def check_duplicate_patient(request):
@@ -971,7 +987,7 @@ class WalkInListCreateView(generics.ListCreateAPIView):
                 # Regular web user: only show their own appointments
                 queryset = queryset.filter(
                     owner__user_account=user
-                ).order_by('created_at')
+                ).order_by('-created_at')
         else:
             # Unauthenticated request (desktop system) - treat as staff
             queryset = queryset.order_by('-created_at')
