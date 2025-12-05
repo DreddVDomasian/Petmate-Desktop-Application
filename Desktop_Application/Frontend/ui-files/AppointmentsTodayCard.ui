@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>867</width>
+    <height>88</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>8</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="homeAppointments">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame{
+	background-color:#fcfcfc;
+	border-radius : 5px;
+	border-bottom: #272727;
+	border-right: #272727;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>30</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>20</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="appointmentOwner">
+        <property name="styleSheet">
+         <string notr="true">font: 81 14pt &quot;Montserrat Medium&quot;;
+	color:rgb(52, 52, 52);</string>
+        </property>
+        <property name="text">
+         <string>Robert Moleno</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="appointmentPet">
+        <property name="styleSheet">
+         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+color: rgb(120, 120, 120);</string>
+        </property>
+        <property name="text">
+         <string>riu</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="appointmentService">
+        <property name="styleSheet">
+         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+color: rgb(120, 120, 120);</string>
+        </property>
+        <property name="text">
+         <string>Grooming</string>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignRight">
+       <widget class="QLabel" name="appointmentTime">
+        <property name="styleSheet">
+         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+color: rgb(120, 120, 120);</string>
+        </property>
+        <property name="text">
+         <string>9:00AM</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

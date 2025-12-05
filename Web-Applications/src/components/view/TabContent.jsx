@@ -96,7 +96,7 @@ const TabContent = ({
   const filteredBarangays = barangays.filter(brgy => brgy.mun_code === selectedCity);
 
   // Fetch user profile data - UPDATED TO SET CORRECT SELECTIONS
-   useEffect(() => {
+  useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const res = await fetch("/api/user/profile/", {
@@ -148,7 +148,7 @@ const TabContent = ({
   }, [activeTab, provinces, cities]);// Added dependencies to re-run when address data loads
 
   // Handle profile update with address fields - UPDATED TO STORE NAMES, NOT CODES
-   const handleProfileUpdate = async (e) => {
+  const handleProfileUpdate = async (e) => {
     e.preventDefault();
     
     if (!userFirstName.trim()) {
@@ -338,7 +338,7 @@ const TabContent = ({
         <div className="profile-card">
           <h3><i className="fas fa-paw"></i> My Pets</h3>
           <p>Manage your pets' information and view their medical history.</p>
-     
+    
           <div style={{ height: '12px', marginBottom: '20px' }} />
           {loading ? (
             <LoadingState />

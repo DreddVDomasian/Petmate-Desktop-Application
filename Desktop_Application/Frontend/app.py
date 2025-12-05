@@ -12,7 +12,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget, QComboBox, QButtonGroup, QMessageBox, \
-    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout
+    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
     QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime
@@ -135,6 +135,7 @@ class MainUI(QMainWindow):
 
         # Analytics/Homepage
         self.stackedWidget.setCurrentIndex(0)
+        self.appointments_today()
         self.setup_bar_graph()
         self.setup_pie_graph()
 
@@ -2563,6 +2564,7 @@ class MainUI(QMainWindow):
         print("Refreshing analytics...")
         self.setup_bar_graph()
         self.setup_pie_graph()
+
     def setup_bar_graph(self):
 
         data = fetch_json(f"{API_BASE_URL}/api/serviceCounts")
@@ -2602,6 +2604,7 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
+
     def setup_pie_graph(self):
 
         data = fetch_json(f"{API_BASE_URL}/api/speciesCounts")
@@ -2634,7 +2637,54 @@ class MainUI(QMainWindow):
 
         layout.addWidget(chart_view)
 
+    def appointments_today(self):
+        try:
+            res = requests.get("http://127.0.0.1:8000/api/todaysAppointments/", timeout=5)
+            data = res.json()
+        except Exception as e:
+            print("❌ API ERROR:", e)
+            return
 
+        container = self.findChild(QWidget, "appointmentsTodayScroll")
+
+        if not container:
+            print("❌ appointmentsTodayScroll NOT FOUND")
+            return
+
+        layout = container.layout()
+        if layout is None:
+            layout = QVBoxLayout(container)
+            container.setLayout(layout)
+
+        # ✅ CLEAR OLD WIDGETS
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
+        for appt in data:
+            card = uic.loadUi("ui-files/AppointmentsTodayCard.ui")
+
+            card.appointmentOwner.setText(str(appt["owner"]).title())
+            card.appointmentPet.setText(str(appt["pet_name"]).title())
+            card.appointmentService.setText(str(appt["service"]).title())
+
+            time_str = appt["prefTime"]  # e.g. "14:30:00"
+            time_obj = datetime.strptime(time_str, "%H:%M:%S")
+            formatted_time = time_obj.strftime("%I:%M %p")
+            card.appointmentTime.setText(formatted_time)
+
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setBlurRadius(20)
+            shadow.setXOffset(0)
+            shadow.setYOffset(3)
+            shadow.setColor(QColor(0, 0, 0, 60))
+            card.setGraphicsEffect(shadow)
+
+            layout.addWidget(card)
+
+        layout.addStretch()
 
     def setup_day_radio_groups(self):
         """Setup radio button groups for each day with 3 options"""

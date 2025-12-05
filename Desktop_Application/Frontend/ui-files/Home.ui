@@ -1321,7 +1321,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1365,13 +1365,13 @@ QToolButton:hover{
                   <number>0</number>
                  </property>
                  <property name="leftMargin">
-                  <number>10</number>
+                  <number>11</number>
                  </property>
                  <property name="topMargin">
                   <number>0</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>11</number>
                  </property>
                  <property name="bottomMargin">
                   <number>0</number>
@@ -1391,7 +1391,7 @@ border:none;</string>
                  <item>
                   <widget class="QFrame" name="DailyAnalytics">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1406,10 +1406,23 @@ border:none;</string>
                     <item>
                      <widget class="QFrame" name="SpeciesPieGraph">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>350</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QFrame{
+	background-color : white;
+	border-color: rgb(120, 120, 120);
+	border-radius: 10px;
+}</string>
                       </property>
                       <property name="frameShape">
                        <enum>QFrame::StyledPanel</enum>
@@ -1423,14 +1436,14 @@ border:none;</string>
                     <item>
                      <widget class="QFrame" name="ServiceBarGraph">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>0</width>
+                        <width>500</width>
                         <height>0</height>
                        </size>
                       </property>
@@ -1450,14 +1463,47 @@ border:none;</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFrame" name="Appointments">
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
+                  <widget class="QScrollArea" name="scrollArea_10">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>327</height>
+                    </size>
                    </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="lineWidth">
+                    <number>1</number>
+                   </property>
+                   <property name="horizontalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAsNeeded</enum>
+                   </property>
+                   <property name="sizeAdjustPolicy">
+                    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+                   </property>
+                   <property name="widgetResizable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                   <widget class="QWidget" name="appointmentsTodayScroll">
+                    <property name="geometry">
+                     <rect>
+                      <x>0</x>
+                      <y>0</y>
+                      <width>874</width>
+                      <height>325</height>
+                     </rect>
+                    </property>
+                   </widget>
                   </widget>
                  </item>
                 </layout>
@@ -2685,8 +2731,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>860</width>
-                   <height>506</height>
+                   <width>128</width>
+                   <height>25</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3976,7 +4022,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>860</width>
+                           <width>82</width>
                            <height>362</height>
                           </rect>
                          </property>
@@ -4974,7 +5020,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>858</width>
+                          <width>80</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -5418,8 +5464,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>860</width>
-                       <height>412</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -8071,7 +8117,7 @@ background:none;</string>
                           <x>0</x>
                           <y>0</y>
                           <width>90</width>
-                          <height>33</height>
+                          <height>25</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -11984,7 +12030,7 @@ QTimeEdit {
 </string>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="serviceManagementPage">
                     <layout class="QVBoxLayout" name="verticalLayout_86">
@@ -12120,8 +12166,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>820</width>
-                             <height>399</height>
+                             <width>82</width>
+                             <height>43</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12195,9 +12241,9 @@ color:rgb(168, 168, 168);</string>
                         <property name="geometry">
                          <rect>
                           <x>0</x>
-                          <y>-183</y>
-                          <width>830</width>
-                          <height>706</height>
+                          <y>0</y>
+                          <width>684</width>
+                          <height>692</height>
                          </rect>
                         </property>
                         <property name="styleSheet">
@@ -12388,7 +12434,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12537,7 +12583,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12694,7 +12740,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12837,7 +12883,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -12980,7 +13026,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -13123,7 +13169,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -13266,7 +13312,7 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <property name="rightMargin">
-                                <number>90</number>
+                                <number>60</number>
                                </property>
                                <property name="bottomMargin">
                                 <number>0</number>
@@ -13380,22 +13426,6 @@ font-size:14px;</string>
    </hints>
   </connection>
   <connection>
-   <sender>addPatientBtn_2</sender>
-   <signal>clicked()</signal>
-   <receiver>addPatientBtn</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>319</x>
-     <y>227</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>178</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>appointmentBtn_2</sender>
    <signal>clicked()</signal>
    <receiver>appointmentBtn</receiver>
@@ -13428,18 +13458,82 @@ font-size:14px;</string>
    </hints>
   </connection>
   <connection>
-   <sender>homeBtn</sender>
+   <sender>addPatientBtn_2</sender>
+   <signal>clicked()</signal>
+   <receiver>addPatientBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>settings_2</sender>
+   <signal>clicked()</signal>
+   <receiver>settingsBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>361</x>
+     <y>453</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>455</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>webContentBtn_2</sender>
+   <signal>clicked()</signal>
+   <receiver>webContentBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>315</x>
+     <y>490</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>190</x>
+     <y>492</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>settingsBtn</sender>
    <signal>toggled(bool)</signal>
-   <receiver>homeBtn_2</receiver>
+   <receiver>settings_2</receiver>
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>196</y>
+     <x>212</x>
+     <y>455</y>
     </hint>
     <hint type="destinationlabel">
-     <x>322</x>
-     <y>162</y>
+     <x>361</x>
+     <y>453</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>webContentBtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>webContentBtn_2</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>468</y>
     </hint>
    </hints>
   </connection>
@@ -13460,18 +13554,34 @@ font-size:14px;</string>
    </hints>
   </connection>
   <connection>
-   <sender>petRecordsBtn</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>petRecordsBtn_2</receiver>
-   <slot>setChecked(bool)</slot>
+   <sender>toolButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>logoutBtn</receiver>
+   <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>300</y>
+     <x>318</x>
+     <y>642</y>
     </hint>
     <hint type="destinationlabel">
+     <x>206</x>
+     <y>643</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>petRecordsBtn_2</sender>
+   <signal>clicked()</signal>
+   <receiver>petRecordsBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
      <x>361</x>
      <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>221</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
@@ -13508,98 +13618,34 @@ font-size:14px;</string>
    </hints>
   </connection>
   <connection>
-   <sender>petRecordsBtn_2</sender>
-   <signal>clicked()</signal>
-   <receiver>petRecordsBtn</receiver>
-   <slot>click()</slot>
+   <sender>homeBtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>homeBtn_2</receiver>
+   <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>361</x>
-     <y>301</y>
+     <x>221</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel">
+     <x>322</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>petRecordsBtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>petRecordsBtn_2</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
      <x>221</x>
      <y>300</y>
     </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>settings_2</sender>
-   <signal>clicked()</signal>
-   <receiver>settingsBtn</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>361</x>
-     <y>453</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>165</x>
-     <y>455</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>settingsBtn</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>settings_2</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>212</x>
-     <y>455</y>
-    </hint>
     <hint type="destinationlabel">
      <x>361</x>
-     <y>453</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolButton_4</sender>
-   <signal>clicked()</signal>
-   <receiver>logoutBtn</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>318</x>
-     <y>642</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>206</x>
-     <y>643</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>webContentBtn</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>webContentBtn_2</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>141</x>
-     <y>480</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>319</x>
-     <y>468</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>webContentBtn_2</sender>
-   <signal>clicked()</signal>
-   <receiver>webContentBtn</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>315</x>
-     <y>490</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>190</x>
-     <y>492</y>
+     <y>301</y>
     </hint>
    </hints>
   </connection>
