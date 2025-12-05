@@ -66,36 +66,42 @@ function ClaimAccountModal({ visible, verificationData, onClose, onSuccess }) {
     }
   };
 
-  const handleResendOTP = async () => {
-    try {
-      const res = await fetch('/api/check-existing-patient/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken') || ''
-        },
-        body: JSON.stringify({ email: verificationData.patient_email || verificationData.email })
-      });
-      
-      const data = await res.json();
-      
-      if (data.has_existing_record) {
-        setMessage("New OTP sent to your email!");
-        setMessageType("success");
-        // Update verification ID if a new one was created
-        if (data.verification_id) {
-          verificationData.verification_id = data.verification_id;
-        }
-      } else {
-        setMessage("Failed to resend OTP. Please try again.");
-        setMessageType("error");
+// In ClaimAccountModal.jsx, update the handleResendOTP function:
+const handleResendOTP = async () => {
+  try {
+    const res = await fetch('/api/check-existing-patient/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken') || ''
+      },
+      body: JSON.stringify({ email: verificationData.patient_email || verificationData.email })
+    });
+    
+    const data = await res.json();
+    
+    if (data.already_sent) {
+      setMessage("Verification code was already sent recently. Please check your email.");
+      setMessageType("info");
+    } else if (data.has_existing_record) {
+      setMessage("New OTP sent to your email!");
+      setMessageType("success");
+      // Update verification ID if a new one was created
+      if (data.verification_id) {
+        setVerificationData(prev => ({
+          ...prev,
+          verification_id: data.verification_id
+        }));
       }
-    } catch (err) {
-      setMessage("Failed to resend OTP.");
+    } else {
+      setMessage("Failed to resend OTP. Please try again.");
       setMessageType("error");
     }
-  };
-
+  } catch (err) {
+    setMessage("Failed to resend OTP.");
+    setMessageType("error");
+  }
+};
   return (
     <div className="modal" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>

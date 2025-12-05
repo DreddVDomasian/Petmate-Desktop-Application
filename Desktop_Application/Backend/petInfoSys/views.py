@@ -1871,7 +1871,6 @@ def check_existing_patient(request):
         return Response({'error': 'Email is required'}, status=400)
 
     try:
-        # Validate email format
         validate_email(email)
     except ValidationError:
         return Response({'error': 'Invalid email format'}, status=400)
@@ -1891,27 +1890,33 @@ def check_existing_patient(request):
     ).first()
 
     if patient:
-        # Check if verification is already pending
-        existing_verification = EmailVerification.objects.filter(
+        # Check if verification was sent recently (last 2 minutes)
+        two_minutes_ago = timezone.now() - timedelta(minutes=2)
+        recent_verification = EmailVerification.objects.filter(
             email=email,
             patient=patient,
-            verified=False,
-            expires_at__gt=timezone.now()
+            created_at__gte=two_minutes_ago
         ).first()
 
-        if existing_verification:
-            # Resend OTP
-            otp = existing_verification.otp
-            verification = existing_verification
-        else:
-            # Generate new OTP
-            otp = str(random.randint(100000, 999999))
-            verification = EmailVerification.objects.create(
-                email=email,
-                otp=otp,
-                patient=patient,
-                expires_at=timezone.now() + timedelta(minutes=10)
-            )
+        if recent_verification and not recent_verification.verified:
+            # Don't resend if sent recently, just return the existing verification
+            return Response({
+                'has_existing_record': True,
+                'patient_id': patient.id,
+                'patient_name': f"{patient.firstName} {patient.lastName}",
+                'verification_id': recent_verification.id,
+                'message': 'Verification code already sent. Check your email.',
+                'already_sent': True  # Flag to indicate no new email was sent
+            })
+
+        # Generate new OTP
+        otp = str(random.randint(100000, 999999))
+        verification = EmailVerification.objects.create(
+            email=email,
+            otp=otp,
+            patient=patient,
+            expires_at=timezone.now() + timedelta(minutes=10)
+        )
 
         # Send OTP email
         try:
