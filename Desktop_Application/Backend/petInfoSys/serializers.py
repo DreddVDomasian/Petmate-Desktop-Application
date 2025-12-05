@@ -57,17 +57,29 @@ class PetSerializer(serializers.ModelSerializer):
 
 
 class ServiceSerializer(serializers.ModelSerializer):
+
     owner_full_name = serializers.SerializerMethodField()
     pet_name = serializers.SerializerMethodField()
-
+    service_type = serializers.CharField(source='service_type.name', read_only=True)
+    service_type_name = serializers.CharField(source='service_type.name', read_only=True)
+    service_type_id = serializers.PrimaryKeyRelatedField(
+        queryset=ServiceType.objects.all(),
+        source='service_type',
+        write_only=True,
+        required=True
+    )
 
     class Meta:
         model = Service
-        fields = '__all__'
+        fields = [
+            'id', 'owner', 'pet', 'service_type', 'service_type_id',
+            'service_type_name', 'date', 'return_date', 'date_added',
+            'notes', 'status', 'owner_full_name', 'pet_name'
+        ]
 
     def get_owner_full_name(self, obj):
         parts = [obj.owner.firstName, obj.owner.middleName, obj.owner.lastName]
-        return " ".join(p for p in parts if p)  # skips None or ""
+        return " ".join(p for p in parts if p)
 
     def get_pet_name(self, obj):
         return obj.pet.petName
@@ -76,16 +88,22 @@ class ServiceSerializer(serializers.ModelSerializer):
 class WalkInSerializer(serializers.ModelSerializer):
     owner_full_name = serializers.SerializerMethodField()
     petName = serializers.SerializerMethodField()
-    # Add nested serializers for owner and pet (read-only)
+    service_type_name = serializers.CharField(source='service_type.name', read_only=True)
+    service_type_id = serializers.PrimaryKeyRelatedField(
+        queryset=ServiceType.objects.all(),
+        source='service_type',
+        write_only=True,
+        required=True
+    )
+
     owner = BasicInfoSerializer(read_only=True)
     pet = PetSerializer(read_only=True)
 
-    # Add write-only fields for foreign keys
     owner_id = serializers.PrimaryKeyRelatedField(
         queryset=basicInfo.objects.all(),
         source='owner',
         write_only=True,
-        required = False  # Make optional for web appointments
+        required=False
     )
     pet_id = serializers.PrimaryKeyRelatedField(
         queryset=Pet.objects.all(),
@@ -97,8 +115,9 @@ class WalkInSerializer(serializers.ModelSerializer):
         model = WalkInAppointment
         fields = [
             'id', 'booking_id', 'owner', 'pet', 'owner_id', 'pet_id',
-            'date', 'prefTime', 'status', 'service_name', 'request',
-            'created_at', 'owner_full_name', 'petName'
+            'date', 'prefTime', 'status', 'service_type', 'service_type_id',
+            'service_type_name', 'request', 'created_at',
+            'owner_full_name', 'petName'
         ]
 
     def get_owner_full_name(self, obj):
@@ -109,7 +128,7 @@ class WalkInSerializer(serializers.ModelSerializer):
         return obj.pet.petName
 
     def create(self, validated_data):
-        # For web appointments, automatically set the owner from the pet
+        # Auto-set owner from pet if not provided (for web appointments)
         if 'owner' not in validated_data and 'pet' in validated_data:
             validated_data['owner'] = validated_data['pet'].owner
 

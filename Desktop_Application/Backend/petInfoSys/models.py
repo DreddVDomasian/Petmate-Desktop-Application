@@ -145,7 +145,6 @@ class Pet(models.Model):
         return self.stored_age or "Unknown"
 
 
-
 class Service(models.Model):
     owner = models.ForeignKey(
         basicInfo,
@@ -157,14 +156,21 @@ class Service(models.Model):
         on_delete=models.CASCADE,
         related_name='services'
     )
-    service_type = models.CharField(max_length=255)
+    # CHANGE: Use ForeignKey instead of CharField
+    service_type = models.ForeignKey(
+        'ServiceType',
+        on_delete=models.PROTECT,  # Can't delete service type if it's in use
+        related_name='services'
+    )
     date = models.DateField()
-    return_date = models.DateField(null=True, blank=True)  # optional
+    return_date = models.DateField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, default='pending')
+
     def __str__(self):
-        return f"Service: {self.service_type} for {self.pet.petName} ({self.date})"
+        return f"Service: {self.service_type.name} for {self.pet.petName} ({self.date})"
+
 
 class WalkInAppointment(models.Model):
     booking_id = models.CharField(max_length=20, unique=True, blank=True)
@@ -173,7 +179,13 @@ class WalkInAppointment(models.Model):
     date = models.DateField()
     prefTime = models.TimeField()
     status = models.CharField(max_length=20, default='pending')
-    service_name = models.CharField(max_length=100, default='none')
+    # CHANGE: Use ForeignKey instead of service_name CharField
+    service_type = models.ForeignKey(
+        'ServiceType',
+        on_delete=models.PROTECT,
+        related_name='appointments',
+        null = True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     request = models.CharField(max_length=20, default='accepted')
 
@@ -181,23 +193,24 @@ class WalkInAppointment(models.Model):
         if not self.booking_id:
             self.booking_id = self.generate_booking_id()
         super().save(*args, **kwargs)
-    
+
     def generate_booking_id(self):
         import random
         import string
         from datetime import datetime
-        
-        # Format: BK + YYMMDD + 4 random chars
+
         date_part = datetime.now().strftime('%y%m%d')
         random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
         booking_id = f"BK{date_part}{random_part}"
-        
-        # Ensure uniqueness
+
         while WalkInAppointment.objects.filter(booking_id=booking_id).exists():
             random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
             booking_id = f"BK{date_part}{random_part}"
-        
+
         return booking_id
+
+    def __str__(self):
+        return f"Appointment: {self.service_type.name} for {self.pet.petName} ({self.date})"
 
 
 

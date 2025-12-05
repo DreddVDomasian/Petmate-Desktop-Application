@@ -411,15 +411,15 @@ useEffect(() => {
         setSubmitting(false);
         return;
       }
-
-      const appointmentData = {
-        pet_id: parseInt(form.pet),
-        service_name: form.service,
-        date: form.preferredDate,
-        prefTime: form.preferredTime,
-        request: "pending",
-        status: "pending",
-      };
+        const serviceTypeId = form.service; // Assuming this now stores ID
+        const appointmentData = {
+            pet_id: parseInt(form.pet),
+            service_type_id: serviceTypeId,  // CHANGED: Send ID
+            date: form.preferredDate,
+            prefTime: form.preferredTime,
+            request: "pending",
+            status: "pending",
+        };
 
       const res = await fetch("/api/walkIn/", {
         method: "POST",
@@ -524,23 +524,23 @@ useEffect(() => {
             
             <div className="new-form-group">
               <label htmlFor="appointmentService">Service</label>
-              <select
-                name="service"
-                className="form-control"
-                value={form.service}
-                onChange={handleChange}
-                disabled={loadingServices}
-                required
-              >
-                <option value="">
-                  {loadingServices ? "Loading services..." : "Select Service"}
-                </option>
-                {services.map((service) => (
-                  <option key={service.id} value={service.name}>
-                    {service.name}
-                  </option>
-                ))}
-              </select>
+                <select
+                    name="service"
+                    value={form.service}
+                    className="form-control"
+                    onChange={handleChange}
+                    disabled={loadingServices}
+                    required
+                >
+                    <option value="">
+                      {loadingServices ? "Loading services..." : "Select Service"}
+                    </option>
+                    {services.map((service) => (
+                        <option key={service.id} value={service.id}>  {/* Store ID in value */}
+                            {service.name}
+                        </option>
+                    ))}
+                </select>
               {services.length === 0 && !loadingServices && (
                 <div className="form-text" style={{ color: '#ff6b6b', fontSize: '12px' }}>
                   No services available. Please contact the clinic.

@@ -3,6 +3,15 @@ import { useState, useEffect } from 'react'
 const AppointmentCard = ({ appointment, onViewDetails }) => {
   const [timeSlotAvailability, setTimeSlotAvailability] = useState({})
 
+  // Get service name from new structure
+  const getServiceName = () => {
+    // Try different possible field names
+    return appointment.service_type_name ||  // NEW: from serializer
+           (appointment.service_type && appointment.service_type.name) ||  // NEW: nested object
+           appointment.service_name ||  // OLD: kept for backward compatibility
+           "General Consultation";
+  };
+
   // Status badge system from old ViewAppointments
   const getAppointmentBadges = (appointment) => {
     const { request, status, date, prefTime } = appointment;
@@ -101,9 +110,7 @@ const AppointmentCard = ({ appointment, onViewDetails }) => {
     (appointment.pet && (appointment.pet.petName || appointment.pet.pet_name)) ||
     "Unknown Pet";
 
-  const service = appointment.appointment_reason ||
-    appointment.service_name ||
-    "General Consultation";
+  const service = getServiceName(); // UPDATED: Use new function
 
   return (
     <div className="appointment-card">
@@ -113,7 +120,7 @@ const AppointmentCard = ({ appointment, onViewDetails }) => {
           {getAppointmentBadges(appointment)}
         </div>
       </div>
-      
+
       <div className="status-explanation">
         {getStatusExplanation(appointment)}
       </div>
@@ -129,7 +136,7 @@ const AppointmentCard = ({ appointment, onViewDetails }) => {
         </div>
         <div>
           <div className="info-label">Service</div>
-          <div className="info-value">{service}</div>
+          <div className="info-value">{service}</div> {/* UPDATED */}
         </div>
       </div>
 

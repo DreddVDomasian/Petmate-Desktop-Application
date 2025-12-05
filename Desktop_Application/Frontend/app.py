@@ -1551,7 +1551,13 @@ class MainUI(QMainWindow):
                 service_combo.addItem("Select Service", None)
                 service_combo.addItem("Error loading services", None)
     def submit_service_data(self):
-        service_type = self.serviceTypeComboBox.currentText().strip()
+        service_type_id = self.serviceTypeComboBox.currentData()
+
+        if not service_type_id:
+            toast = Toast(self, "Please select a valid service type", icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
         date = self.dateEdit.date().toString("yyyy-MM-dd")
 
         if self.returnCheckBox.isChecked():
@@ -1583,7 +1589,7 @@ class MainUI(QMainWindow):
         service_data = {
             "owner": self.selected_patient_id,
             "pet": self.selected_pet_id,
-            "service_type": service_type,
+            "service_type_id": service_type_id,  # CHANGED: Send ID
             "date": date,
             "return_date": return_date,
             "notes": notes

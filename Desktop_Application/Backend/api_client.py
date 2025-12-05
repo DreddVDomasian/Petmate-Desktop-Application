@@ -159,17 +159,30 @@ def add_new_service(data):
         return False
 
 
-def add_new_appointment(data):
+def add_new_appointment(appointment_data):
+    """Send appointment data to API"""
     try:
-        response = requests.post(f"{BASE_URL}/api/walkIn/", json=data)
-        print(f"Create appointment response status: {response.status_code}")
-        print(f"Create appointment response text: {response.text}")
+        print(f"DEBUG: Sending to API: {appointment_data}")
+
+        response = requests.post(
+            f"{API_BASE_URL}/api/walkIn/",
+            json=appointment_data,
+            headers={"Content-Type": "application/json"}
+        )
+
+        print(f"DEBUG: API Response Status: {response.status_code}")
+        print(f"DEBUG: API Response Text: {response.text}")
 
         if response.status_code == 201:
             return True
         else:
-            print(f"Failed with status: {response.status_code}")
+            # Log the error
+            try:
+                error_data = response.json()
+                print(f"DEBUG: API Error: {error_data}")
+            except:
+                print(f"DEBUG: API Error (raw): {response.text}")
             return False
     except Exception as e:
-        print(f"Exception in add_new_appointment: {e}")
+        print(f"DEBUG: Exception in add_new_appointment: {e}")
         return False

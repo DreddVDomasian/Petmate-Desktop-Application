@@ -899,13 +899,15 @@ class PetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pet.objects.all()
     serializer_class = PetSerializer
 
+
 class ServiceListCreateView(generics.ListCreateAPIView):
     serializer_class = ServiceSerializer
-    queryset = Service.objects.all()
 
     def get_queryset(self):
         today = date.today()
-        services = Service.objects.all()
+
+        # Start with base queryset
+        services = Service.objects.all().select_related('service_type', 'owner', 'pet')
 
         # 🔎 Filter by pet_id if provided in query params
         pet_id = self.request.query_params.get("pet_id")
@@ -952,6 +954,11 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         today = date.today()
         user = self.request.user
 
+        # Start with base queryset
+        queryset = WalkInAppointment.objects.all().select_related(
+            'service_type', 'owner', 'pet'
+        )
+
         # Check if user has staff permissions (desktop or admin)
         is_staff_user = user.is_authenticated and (user.is_staff or user.is_superuser)
 
@@ -959,17 +966,17 @@ class WalkInListCreateView(generics.ListCreateAPIView):
         if user.is_authenticated:
             if is_staff_user:
                 # Staff/Desktop: see ALL appointments for management
-                queryset = WalkInAppointment.objects.all().order_by('-created_at')
+                queryset = queryset.order_by('-created_at')
             else:
                 # Regular web user: only show their own appointments
-                queryset = WalkInAppointment.objects.filter(
+                queryset = queryset.filter(
                     owner__user_account=user
                 ).order_by('created_at')
         else:
             # Unauthenticated request (desktop system) - treat as staff
-            queryset = WalkInAppointment.objects.all().order_by('-created_at')
+            queryset = queryset.order_by('-created_at')
 
-        # Rest of your filtering logic remains the same...
+        # Rest of your filtering logic...
         request_filter = self.request.query_params.get('request', None)
         if request_filter:
             queryset = queryset.filter(request=request_filter)
@@ -989,7 +996,7 @@ class WalkInListCreateView(generics.ListCreateAPIView):
                             Q(owner__lastName__icontains=term) |
                             Q(owner__middleName__icontains=term) |
                             Q(pet__petName__icontains=term) |
-                            Q(service_name__icontains=term)
+                            Q(service_type__name__icontains=term)  # CHANGED: Use service_type__name
                     )
                     query &= term_query
                 queryset = queryset.filter(query)
@@ -1645,16 +1652,19 @@ class ManualReminderView(APIView):
         except WalkInAppointment.DoesNotExist:
             return Response({'error': 'Appointment not found'}, status=404)
 
+
 @api_view(['GET'])
 def api_service_counts(request):
+    # Count WalkInAppointments by service type name
     data = (
-        WalkInAppointment.objects.values('service_name')
-        .annotate(total=Count('service_name'))
-        .order_by('service_name')
+        WalkInAppointment.objects.values('service_type__name')
+        .annotate(total=Count('service_type__name'))
+        .order_by('service_type__name')
     )
 
-    formatted = {item['service_name']: item['total'] for item in data}
+    formatted = {item['service_type__name']: item['total'] for item in data}
     return JsonResponse(formatted)
+
 
 @api_view(['GET'])
 def api_species_counts(request):
@@ -1667,9 +1677,13 @@ def api_species_counts(request):
         month = datetime.today().month  # ✅ Default = current month
 
     # ✅ Monthly filtering (ALL species now respect the selected month)
-    cats = Pet.objects.filter(species__icontains="cat",date_added__month=month).count()
-    dogs = Pet.objects.filter(species__icontains="dog",date_added__month=month).count()
-    others = Pet.objects.filter(date_added__month=month).exclude(species__icontains="cat").exclude(species__icontains="dog").count()
+    cats = Pet.objects.filter(species__icontains="cat", date_added__month=month).count()
+    dogs = Pet.objects.filter(species__icontains="dog", date_added__month=month).count()
+    others = Pet.objects.filter(date_added__month=month).exclude(
+        species__icontains="cat"
+    ).exclude(
+        species__icontains="dog"
+    ).count()
 
     return Response({
         "month": month,
@@ -1682,15 +1696,18 @@ def api_species_counts(request):
 @api_view(["GET"])
 def todays_appointments(request):
     today = date.today()
-    appointments = WalkInAppointment.objects.filter(date=today).exclude(
+    appointments = WalkInAppointment.objects.filter(
+        date=today
+    ).exclude(
         status__in=["cancelled", "completed"]
-    )
+    ).select_related('service_type', 'owner', 'pet')
+
     result = []
     for a in appointments:
         result.append({
             "owner": str(a.owner),
             "pet_name": str(a.pet.petName),
-            "service": str(a.service_name),
+            "service": a.service_type.name if a.service_type else "Unknown",
             "prefTime": str(a.prefTime)
         })
 

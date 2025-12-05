@@ -149,44 +149,37 @@ class AddAppointmentCard(QWidget):
 
     #SET UP COMBO BOXES AND DATA SUBMITTING
     def load_service_types_to_combobox(self):
-        """Load ALL service types for the combobox"""
+        """Load ALL service types for the combobox - returns IDs not names"""
         try:
-            # Fetch only active service types
             response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true&no_pagination=true")
 
             if response.status_code == 200:
                 data = response.json()
+
+                # Handle both response formats
                 if isinstance(data, list):
-                    service_types = data  # Direct list from no_pagination
+                    service_types = data
                 elif isinstance(data, dict) and 'results' in data:
-                    service_types = data['results']  # Paginated response
+                    service_types = data['results']
                 else:
-                    service_types = []  # Get the results array
+                    service_types = []
 
                 self.serviceTypeComboBox.clear()
-                self.serviceTypeComboBox.addItem("Select Service Type", None)  # Add placeholder
+                self.serviceTypeComboBox.addItem("Select Service Type", None)
 
-                # Add service types to combobox
                 for service_type in service_types:
                     if service_type.get('is_active', True):
                         name = service_type.get('name', '')
-                        if name:  # Only add if name exists
-                            self.serviceTypeComboBox.addItem(name, service_type.get('id'))
+                        service_id = service_type.get('id')
+                        if name and service_id:
+                            # Store ID as data, name as display text
+                            self.serviceTypeComboBox.addItem(name, service_id)
 
-                # If no service types were added (only placeholder)
                 if self.serviceTypeComboBox.count() == 1:
                     self.serviceTypeComboBox.addItem("No service types available", None)
 
-                print(f"Loaded {self.serviceTypeComboBox.count() - 1} service types to combobox")
-
-            else:
-                print(f"Failed to load service types: {response.status_code}")
-                self.serviceTypeComboBox.clear()
-                self.serviceTypeComboBox.addItem("Select Service Type", None)
-                self.serviceTypeComboBox.addItem("Error loading services", None)
-
         except Exception as e:
-            print(f"Error loading service types for combobox: {e}")
+            print(f"Error loading service types: {e}")
             self.serviceTypeComboBox.clear()
             self.serviceTypeComboBox.addItem("Select Service Type", None)
             self.serviceTypeComboBox.addItem("Error loading services", None)
@@ -336,6 +329,7 @@ class AddAppointmentCard(QWidget):
         completer.setFilterMode(Qt.MatchFlag.MatchContains)  # Change to MatchContains
         completer.popup().setStyleSheet(completer_popup_style)
         comboBox.setCompleter(completer)
+
     def submit_appointment_data(self):
         # get values from UI
         patient_index = self.selectPatientPopUp.currentIndex()
@@ -350,9 +344,16 @@ class AddAppointmentCard(QWidget):
         time_index = self.timeComboBox.currentIndex()
         time = self.timeComboBox.itemData(time_index) if time_index >= 0 else ""
 
-        service_name = self.serviceTypeComboBox.currentText()
+        # CHANGED: Get service_type_id (not service_name)
+        service_index = self.serviceTypeComboBox.currentIndex()
+        service_type_id = self.serviceTypeComboBox.itemData(service_index)
 
-        # basic validation
+        # Debug prints
+        print(f"DEBUG: Service index: {service_index}")
+        print(f"DEBUG: Service type ID: {service_type_id}")
+        print(f"DEBUG: Service text: {self.serviceTypeComboBox.currentText()}")
+
+        # basic validation - UPDATED for service_type_id
         missing = []
         if not patient_id:
             missing.append("Patient")
@@ -360,9 +361,8 @@ class AddAppointmentCard(QWidget):
             missing.append("Date")
         if not time:
             missing.append("Time")
-        if not service_name:
+        if not service_type_id:  # CHANGED: Check for ID, not name
             missing.append("Service")
-
 
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
@@ -382,16 +382,17 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             return
 
-        # build data - USE THE NEW FIELD NAMES
+        # build data - CHANGED: Use service_type_id instead of service_name
         appointment_data = {
             "owner_id": patient_id,
             "pet_id": pet_id,
             "date": date,
             "prefTime": time,
-            "service_name": service_name,
+            "service_type_id": service_type_id,  # CHANGED: Send ID, not name
             "request": "accepted"
         }
 
+        print(f"DEBUG: Sending appointment data: {appointment_data}")
 
         # send data to backend
         if add_new_appointment(appointment_data):
@@ -796,7 +797,7 @@ class AddAppointmentCard(QWidget):
             card.DateTime.setText(date_and_time)
 
             # Add service name if available
-            service_name = appoint.get("service_name", "")
+            service_name = appoint.get("service_type_name", "")
             if service_name and service_name != "none":
                 # You might want to add a label for service name in your UI
                 pass
@@ -842,7 +843,7 @@ class AddAppointmentCard(QWidget):
         time = dateTime[3]
         # WalkInAppointment specific fields
         self.main_window.reviewDoctor.setText("Walk-in")  # Default for walk-ins
-        self.main_window.reviewService.setText(appoint.get("service_name", "").title())
+        self.main_window.reviewService.setText(appoint.get("service_type_name", "").title())
         self.main_window.reviewTime.setText(time)
         self.main_window.reviewDate.setText(mdy)
 
@@ -1024,7 +1025,7 @@ class AppointmentCardManager:
         # Set appointment information
         card.ownerName.setText(appointment["owner_full_name"].title())
         card.petNameApp.setText(appointment["petName"].capitalize())
-        card.serviceApp.setText(appointment["service_name"].capitalize())
+        card.serviceApp.setText(appointment["service_type_name"].capitalize())
         card.appDate.setText(self.main_window.format_date(appointment.get("date")))
 
         # Format time
