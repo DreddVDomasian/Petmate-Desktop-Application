@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const OfficeHours = () => {
     const [officeHours, setOfficeHours] = useState([]);
@@ -6,9 +8,24 @@ const OfficeHours = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // 1. Initialize AOS and Fetch Data
     useEffect(() => {
         fetchOfficeHours();
+        
+        AOS.init({
+            once: false, 
+            duration: 1000,
+            easing: "ease-in-out",
+        });
     }, []);
+
+    // 2. Refresh AOS when loading finishes
+    // This ensures animations calculate correctly after data arrives from your API
+    useEffect(() => {
+        if (!isLoading) {
+            AOS.refresh();
+        }
+    }, [isLoading]);
 
     const fetchOfficeHours = async () => {
         try {
@@ -94,11 +111,8 @@ const OfficeHours = () => {
         const groupLastDay = group.days[group.days.length - 1].toLowerCase();
         const newDay = getFullDayName(hour.day).toLowerCase();
 
-        const groupIndex = originalOrder.indexOf(groupLastDay);
-        const newIndex = originalOrder.indexOf(newDay);
-
         // Allow grouping even if not strictly consecutive
-        return true; // Changed to allow non-consecutive days with same schedule
+        return true; 
     };
 
     const formatGroup = (group, allHours) => {
@@ -204,12 +218,12 @@ const OfficeHours = () => {
 
     if (isLoading) {
         return (
-            <section className="hours" id="hours">
+            <section className="hours" id="hours" data-aos="fade-up">
                 <div className="container">
-                    <h1 className="section-title">OFFICE HOURS</h1>
-                    <div className="hours-container">
-                        <div className="hours-visual">
-                            <div className="clock-icon">
+                    <h1 className="section-title" data-aos="fade-down">OFFICE HOURS</h1>
+                    <div className="hours-container" data-aos="fade-up">
+                        <div className="hours-visual" data-aos="zoom-in">
+                            <div className="clock-icon" data-aos="fade-right">
                                 <i className="far fa-clock"></i>
                             </div>
                             <p>Loading office hours...</p>
@@ -222,12 +236,12 @@ const OfficeHours = () => {
 
     if (error) {
         return (
-            <section className="hours" id="hours">
+            <section className="hours" id="hours" data-aos="fade-up">
                 <div className="container">
-                    <h1 className="section-title">OFFICE HOURS</h1>
-                    <div className="hours-container">
-                        <div className="hours-visual">
-                            <div className="clock-icon">
+                    <h1 className="section-title" data-aos="fade-down">OFFICE HOURS</h1>
+                    <div className="hours-container" data-aos="fade-up">
+                        <div className="hours-visual" data-aos="zoom-in">
+                            <div className="clock-icon" data-aos="fade-right">
                                 <i className="far fa-clock"></i>
                             </div>
                             <p className="text-error">{error}</p>
@@ -246,26 +260,30 @@ const OfficeHours = () => {
     return (
         <section className="hours" id="hours">
             <div className="container">
-                <h1 className="section-title">OFFICE HOURS</h1>
+                <h1 className="section-title" data-aos="fade-down">OFFICE HOURS</h1>
                 <div className="hours-container">
                     <div className="hours-visual">
-                        <div className="clock-icon">
+                        <div className="clock-icon" data-aos="fade-right">
                             <i className="far fa-clock"></i>
                         </div>
-                        <div className="hours-text">
+                        <div className="hours-text" data-aos="fade-left">
                             <h3>Visit Us Today</h3>
                             <p>We're here to care for your pets</p>
                         </div>
                         <ul className="hours-list">
                             {groupedHours.map((group, index) => (
-                                <li key={index}>
+                                <li 
+                                    key={index}
+                                    data-aos="fade-up"
+                                    data-aos-delay={index * 100} // This creates the staggered effect
+                                >
                                     <span className="day">{group.label}</span>
                                     <span>{group.displayTime}</span>
                                 </li>
                             ))}
                         </ul>
                         {hasEmergency && (
-                            <div className="emergency-note">
+                            <div className="emergency-note" data-aos="fade-up" data-aos-delay={100}>
                                 <h4>Emergency Services</h4>
                                 <p>Available 24/7 for urgent care needs</p>
                             </div>
