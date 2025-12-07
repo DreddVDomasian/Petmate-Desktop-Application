@@ -1321,7 +1321,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2731,8 +2731,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>128</width>
-                   <height>25</height>
+                   <width>882</width>
+                   <height>506</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3564,7 +3564,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>440</height>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4022,7 +4022,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>82</width>
+                           <width>882</width>
                            <height>362</height>
                           </rect>
                          </property>
@@ -4634,7 +4634,7 @@ QComboBox QLineEdit {
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QLineEdit" name="lineEdit_9">
+                        <widget class="QLineEdit" name="scheduledSearchBar">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -4648,7 +4648,7 @@ QComboBox QLineEdit {
                           </size>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">#lineEdit_9 {
+                          <string notr="true">#scheduledSearchBar {
     background-color: #F0F0F0;
     border-top-left-radius: 10px;
  	border-bottom-left-radius: 10px;
@@ -5020,7 +5020,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>80</width>
+                          <width>880</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -8117,7 +8117,7 @@ background:none;</string>
                           <x>0</x>
                           <y>0</y>
                           <width>90</width>
-                          <height>25</height>
+                          <height>33</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -11639,8 +11639,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>72</width>
-                          <height>18</height>
+                          <width>100</width>
+                          <height>30</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
@@ -12166,8 +12166,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>82</width>
-                             <height>43</height>
+                             <width>93</width>
+                             <height>51</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12242,8 +12242,8 @@ color:rgb(168, 168, 168);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>684</width>
-                          <height>692</height>
+                          <width>742</width>
+                          <height>706</height>
                          </rect>
                         </property>
                         <property name="styleSheet">
