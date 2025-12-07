@@ -951,16 +951,70 @@ class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ServiceSerializer
 
 class ScheduledServiceListView(generics.ListAPIView):
-    serializer_class = ServiceSerializer
+    serializer_class = ScheduledServiceSerializer  # Changed to new serializer
+    pagination_class = StandardPagination
 
     def get_queryset(self):
-        pet_id = self.request.query_params.get('pet_id')
-        owner_id = self.request.query_params.get('owner_id')
-        queryset = Service.objects.filter(return_date__isnull=False)
-        if pet_id:
-            queryset = queryset.filter(pet_id=pet_id)
-        if owner_id:
-            queryset = queryset.filter(owner_id=owner_id)
+        today = date.today()
+
+        # Start with services that have return dates
+        queryset = Service.objects.filter(
+            return_date__isnull=False
+        ).select_related(
+            'service_type',
+            'owner',
+            'pet'
+        ).order_by('return_date')
+
+        # Apply filters
+        # 1. Month filter
+        month_name = self.request.query_params.get('month', '').strip()
+        if month_name:
+            # Map month name to month number
+            month_mapping = {
+                'january': 1, 'february': 2, 'march': 3, 'april': 4,
+                'may': 5, 'june': 6, 'july': 7, 'august': 8,
+                'september': 9, 'october': 10, 'november': 11, 'december': 12
+            }
+            month_number = month_mapping.get(month_name.lower())
+            if month_number:
+                queryset = queryset.filter(return_date__month=month_number)
+
+        # 2. Status filter (pending/completed/overdue)
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            if status_filter == 'overdue':
+                queryset = queryset.filter(
+                    return_date__lt=today,
+                    status__in=['pending', 'overdue']
+                )
+            else:
+                queryset = queryset.filter(status=status_filter)
+
+        # 3. Search filter
+        search_term = self.request.query_params.get('search', '').strip()
+        if search_term:
+            search_terms = ' '.join(search_term.split()).split()
+            if search_terms:
+                query = Q()
+                for term in search_terms:
+                    term_query = (
+                            Q(owner__firstName__icontains=term) |
+                            Q(owner__lastName__icontains=term) |
+                            Q(owner__middleName__icontains=term) |
+                            Q(pet__petName__icontains=term) |
+                            Q(service_type__name__icontains=term)
+                    )
+                    query &= term_query
+                queryset = queryset.filter(query)
+
+        # Auto-update statuses
+        for service in queryset:
+            if service.return_date and service.status not in ["completed", "cancelled"]:
+                if service.return_date < today and service.status != "overdue":
+                    service.status = "overdue"
+                    service.save(update_fields=["status"])
+
         return queryset
 
 

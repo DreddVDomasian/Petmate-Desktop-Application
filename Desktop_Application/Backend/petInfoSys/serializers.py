@@ -195,3 +195,28 @@ class ClaimAccountSerializer(serializers.Serializer):
             raise serializers.ValidationError({"password": "Password must contain at least one number."})
 
         return data
+
+
+class ScheduledServiceSerializer(serializers.ModelSerializer):
+    owner_full_name = serializers.SerializerMethodField()
+    pet_name = serializers.SerializerMethodField()
+    service_type_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Service
+        fields = [
+            'id', 'date', 'return_date', 'status', 'notes',
+            'owner', 'pet', 'service_type',
+            'owner_full_name', 'pet_name', 'service_type_name'
+        ]
+
+    def get_owner_full_name(self, obj):
+        owner = obj.owner
+        parts = [owner.firstName, owner.middleName, owner.lastName]
+        return " ".join(p for p in parts if p)
+
+    def get_pet_name(self, obj):
+        return obj.pet.petName if obj.pet else "Unknown"
+
+    def get_service_type_name(self, obj):
+        return obj.service_type.name if obj.service_type else "Unknown"
