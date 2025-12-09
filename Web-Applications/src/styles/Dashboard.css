@@ -888,3 +888,42 @@ header {
 .day-status-message i {
   font-size: 16px;
 }
+
+
+
+
+/* PASSWORD RESTRICTION */
+.password-rules {
+  text-align: center;      
+  margin-top: 20px;
+}
+
+.rules-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.password-rules ul {
+  padding: 0;
+  display: inline-block;   /* Technique para magitna ang list block */
+  text-align: left;        /* Ibalik sa left align ang text para pantay-pantay basahin */
+}
+
+.password-rules li {
+  font-size: 15px;
+  margin: 6px 0;
+  display: flex;           /* Para pantay ang icon at text */
+  align-items: center;
+  gap: 8px;                /* Space sa pagitan ng bullet/check at text */
+  transition: color 0.3s ease;
+}
+
+
+
+.valid {
+  color: #28a745;  /* green */
+}
+.invalid {
+  color: #dc3545;  /* red */
+}

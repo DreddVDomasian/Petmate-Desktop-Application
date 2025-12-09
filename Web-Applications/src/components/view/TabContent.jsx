@@ -15,6 +15,8 @@ const TabContent = ({
 }) => {
   const [selectedPet, setSelectedPet] = useState(null)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
+
+
   
   // User profile state with address fields
   const [userFirstName, setUserFirstName] = useState("");
@@ -42,6 +44,42 @@ const TabContent = ({
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordMessageType, setPasswordMessageType] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+
+
+  // RESTRICTION FOR PASSWORD STRENGTH
+  const [passwordValid, setPasswordValid] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false
+  });
+
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
+
+  const validatePassword = (pwd) => {
+    setPasswordValid({
+      length: pwd.length >= 8,
+      uppercase: /[A-Z]/.test(pwd),
+      lowercase: /[a-z]/.test(pwd),
+      number: /\d/.test(pwd),
+      special: /[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]/.test(pwd)
+    });
+  };
+
+  const handleNewPasswordChange = (e) => {
+    const pwd = e.target.value;
+    setNewPassword(pwd);
+    validatePassword(pwd);
+    setPasswordsMatch(pwd === confirmPassword);
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const cpwd = e.target.value;
+    setConfirmPassword(cpwd);
+    setPasswordsMatch(newPassword === cpwd);
+  };
+
 
   // Helper for CSRF cookie
   const getCookie = (name) => {
@@ -233,6 +271,14 @@ const TabContent = ({
       setPasswordMessageType("error");
       return;
     }
+
+    const isStrong = Object.values(passwordValid).every(Boolean);
+    if (!isStrong) {
+      setPasswordMessage("Password does not meet all requirements (length, number, etc).");
+      setPasswordMessageType("error");
+      return;
+    }
+
 
     try {
       const csrf = getCookie("csrftoken") || getCookie("csrf") || getCookie("XSRF-TOKEN");
@@ -621,7 +667,7 @@ const TabContent = ({
                   className="form-control"
                   placeholder="Enter new password"
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={handleNewPasswordChange} 
                   required
                 />
               </div>
@@ -632,11 +678,39 @@ const TabContent = ({
                   className="form-control"
                   placeholder="Confirm new password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={handleConfirmPasswordChange}
                   required
                 />
               </div>
             </div>
+
+            <div className="password-rules">
+            <p className="rules-title">Password must contain:</p>
+
+            <ul className="password-checklist">
+                <li className={!newPassword ? "neutral" : (passwordValid.length ? "valid" : "invalid")}>
+                  <span className="icon">{passwordValid.length ? "✔" : "✖"}</span> 
+                  At least 8 characters
+                </li>
+                <li className={!newPassword ? "neutral" : (passwordValid.uppercase ? "valid" : "invalid")}>
+                  <span className="icon">{passwordValid.uppercase ? "✔" : "✖"}</span> 
+                  At least 1 uppercase letter
+                </li>
+                <li className={!newPassword ? "neutral" : (passwordValid.lowercase ? "valid" : "invalid")}>
+                  <span className="icon">{passwordValid.lowercase ? "✔" : "✖"}</span> 
+                  At least 1 lowercase letter
+                </li>
+                <li className={!newPassword ? "neutral" : (passwordValid.number ? "valid" : "invalid")}>
+                  <span className="icon">{passwordValid.number ? "✔" : "✖"}</span> 
+                  At least 1 number
+                </li>
+                <li className={!newPassword ? "neutral" : (passwordValid.special ? "valid" : "invalid")}>
+                  <span className="icon">{passwordValid.special ? "✔" : "✖"}</span> 
+                  At least 1 special character
+                </li>
+              </ul>
+          </div>
+
             
             {passwordMessage && (
               <div className={`message ${passwordMessageType === 'error' ? 'error-message' : 'success-message'}`}>
