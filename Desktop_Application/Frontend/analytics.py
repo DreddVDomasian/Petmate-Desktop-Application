@@ -15,14 +15,14 @@ def fetch_json(url):
         try:
             data = response.json()
         except Exception as e:
-            print("❌ ERROR: Response is NOT JSON!", e)
+            print("ERROR: Response is NOT JSON!", e)
             return None
 
         print("PARSED JSON:", data)
         return data
 
     except Exception as e:
-        print("❌ REQUEST FAILED:", e)
+        print("REQUEST FAILED:", e)
         return None
 
 

@@ -98,17 +98,10 @@ class MainUI(QMainWindow):
         # Duplicate dialog state
         self.duplicateDialog = None
         self.ignore_duplicates = False
-        # Add pagination state for scheduled services
-        self.scheduled_current_page = 1
-        self.scheduled_total_pages = 1
-        self.scheduled_total_count = 0
-        self.scheduled_search_term = ""
-        self.scheduled_current_filter = None
 
         # Search state
         self.current_search_term = ""
         self.is_searching = False
-        self.setup_scheduled_search()
 
         #Pet species comboBox
         self.setup_species_field()
@@ -126,9 +119,7 @@ class MainUI(QMainWindow):
         self.setup_shadow()
         self.setup_all_back_buttons()
         self.setup_input_shadows()
-        self.monthComboBox.currentTextChanged.connect(
-            lambda: self.load_scheduled_services(1, self.scheduled_search_term)
-        )
+        self.monthComboBox.currentTextChanged.connect(self.load_scheduled_services)
 
         # Setup search
         self.setup_search()
@@ -251,7 +242,7 @@ class MainUI(QMainWindow):
         self.websiteBtn.setCheckable(True)
         self.walkInOrWeb.setCurrentIndex(0)
         self.sourceBtnGroup = QButtonGroup(self)
-        self.sourceBtnGroup.setExclusive(True) 
+        self.sourceBtnGroup.setExclusive(True)
         for btn in [self.walkInBtn, self.websiteBtn]:
             self.sourceBtnGroup.addButton(btn)
         self.websiteBtn.setChecked(True)
@@ -300,18 +291,9 @@ class MainUI(QMainWindow):
         for btn in [self.pendingReturnBtn, self.completeReurnBtn, self.overdueReturnBtn]:
             self.returnStatusBtnGroup.addButton(btn)
         self.pendingReturnBtn.setChecked(True)
-        self.pendingReturnBtn.clicked.connect(lambda: (
-            self.returnStackedWidget.setCurrentIndex(0),
-            self.load_scheduled_services(1, self.scheduled_search_term)
-        ))
-        self.completeReurnBtn.clicked.connect(lambda: (
-            self.returnStackedWidget.setCurrentIndex(1),
-            self.load_scheduled_services(1, self.scheduled_search_term)
-        ))
-        self.overdueReturnBtn.clicked.connect(lambda: (
-            self.returnStackedWidget.setCurrentIndex(2),
-            self.load_scheduled_services(1, self.scheduled_search_term)
-        ))
+        self.pendingReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(0))
+        self.completeReurnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(1))
+        self.overdueReturnBtn.clicked.connect(lambda: self.returnStackedWidget.setCurrentIndex(2))
 
         #Web management stackwidget
         self.serviceTab.setChecked(True)
@@ -1682,317 +1664,67 @@ class MainUI(QMainWindow):
         self.appointmentCard.show_card()
 
     #SCHEDULED RETURN VIST PAGE
-    def setup_scheduled_search(self):
-        """Setup search functionality for scheduled services"""
-        # Connect search bar to search handler
-        self.scheduledSearchBar.textEdited.connect(self.handle_scheduled_search_input)
-
-        # Setup search timer for debouncing
-        self._scheduled_search_timer = QTimer()
-        self._scheduled_search_timer.setSingleShot(True)
-        self._scheduled_search_timer.timeout.connect(self.perform_scheduled_search)
-
-        # Clear search bar initially
-        self.scheduledSearchBar.clear()
-    def handle_scheduled_search_input(self, text):
-        """Handle scheduled services search input with debouncing"""
-        self.scheduled_search_term = text.strip()
-        self._scheduled_search_timer.start(500)
-    def perform_scheduled_search(self):
-        """Perform the actual search for scheduled services"""
-        print(f"DEBUG: Performing search for: '{self.scheduled_search_term}'")
-        if self.scheduled_search_term:
-            self.load_scheduled_services(page=1, search_term=self.scheduled_search_term)
-        else:
-            # If search is empty, load normal scheduled services list
-            self.load_scheduled_services(page=1)
-
     def set_current_month_in_combobox(self):
         self.monthComboBox.setGraphicsEffect(create_card_shadow())
         current_month = datetime.now().strftime("%B")
         index = self.monthComboBox.findText(current_month)
         if index >= 0:
             self.monthComboBox.setCurrentIndex(index)
+    def load_scheduled_services(self):
+        response = requests.get("http://127.0.0.1:8000/api/scheduled-services/")
+        scheduled_services = response.json() if response.status_code == 200 else []
 
-    def load_scheduled_services(self, page=1, search_term=None):
-        """Load scheduled services with pagination and search support"""
-        try:
-            # Debug print to see what's happening
-            print(f"DEBUG: load_scheduled_services called with page={page}, search_term='{search_term}'")
+        # get selected month from combobox
+        selected_month = self.monthComboBox.currentText()  # e.g., 'August'
 
-            # Determine current status filter based on which status button is checked
-            if self.pendingReturnBtn.isChecked():
-                self.scheduled_current_filter = "pending"
-                target_layout = self.pendingLayout
-                print(f"DEBUG: Status filter = pending")
-            elif self.completeReurnBtn.isChecked():
-                self.scheduled_current_filter = "completed"
-                target_layout = self.completedLayout
-                print(f"DEBUG: Status filter = completed")
-            elif self.overdueReturnBtn.isChecked():
-                self.scheduled_current_filter = "overdue"
-                target_layout = self.overdueLayout
-                print(f"DEBUG: Status filter = overdue")
-            else:
-                self.scheduled_current_filter = "pending"
-                target_layout = self.pendingLayout
-                print(f"DEBUG: Status filter = pending (default)")
+        # clear all layouts before repopulating
+        for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout]:
+            while layout.count():
+                child = layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
 
-            # Update state
-            self.scheduled_current_page = page
-            self.scheduled_search_term = search_term or ""
-
-            # Clear ALL layouts and pagination widget
-            print(f"DEBUG: Clearing layouts")
-            for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout]:
-                while layout.count():
-                    child = layout.takeAt(0)
-                    if child.widget():
-                        child.widget().deleteLater()
-
-            # Clear pagination widget
-            if hasattr(self, 'scheduled_pagination_widget'):
+        # filter by return_date month
+        filtered_services = []
+        for service in scheduled_services:
+            return_date_str = service.get("return_date")
+            if return_date_str:
                 try:
-                    if self.scheduled_pagination_widget and self.scheduled_pagination_widget.isWidgetType():
-                        self.scheduled_pagination_widget.deleteLater()
-                except:
-                    pass
-                finally:
-                    if hasattr(self, 'scheduled_pagination_widget'):
-                        delattr(self, 'scheduled_pagination_widget')
+                    date_obj = datetime.strptime(return_date_str, "%Y-%m-%d")
+                    month_name = date_obj.strftime("%B")
+                    if month_name == selected_month:  # match month
+                        filtered_services.append(service)
+                except ValueError:
+                    pass  # skip invalid dates
 
-            # Get selected month from combobox
-            selected_month = self.monthComboBox.currentText()  # e.g., 'August'
-            print(f"DEBUG: Selected month = {selected_month}")
-
-            # Build API URL with pagination and filters
-            # First try the new endpoint with all parameters
-            url = f"{API_BASE_URL}/api/scheduled-services/"
-            params = {
-                'page': page,
-                'month': selected_month,
-                'status': self.scheduled_current_filter  # Always include status
-            }
-
-            # Add search term if provided
-            if search_term and search_term.strip():
-                params['search'] = search_term.strip()
-
-            print(f"DEBUG: API params = {params}")
-
-            # Make API request
-            try:
-                response = requests.get(url, params=params, timeout=10)
-                print(f"DEBUG: API response status = {response.status_code}")
-
-                if response.status_code != 200:
-                    print(f"DEBUG: API response text = {response.text}")
-                    print(f"Failed to load scheduled services: {response.status_code}")
-                    self.show_scheduled_empty_state(target_layout, error=True)
-                    return
-
-                data = response.json()
-                print(f"DEBUG: API response data type = {type(data)}")
-
-                # Check if the API supports pagination
-                if isinstance(data, dict) and 'results' in data:
-                    # Paginated response
-                    scheduled_services = data.get('results', [])
-                    self.scheduled_total_pages = data.get('total_pages', 1)
-                    self.scheduled_total_count = data.get('count', 0)
-                    print(
-                        f"DEBUG: Got paginated response: {len(scheduled_services)} services, {self.scheduled_total_pages} pages")
-                else:
-                    # Non-paginated response or direct list
-                    scheduled_services = data or []
-                    self.scheduled_total_pages = 1
-                    self.scheduled_total_count = len(scheduled_services)
-                    print(f"DEBUG: Got direct list response: {len(scheduled_services)} services")
-
-                    # If we got a list but expected status filter, we need to filter manually
-                    if self.scheduled_current_filter and scheduled_services:
-                        # Check if items have status field
-                        if 'status' in scheduled_services[0]:
-                            scheduled_services = [s for s in scheduled_services if
-                                                  s.get('status', '').lower() == self.scheduled_current_filter]
-                            print(f"DEBUG: After manual status filtering: {len(scheduled_services)} services")
-
-                print(f"DEBUG: Final service count = {len(scheduled_services)}")
-
-                # If no results and we're not on page 1, go back to page 1
-                if not scheduled_services and page > 1:
-                    print(f"DEBUG: No results, going back to page 1")
-                    self.load_scheduled_services(page=1, search_term=search_term)
-                    return
-
-                # Show empty state if no results
-                if not scheduled_services:
-                    print(f"DEBUG: Showing empty state")
-                    self.show_scheduled_empty_state(target_layout, is_search=bool(search_term))
-                    return
-
-                # Create and add cards
-                print(f"DEBUG: Creating {len(scheduled_services)} cards")
-                for service in scheduled_services:
-                    card = self.create_scheduled_card(service)
-                    target_layout.addWidget(card)
-
-                # Add pagination controls if needed
-                if self.scheduled_total_pages > 1:
-                    print(f"DEBUG: Adding pagination controls")
-                    self.add_scheduled_pagination_controls(target_layout, search_term)
-                else:
-                    print(f"DEBUG: No pagination needed (only 1 page)")
-
-            except requests.exceptions.RequestException as e:
-                print(f"DEBUG: Request error: {e}")
-                self.show_scheduled_empty_state(target_layout, error=True)
-                return
-
-        except Exception as e:
-            print(f"DEBUG: General error in load_scheduled_services: {e}")
-            import traceback
-            traceback.print_exc()
-            self.show_scheduled_empty_state(self.pendingLayout, error=True)
-
-    def show_scheduled_empty_state(self, layout, is_search=False, error=False):
-        """Show appropriate empty state message for scheduled services"""
-        empty_label = QLabel()
-
-        if error:
-            empty_label.setText("Error loading scheduled services")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(255, 100, 100);")
-        elif is_search:
-            empty_label.setText("No scheduled services found")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(168, 168, 168);")
-        else:
-            empty_label.setText("NO SCHEDULED SERVICES")
-            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(168, 168, 168);")
-
-        layout.addStretch()
-        layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
-        layout.addStretch()
-
-    def create_scheduled_card(self, service):
-        """Create a scheduled service card"""
-        try:
-            card = uic.loadUi("ui-files/schedCard.ui")
-
-            # Set service information - handle potential missing fields
-            owner_name = service.get('owner_full_name', 'Unknown Owner')
-            pet_name = service.get('pet_name', 'Unknown Pet')
-            service_type = service.get('service_type', 'Unknown Service')
-
-            card.ReturnNameLabel.setText(str(owner_name).title())
-            card.petName.setText(str(pet_name).capitalize())
-            card.ReturnServiceLabel.setText(str(service_type))
-
-            return_date = self.format_date(service.get("return_date"))
-            card.ReturnDateCardLabel.setText(return_date if return_date else "No return date")
-
-            card.setGraphicsEffect(create_card_shadow())
-
-            # Connect click event to open pet profile
-            pet_id = service.get("pet")
-            if pet_id:
-                card.mousePressEvent = lambda event, pid=pet_id: self.open_pet_from_service(pid)
-
-            return card
-        except Exception as e:
-            print(f"DEBUG: Error creating scheduled card: {e}")
-            # Return a placeholder card if creation fails
-            card = QLabel(f"Error creating card: {e}")
-            return card
-
-    def add_scheduled_pagination_controls(self, layout, search_term=None):
-        """Add pagination controls for scheduled services"""
-        # Safely remove existing pagination widget
-        if hasattr(self, 'scheduled_pagination_widget'):
-            try:
-                if self.scheduled_pagination_widget and self.scheduled_pagination_widget.isWidgetType():
-                    self.scheduled_pagination_widget.deleteLater()
-            except RuntimeError:
-                pass
-
-        if self.scheduled_total_pages <= 1:
+        if not filtered_services:
+            # show empty in each page if no services at all for the month
+            for layout in [self.pendingLayout, self.completedLayout, self.overdueLayout]:
+                empty_label = QLabel("EMPTY")
+                empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+                layout.addStretch()
+                layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+                layout.addStretch()
             return
 
-        try:
-            self.scheduled_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
+        # segregate by status after filtering
+        for service in filtered_services:
+            card = uic.loadUi("ui-files/schedCard.ui")
+            card.ReturnNameLabel.setText(service['owner_full_name'].title())
+            card.petName.setText(service['pet_name'].capitalize())
+            card.ReturnServiceLabel.setText(service['service_type'])
+            return_date = self.format_date(service.get("return_date"))
+            card.ReturnDateCardLabel.setText(return_date)
+            card.setGraphicsEffect(create_card_shadow())
 
-            # Connect prev/next buttons
-            self.scheduled_pagination_widget.PrevPage.clicked.connect(
-                lambda: self.load_scheduled_services(self.scheduled_current_page - 1, search_term)
-            )
-            self.scheduled_pagination_widget.NextPage.clicked.connect(
-                lambda: self.load_scheduled_services(self.scheduled_current_page + 1, search_term)
-            )
-
-            # Set button states
-            self.scheduled_pagination_widget.PrevPage.setEnabled(self.scheduled_current_page > 1)
-            self.scheduled_pagination_widget.NextPage.setEnabled(
-                self.scheduled_current_page < self.scheduled_total_pages
-            )
-
-            # Create page buttons
-            self.create_scheduled_page_buttons(search_term)
-
-            self.scheduled_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
-            layout.addWidget(self.scheduled_pagination_widget)
-
-        except Exception as e:
-            print(f"Error creating scheduled pagination: {e}")
-
-    def create_scheduled_page_buttons(self, search_term=None):
-        """Create page buttons for scheduled services pagination"""
-        page_layout = self.scheduled_pagination_widget.pageButtonsLayout
-
-        # Clear existing buttons
-        while page_layout.count():
-            child = page_layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-
-        current_page = self.scheduled_current_page
-        total_pages = self.scheduled_total_pages
-        max_visible_pages = 7
-
-        if total_pages <= max_visible_pages:
-            start_page = 1
-            end_page = total_pages
-        else:
-            if current_page <= 4:
-                start_page = 1
-                end_page = 7
-            elif current_page >= total_pages - 3:
-                start_page = total_pages - 6
-                end_page = total_pages
-            else:
-                start_page = current_page - 3
-                end_page = current_page + 3
-
-        # Add page number buttons
-        for page in range(start_page, end_page + 1):
-            page_btn = QPushButton(str(page))
-
-            # Dynamically resize button width based on text length
-            btn_width = 40 + (len(str(page)) - 1) * 8
-            page_btn.setFixedSize(btn_width, 40)
-            font = page_btn.font()
-            font.setPointSize(10)
-            font.setBold(True)
-            page_btn.setFont(font)
-
-            if page == current_page:
-                page_btn.setStyleSheet(current_pageBtn)
-            else:
-                page_btn.setStyleSheet(other_pageBtn)
-                # Pass search term when loading different pages
-                page_btn.clicked.connect(lambda checked, p=page:
-                                         self.load_scheduled_services(p, search_term))
-
-            page_layout.addWidget(page_btn)
-
+            status = service.get("status")
+            if status == "pending":
+                self.pendingLayout.addWidget(card)
+            elif status == "completed":
+                self.completedLayout.addWidget(card)
+            elif status == "overdue":
+                self.overdueLayout.addWidget(card)
+            card.mousePressEvent = lambda event, pid=service["pet"]: self.open_pet_from_service(pid)
     def open_pet_from_service(self, pet_id):
         response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
         if response.status_code == 200:

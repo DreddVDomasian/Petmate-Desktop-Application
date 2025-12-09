@@ -1321,7 +1321,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1391,7 +1391,7 @@ border:none;</string>
                  <item>
                   <widget class="QFrame" name="DailyAnalytics">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1402,48 +1402,21 @@ border:none;</string>
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
+                   <property name="lineWidth">
+                    <number>0</number>
+                   </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_78">
                     <item>
                      <widget class="QFrame" name="SpeciesPieGraph">
                       <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>350</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">QFrame{
-	background-color : white;
-	border-color: rgb(120, 120, 120);
-	border-radius: 10px;
-}</string>
-                      </property>
-                      <property name="frameShape">
-                       <enum>QFrame::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Raised</enum>
-                      </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_4"/>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QFrame" name="ServiceBarGraph">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>500</width>
+                        <width>300</width>
                         <height>0</height>
                        </size>
                       </property>
@@ -1451,10 +1424,39 @@ border:none;</string>
                        <string notr="true"/>
                       </property>
                       <property name="frameShape">
-                       <enum>QFrame::StyledPanel</enum>
+                       <enum>QFrame::NoFrame</enum>
                       </property>
                       <property name="frameShadow">
-                       <enum>QFrame::Raised</enum>
+                       <enum>QFrame::Plain</enum>
+                      </property>
+                      <property name="lineWidth">
+                       <number>1</number>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_4"/>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="ServiceBarGraph">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>520</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Plain</enum>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_5"/>
                      </widget>
@@ -1463,9 +1465,9 @@ border:none;</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QScrollArea" name="scrollArea_10">
+                  <widget class="QScrollArea" name="homeTodayScroll">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1473,11 +1475,74 @@ border:none;</string>
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>327</height>
+                     <height>379</height>
                     </size>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true"/>
+                    <string notr="true">#homeTodayScroll{
+	border:none;
+
+}
+#homeTodayScroll QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+#homeTodayScroll QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+
+#homeTodayScroll QScrollBar::add-line:vertical,
+#homeTodayScroll6 QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#homeTodayScroll QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+
+#homeTodayScroll QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /* horizontal thickness */
+    margin: 0px;
+}
+
+#homeTodayScroll QScrollBar::handle:horizontal {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    height: 10px; /* same as scrollbar height */
+}
+
+#homeTodayScroll QScrollBar::add-line:horizontal,
+#homeTodayScroll QScrollBar::sub-line:horizontal {
+    width: 0px; /* hide buttons */
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#homeTodayScroll QScrollBar::groove:horizontal {
+    background: transparent;
+    border: none;
+}
+
+</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Sunken</enum>
                    </property>
                    <property name="lineWidth">
                     <number>1</number>
@@ -1499,10 +1564,45 @@ border:none;</string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>874</width>
-                      <height>325</height>
+                      <width>854</width>
+                      <height>379</height>
                      </rect>
                     </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_89">
+                     <item>
+                      <widget class="QLabel" name="noAppointmentsToday">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="layoutDirection">
+                        <enum>Qt::LeftToRight</enum>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">font: 81 20pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(141, 141, 141);
+</string>
+                       </property>
+                       <property name="text">
+                        <string>No Appointments Today</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </widget>
                  </item>
@@ -2731,8 +2831,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>882</width>
-                   <height>506</height>
+                   <width>128</width>
+                   <height>25</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -4022,8 +4122,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>882</width>
-                           <height>362</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -4634,7 +4734,7 @@ QComboBox QLineEdit {
                         <number>0</number>
                        </property>
                        <item>
-                        <widget class="QLineEdit" name="scheduledSearchBar">
+                        <widget class="QLineEdit" name="lineEdit_9">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -4648,7 +4748,7 @@ QComboBox QLineEdit {
                           </size>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">#scheduledSearchBar {
+                          <string notr="true">#lineEdit_9 {
     background-color: #F0F0F0;
     border-top-left-radius: 10px;
  	border-bottom-left-radius: 10px;
@@ -5020,7 +5120,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>880</width>
+                          <width>100</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -8117,7 +8217,7 @@ background:none;</string>
                           <x>0</x>
                           <y>0</y>
                           <width>90</width>
-                          <height>33</height>
+                          <height>25</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -12166,8 +12266,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>93</width>
-                             <height>51</height>
+                             <width>90</width>
+                             <height>43</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12242,8 +12342,8 @@ color:rgb(168, 168, 168);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>742</width>
-                          <height>706</height>
+                          <width>684</width>
+                          <height>692</height>
                          </rect>
                         </property>
                         <property name="styleSheet">
