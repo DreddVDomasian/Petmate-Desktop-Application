@@ -1517,7 +1517,7 @@ def schedule_reminders_for_appointment(appointment):
     """Schedule all reminders for a new appointment"""
     from .models import AppointmentReminder
 
-    # Calculate reminder times - make sure everything is timezone-aware
+    # Django will use your TIME_ZONE setting (Asia/Manila)
     appointment_datetime = timezone.make_aware(
         datetime.combine(appointment.date, appointment.prefTime)
     )
@@ -1563,7 +1563,7 @@ def check_and_send_reminders():
                 patient_email=appointment.owner.email,
                 patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
                 pet_name=appointment.pet.petName,
-                service_type=appointment.service_name,
+                service_type=appointment.service_type.name if appointment.service_type else "Unknown",
                 appointment_date=appointment.date.strftime("%B %d, %Y"),
                 appointment_time=appointment.prefTime.strftime("%I:%M %p"),
                 booking_id=appointment.booking_id,
@@ -1602,7 +1602,7 @@ def send_immediate_reminder_for_today(appointment):
                 patient_email=patient_email,
                 patient_name=patient_name,
                 pet_name=appointment.pet.petName,
-                service_type=appointment.service_name,
+                service_type=appointment.service_type.name if appointment.service_type else "Unknown",
                 appointment_date=appointment.date.strftime("%B %d, %Y"),
                 appointment_time=appointment.prefTime.strftime("%I:%M %p"),
                 booking_id=appointment.booking_id,
@@ -1702,7 +1702,7 @@ class ManualReminderView(APIView):
                 patient_email=appointment.owner.email,
                 patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
                 pet_name=appointment.pet.petName,
-                service_type=appointment.service_name,
+                service_type=appointment.service_type.name if appointment.service_type else "Unknown",
                 appointment_date=appointment.date.strftime("%B %d, %Y"),
                 appointment_time=appointment.prefTime.strftime("%I:%M %p"),
                 booking_id=appointment.booking_id,

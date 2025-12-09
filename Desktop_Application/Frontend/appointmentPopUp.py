@@ -11,7 +11,8 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6 import uic
-from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton, QSizePolicy, QVBoxLayout, QScrollArea
+from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton, QSizePolicy, QVBoxLayout, QScrollArea, \
+    QMessageBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer
 from input_styles import *
@@ -63,6 +64,8 @@ class AddAppointmentCard(QWidget):
         self.popUpDateEdit.dateChanged.connect(self.update_time_slots_availability)
         if parent:
             parent.installEventFilter(self)
+
+        self.setup_reminder_controls()
 
     #SET UP LAYOUT/SHADOW FOR MODAL
     def setup_stackLayout(self):
@@ -642,8 +645,109 @@ class AddAppointmentCard(QWidget):
         # Reconnect safely
         self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
         self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
+    def setup_reminder_controls(self):
+        """Connect reminder control buttons"""
+        # Connect buttons from your reminderbtns frame
+        self.main_window.selecAllBtn.clicked.connect(self.select_all_appointments)  # Select All
+        self.main_window.clearAllBtn.clicked.connect(self.clear_all_appointments)  # Clear All
+        self.main_window.sendReminersBtn.clicked.connect(self.send_selected_reminders)  # Send Reminders
+    def select_all_appointments(self):
+        """Select all visible appointment cards"""
+        for card in self.card_manager.appointment_cards:
+            if hasattr(card, 'checkBox') and card.checkBox.isEnabled():
+                card.checkBox.setChecked(True)
+    def clear_all_appointments(self):
+        """Deselect all appointment cards"""
+        for card in self.card_manager.appointment_cards:
+            if hasattr(card, 'checkBox'):
+                card.checkBox.setChecked(False)
+        # Also clear the tracking list
+        self.card_manager.selected_appointment_ids = []
 
+    def send_selected_reminders(self):
+        if not self.card_manager.selected_appointment_ids:
+            self.show_toast("Please select at least one appointment", "warning")
+            return
 
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Question)
+        msg_box.setWindowTitle("Confirm Send Reminders")
+        msg_box.setText(
+            f"Send reminders to {len(self.card_manager.selected_appointment_ids)} selected appointments?"
+        )
+        msg_box.setStandardButtons(
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if msg_box.exec() == QMessageBox.StandardButton.Yes:
+            self.send_reminders_to_backend()
+    def send_reminders_to_backend(self):
+        """Call the API to send reminders"""
+        try:
+
+            # Get admin ID (you need to track this somewhere)
+            admin_id = getattr(self.main_window, 'current_admin_id', 1)
+
+            # Prepare data
+            data = {
+                'admin_id': admin_id,
+                'appointment_ids': self.card_manager.selected_appointment_ids,
+                'reminder_type': 'manual_batch'
+            }
+
+            # Call API - First let's check if we have the endpoint
+            # We'll create a simple version first
+            self.send_reminders_simple(data)
+
+        except Exception as e:
+            self.show_toast(f"Error: {str(e)}", "error")
+            print(f"Error sending reminders: {e}")
+    def send_reminders_simple(self, data):
+        """Simple implementation - send reminders one by one"""
+        successful = 0
+        failed = 0
+
+        for appointment_id in data['appointment_ids']:
+            try:
+                # Use your existing manual reminder endpoint
+                response = requests.post(
+                    f"{API_BASE_URL}/api/desktop-manual-reminder/",
+                    json={
+                        'admin_id': data['admin_id'],
+                        'appointment_id': appointment_id
+                    }
+                )
+
+                if response.status_code == 200:
+                    successful += 1
+                else:
+                    failed += 1
+
+            except Exception as e:
+                print(f"Failed to send reminder for appointment {appointment_id}: {e}")
+                failed += 1
+
+        # Show result
+        message = f"Successfully sent {successful} reminder(s)"
+        if failed > 0:
+            message += f", {failed} failed"
+
+        self.show_toast(message, "success" if successful > 0 else "warning")
+
+        # Clear selection after sending
+        self.clear_all_appointments()
+    def show_toast(self, message, type="info"):
+        """Show a toast notification"""
+        # Use your existing toast system
+        icon_map = {
+            "success": "Icons/check.png",
+            "warning": "Icons/warning.png",
+            "error": "Icons/error.png",
+            "info": "Icons/info.png"
+        }
+
+        toast = Toast(self.main_window, message, icon_path=icon_map.get(type, "Icons/info.png"))
+        toast.show_toast()
     #-------------------------------------------WEB REQUEST---------------------------------------
 
     def web_Appointment(self, page=1, request_filter="pending"):
@@ -703,7 +807,6 @@ class AddAppointmentCard(QWidget):
 
         except Exception as e:
             print(f"Error loading web appointments: {e}")
-
     def add_web_pagination_controls(self, layout, current_page, total_pages, request_filter):
         # Remove old pagination widget
         try:
@@ -976,6 +1079,7 @@ class AppointmentCardManager:
         self.appointment_card = appointment_card_instance  # Reference to AddAppointmentCard instance
         self.main_window = appointment_card_instance.main_window
         self.appointment_cards = []
+        self.selected_appointment_ids = []
         self.current_appointment_page = 1
         self.total_appointment_pages = 1
         self.total_appointment_count = 0
@@ -985,6 +1089,7 @@ class AppointmentCardManager:
         self._pagination_cooldown.setInterval(300)
         self._pagination_cooldown.setSingleShot(True)
         self._can_paginate = True
+
 
     def clear_layouts(self):
         """Clear all appointment layouts"""
@@ -1015,6 +1120,7 @@ class AppointmentCardManager:
         layout.addStretch()
         layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignCenter)
         layout.addStretch()
+
     def create_appointment_card(self, appointment):
         """Create and configure an appointment card"""
         card = uic.loadUi("ui-files/appointmentCard.ui")
@@ -1023,6 +1129,13 @@ class AppointmentCardManager:
             card.deleteButton.setVisible(False)
         else:
             card.deleteButton.setVisible(True)
+
+        appointment_id = appointment["id"]
+        card.appointment_id = appointment_id
+
+        print(f"DEBUG: Creating card for appointment {appointment_id}")
+        print(f"DEBUG: Manager instance: {id(self)}")
+
         # Set appointment information
         card.ownerName.setText(appointment["owner_full_name"].title())
         card.petNameApp.setText(appointment["petName"].capitalize())
@@ -1041,14 +1154,45 @@ class AppointmentCardManager:
         else:
             card.preferredTime.setText("N/A")
 
-        # Connect buttons
-        appointment_id = appointment["id"]
+        # Connect delete button
         pet_id = appointment["pet"]["id"]
-        card.deleteButton.clicked.connect(lambda _, a_id=appointment_id: self.appointment_card.cancelled_appointment(a_id))
+        card.deleteButton.clicked.connect(
+            lambda _, a_id=appointment_id: self.appointment_card.cancelled_appointment(a_id)
+        )
         card.mousePressEvent = lambda event, pid=pet_id: self.appointment_card.open_pet_from_appointment(pid)
         card.setGraphicsEffect(create_card_shadow())
+
+        # Connect checkbox - FIXED VERSION
+        if hasattr(card, 'checkBox'):
+            print(f"DEBUG: Card has checkbox, connecting...")
+
+            # Method 1: Use weak reference to avoid memory issues
+            from PyQt6.QtCore import QObject, pyqtSlot
+
+            # Create a proper slot
+            @pyqtSlot(int)
+            def on_state_changed(state):
+                print(f"DEBUG: Checkbox changed for {appointment_id}, state: {state}")
+                self.handle_checkbox_change(state, appointment_id)
+
+            card.checkBox.stateChanged.connect(on_state_changed)
+
+            # Store the function reference to prevent garbage collection
+            if not hasattr(card, '_checkbox_handler'):
+                card._checkbox_handler = on_state_changed
+
         return card
 
+    def handle_checkbox_change(self, state, appointment_id):
+        # Check if checked (2) or unchecked (0)
+        if state == 2:  # Qt.CheckState.Checked.value is 2
+            if appointment_id not in self.selected_appointment_ids:
+                self.selected_appointment_ids.append(appointment_id)
+        else:  # state == 0 (unchecked)
+            if appointment_id in self.selected_appointment_ids:
+                self.selected_appointment_ids.remove(appointment_id)
+
+        print(f"Selected IDs: {self.selected_appointment_ids}")  # Debug
     def add_appointment_pagination_controls(self, layout, status_filter=None, search_term=None):
         """Add pagination controls for appointments with search support"""
         # Safely remove existing pagination widget
