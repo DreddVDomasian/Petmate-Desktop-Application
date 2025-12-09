@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>743</width>
-    <height>451</height>
+    <height>455</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,9 @@
     <widget class="QFrame" name="addPopUPFrame">
      <property name="styleSheet">
       <string notr="true">#addPopUPFrame{
-	background-color:#81BFDA;
-	border-radius:15px;
+	background-color:rgb(254, 254, 254);
+    border-radius: 15px;
+    border: 2px solid #78B3CE;
 }
 
 QDateEdit {

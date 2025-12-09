@@ -21,8 +21,9 @@
     <widget class="QFrame" name="remidersChecklists">
      <property name="styleSheet">
       <string notr="true">#remidersChecklists{
-	background-color:#81BFDA;
-	border-radius:15px;
+	 background-color:rgb(254, 254, 254);
+    border-radius: 15px;
+    border: 2px solid #78B3CE;
 }</string>
      </property>
      <property name="frameShape">
@@ -144,8 +145,8 @@ QScrollBar::groove:vertical {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>777</width>
-           <height>368</height>
+           <width>773</width>
+           <height>364</height>
           </rect>
          </property>
          <property name="styleSheet">

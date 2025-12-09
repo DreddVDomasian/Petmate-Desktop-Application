@@ -30,9 +30,9 @@
     <widget class="QFrame" name="confirmation">
      <property name="styleSheet">
       <string notr="true">#confirmation{
-	background-color:#81BFDA;
-	border-radius:15px;
-	border-bottom:1px solid rgb(199, 199, 199);
+	background-color:rgb(254, 254, 254);
+    border-radius: 15px;
+    border: 2px solid #78B3CE;
 }</string>
      </property>
      <property name="frameShape">

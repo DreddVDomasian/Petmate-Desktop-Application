@@ -1574,9 +1574,12 @@ class ScheduledServiceCardManager:
 
             # Hide checkbox for completed/cancelled services
             status = service.get("status", "").lower()
+
             if status in ["completed", "cancelled"]:
                 card.checkBox.setVisible(False)
                 card.deleteButton.setVisible(True)  # Show delete button for completed/cancelled
+                card.deleteButton.setEnabled(True)
+                card.deleteButton.setToolTip(f"Delete service {service_id}")
             else:
                 card.checkBox.setVisible(True)
                 card.deleteButton.setVisible(False)  # Hide delete button for active services
@@ -1619,15 +1622,36 @@ class ScheduledServiceCardManager:
 
                 card.mousePressEvent = mouse_press_handler
 
-            # Connect delete button to your existing Delete class
-            if hasattr(card, 'deleteButton') and hasattr(self.main_window, 'delete_handler'):
-                card.deleteButton.clicked.connect(
-                    lambda _, s_id=service_id: self.main_window.delete_handler.delete_selected_service()
-                )
-                # Set the selected_service_id in main window
-                card.deleteButton.clicked.connect(
-                    lambda _, s_id=service_id: setattr(self.main_window, 'selected_service_id', s_id)
-                )
+            # =========== FIXED DELETE BUTTON CONNECTION ===========
+            # Connect delete button using deleteFunction (not delete_handler)
+            if hasattr(card, 'deleteButton'):
+                print(f"DEBUG: Setting up delete button for service {service_id}")
+
+                # Store service_id on the card object
+                card.delete_service_id = service_id
+
+                # Actual delete handler
+                def delete_service_handler():
+                    current_service_id = card.delete_service_id
+                    print(f"DEBUG: Delete handler triggered for service {current_service_id}")
+
+                    # Use deleteFunction (your Delete class instance)
+                    if hasattr(self.main_window, 'deleteFunction'):
+                        print(f"DEBUG: Using deleteFunction")
+
+                        # First set the selected_service_id in main window
+                        self.main_window.selected_service_id = current_service_id
+                        print(f"DEBUG: Set selected_service_id to: {self.main_window.selected_service_id}")
+
+                        # Then call the delete method
+                        self.main_window.deleteFunction.delete_selected_service()
+                        print(f"DEBUG: Called delete_selected_service()")
+                    else:
+                        print("ERROR: deleteFunction not found on main_window")
+
+                # Connect the delete handler
+                card.deleteButton.clicked.connect(delete_service_handler)
+            # ======================================================
 
             # Add to tracking list
             self.scheduled_cards.append(card)

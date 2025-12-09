@@ -5166,7 +5166,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                    </property>
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>2</number>
                    </property>
                    <widget class="QWidget" name="pendingReturn">
                     <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -5311,8 +5311,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>93</width>
-                          <height>41</height>
+                          <width>858</width>
+                          <height>427</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">

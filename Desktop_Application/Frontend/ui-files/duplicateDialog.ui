@@ -18,8 +18,9 @@
     <widget class="QFrame" name="duplicationDialogFrame">
      <property name="styleSheet">
       <string notr="true">#duplicationDialogFrame{
-	background-color:#81BFDA;
-	border-radius:15px;
+ background-color:rgb(254, 254, 254);
+    border-radius: 15px;
+    border: 2px solid #78B3CE;
 }
 
 </string>
@@ -194,8 +195,8 @@ QScrollArea QScrollBar::groove:horizontal {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>876</width>
-              <height>411</height>
+              <width>872</width>
+              <height>407</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4"/>
