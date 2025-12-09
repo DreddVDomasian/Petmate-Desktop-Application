@@ -2938,32 +2938,36 @@ class MainUI(QMainWindow):
             res = requests.get("http://127.0.0.1:8000/api/todaysAppointments/", timeout=5)
             data = res.json()
         except Exception as e:
-            print("API ERROR:", e)
+            print("❌ API ERROR:", e)
             return
 
         container = self.findChild(QWidget, "appointmentsTodayScroll")
-
         if not container:
-            print("appointmentsTodayScroll NOT FOUND")
+            print("❌ appointmentsTodayScroll NOT FOUND")
             return
 
+        # --- FIXED LABEL ---
         label = self.findChild(QLabel, "noAppointmentsToday")
         if not label:
-            print("noAppointmentsToday NOT FOUND")
+            print("❌ noAppointmentsToday LABEL NOT FOUND")
             return
+
+        # Show label if empty, hide if not
+        label.setVisible(len(data) == 0)
 
         layout = container.layout()
         if layout is None:
             layout = QVBoxLayout(container)
             container.setLayout(layout)
 
-        # ✅ CLEAR OLD WIDGETS
+        # Clear old widgets
         while layout.count():
             item = layout.takeAt(0)
             widget = item.widget()
             if widget:
                 widget.deleteLater()
 
+        # Populate cards
         for appt in data:
             card = uic.loadUi("ui-files/AppointmentsTodayCard.ui")
 
@@ -2971,10 +2975,8 @@ class MainUI(QMainWindow):
             card.appointmentPet.setText(str(appt["pet_name"]).title())
             card.appointmentService.setText(str(appt["service"]).title())
 
-            time_str = appt["prefTime"]  # e.g. "14:30:00"
-            time_obj = datetime.strptime(time_str, "%H:%M:%S")
-            formatted_time = time_obj.strftime("%I:%M %p")
-            card.appointmentTime.setText(formatted_time)
+            time_obj = datetime.strptime(appt["prefTime"], "%H:%M:%S")
+            card.appointmentTime.setText(time_obj.strftime("%I:%M %p"))
 
             shadow = QGraphicsDropShadowEffect()
             shadow.setBlurRadius(20)
