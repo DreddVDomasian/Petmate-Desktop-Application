@@ -1881,7 +1881,7 @@ class MainUI(QMainWindow):
             # Set service information - handle potential missing fields
             owner_name = service.get('owner_full_name', 'Unknown Owner')
             pet_name = service.get('pet_name', 'Unknown Pet')
-            service_type = service.get('service_type', 'Unknown Service')
+            service_type = service.get('service_type_name', 'Unknown Service')
 
             card.ReturnNameLabel.setText(str(owner_name).title())
             card.petName.setText(str(pet_name).capitalize())
@@ -2838,7 +2838,6 @@ class MainUI(QMainWindow):
         print("Refreshing analytics...")
         self.setup_bar_graph()
         self.setup_pie_graph()
-
     def setup_bar_graph(self):
 
         data = fetch_json(f"{API_BASE_URL}/api/serviceCounts")
@@ -2866,6 +2865,12 @@ class MainUI(QMainWindow):
 
         chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(20)
+        shadow.setXOffset(0)
+        shadow.setYOffset(3)
+        shadow.setColor(QColor(0, 0, 0, 60))
+        self.ServiceBarGraph.setGraphicsEffect(shadow)
 
         layout = self.ServiceBarGraph.layout()
         if layout is None:
@@ -2878,18 +2883,31 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
-
     def setup_pie_graph(self):
 
         data = fetch_json(f"{API_BASE_URL}/api/speciesCounts")
-        if data is None:
-            print("PIE GRAPH ERROR — No data")
-            return
+
+        if not data:
+            print("PIE GRAPH — No data found, using zero fallback")
+            data = {"dogs": 0, "cats": 0, "others": 0}
+
+        dogs = data.get("dogs", 0)
+        cats = data.get("cats", 0)
+        others = data.get("others", 0)
 
         series = QPieSeries()
-        series.append(f"Dogs: {data.get('dogs', 0)}", data.get("dogs", 0))
-        series.append(f"Cats: {data.get('cats', 0)}", data.get("cats", 0))
-        series.append(f"Others: {data.get('others', 0)}", data.get("others", 0))
+
+        total = dogs + cats + others
+
+        if total == 0:
+            series.append("No Data", 1)
+        else:
+            series.append(f"Dogs: {dogs}", dogs)
+            series.append(f"Cats: {cats}", cats)
+            series.append(f"Others: {others}", others)
+
+
+        series.setHoleSize(0.35)
 
         chart = QChart()
         chart.addSeries(series)
@@ -2897,20 +2915,24 @@ class MainUI(QMainWindow):
 
         chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
-
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(20)
+        shadow.setXOffset(0)
+        shadow.setYOffset(3)
+        shadow.setColor(QColor(0, 0, 0, 60))
+        self.SpeciesPieGraph.setGraphicsEffect(shadow)
 
         layout = self.SpeciesPieGraph.layout()
         if layout is None:
             layout = QVBoxLayout(self.SpeciesPieGraph)
 
-        # Remove previous charts
+        # ✅ Remove previous charts
         while layout.count():
             old = layout.takeAt(0)
             if old.widget():
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
-
     def appointments_today(self):
         try:
             res = requests.get("http://127.0.0.1:8000/api/todaysAppointments/", timeout=5)
@@ -2920,23 +2942,32 @@ class MainUI(QMainWindow):
             return
 
         container = self.findChild(QWidget, "appointmentsTodayScroll")
-
         if not container:
             print("❌ appointmentsTodayScroll NOT FOUND")
             return
+
+        # --- FIXED LABEL ---
+        label = self.findChild(QLabel, "noAppointmentsToday")
+        if not label:
+            print("❌ noAppointmentsToday LABEL NOT FOUND")
+            return
+
+        # Show label if empty, hide if not
+        label.setVisible(len(data) == 0)
 
         layout = container.layout()
         if layout is None:
             layout = QVBoxLayout(container)
             container.setLayout(layout)
 
-        # ✅ CLEAR OLD WIDGETS
+        # Clear old widgets
         while layout.count():
             item = layout.takeAt(0)
             widget = item.widget()
             if widget:
                 widget.deleteLater()
 
+        # Populate cards
         for appt in data:
             card = uic.loadUi("ui-files/AppointmentsTodayCard.ui")
 
@@ -2944,10 +2975,8 @@ class MainUI(QMainWindow):
             card.appointmentPet.setText(str(appt["pet_name"]).title())
             card.appointmentService.setText(str(appt["service"]).title())
 
-            time_str = appt["prefTime"]  # e.g. "14:30:00"
-            time_obj = datetime.strptime(time_str, "%H:%M:%S")
-            formatted_time = time_obj.strftime("%I:%M %p")
-            card.appointmentTime.setText(formatted_time)
+            time_obj = datetime.strptime(appt["prefTime"], "%H:%M:%S")
+            card.appointmentTime.setText(time_obj.strftime("%I:%M %p"))
 
             shadow = QGraphicsDropShadowEffect()
             shadow.setBlurRadius(20)
