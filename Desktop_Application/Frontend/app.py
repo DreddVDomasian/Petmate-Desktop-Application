@@ -148,9 +148,9 @@ class MainUI(QMainWindow):
         self.setup_bar_graph()
         self.setup_pie_graph()
 
-        self.analyticsTimer = QTimer()
-        self.analyticsTimer.timeout.connect(self.refresh_analytics)
-        self.analyticsTimer.start(15000)
+
+        self.homeBtn.clicked.connect(self.refresh_analytics)
+        self.homeBtn_2.clicked.connect(self.refresh_analytics)
 
         self.setup_office_hours()
         self.load_service_types_to_main_combobox()
@@ -2835,9 +2835,26 @@ class MainUI(QMainWindow):
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
 
     def refresh_analytics(self):
-        print("Refreshing analytics...")
+
+        self.clear_layout(self.SpeciesPieGraph.layout())
+        self.clear_layout(self.ServiceBarGraph.layout())
+
         self.setup_bar_graph()
         self.setup_pie_graph()
+        self.appointments_today()
+
+
+    def clear_layout(self, layout):
+        if layout is None:
+            return
+
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+
     def setup_bar_graph(self):
 
         data = fetch_json(f"{API_BASE_URL}/api/serviceCounts")
@@ -2857,6 +2874,9 @@ class MainUI(QMainWindow):
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Total every service")
+
+        chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
+        chart.setTheme(QChart.ChartTheme.ChartThemeLight)
 
         axis_x = QBarCategoryAxis()
         axis_x.append(categories)
@@ -2883,6 +2903,7 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
+
     def setup_pie_graph(self):
 
         data = fetch_json(f"{API_BASE_URL}/api/speciesCounts")
@@ -2907,11 +2928,18 @@ class MainUI(QMainWindow):
             series.append(f"Others: {others}", others)
 
 
-        series.setHoleSize(0.35)
-
+        series.setHoleSize(0.30)
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Species Distribution")
+
+        chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
+        chart.setTheme(QChart.ChartTheme.ChartThemeLight)
+        for s in series.slices():
+            s.setExplodeDistanceFactor(0.2)
+            s.setLabelVisible(True)
+
+        series.hovered.connect(lambda slice, state: slice.setExploded(state))
 
         chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -2933,6 +2961,7 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
+
     def appointments_today(self):
         try:
             res = requests.get("http://127.0.0.1:8000/api/todaysAppointments/", timeout=5)
@@ -2946,14 +2975,14 @@ class MainUI(QMainWindow):
             print("❌ appointmentsTodayScroll NOT FOUND")
             return
 
-        # --- FIXED LABEL ---
-        label = self.findChild(QLabel, "noAppointmentsToday")
-        if not label:
-            print("❌ noAppointmentsToday LABEL NOT FOUND")
+        label = self.findChild(QLabel, "noAppointmentToday")
+
+        if label is None:
+            print("wala nga tangina")
             return
 
-        # Show label if empty, hide if not
         label.setVisible(len(data) == 0)
+
 
         layout = container.layout()
         if layout is None:
