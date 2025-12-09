@@ -55,7 +55,7 @@ class AddAppointmentCard(QWidget):
         self.load_appointments(1,"pending", search_term=None)
         self.setup_status_filters()
         self.web_Appointment(1, "pending")
-        self.status_filter_global = None
+        self.status_filter_global = "pending"
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
         self.main_window.reminderbtns.setVisible(False)
         self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
@@ -478,7 +478,6 @@ class AddAppointmentCard(QWidget):
         try:
             self.status_filter_global = status_filter
             current_layout = self.get_layout_for_status(status_filter)
-
             # Build API URL
             url = f"{API_BASE_URL}/api/walkIn/?request=accepted&page={page}"
             if status_filter:
@@ -772,7 +771,6 @@ class AddAppointmentCard(QWidget):
         except Exception as e:
             self.show_toast(f"Error: {str(e)}", "error")
             print(f"Error sending reminders: {e}")
-
     def send_reminders_simple(self, data):
         """Send reminders using worker thread"""
         print(f"DEBUG: Starting thread for {len(data['appointment_ids'])} appointments")
@@ -793,7 +791,6 @@ class AddAppointmentCard(QWidget):
         self.worker.finished.connect(self._on_reminders_finished)
         self.worker.error.connect(self._on_reminders_error)
         self.worker.start()
-
     def _disable_all_buttons(self):
         """Disable all control buttons"""
         if hasattr(self.main_window, 'sendRemindersBtn'):
@@ -802,7 +799,6 @@ class AddAppointmentCard(QWidget):
             self.main_window.selecAllBtn.setEnabled(False)
         if hasattr(self.main_window, 'clearAllBtn'):
             self.main_window.clearAllBtn.setEnabled(False)
-
     def _reenable_buttons(self):
         """Re-enable all control buttons"""
         if hasattr(self.main_window, 'sendRemindersBtn'):
@@ -811,7 +807,6 @@ class AddAppointmentCard(QWidget):
             self.main_window.selecAllBtn.setEnabled(True)
         if hasattr(self.main_window, 'clearAllBtn'):
             self.main_window.clearAllBtn.setEnabled(True)
-
     def _on_reminders_finished(self, successful, failed):
         """Called when worker thread finishes successfully"""
         print(f"DEBUG: Thread finished callback: {successful} successful, {failed} failed")
@@ -833,7 +828,6 @@ class AddAppointmentCard(QWidget):
 
         # Clear selection and hide buttons
         self._cleanup_after_sending()
-
     def _on_reminders_error(self, error_message):
         """Called when worker thread has an error"""
         print(f"DEBUG: Thread error callback: {error_message}")
@@ -851,7 +845,6 @@ class AddAppointmentCard(QWidget):
 
         # Still clean up
         self._cleanup_after_sending()
-
     def _cleanup_after_sending(self):
         """Clean up after sending reminders"""
         print("DEBUG: Cleaning up after sending...")
@@ -866,6 +859,7 @@ class AddAppointmentCard(QWidget):
         # 3. Clear the selected IDs list
         if hasattr(self, 'card_manager') and hasattr(self.card_manager, 'selected_appointment_ids'):
             self.card_manager.selected_appointment_ids.clear()
+            self.card_manager.persistently_checked_ids.clear()
 
         # 4. Clean up worker thread (if using threads)
         if hasattr(self, 'worker') and self.worker:
@@ -1243,6 +1237,7 @@ class AppointmentCardManager:
         self.main_window = appointment_card_instance.main_window
         self.appointment_cards = []
         self.selected_appointment_ids = []
+        self.persistently_checked_ids = []
         self.current_appointment_page = 1
         self.total_appointment_pages = 1
         self.total_appointment_count = 0
@@ -1328,38 +1323,46 @@ class AppointmentCardManager:
         card.setGraphicsEffect(create_card_shadow())
 
         # Connect checkbox - FIXED VERSION
+        # Connect checkbox
         if hasattr(card, 'checkBox'):
             print(f"DEBUG: Card has checkbox, connecting...")
 
-            # Create a handler that checks if card still exists
+            # ✅ RESTORE CHECKED STATE
+            if appointment_id in self.persistently_checked_ids:
+                card.checkBox.setChecked(True)
+                if appointment_id not in self.selected_appointment_ids:
+                    self.selected_appointment_ids.append(appointment_id)
+
+            # Create handler
             def on_state_changed(state):
                 try:
-                    # Check if card still exists before accessing
                     if not card or not hasattr(card, 'checkBox'):
-                        print(f"DEBUG: Card {appointment_id} no longer exists")
                         return
                     self.handle_checkbox_change(state, appointment_id)
                 except RuntimeError:
                     print(f"DEBUG: Card {appointment_id} was deleted")
 
             card.checkBox.stateChanged.connect(on_state_changed)
-
-            # Store reference to prevent garbage collection
             card._checkbox_handler = on_state_changed
 
         return card
 
     def handle_checkbox_change(self, state, appointment_id):
-        # Check if checked (2) or unchecked (0)
-        if state == 2:  # Qt.CheckState.Checked.value is 2
+        """Handle checkbox selection/deselection"""
+        if state == 2:  # Checked
             if appointment_id not in self.selected_appointment_ids:
                 self.selected_appointment_ids.append(appointment_id)
-        else:  # state == 0 (unchecked)
+            if appointment_id not in self.persistently_checked_ids:
+                self.persistently_checked_ids.append(appointment_id)
+        else:  # Unchecked
             if appointment_id in self.selected_appointment_ids:
                 self.selected_appointment_ids.remove(appointment_id)
+            if appointment_id in self.persistently_checked_ids:
+                self.persistently_checked_ids.remove(appointment_id)
 
         self.update_reminder_controls_visibility()
-        print(f"Selected IDs: {self.selected_appointment_ids}")  # Debug
+        print(f"Selected IDs: {self.selected_appointment_ids}")
+        print(f"Persistent IDs: {self.persistently_checked_ids}")
     def add_appointment_pagination_controls(self, layout, status_filter=None, search_term=None):
         """Add pagination controls for appointments with search support"""
         # Safely remove existing pagination widget
