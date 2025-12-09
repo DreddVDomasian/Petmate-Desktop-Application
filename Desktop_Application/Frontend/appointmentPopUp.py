@@ -401,6 +401,7 @@ class AddAppointmentCard(QWidget):
         if add_new_appointment(appointment_data):
             toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
             toast.show_toast()
+            self.refresh_appointments_safely()
             self.close()
             self.update_time_slots_availability()
             self.serviceTypeComboBox.setCurrentIndex(-1)
@@ -476,7 +477,7 @@ class AddAppointmentCard(QWidget):
             self.status_filter_global = status_filter
             current_layout = self.get_layout_for_status(status_filter)
 
-            # Build API URL with search term
+            # Build API URL
             url = f"{API_BASE_URL}/api/walkIn/?request=accepted&page={page}"
             if status_filter:
                 url += f"&status={status_filter}"
@@ -509,12 +510,8 @@ class AddAppointmentCard(QWidget):
             if not appointments and page > 1:
                 return self.load_appointments(page - 1, status_filter, search_term)
 
-            # Update card_manager pagination state
-            self.card_manager.current_appointment_page = current_page
-            self.card_manager.total_appointment_pages = max(1, total_pages)
-            self.card_manager.total_appointment_count = total_count
-            self.card_manager.current_status_filter = status_filter
-            self.card_manager.current_search_term = search_term
+            # ✅ CRITICAL FIX: Clear the cards list BEFORE clearing layout
+            self.card_manager.appointment_cards.clear()
 
             # Clear current layout
             if current_layout:
@@ -522,6 +519,13 @@ class AddAppointmentCard(QWidget):
                     child = current_layout.takeAt(0)
                     if child and child.widget():
                         child.widget().deleteLater()
+
+            # Update card_manager pagination state
+            self.card_manager.current_appointment_page = current_page
+            self.card_manager.total_appointment_pages = max(1, total_pages)
+            self.card_manager.total_appointment_count = total_count
+            self.card_manager.current_status_filter = status_filter
+            self.card_manager.current_search_term = search_term
 
             # Create UI cards
             self.distribute_appointment_cards(appointments, target_layout=current_layout)
@@ -536,6 +540,7 @@ class AddAppointmentCard(QWidget):
                         self.card_manager.appointment_pagination_widget.deleteLater()
                 except Exception:
                     pass
+
         except Exception as e:
             print(f"Error loading appointments: {e}")
             current_layout = self.get_layout_for_status(status_filter)
@@ -652,10 +657,38 @@ class AddAppointmentCard(QWidget):
         self.main_window.clearAllBtn.clicked.connect(self.clear_all_appointments)  # Clear All
         self.main_window.sendReminersBtn.clicked.connect(self.send_selected_reminders)  # Send Reminders
     def select_all_appointments(self):
-        """Select all visible appointment cards"""
+        """Select all visible appointment cards - SAFE VERSION"""
+        print(f"DEBUG: select_all_appointments called")
+        selected_count = 0
+
+        # Create a new list with only valid cards
+        valid_cards = []
         for card in self.card_manager.appointment_cards:
-            if hasattr(card, 'checkBox') and card.checkBox.isEnabled():
-                card.checkBox.setChecked(True)
+            try:
+                # Test if card still exists
+                if card and hasattr(card, 'checkBox'):
+                    # Try to access a property to see if it's alive
+                    _ = card.objectName() or card.checkBox.objectName()
+                    valid_cards.append(card)
+            except RuntimeError:
+                # Card was deleted, skip it
+                print(f"DEBUG: Found deleted card, skipping")
+                continue
+
+        # Update the main list with only valid cards
+        self.card_manager.appointment_cards = valid_cards
+
+        # Now select valid cards
+        for card in valid_cards:
+            try:
+                if card.checkBox.isEnabled():
+                    card.checkBox.setChecked(True)
+                    selected_count += 1
+            except RuntimeError:
+                # Just in case
+                continue
+
+        print(f"DEBUG: Selected {selected_count} cards")
     def clear_all_appointments(self):
         """Deselect all appointment cards"""
         for card in self.card_manager.appointment_cards:
@@ -748,6 +781,24 @@ class AddAppointmentCard(QWidget):
 
         toast = Toast(self.main_window, message, icon_path=icon_map.get(type, "Icons/info.png"))
         toast.show_toast()
+    def refresh_appointments_safely(self):
+        """Safely refresh appointments without memory issues"""
+        # Clear all tracked data
+        self.card_manager.selected_appointment_ids.clear()
+
+        # Clear any stored handlers
+        for card in self.card_manager.appointment_cards:
+            try:
+                if hasattr(card, '_checkbox_handler'):
+                    delattr(card, '_checkbox_handler')
+            except:
+                pass
+
+        # Clear the cards list
+        self.card_manager.appointment_cards.clear()
+
+        # Now load fresh
+        self.load_appointments(1, self.status_filter_global)
     #-------------------------------------------WEB REQUEST---------------------------------------
 
     def web_Appointment(self, page=1, request_filter="pending"):
@@ -1166,20 +1217,21 @@ class AppointmentCardManager:
         if hasattr(card, 'checkBox'):
             print(f"DEBUG: Card has checkbox, connecting...")
 
-            # Method 1: Use weak reference to avoid memory issues
-            from PyQt6.QtCore import QObject, pyqtSlot
-
-            # Create a proper slot
-            @pyqtSlot(int)
+            # Create a handler that checks if card still exists
             def on_state_changed(state):
-                print(f"DEBUG: Checkbox changed for {appointment_id}, state: {state}")
-                self.handle_checkbox_change(state, appointment_id)
+                try:
+                    # Check if card still exists before accessing
+                    if not card or not hasattr(card, 'checkBox'):
+                        print(f"DEBUG: Card {appointment_id} no longer exists")
+                        return
+                    self.handle_checkbox_change(state, appointment_id)
+                except RuntimeError:
+                    print(f"DEBUG: Card {appointment_id} was deleted")
 
             card.checkBox.stateChanged.connect(on_state_changed)
 
-            # Store the function reference to prevent garbage collection
-            if not hasattr(card, '_checkbox_handler'):
-                card._checkbox_handler = on_state_changed
+            # Store reference to prevent garbage collection
+            card._checkbox_handler = on_state_changed
 
         return card
 
