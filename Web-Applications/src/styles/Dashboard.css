@@ -919,6 +919,14 @@ header {
   transition: color 0.3s ease;
 }
 
+.message {
+  margin-top: 15px;
+  width: fit-content; /* Para hindi sakop buong width, sakto lang sa text */
+  margin-left: auto;  
+  margin-right: auto; 
+  text-align: center; /* Center text inside */
+}
+
 
 
 .valid {
