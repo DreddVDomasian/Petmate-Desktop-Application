@@ -14,12 +14,13 @@ from PyQt6 import uic
 from PyQt6.QtWidgets import QWidget, QCompleter, QLabel, QComboBox, QPushButton, QSizePolicy, QVBoxLayout, QScrollArea, \
     QMessageBox
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer
+from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer,QThread, pyqtSignal
 from input_styles import *
 from  shadowEffects import *
 from toast import Toast
 from Desktop_Application.Backend.api_client import add_new_appointment
 from datetime import datetime
+from loading_overlay import LoadingOverlay
 from functools import partial
 from config_loader import API_BASE_URL
 import requests
@@ -740,43 +741,115 @@ class AddAppointmentCard(QWidget):
         except Exception as e:
             self.show_toast(f"Error: {str(e)}", "error")
             print(f"Error sending reminders: {e}")
+
     def send_reminders_simple(self, data):
-        """Simple implementation - send reminders one by one"""
-        successful = 0
-        failed = 0
+        """Send reminders using worker thread"""
+        print(f"DEBUG: Starting thread for {len(data['appointment_ids'])} appointments")
 
-        for appointment_id in data['appointment_ids']:
-            try:
-                # Use your existing manual reminder endpoint
-                response = requests.post(
-                    f"{API_BASE_URL}/api/desktop-manual-reminder/",
-                    json={
-                        'admin_id': data['admin_id'],
-                        'appointment_id': appointment_id
-                    }
-                )
+        # Create and show loading overlay
+        self.loading_overlay = LoadingOverlay(self.main_window)
+        self.loading_overlay.set_message(
+            f"Sending {len(data['appointment_ids'])} reminder(s)...",
+            "Please wait while we send the emails"
+        )
+        self.loading_overlay.show()
 
-                if response.status_code == 200:
-                    successful += 1
-                else:
-                    failed += 1
+        # Disable buttons to prevent double-clicking
+        self._disable_all_buttons()
 
-            except Exception as e:
-                print(f"Failed to send reminder for appointment {appointment_id}: {e}")
-                failed += 1
+        # Create and start worker thread
+        self.worker = ReminderWorker(data)
+        self.worker.finished.connect(self._on_reminders_finished)
+        self.worker.error.connect(self._on_reminders_error)
+        self.worker.start()
 
-        # Show result
-        message = f"Successfully sent {successful} reminder(s)"
+    def _disable_all_buttons(self):
+        """Disable all control buttons"""
+        if hasattr(self.main_window, 'sendRemindersBtn'):
+            self.main_window.sendRemindersBtn.setEnabled(False)
+        if hasattr(self.main_window, 'selecAllBtn'):
+            self.main_window.selecAllBtn.setEnabled(False)
+        if hasattr(self.main_window, 'clearAllBtn'):
+            self.main_window.clearAllBtn.setEnabled(False)
+
+    def _reenable_buttons(self):
+        """Re-enable all control buttons"""
+        if hasattr(self.main_window, 'sendRemindersBtn'):
+            self.main_window.sendRemindersBtn.setEnabled(True)
+        if hasattr(self.main_window, 'selecAllBtn'):
+            self.main_window.selecAllBtn.setEnabled(True)
+        if hasattr(self.main_window, 'clearAllBtn'):
+            self.main_window.clearAllBtn.setEnabled(True)
+
+    def _on_reminders_finished(self, successful, failed):
+        """Called when worker thread finishes successfully"""
+        print(f"DEBUG: Thread finished callback: {successful} successful, {failed} failed")
+
+        # Hide loading overlay
+        if hasattr(self, 'loading_overlay') and self.loading_overlay:
+            self.loading_overlay.close()
+            self.loading_overlay = None
+
+        # Re-enable buttons
+        self._reenable_buttons()
+
+        # Show result toast
+        message = f"Sent {successful} reminder(s)"
         if failed > 0:
-            message += f", {failed} failed"
+            message += f",{failed} failed"
 
         self.show_toast(message, "success" if successful > 0 else "warning")
 
-        # Clear selection after sending
-        self.clear_all_appointments()
-        # ✅ NEW: Hide the reminder buttons frame
+        # Clear selection and hide buttons
+        self._cleanup_after_sending()
+
+    def _on_reminders_error(self, error_message):
+        """Called when worker thread has an error"""
+        print(f"DEBUG: Thread error callback: {error_message}")
+
+        # Hide loading overlay
+        if hasattr(self, 'loading_overlay') and self.loading_overlay:
+            self.loading_overlay.close()
+            self.loading_overlay = None
+
+        # Re-enable buttons
+        self._reenable_buttons()
+
+        # Show error toast
+        self.show_toast(f"❌ Error: {error_message}", "error")
+
+        # Still clean up
+        self._cleanup_after_sending()
+
+    def _cleanup_after_sending(self):
+        """Clean up after sending reminders"""
+        print("DEBUG: Cleaning up after sending...")
+
+        # 1. Clear the selection (uncheck all checkboxes)
+        self.clear_all_appointments()  # You already have this
+
+        # 2. Hide the reminder buttons frame
         if hasattr(self.main_window, 'reminderbtns'):
             self.main_window.reminderbtns.setVisible(False)
+
+        # 3. Clear the selected IDs list
+        if hasattr(self, 'card_manager') and hasattr(self.card_manager, 'selected_appointment_ids'):
+            self.card_manager.selected_appointment_ids.clear()
+
+        # 4. Clean up worker thread (if using threads)
+        if hasattr(self, 'worker') and self.worker:
+            try:
+                self.worker.quit()
+                self.worker.wait(1000)  # Wait up to 1 second
+                self.worker = None
+            except Exception as e:
+                print(f"DEBUG: Error cleaning up worker: {e}")
+
+        # 5. Update button visibility (if you have that method)
+        if hasattr(self, 'card_manager') and hasattr(self.card_manager, 'update_reminder_controls_visibility'):
+            self.card_manager.update_reminder_controls_visibility()
+
+        print("DEBUG: Cleanup complete")
     def show_toast(self, message, type="info"):
         """Show a toast notification"""
         # Use your existing toast system
@@ -1367,3 +1440,49 @@ class AppointmentCardManager:
         # Trigger actual loading with search term
         self.appointment_card.load_appointments(page, status_filter, search_term)
 
+
+class ReminderWorker(QThread):
+    """Worker thread for sending reminders"""
+    finished = pyqtSignal(int, int)  # successful, failed
+    error = pyqtSignal(str)
+
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+
+    def run(self):
+        """Run in background thread"""
+        successful = 0
+        failed = 0
+
+        try:
+            for appointment_id in self.data['appointment_ids']:
+                try:
+                    response = requests.post(
+                        f"{API_BASE_URL}/api/desktop-manual-reminder/",
+                        json={
+                            'admin_id': self.data['admin_id'],
+                            'appointment_id': appointment_id
+                        },
+                        timeout=10  # 10 second timeout per request
+                    )
+
+                    if response.status_code == 200:
+                        successful += 1
+                    else:
+                        failed += 1
+                        print(f"DEBUG: Failed for appointment {appointment_id}: {response.status_code}")
+
+                except requests.exceptions.Timeout:
+                    print(f"DEBUG: Timeout for appointment {appointment_id}")
+                    failed += 1
+                except Exception as e:
+                    print(f"DEBUG: Error for appointment {appointment_id}: {e}")
+                    failed += 1
+
+            print(f"DEBUG: Worker finished: {successful} successful, {failed} failed")
+            self.finished.emit(successful, failed)
+
+        except Exception as e:
+            print(f"DEBUG: Worker error: {e}")
+            self.error.emit(str(e))
