@@ -1321,7 +1321,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1361,21 +1361,6 @@ QToolButton:hover{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_8">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>11</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>11</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="homeBackBtn">
                    <property name="styleSheet">
@@ -1564,7 +1549,7 @@ border:none;</string>
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>854</width>
+                      <width>858</width>
                       <height>379</height>
                      </rect>
                     </property>
@@ -2831,7 +2816,7 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>882</width>
+                   <width>860</width>
                    <height>506</height>
                   </rect>
                  </property>
@@ -5120,7 +5105,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
+                          <width>858</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -5564,8 +5549,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>860</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -12266,8 +12251,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>90</width>
-                             <height>43</height>
+                             <width>93</width>
+                             <height>51</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12342,7 +12327,7 @@ color:rgb(168, 168, 168);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>742</width>
+                          <width>830</width>
                           <height>706</height>
                          </rect>
                         </property>
