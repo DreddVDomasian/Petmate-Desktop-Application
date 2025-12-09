@@ -704,22 +704,53 @@ class AddAppointmentCard(QWidget):
         self.card_manager.selected_appointment_ids = []
         self.card_manager.update_reminder_controls_visibility()
     def send_selected_reminders(self):
+        """Send reminders to selected appointments - using confirmCard"""
         if not self.card_manager.selected_appointment_ids:
             self.show_toast("Please select at least one appointment", "warning")
             return
 
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Icon.Question)
-        msg_box.setWindowTitle("Confirm Send Reminders")
-        msg_box.setText(
-            f"Send reminders to {len(self.card_manager.selected_appointment_ids)} selected appointments?"
-        )
-        msg_box.setStandardButtons(
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
+        count = len(self.card_manager.selected_appointment_ids)
 
-        if msg_box.exec() == QMessageBox.StandardButton.Yes:
-            self.send_reminders_to_backend()
+        # Use your existing confirmCard
+        self.main_window.confirmCard.confirmationMessage.setText(
+            f"Send reminders to {count} selected appointment(s)?\n\n"
+            f"This will email all selected patients."
+        )
+        self.main_window.confirmCard.show_card()
+
+        def clicked_yes():
+            # Get admin ID
+            admin_id = getattr(self.main_window, 'current_admin_id', 1)
+
+            # Prepare data
+            data = {
+                'admin_id': admin_id,
+                'appointment_ids': self.card_manager.selected_appointment_ids,
+                'reminder_type': 'manual_batch'
+            }
+
+            # Send reminders
+            self.send_reminders_simple(data)
+
+            # Hide confirm card
+            self.main_window.confirmCard.hide()
+
+        def clicked_no():
+            self.main_window.confirmCard.hide()
+
+        # Disconnect previous connections
+        try:
+            self.main_window.confirmCard.yesButton.clicked.disconnect()
+        except TypeError:
+            pass
+        try:
+            self.main_window.confirmCard.noButton.clicked.disconnect()
+        except TypeError:
+            pass
+
+        # Reconnect
+        self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
+        self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
     def send_reminders_to_backend(self):
         """Call the API to send reminders"""
         try:
@@ -1259,8 +1290,10 @@ class AppointmentCardManager:
         status = appointment.get("status", "").lower()
         if status in ["completed", "cancelled"]:
             card.deleteButton.setVisible(False)
+            card.checkBox.setVisible(False)
         else:
             card.deleteButton.setVisible(True)
+            card.checkBox.setVisible(True)
 
         appointment_id = appointment["id"]
         card.appointment_id = appointment_id
