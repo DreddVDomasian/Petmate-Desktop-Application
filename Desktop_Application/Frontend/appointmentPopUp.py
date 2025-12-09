@@ -56,6 +56,7 @@ class AddAppointmentCard(QWidget):
         self.web_Appointment(1, "pending")
         self.status_filter_global = None
         self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
+        self.main_window.reminderbtns.setVisible(False)
         self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
         self.setup_search()
 
@@ -510,6 +511,8 @@ class AddAppointmentCard(QWidget):
             if not appointments and page > 1:
                 return self.load_appointments(page - 1, status_filter, search_term)
 
+            if hasattr(self.main_window, 'reminderbtns'):
+                self.main_window.reminderbtns.setVisible(False)
             # ✅ CRITICAL FIX: Clear the cards list BEFORE clearing layout
             self.card_manager.appointment_cards.clear()
 
@@ -670,11 +673,13 @@ class AddAppointmentCard(QWidget):
                     # Try to access a property to see if it's alive
                     _ = card.objectName() or card.checkBox.objectName()
                     valid_cards.append(card)
+
             except RuntimeError:
                 # Card was deleted, skip it
                 print(f"DEBUG: Found deleted card, skipping")
                 continue
-
+        # ✅ NEW: Update visibility
+        self.card_manager.update_reminder_controls_visibility()
         # Update the main list with only valid cards
         self.card_manager.appointment_cards = valid_cards
 
@@ -696,7 +701,7 @@ class AddAppointmentCard(QWidget):
                 card.checkBox.setChecked(False)
         # Also clear the tracking list
         self.card_manager.selected_appointment_ids = []
-
+        self.card_manager.update_reminder_controls_visibility()
     def send_selected_reminders(self):
         if not self.card_manager.selected_appointment_ids:
             self.show_toast("Please select at least one appointment", "warning")
@@ -769,6 +774,9 @@ class AddAppointmentCard(QWidget):
 
         # Clear selection after sending
         self.clear_all_appointments()
+        # ✅ NEW: Hide the reminder buttons frame
+        if hasattr(self.main_window, 'reminderbtns'):
+            self.main_window.reminderbtns.setVisible(False)
     def show_toast(self, message, type="info"):
         """Show a toast notification"""
         # Use your existing toast system
@@ -1244,6 +1252,7 @@ class AppointmentCardManager:
             if appointment_id in self.selected_appointment_ids:
                 self.selected_appointment_ids.remove(appointment_id)
 
+        self.update_reminder_controls_visibility()
         print(f"Selected IDs: {self.selected_appointment_ids}")  # Debug
     def add_appointment_pagination_controls(self, layout, status_filter=None, search_term=None):
         """Add pagination controls for appointments with search support"""
@@ -1334,6 +1343,16 @@ class AppointmentCardManager:
                 page_btn.clicked.connect(partial(self.safe_paginate, page, status_filter, search_term))
 
             page_layout.addWidget(page_btn)
+
+    def update_reminder_controls_visibility(self):
+        """Show/hide reminder buttons based on selection"""
+        if hasattr(self.appointment_card.main_window, 'reminderbtns'):
+            frame = self.appointment_card.main_window.reminderbtns
+            should_show = len(self.selected_appointment_ids) > 0
+
+            # Only change if needed (prevents flickering)
+            if frame.isVisible() != should_show:
+                frame.setVisible(should_show)
 
     def safe_paginate(self, page, status_filter, search_term):
         """Prevent spamming pagination clicks with search support."""
