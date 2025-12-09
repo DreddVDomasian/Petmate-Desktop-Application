@@ -36,8 +36,8 @@ from config_loader import API_BASE_URL
 import requests
 import webbrowser
 
-from PyQt6.QtCharts import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QPieSeries
-from PyQt6.QtGui import QColor, QPainter
+from PyQt6.QtCharts import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QPieSeries, QHorizontalBarSeries
+from PyQt6.QtGui import QColor, QPainter, QFont, QBrush
 from PyQt6.QtWidgets import QVBoxLayout
 from analytics import fetch_json
 
@@ -2862,24 +2862,34 @@ class MainUI(QMainWindow):
 
         chart = QChart()
         chart.addSeries(series)
-        chart.setTitle("Total every service")
+        chart.setTitle("Total Every Service")
+        chart.setTitleFont(QFont("Montserrat ExtraBold" ,20))
+
+        chart.legend().setVisible(True)
+        chart.legend().setAlignment(Qt.AlignmentFlag.AlignTop)
+        chart.legend().setFont(QFont("Montserrat", 12))
 
         chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
         chart.setTheme(QChart.ChartTheme.ChartThemeLight)
 
+
         axis_x = QBarCategoryAxis()
         axis_x.append(categories)
+        axis_x.setGridLineVisible(False)
+        axis_x.setMinorGridLineVisible(False)
         chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
         series.attachAxis(axis_x)
 
         chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(20)
         shadow.setXOffset(0)
         shadow.setYOffset(3)
         shadow.setColor(QColor(0, 0, 0, 60))
         self.ServiceBarGraph.setGraphicsEffect(shadow)
+        
 
         layout = self.ServiceBarGraph.layout()
         if layout is None:
@@ -2906,7 +2916,6 @@ class MainUI(QMainWindow):
         others = data.get("others", 0)
 
         series = QPieSeries()
-
         total = dogs + cats + others
 
         if total == 0:
@@ -2921,6 +2930,11 @@ class MainUI(QMainWindow):
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Species Distribution")
+        chart.setTitleFont(QFont("Montserrat ExtraBold", 20))
+
+        chart.legend().setVisible(True)
+        chart.legend().setAlignment(Qt.AlignmentFlag.AlignTop)
+        chart.legend().setFont(QFont("Montserrat", 12))
 
         chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
         chart.setTheme(QChart.ChartTheme.ChartThemeLight)
@@ -2932,6 +2946,7 @@ class MainUI(QMainWindow):
 
         chart_view = QChartView(chart)
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
+
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(20)
         shadow.setXOffset(0)
@@ -2966,7 +2981,7 @@ class MainUI(QMainWindow):
 
         label = self.findChild(QLabel, "noAppointmentToday")
 
-        if label is None:
+        if not label:
             print("wala nga tangina")
             return
 
