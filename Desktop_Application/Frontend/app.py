@@ -1706,20 +1706,26 @@ class MainUI(QMainWindow):
         else:
             # If search is empty, load normal scheduled services list
             self.load_scheduled_services(page=1)
-
     def set_current_month_in_combobox(self):
         self.monthComboBox.setGraphicsEffect(create_card_shadow())
         current_month = datetime.now().strftime("%B")
         index = self.monthComboBox.findText(current_month)
         if index >= 0:
             self.monthComboBox.setCurrentIndex(index)
-
     def load_scheduled_services(self, page=1, search_term=None):
         """Load scheduled services with pagination and search support"""
         try:
             # Debug print to see what's happening
             print(f"DEBUG: load_scheduled_services called with page={page}, search_term='{search_term}'")
-
+            if hasattr(self, 'appointmentCard') and hasattr(self.appointmentCard, 'scheduled_card_manager'):
+                print(f"DEBUG: Clearing scheduled card manager")
+                # Clear cards list but keep persistent IDs for restoration
+                self.appointmentCard.scheduled_card_manager.scheduled_cards.clear()
+                # Clear selected IDs (they'll be restored if persistent)
+                self.appointmentCard.scheduled_card_manager.selected_service_ids.clear()
+                # Hide reminder buttons
+                if hasattr(self, 'schedReminderBtnFrame'):
+                    self.schedReminderBtnFrame.setVisible(False)
             # Determine current status filter based on which status button is checked
             if self.pendingReturnBtn.isChecked():
                 self.scheduled_current_filter = "pending"
@@ -1854,7 +1860,6 @@ class MainUI(QMainWindow):
             import traceback
             traceback.print_exc()
             self.show_scheduled_empty_state(self.pendingLayout, error=True)
-
     def show_scheduled_empty_state(self, layout, is_search=False, error=False):
         """Show appropriate empty state message for scheduled services"""
         empty_label = QLabel()
@@ -1874,36 +1879,22 @@ class MainUI(QMainWindow):
         layout.addStretch()
 
     def create_scheduled_card(self, service):
-        """Create a scheduled service card"""
+        """Create a scheduled service card - simplified version"""
         try:
-            card = uic.loadUi("ui-files/schedCard.ui")
+            # Delegate card creation to the scheduled_card_manager
+            card = self.appointmentCard.scheduled_card_manager.create_scheduled_card(service)
 
-            # Set service information - handle potential missing fields
-            owner_name = service.get('owner_full_name', 'Unknown Owner')
-            pet_name = service.get('pet_name', 'Unknown Pet')
-            service_type = service.get('service_type_name', 'Unknown Service')
-
-            card.ReturnNameLabel.setText(str(owner_name).title())
-            card.petName.setText(str(pet_name).capitalize())
-            card.ReturnServiceLabel.setText(str(service_type))
-
-            return_date = self.format_date(service.get("return_date"))
-            card.ReturnDateCardLabel.setText(return_date if return_date else "No return date")
-
-            card.setGraphicsEffect(create_card_shadow())
-
-            # Connect click event to open pet profile
-            pet_id = service.get("pet")
-            if pet_id:
-                card.mousePressEvent = lambda event, pid=pet_id: self.open_pet_from_service(pid)
+            # The pet click event is already set up in the manager's method
+            # No additional setup needed here
 
             return card
         except Exception as e:
             print(f"DEBUG: Error creating scheduled card: {e}")
+            import traceback
+            traceback.print_exc()
             # Return a placeholder card if creation fails
             card = QLabel(f"Error creating card: {e}")
             return card
-
     def add_scheduled_pagination_controls(self, layout, search_term=None):
         """Add pagination controls for scheduled services"""
         # Safely remove existing pagination widget
@@ -1942,7 +1933,6 @@ class MainUI(QMainWindow):
 
         except Exception as e:
             print(f"Error creating scheduled pagination: {e}")
-
     def create_scheduled_page_buttons(self, search_term=None):
         """Create page buttons for scheduled services pagination"""
         page_layout = self.scheduled_pagination_widget.pageButtonsLayout
@@ -1992,7 +1982,6 @@ class MainUI(QMainWindow):
                                          self.load_scheduled_services(p, search_term))
 
             page_layout.addWidget(page_btn)
-
     def open_pet_from_service(self, pet_id):
         response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
         if response.status_code == 200:

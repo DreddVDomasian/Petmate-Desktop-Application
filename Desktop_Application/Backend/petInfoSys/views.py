@@ -1688,42 +1688,115 @@ class ManualReminderView(APIView):
             return Response({'error': 'Admin access required'}, status=403)
 
         appointment_id = request.data.get('appointment_id')
+        service_id = request.data.get('service_id')
 
-        try:
-            appointment = WalkInAppointment.objects.get(id=appointment_id)
+        # Handle appointment reminder
+        if appointment_id:
+            try:
+                appointment = WalkInAppointment.objects.select_related('owner', 'pet', 'service_type').get(
+                    id=appointment_id)
 
-            # Only send if appointment is still valid
-            if appointment.status in ['cancelled', 'completed']:
-                return Response({
-                    'error': 'Cannot send reminder for cancelled/completed appointment'
-                }, status=400)
+                # Only send if appointment is still valid
+                if appointment.status in ['cancelled', 'completed']:
+                    return Response({
+                        'error': 'Cannot send reminder for cancelled/completed appointment'
+                    }, status=400)
 
-            success = send_appointment_reminder_email(
-                patient_email=appointment.owner.email,
-                patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
-                pet_name=appointment.pet.petName,
-                service_type=appointment.service_type.name if appointment.service_type else "Unknown",
-                appointment_date=appointment.date.strftime("%B %d, %Y"),
-                appointment_time=appointment.prefTime.strftime("%I:%M %p"),
-                booking_id=appointment.booking_id,
-                reminder_type='manual'
-            )
-
-            if success:
-                # Log this manual reminder
-                AppointmentReminder.objects.create(
-                    appointment=appointment,
-                    reminder_type='manual',
-                    scheduled_send_time=timezone.now(),
-                    sent_at=timezone.now()
+                success = send_appointment_reminder_email(
+                    patient_email=appointment.owner.email,
+                    patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
+                    pet_name=appointment.pet.petName,
+                    service_type=appointment.service_type.name if appointment.service_type else "Unknown",
+                    appointment_date=appointment.date.strftime("%B %d, %Y"),
+                    appointment_time=appointment.prefTime.strftime("%I:%M %p"),
+                    booking_id=appointment.booking_id,
+                    reminder_type='manual'
                 )
-                return Response({'message': 'Manual reminder sent successfully'}, status=200)
-            else:
-                return Response({'error': 'Failed to send reminder'}, status=500)
 
-        except WalkInAppointment.DoesNotExist:
-            return Response({'error': 'Appointment not found'}, status=404)
+                if success:
+                    # Log this manual reminder
+                    AppointmentReminder.objects.create(
+                        appointment=appointment,
+                        reminder_type='manual',
+                        scheduled_send_time=timezone.now(),
+                        sent_at=timezone.now()
+                    )
+                    return Response({'message': 'Appointment reminder sent successfully'}, status=200)
+                else:
+                    return Response({'error': 'Failed to send appointment reminder'}, status=500)
 
+            except WalkInAppointment.DoesNotExist:
+                return Response({'error': 'Appointment not found'}, status=404)
+
+        # Handle service return reminder
+        elif service_id:
+            try:
+                service = Service.objects.select_related('owner', 'pet', 'service_type').get(id=service_id)
+
+                # Only send if service has a return date
+                if not service.return_date:
+                    return Response({
+                        'error': 'Service has no return date'
+                    }, status=400)
+
+                # Only send if service is not completed/cancelled
+                if service.status in ['completed', 'cancelled']:
+                    return Response({
+                        'error': 'Cannot send reminder for completed/cancelled service'
+                    }, status=400)
+
+                success = send_service_return_reminder_email(
+                    patient_email=service.owner.email,
+                    patient_name=f"{service.owner.firstName} {service.owner.lastName}",
+                    pet_name=service.pet.petName,
+                    service_type=service.service_type.name if service.service_type else "Unknown",
+                    return_date=service.return_date.strftime("%B %d, %Y"),
+                    service_id=service.id
+                )
+
+                if success:
+                    # Log this manual reminder
+                    AppointmentReminder.objects.create(
+                        service=service,
+                        reminder_type='service_return',
+                        scheduled_send_time=timezone.now(),
+                        sent_at=timezone.now()
+                    )
+                    return Response({'message': 'Service return reminder sent successfully'}, status=200)
+                else:
+                    return Response({'error': 'Failed to send service reminder'}, status=500)
+
+            except Service.DoesNotExist:
+                return Response({'error': 'Service not found'}, status=404)
+
+        else:
+            return Response({'error': 'Either appointment_id or service_id is required'}, status=400)
+
+def send_service_return_reminder_email(patient_email, patient_name, pet_name, service_type, return_date, service_id):
+    """Send service return reminder email"""
+    try:
+        subject = "🐾 PetMate Animal Clinic - Service Return Reminder"
+        from_email = 'petmateanimalclinic@gmail.com'
+        to = [patient_email]
+
+        # Render HTML template
+        html_content = render_to_string('service_return_reminder.html', {
+            'patient_name': patient_name,
+            'pet_name': pet_name,
+            'service_type': service_type,
+            'return_date': return_date,
+            'service_id': service_id
+        })
+        text_content = strip_tags(html_content)
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        return True
+    except Exception as e:
+        print(f"Failed to send service reminder email: {str(e)}")
+        return False
 
 @api_view(['GET'])
 def api_service_counts(request):

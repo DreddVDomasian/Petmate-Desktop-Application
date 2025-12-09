@@ -88,6 +88,46 @@
        <number>15</number>
       </property>
       <item>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QCheckBox {
+    font-size: 14px;
+    spacing: 6px; /* space between box and text */
+}
+
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #6c6c6c;
+    border-radius: 4px;
+    background: white;
+}
+
+QCheckBox::indicator:hover {
+    border-color: #3b82f6; /* blue highlight */
+}
+
+QCheckBox::indicator:checked {
+    background: #78B3CE;
+}
+
+QCheckBox::indicator:disabled {
+    background: #ddd;
+    border-color: #aaa;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="SchedCardProfileIcon">
         <property name="maximumSize">
          <size>

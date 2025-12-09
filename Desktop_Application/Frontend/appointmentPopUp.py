@@ -31,6 +31,7 @@ class AddAppointmentCard(QWidget):
         self.main_window = main_window
         uic.loadUi("ui-files/addAppointmentCard.ui", self)
         self.card_manager = AppointmentCardManager(self)
+        self.scheduled_card_manager = ScheduledServiceCardManager(self.main_window)
 
         #layouts
         self.setup_stackLayout()
@@ -1521,4 +1522,417 @@ class ReminderWorker(QThread):
 
         except Exception as e:
             print(f"DEBUG: Worker error: {e}")
+            self.error.emit(str(e))
+
+
+class ScheduledServiceCardManager:
+    def __init__(self, main_window):
+        self.main_window = main_window
+        self.scheduled_cards = []
+        self.selected_service_ids = []
+        self.persistently_checked_ids = []
+
+        # Pagination state
+        self.current_page = 1
+        self.total_pages = 1
+        self.total_count = 0
+        self.current_filter = "pending"
+        self.current_search_term = ""
+
+        # Initialize UI connections
+        self.setup_scheduled_reminder_controls()
+
+    def create_scheduled_card(self, service):
+        """Create and configure a scheduled service card"""
+        try:
+            card = uic.loadUi("ui-files/schedCard.ui")
+
+            # Set service information
+            owner_name = service.get('owner_full_name', 'Unknown Owner')
+            pet_name = service.get('pet_name', 'Unknown Pet')
+            service_type = service.get('service_type_name', 'Unknown Service')
+
+            card.ReturnNameLabel.setText(str(owner_name).title())
+            card.petName.setText(str(pet_name).capitalize())
+            card.ReturnServiceLabel.setText(str(service_type))
+
+            # Format return date
+            return_date = service.get("return_date")
+            if return_date:
+                # Assuming your main_window has a format_date method
+                formatted_date = self.main_window.format_date(return_date)
+                card.ReturnDateCardLabel.setText(formatted_date)
+            else:
+                card.ReturnDateCardLabel.setText("No return date")
+
+            # Set graphics effect
+            card.setGraphicsEffect(create_card_shadow())
+
+            # Get service ID
+            service_id = service.get("id")
+            card.service_id = service_id
+
+            # Hide checkbox for completed/cancelled services
+            status = service.get("status", "").lower()
+            if status in ["completed", "cancelled"]:
+                card.checkBox.setVisible(False)
+                card.deleteButton.setVisible(True)  # Show delete button for completed/cancelled
+            else:
+                card.checkBox.setVisible(True)
+                card.deleteButton.setVisible(False)  # Hide delete button for active services
+
+                # ✅ RESTORE CHECKED STATE from persistent list
+                if service_id in self.persistently_checked_ids:
+                    card.checkBox.setChecked(True)
+                    if service_id not in self.selected_service_ids:
+                        self.selected_service_ids.append(service_id)
+
+                # Create checkbox handler with proper lambda capture
+                def create_checkbox_handler(card_obj, s_id):
+                    def handler(state):
+                        try:
+                            if not card_obj or not hasattr(card_obj, 'checkBox'):
+                                return
+                            self.handle_scheduled_checkbox_change(state, s_id)
+                        except RuntimeError:
+                            print(f"DEBUG: Card for service {s_id} was deleted")
+
+                    return handler
+
+                handler = create_checkbox_handler(card, service_id)
+                card.checkBox.stateChanged.connect(handler)
+                card._checkbox_handler = handler
+
+            # Connect click event to open pet profile
+            pet_id = service.get("pet")
+            if pet_id:
+                # Only allow clicking on the card if not clicking on checkbox
+                def mouse_press_handler(event, pid=pet_id):
+                    # Check if click was on checkbox or delete button
+                    if (hasattr(card, 'checkBox') and card.checkBox.underMouse()) or \
+                            (hasattr(card, 'deleteButton') and card.deleteButton.underMouse()):
+                        # Let those widgets handle the click
+                        event.ignore()
+                        return
+                    # Otherwise open pet profile
+                    self.main_window.open_pet_from_service(pid)
+
+                card.mousePressEvent = mouse_press_handler
+
+            # Connect delete button to your existing Delete class
+            if hasattr(card, 'deleteButton') and hasattr(self.main_window, 'delete_handler'):
+                card.deleteButton.clicked.connect(
+                    lambda _, s_id=service_id: self.main_window.delete_handler.delete_selected_service()
+                )
+                # Set the selected_service_id in main window
+                card.deleteButton.clicked.connect(
+                    lambda _, s_id=service_id: setattr(self.main_window, 'selected_service_id', s_id)
+                )
+
+            # Add to tracking list
+            self.scheduled_cards.append(card)
+
+            return card
+        except Exception as e:
+            print(f"DEBUG: Error in create_scheduled_card: {e}")
+            import traceback
+            traceback.print_exc()
+            # Return a simple label as fallback
+            card = QLabel(f"Error: {str(e)[:50]}")
+            return card
+
+    def setup_scheduled_reminder_controls(self):
+        """Connect scheduled reminder control buttons"""
+        if hasattr(self.main_window, 'schedReminderBtnFrame'):
+            self.main_window.schedSelectAll.clicked.connect(self.select_all_scheduled)
+            self.main_window.schedClearAll.clicked.connect(self.clear_all_scheduled)
+            self.main_window.schedSendReminder.clicked.connect(self.send_selected_scheduled_reminders)
+
+            # Hide by default
+            self.main_window.schedReminderBtnFrame.setVisible(False)
+
+    def select_all_scheduled(self):
+        """Select all visible scheduled service cards"""
+        selected_count = 0
+
+        # Create a new list with only valid cards
+        valid_cards = []
+        for card in self.scheduled_cards:
+            try:
+                # Test if card still exists
+                if card and hasattr(card, 'checkBox'):
+                    # Try to access a property to see if it's alive
+                    _ = card.objectName() or card.checkBox.objectName()
+                    valid_cards.append(card)
+            except RuntimeError:
+                # Card was deleted, skip it
+                continue
+
+        # Update the main list with only valid cards
+        self.scheduled_cards = valid_cards
+
+        # Now select valid cards
+        for card in valid_cards:
+            try:
+                if card.checkBox.isEnabled():
+                    card.checkBox.setChecked(True)
+                    selected_count += 1
+            except RuntimeError:
+                continue
+
+        # Update visibility
+        self.update_scheduled_controls_visibility()
+        print(f"DEBUG: Selected {selected_count} scheduled cards")
+
+    def clear_all_scheduled(self):
+        """Deselect all scheduled service cards"""
+        for card in self.scheduled_cards:
+            if hasattr(card, 'checkBox'):
+                card.checkBox.setChecked(False)
+
+        # Clear tracking lists
+        self.selected_service_ids = []
+        self.persistently_checked_ids = []
+        self.update_scheduled_controls_visibility()
+
+    def handle_scheduled_checkbox_change(self, state, service_id):
+        """Handle checkbox selection/deselection for scheduled services"""
+        if state == 2:  # Checked
+            if service_id not in self.selected_service_ids:
+                self.selected_service_ids.append(service_id)
+            if service_id not in self.persistently_checked_ids:
+                self.persistently_checked_ids.append(service_id)
+        else:  # Unchecked
+            if service_id in self.selected_service_ids:
+                self.selected_service_ids.remove(service_id)
+            if service_id in self.persistently_checked_ids:
+                self.persistently_checked_ids.remove(service_id)
+
+        self.update_scheduled_controls_visibility()
+        print(f"Selected Service IDs: {self.selected_service_ids}")
+
+    def update_scheduled_controls_visibility(self):
+        """Show/hide scheduled reminder buttons based on selection"""
+        if hasattr(self.main_window, 'schedReminderBtnFrame'):
+            frame = self.main_window.schedReminderBtnFrame
+            should_show = len(self.selected_service_ids) > 0
+
+            # Only change if needed (prevents flickering)
+            if frame.isVisible() != should_show:
+                frame.setVisible(should_show)
+
+    def send_selected_scheduled_reminders(self):
+        """Send reminders for selected scheduled services"""
+        if not self.selected_service_ids:
+            self.show_toast("Please select at least one scheduled service", "warning")
+            return
+
+        count = len(self.selected_service_ids)
+
+        # Use confirmCard
+        self.main_window.confirmCard.confirmationMessage.setText(
+            f"Send reminders for {count} selected scheduled service(s)?\n\n"
+            f"This will email all selected patients about their return dates."
+        )
+        self.main_window.confirmCard.show_card()
+
+        def clicked_yes():
+            # Get admin ID
+            admin_id = getattr(self.main_window, 'current_admin_id', 1)
+
+            # Prepare data
+            data = {
+                'admin_id': admin_id,
+                'service_ids': self.selected_service_ids,
+                'reminder_type': 'service_return_batch'
+            }
+
+            # Send reminders
+            self.send_scheduled_reminders_simple(data)
+            self.main_window.confirmCard.hide()
+
+        def clicked_no():
+            self.main_window.confirmCard.hide()
+
+        # Disconnect previous connections
+        try:
+            self.main_window.confirmCard.yesButton.clicked.disconnect()
+        except TypeError:
+            pass
+        try:
+            self.main_window.confirmCard.noButton.clicked.disconnect()
+        except TypeError:
+            pass
+
+        # Reconnect
+        self.main_window.confirmCard.yesButton.clicked.connect(clicked_yes)
+        self.main_window.confirmCard.noButton.clicked.connect(clicked_no)
+
+    def send_scheduled_reminders_simple(self, data):
+        """Send scheduled service reminders using worker thread"""
+        print(f"DEBUG: Starting thread for {len(data['service_ids'])} scheduled services")
+
+        # Create and show loading overlay
+        self.loading_overlay = LoadingOverlay(self.main_window)
+        self.loading_overlay.set_message(
+            f"Sending {len(data['service_ids'])} reminder(s)...",
+            "Please wait while we send the emails"
+        )
+        self.loading_overlay.show()
+
+        # Disable buttons
+        self._disable_scheduled_buttons()
+
+        # Create and start worker thread
+        self.worker = ScheduledReminderWorker(data)
+        self.worker.finished.connect(self._on_scheduled_reminders_finished)
+        self.worker.error.connect(self._on_scheduled_reminders_error)
+        self.worker.start()
+
+    def _disable_scheduled_buttons(self):
+        """Disable all scheduled reminder buttons"""
+        if hasattr(self.main_window, 'schedSendReminder'):
+            self.main_window.schedSendReminder.setEnabled(False)
+        if hasattr(self.main_window, 'schedSelectAll'):
+            self.main_window.schedSelectAll.setEnabled(False)
+        if hasattr(self.main_window, 'schedClearAll'):
+            self.main_window.schedClearAll.setEnabled(False)
+
+    def _reenable_scheduled_buttons(self):
+        """Re-enable all scheduled reminder buttons"""
+        if hasattr(self.main_window, 'schedSendReminder'):
+            self.main_window.schedSendReminder.setEnabled(True)
+        if hasattr(self.main_window, 'schedSelectAll'):
+            self.main_window.schedSelectAll.setEnabled(True)
+        if hasattr(self.main_window, 'schedClearAll'):
+            self.main_window.schedClearAll.setEnabled(True)
+
+    def _on_scheduled_reminders_finished(self, successful, failed):
+        """Called when worker thread finishes successfully"""
+        print(f"DEBUG: Scheduled thread finished: {successful} successful, {failed} failed")
+
+        # Hide loading overlay
+        if hasattr(self, 'loading_overlay') and self.loading_overlay:
+            self.loading_overlay.close()
+            self.loading_overlay = None
+
+        # Re-enable buttons
+        self._reenable_scheduled_buttons()
+
+        # Show result toast
+        message = f"Sent {successful} reminder(s)"
+        if failed > 0:
+            message += f", {failed} failed"
+
+        self.show_toast(message, "success" if successful > 0 else "warning")
+
+        # Clear selection and hide buttons
+        self._cleanup_after_scheduled_sending()
+
+    def _on_scheduled_reminders_error(self, error_message):
+        """Called when worker thread has an error"""
+        print(f"DEBUG: Scheduled thread error: {error_message}")
+
+        # Hide loading overlay
+        if hasattr(self, 'loading_overlay') and self.loading_overlay:
+            self.loading_overlay.close()
+            self.loading_overlay = None
+
+        # Re-enable buttons
+        self._reenable_scheduled_buttons()
+
+        # Show error toast
+        self.show_toast(f"❌ Error: {error_message}", "error")
+
+        # Clean up
+        self._cleanup_after_scheduled_sending()
+
+    def _cleanup_after_scheduled_sending(self):
+        """Clean up after sending scheduled reminders"""
+        print("DEBUG: Cleaning up after sending scheduled reminders...")
+
+        # 1. Clear the selection
+        self.clear_all_scheduled()
+
+        # 2. Hide the reminder buttons frame
+        if hasattr(self.main_window, 'schedReminderBtnFrame'):
+            self.main_window.schedReminderBtnFrame.setVisible(False)
+
+        # 3. Clear the selected IDs list
+        self.selected_service_ids.clear()
+        self.persistently_checked_ids.clear()
+
+        # 4. Clean up worker thread
+        if hasattr(self, 'worker') and self.worker:
+            try:
+                self.worker.quit()
+                self.worker.wait(1000)
+                self.worker = None
+            except Exception as e:
+                print(f"DEBUG: Error cleaning up scheduled worker: {e}")
+
+        # 5. Update button visibility
+        self.update_scheduled_controls_visibility()
+
+        print("DEBUG: Scheduled cleanup complete")
+
+    def show_toast(self, message, type="info"):
+        """Show a toast notification"""
+        icon_map = {
+            "success": "Icons/check.png",
+            "warning": "Icons/warning.png",
+            "error": "Icons/error.png",
+            "info": "Icons/info.png"
+        }
+
+        toast = Toast(self.main_window, message, icon_path=icon_map.get(type, "Icons/info.png"))
+        toast.show_toast()
+
+
+class ScheduledReminderWorker(QThread):
+    """Worker thread for sending scheduled service reminders"""
+    finished = pyqtSignal(int, int)  # successful, failed
+    error = pyqtSignal(str)
+
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+
+    def run(self):
+        """Run in background thread - for scheduled service reminders"""
+        successful = 0
+        failed = 0
+
+        try:
+            for service_id in self.data['service_ids']:
+                try:
+                    # Use the updated ManualReminderView endpoint
+                    response = requests.post(
+                        f"{API_BASE_URL}/api/desktop-manual-reminder/",
+                        json={
+                            'admin_id': self.data['admin_id'],
+                            'service_id': service_id  # Key change: send service_id instead of appointment_id
+                        },
+                        timeout=10
+                    )
+
+                    if response.status_code == 200:
+                        successful += 1
+                        print(f"DEBUG: Successfully sent reminder for service {service_id}")
+                    else:
+                        failed += 1
+                        print(f"DEBUG: Failed for service {service_id}: {response.status_code} - {response.text}")
+
+                except requests.exceptions.Timeout:
+                    print(f"DEBUG: Timeout for service {service_id}")
+                    failed += 1
+                except Exception as e:
+                    print(f"DEBUG: Error for service {service_id}: {e}")
+                    failed += 1
+
+            print(f"DEBUG: Scheduled worker finished: {successful} successful, {failed} failed")
+            self.finished.emit(successful, failed)
+
+        except Exception as e:
+            print(f"DEBUG: Scheduled worker error: {e}")
             self.error.emit(str(e))
