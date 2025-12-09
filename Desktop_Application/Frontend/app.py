@@ -251,7 +251,7 @@ class MainUI(QMainWindow):
         self.websiteBtn.setCheckable(True)
         self.walkInOrWeb.setCurrentIndex(0)
         self.sourceBtnGroup = QButtonGroup(self)
-        self.sourceBtnGroup.setExclusive(True) 
+        self.sourceBtnGroup.setExclusive(True)
         for btn in [self.walkInBtn, self.websiteBtn]:
             self.sourceBtnGroup.addButton(btn)
         self.websiteBtn.setChecked(True)

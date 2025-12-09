@@ -1735,7 +1735,7 @@ def api_service_counts(request):
     )
 
     formatted = {item['service_type__name']: item['total'] for item in data}
-    return JsonResponse(formatted)
+    return Response(formatted)
 
 
 @api_view(['GET'])
@@ -1768,11 +1768,14 @@ def api_species_counts(request):
 @api_view(["GET"])
 def todays_appointments(request):
     today = date.today()
+
     appointments = WalkInAppointment.objects.filter(
         date=today
     ).exclude(
         status__in=["cancelled", "completed"]
-    ).select_related('service_type', 'owner', 'pet')
+    ).select_related(
+        'service_type', 'owner', 'pet'
+    ).order_by('prefTime')  # ✅ ORDER BY TIME (AM → PM)
 
     result = []
     for a in appointments:
@@ -1784,6 +1787,7 @@ def todays_appointments(request):
         })
 
     return Response(result)
+
 
 # Add these views to views.py
 @api_view(['GET'])
