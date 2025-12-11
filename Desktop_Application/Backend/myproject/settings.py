@@ -92,7 +92,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+        # ===========================
+        # SMS CONFIGURATION (PhilSMS)
+        # ===========================
+PHILSMS_API_KEY = os.getenv('PHILSMS_API_KEY', '')
+PHILSMS_SENDER_ID = os.getenv('PHILSMS_SENDER_ID', 'PhilSms')
+PHILSMS_API_URL = 'https://dashboard.philsms.com/api/v3/sms/send'
+PHILSMS_BALANCE_URL = 'https://dashboard.philsms.com/api/v3/sms/'
 
 
 DATABASES = {

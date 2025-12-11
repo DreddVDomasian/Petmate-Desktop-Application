@@ -4,6 +4,7 @@ Petmate-Desktop-Application/
 ├── requirements.txt
 ├── .gitignore
 ├── docker-compose.yml
+├── .env
 │
 ├── Desktop_Application/
 │   ├── Backend/

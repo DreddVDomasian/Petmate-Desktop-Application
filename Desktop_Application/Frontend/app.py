@@ -1877,7 +1877,6 @@ class MainUI(QMainWindow):
         layout.addStretch()
         layout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         layout.addStretch()
-
     def create_scheduled_card(self, service):
         """Create a scheduled service card - simplified version"""
         try:
