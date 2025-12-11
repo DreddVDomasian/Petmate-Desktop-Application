@@ -1478,6 +1478,7 @@ class AppointmentCardManager:
         self.appointment_card.load_appointments(page, status_filter, search_term)
 
 
+# In appointmentPopUp.py, update the ReminderWorker class
 class ReminderWorker(QThread):
     """Worker thread for sending reminders"""
     finished = pyqtSignal(int, int)  # successful, failed
@@ -1493,29 +1494,30 @@ class ReminderWorker(QThread):
         failed = 0
 
         try:
-            for appointment_id in self.data['appointment_ids']:
-                try:
-                    response = requests.post(
-                        f"{API_BASE_URL}/api/desktop-manual-reminder/",
-                        json={
-                            'admin_id': self.data['admin_id'],
-                            'appointment_id': appointment_id
-                        },
-                        timeout=10  # 10 second timeout per request
-                    )
+            # Use batch endpoint
+            response = requests.post(
+                f"{API_BASE_URL}/api/desktop-manual-reminder/",
+                json={
+                    'admin_id': self.data['admin_id'],
+                    'appointment_ids': self.data['appointment_ids']
+                },
+                timeout=30  # Longer timeout for batch
+            )
 
-                    if response.status_code == 200:
-                        successful += 1
-                    else:
-                        failed += 1
-                        print(f"DEBUG: Failed for appointment {appointment_id}: {response.status_code}")
-
-                except requests.exceptions.Timeout:
-                    print(f"DEBUG: Timeout for appointment {appointment_id}")
-                    failed += 1
-                except Exception as e:
-                    print(f"DEBUG: Error for appointment {appointment_id}: {e}")
-                    failed += 1
+            if response.status_code == 200:
+                response_data = response.json()
+                if response_data.get('success'):
+                    # Count successful from results
+                    results = response_data.get('results', {})
+                    successful = len(results.get('successful', []))
+                    failed = len(results.get('failed', []))
+                    print(f"DEBUG: Batch result - {successful} successful, {failed} failed")
+                else:
+                    failed = len(self.data['appointment_ids'])
+                    print(f"DEBUG: Batch failed: {response_data.get('message')}")
+            else:
+                failed = len(self.data['appointment_ids'])
+                print(f"DEBUG: API error {response.status_code}: {response.text}")
 
             print(f"DEBUG: Worker finished: {successful} successful, {failed} failed")
             self.finished.emit(successful, failed)
@@ -1928,31 +1930,30 @@ class ScheduledReminderWorker(QThread):
         failed = 0
 
         try:
-            for service_id in self.data['service_ids']:
-                try:
-                    # Use the updated ManualReminderView endpoint
-                    response = requests.post(
-                        f"{API_BASE_URL}/api/desktop-manual-reminder/",
-                        json={
-                            'admin_id': self.data['admin_id'],
-                            'service_id': service_id  # Key change: send service_id instead of appointment_id
-                        },
-                        timeout=10
-                    )
+            # Use batch endpoint
+            response = requests.post(
+                f"{API_BASE_URL}/api/desktop-manual-reminder/",
+                json={
+                    'admin_id': self.data['admin_id'],
+                    'service_ids': self.data['service_ids']
+                },
+                timeout=30
+            )
 
-                    if response.status_code == 200:
-                        successful += 1
-                        print(f"DEBUG: Successfully sent reminder for service {service_id}")
-                    else:
-                        failed += 1
-                        print(f"DEBUG: Failed for service {service_id}: {response.status_code} - {response.text}")
-
-                except requests.exceptions.Timeout:
-                    print(f"DEBUG: Timeout for service {service_id}")
-                    failed += 1
-                except Exception as e:
-                    print(f"DEBUG: Error for service {service_id}: {e}")
-                    failed += 1
+            if response.status_code == 200:
+                response_data = response.json()
+                if response_data.get('success'):
+                    # Count successful from results
+                    results = response_data.get('results', {})
+                    successful = len(results.get('successful', []))
+                    failed = len(results.get('failed', []))
+                    print(f"DEBUG: Batch scheduled result - {successful} successful, {failed} failed")
+                else:
+                    failed = len(self.data['service_ids'])
+                    print(f"DEBUG: Batch scheduled failed: {response_data.get('message')}")
+            else:
+                failed = len(self.data['service_ids'])
+                print(f"DEBUG: API error {response.status_code}: {response.text}")
 
             print(f"DEBUG: Scheduled worker finished: {successful} successful, {failed} failed")
             self.finished.emit(successful, failed)

@@ -242,6 +242,7 @@ class AppointmentReminder(models.Model):
     REMINDER_TYPES = [
         ('next_day', 'Next Day Reminder'),
         ('same_day', 'Same Day Reminder'),
+        ('manual', 'Manual Reminder'),  # ADD THIS
         ('service_return', 'Service Return Reminder'),
     ]
 
@@ -251,6 +252,10 @@ class AppointmentReminder(models.Model):
     scheduled_send_time = models.DateTimeField()
     sent_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # ADD THESE FIELDS:
+    sms_sent = models.BooleanField(default=False)
+    notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.reminder_type} - {self.scheduled_send_time}"

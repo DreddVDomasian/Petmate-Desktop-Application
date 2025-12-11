@@ -223,6 +223,9 @@ class PhilSMSService:
                 'error': str(e)
             }
 
+    # In sms_utils.py, add this function:
+
+
     def send_bulk_sms(self, phone_numbers, message, message_type="plain"):
         """
         Send SMS to multiple recipients
@@ -302,8 +305,44 @@ class PhilSMSService:
                 'error': str(e)
             }
 
+def has_sufficient_sms_balance(minimum_units=1):
+    """
+    Check if there are enough SMS units for sending
 
-# Helper function specifically for appointment reminders
+    Args:
+        minimum_units (int): Minimum units needed (default: 1)
+
+    Returns:
+        tuple: (has_balance, balance_info, message)
+    """
+    sms_service = PhilSMSService()
+    balance_result = sms_service.check_balance()
+
+    if not balance_result.get('success'):
+        # If can't check balance, assume insufficient (fail-safe)
+        return False, None, "Could not check SMS balance"
+
+    balance_data = balance_result.get('data', {})
+
+    # Parse the balance - PhilSMS returns string like '₱286'
+    balance_str = balance_data.get('remaining_balance', '₱0')
+
+    try:
+        # Extract numeric value from '₱286'
+        balance_amount = float(balance_str.replace('₱', '').strip())
+
+        if balance_amount >= minimum_units:
+            return True, balance_data, f"SMS balance: {balance_str}"
+        else:
+            return False, balance_data, f"Insufficient SMS balance: {balance_str}"
+
+    except (ValueError, AttributeError):
+        # If parsing fails, check other possible formats
+        if 'remaining_balance' in balance_data:
+            return True, balance_data, f"SMS balance available"
+        return False, balance_data, "Could not determine SMS balance"
+    # Helper function specifically for appointment reminders
+
 def send_appointment_reminder_sms(phone_number, patient_name, pet_name, service_type,
                                   appointment_date, appointment_time, booking_id, reminder_type='appointment'):
     """
@@ -368,3 +407,50 @@ def send_appointment_reminder_sms(phone_number, patient_name, pet_name, service_
         )
 
     return sms_service.send_sms(phone_number, message)
+
+def send_service_return_reminder_sms(phone_number, patient_name, pet_name, service_type,
+                                     return_date, service_id):
+        """
+        Send service return reminder SMS
+
+        Args:
+            phone_number (str): Patient's phone number
+            patient_name (str): Patient's name
+            pet_name (str): Pet's name
+            service_type (str): Type of service
+            return_date (str): Return date
+            service_id (str/init): Service ID
+
+        Returns:
+            dict: SMS sending result
+        """
+        sms_service = PhilSMSService()
+
+        # Format date
+        from datetime import datetime
+        try:
+            if isinstance(return_date, str):
+                date_obj = datetime.strptime(return_date, '%Y-%m-%d')
+                formatted_date = date_obj.strftime('%B %d, %Y')
+            else:
+                formatted_date = return_date.strftime('%B %d, %Y')
+        except:
+            formatted_date = str(return_date)
+
+        # Create message for service return
+        message = (
+            f"PetMate Animal Clinic: Hi {patient_name}, "
+            f"{pet_name}'s {service_type} return visit "
+            f"is scheduled for {formatted_date}. "
+            f"Please visit us for follow-up care."
+        )
+
+        # Ensure message length is reasonable
+        if len(message) > 160:
+            message = (
+                f"PetMate Reminder: {patient_name}, "
+                f"{pet_name}'s {service_type} return "
+                f"on {formatted_date}. Service ID: {service_id}"
+            )
+
+        return sms_service.send_sms(phone_number, message)
