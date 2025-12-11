@@ -11,7 +11,7 @@ pillow==12.0.0
 asgiref==3.10.0
 sqlparse==0.5.3
 dj-database-url==3.0.1
-
+python-dotenv
 
 # WeasyPrint dependencies
 cairocffi==1.7.1
