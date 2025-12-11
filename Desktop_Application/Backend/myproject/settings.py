@@ -88,7 +88,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'petmateanimalclinic@gmail.com'   # <-- your Gmail address 
-EMAIL_HOST_PASSWORD = 'seqwqhnoohgsgkpi'   # <-- 16-character app password NO SPACE Dapat   #petmate
+EMAIL_HOST_PASSWORD = 'ivxkcgaikytqygwo'   # <-- 16-character app password NO SPACE Dapat   #petmate
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
