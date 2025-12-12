@@ -192,7 +192,7 @@ class AddAppointmentCard(QWidget):
     def load_patients_to_combobox(self):
         """Load ALL patients for the combobox without pagination"""
         try:
-            response = requests.get("http://127.0.0.1:8000/api/patient-combobox-data/")
+            response = requests.get(f"{API_BASE_URL}/api/patient-combobox-data/")
             if response.status_code == 200:
                 patients = response.json()  # This will be the direct list, no pagination
                 self.selectPatientPopUp.clear()
@@ -288,7 +288,7 @@ class AddAppointmentCard(QWidget):
     def get_time_slot_details(self, date, time):
         """Get detailed information about time slot availability"""
         try:
-            url = "http://127.0.0.1:8000/api/check-time-slot/"
+            url = f"{API_BASE_URL}/api/check-time-slot/"
             params = {
                 'date': date,
                 'time': time
@@ -417,7 +417,7 @@ class AddAppointmentCard(QWidget):
         """Check if the selected time slot has available appointments (max 4 ACCEPTED per slot)"""
         try:
             # Use API call instead of direct import
-            url = "http://127.0.0.1:8000/api/check-time-slot/"
+            url = f"{API_BASE_URL}/api/check-time-slot/"
             params = {
                 'date': date,
                 'time': time

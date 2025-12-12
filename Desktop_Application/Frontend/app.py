@@ -2960,7 +2960,7 @@ class MainUI(QMainWindow):
 
     def appointments_today(self):
         try:
-            res = requests.get("http://127.0.0.1:8000/api/todaysAppointments/", timeout=5)
+            res = requests.get(f"{API_BASE_URL}/api/todaysAppointments/", timeout=5)
             data = res.json()
         except Exception as e:
             print("❌ API ERROR:", e)
