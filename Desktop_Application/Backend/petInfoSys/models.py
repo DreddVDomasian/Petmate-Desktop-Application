@@ -166,6 +166,7 @@ class Service(models.Model):
     return_date = models.DateField(null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
+    prescription = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, default='pending')
 
     def __str__(self):

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Icons">
+    <file>Icons/medical-prescription.png</file>
     <file>Icons/webContentIcon.png</file>
     <file>Icons/eye.png</file>
     <file>Icons/hide.png</file>

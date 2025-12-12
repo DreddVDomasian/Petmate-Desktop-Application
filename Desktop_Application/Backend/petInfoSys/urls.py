@@ -30,6 +30,7 @@ urlpatterns = [
     path('walkIn/<int:pk>/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
 
     path("print/<int:owner_id>/<int:pet_id>/", views.print_record, name="print_record"),
+    path("print-prescription/<int:owner_id>/<int:pet_id>/<int:service_id>/", views.print_prescription,name="print_prescription"),
     path("reminders/", views.reminders, name="reminders"),
 
 

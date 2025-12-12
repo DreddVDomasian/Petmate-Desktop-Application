@@ -75,7 +75,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'owner', 'pet', 'service_type', 'service_type_id',
             'service_type_name', 'date', 'return_date', 'date_added',
-            'notes', 'status', 'owner_full_name', 'pet_name'
+            'notes', 'prescription', 'status', 'owner_full_name', 'pet_name'
         ]
 
     def get_owner_full_name(self, obj):

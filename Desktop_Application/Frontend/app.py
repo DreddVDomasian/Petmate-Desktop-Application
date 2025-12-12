@@ -355,8 +355,6 @@ class MainUI(QMainWindow):
         self.settingsProfileSaveBtn.hide()
         self.settingsProfileCancelBtn.hide()
 
-        #reminder pop up
-        self.make_icon_pulse(self.reminderBtn)
 
         #nav
         self.miniNavBtn.clicked.connect(self.slide_in_sideNav)
@@ -533,6 +531,7 @@ class MainUI(QMainWindow):
         self.serviceTypeComboBox.setGraphicsEffect(create_card_shadow())
         self.returnDatePlaceholder.setGraphicsEffect(create_card_shadow())
         self.addNoteLineEdit.setGraphicsEffect(create_card_shadow())
+        self.prescriptionTextedit.setGraphicsEffect(create_card_shadow())
         for dates in self.frame_61.findChildren(QDateEdit):
             dates.setGraphicsEffect(create_card_shadow())
 
@@ -575,6 +574,8 @@ class MainUI(QMainWindow):
         self.label_15.setGraphicsEffect(create_card_shadow(3,2,2,))
 
         self.clearSpeciesBtn.setGraphicsEffect(create_card_shadow())
+
+        self.reminderBtn.setGraphicsEffect(create_card_shadow())
 
         #settings shadow
         self.changePassFrame.setGraphicsEffect(create_card_shadow())
@@ -1400,6 +1401,7 @@ class MainUI(QMainWindow):
             return_date = self.format_date(service.get("return_date"))
             service_status = str(service.get("status", "N/A"))
             notes = str(service.get("notes"))
+            prescription = str(service.get("prescription"))
             # Fill data
             service_card.findChild(QLabel, "serviceLabel").setText(service_type)
             service_card.findChild(QLabel, "doneOnLabel").setText(done_on)
@@ -1417,6 +1419,9 @@ class MainUI(QMainWindow):
             note_label = service_card.findChild(QTextEdit, "noteLabel")
             note_label.setPlainText(f"{notes}" if notes else "No Notes")
 
+            prescription_label = service_card.findChild(QTextEdit, "prescriptionLabel")
+            prescription_label.setPlainText(f"{prescription}" if prescription else "No Notes")
+
             upper_frame = service_card.findChild(QWidget, "upperFrame")
             lower_frame = service_card.findChild(QWidget, "lowerFrame")
             lower_frame.setVisible(False)
@@ -1428,6 +1433,8 @@ class MainUI(QMainWindow):
             service_card.serviceDeleteBtn.clicked.connect(lambda _, service_id=service['id']: self.deleteFunction.set_delete_target("service", service_id))
             service_card.updateServiceCardBtn.clicked.connect(lambda _, service_id=service["id"]: self.updateFunction.update_service_info(service_id))
             service_card.wholeFrameCard.setGraphicsEffect(create_card_shadow())
+
+            service_card.printPrescription.clicked.connect(lambda _, service_id=service['id']: self.print_prescription(service_id))
             # Connect buttons safely
             if open_btn and close_btn and lower_frame:
                 open_btn.setVisible(True)
@@ -1437,29 +1444,7 @@ class MainUI(QMainWindow):
                 close_btn.clicked.connect(partial(self.toggle_note, lower_frame, open_btn, close_btn, False,upper_frame))
 
             self.serviceListLayout.insertWidget(0, service_card)
-    def make_icon_pulse(self, button):
-        # Lock button size so layout won’t move
-        button.setFixedSize(button.size())
 
-        rect = button.iconSize()
-
-        grow = QPropertyAnimation(button, b"iconSize")
-        grow.setDuration(500)
-        grow.setStartValue(rect)
-        grow.setEndValue(rect + QSize(4, 4))
-        grow.setEasingCurve(QEasingCurve.Type.OutCubic)
-
-        shrink = QPropertyAnimation(button, b"iconSize")
-        shrink.setDuration(500)
-        shrink.setStartValue(rect + QSize(4, 4))
-        shrink.setEndValue(rect)
-        shrink.setEasingCurve(QEasingCurve.Type.InCubic)
-
-        self.pulse_anim = QSequentialAnimationGroup(self)
-        self.pulse_anim.addAnimation(grow)
-        self.pulse_anim.addAnimation(shrink)
-        self.pulse_anim.setLoopCount(-1)
-        self.pulse_anim.start()
     def toggle_note(self, frame, open_btn, close_btn, show, upper_frame=None):
         frame.setVisible(show)
         open_btn.setVisible(not show)
@@ -1474,6 +1459,12 @@ class MainUI(QMainWindow):
     def handlePrintButton(self):
         if self.selected_patient_id and self.selected_pet_id:
             print_url = f"{API_BASE_URL}/api/print/{self.selected_patient_id}/{self.selected_pet_id}/"
+            webbrowser.open(print_url)
+        else:
+            QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
+    def print_prescription(self, service_id):
+        if self.selected_patient_id and self.selected_pet_id:
+            print_url = f"{API_BASE_URL}/api/print-prescription/{self.selected_patient_id}/{self.selected_pet_id}/{service_id}/"
             webbrowser.open(print_url)
         else:
             QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
@@ -1584,6 +1575,7 @@ class MainUI(QMainWindow):
             return_date = None
 
         notes = self.addNoteLineEdit.toPlainText().strip()
+        prescription = self.prescriptionTextedit.toPlainText().strip()
 
         required_fields = {
             "service_type": self.serviceTypeComboBox
@@ -1610,7 +1602,8 @@ class MainUI(QMainWindow):
             "service_type_id": service_type_id,  # CHANGED: Send ID
             "date": date,
             "return_date": return_date,
-            "notes": notes
+            "notes": notes,
+            "prescription": prescription
         }
 
         if add_new_service(service_data):

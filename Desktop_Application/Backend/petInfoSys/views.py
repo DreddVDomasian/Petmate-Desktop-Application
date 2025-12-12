@@ -383,6 +383,40 @@ def print_record(request, owner_id, pet_id):
     return response
 
 
+def print_prescription(request, owner_id, pet_id, service_id):
+    owner = get_object_or_404(basicInfo, id=owner_id)
+    pet = get_object_or_404(Pet, id=pet_id, owner=owner)
+
+    # Get the specific service
+    service = get_object_or_404(Service, id=service_id, pet=pet, owner=owner)
+
+    # Still pass services as a list if needed elsewhere in template
+    services = Service.objects.filter(pet=pet).order_by("-date_added")
+
+    # Render the HTML template into a string
+    html_string = render_to_string("prescription_template.html", {
+        "owner": owner,
+        "pet": pet,
+        "service": service,  # Single service object
+        "services": services  # All services (if still needed)
+    })
+
+    # Generate PDF
+    pdf = HTML(
+        string=html_string,
+        base_url=request.build_absolute_uri()
+    ).write_pdf(
+        stylesheets=[CSS(os.path.join(settings.STATIC_ROOT, 'prescription_style.css'))]
+    )
+
+    # Sanitize owner name for filename
+    owner_name_safe = re.sub(r'[^a-zA-Z0-9_-]', '_', owner.firstName + "_" + owner.lastName).upper()
+
+    # Return as HTTP response to open in browser
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = f"inline; filename={owner_name_safe}_Prescription.pdf"
+    return response
+
 
 @api_view(['GET'])
 def reminders(request):
@@ -944,7 +978,7 @@ class ServiceListCreateView(generics.ListCreateAPIView):
                     svc.status = "completed"
                     svc.save(update_fields=["status"])
 
-        return services.order_by("-date")
+        return services.order_by("date_added")
 
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
@@ -1018,11 +1052,50 @@ class ScheduledServiceListView(generics.ListAPIView):
         return queryset
 
 
+def update_overdue_appointments():
+    """Update all overdue appointments (call this from get_queryset and scheduler)"""
+
+    ph_tz = pytz.timezone('Asia/Manila')
+    now_ph = timezone.now().astimezone(ph_tz)
+    today = now_ph.date()
+
+    appointments_to_check = WalkInAppointment.objects.filter(
+        status__in=['pending', 'confirmed']
+    )
+
+    updated_count = 0
+    for appointment in appointments_to_check:
+        try:
+            # Create appointment datetime
+            appointment_datetime_naive = datetime.combine(
+                appointment.date,
+                appointment.prefTime
+            )
+            appointment_datetime_ph = ph_tz.localize(appointment_datetime_naive)
+
+            # Check if overdue
+            if appointment.date < today or (appointment.date == today and appointment_datetime_ph < now_ph):
+                appointment.status = 'overdue'
+                appointment.save(update_fields=['status'])
+                updated_count += 1
+        except Exception as e:
+            print(f"Error updating appointment {appointment.id}: {str(e)}")
+            continue
+
+    return updated_count
+
+
 class WalkInListCreateView(generics.ListCreateAPIView):
     serializer_class = WalkInSerializer
     pagination_class = StandardPagination
 
     def get_queryset(self):
+        # First, update all overdue appointments
+        updated = update_overdue_appointments()
+        if updated > 0:
+            print(f"Updated {updated} appointments to overdue")
+
+        # Now proceed with normal queryset filtering
         today = date.today()
         user = self.request.user
 
@@ -1068,17 +1141,11 @@ class WalkInListCreateView(generics.ListCreateAPIView):
                             Q(owner__lastName__icontains=term) |
                             Q(owner__middleName__icontains=term) |
                             Q(pet__petName__icontains=term) |
-                            Q(service_type__name__icontains=term)  # CHANGED: Use service_type__name
+                            Q(service_type__name__icontains=term)
                     )
                     query &= term_query
                 queryset = queryset.filter(query)
 
-        # Auto-update overdue
-        for appt in queryset:
-            if appt.status not in ["completed", "cancelled", "overdue"]:
-                if appt.date < today:
-                    appt.status = "overdue"
-                    appt.save(update_fields=["status"])
 
         return queryset
 

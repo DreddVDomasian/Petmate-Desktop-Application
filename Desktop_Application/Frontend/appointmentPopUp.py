@@ -714,7 +714,7 @@ class AddAppointmentCard(QWidget):
         # Use your existing confirmCard
         self.main_window.confirmCard.confirmationMessage.setText(
             f"Send reminders to {count} selected appointment(s)?\n\n"
-            f"This will email all selected patients."
+            f"This will remind selected patients."
         )
         self.main_window.confirmCard.show_card()
 
@@ -1758,7 +1758,7 @@ class ScheduledServiceCardManager:
         # Use confirmCard
         self.main_window.confirmCard.confirmationMessage.setText(
             f"Send reminders for {count} selected scheduled service(s)?\n\n"
-            f"This will email all selected patients about their return dates."
+            f"This will remind selected patients about their return dates."
         )
         self.main_window.confirmCard.show_card()
 

@@ -571,6 +571,9 @@ QToolButton:checked{
              </item>
              <item>
               <widget class="QToolButton" name="webContentBtn">
+               <property name="toolTip">
+                <string>WEB CONTENT</string>
+               </property>
                <property name="text">
                 <string>    WEB CONTENT</string>
                </property>
@@ -648,6 +651,9 @@ QToolButton:checked{
                </property>
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
+               </property>
+               <property name="toolTip">
+                <string>LOGOUT</string>
                </property>
                <property name="styleSheet">
                 <string notr="true">QToolButton{
@@ -1200,6 +1206,9 @@ QToolButton:checked{
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>WEB CONTENT</string>
+               </property>
                <property name="text">
                 <string>...</string>
                </property>
@@ -1238,6 +1247,9 @@ QToolButton:checked{
            <widget class="QToolButton" name="toolButton_4">
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>LOGOUT</string>
             </property>
             <property name="styleSheet">
              <string notr="true">QToolButton{
@@ -1321,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>4</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -3648,7 +3660,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>860</width>
+                           <width>100</width>
                            <height>440</height>
                           </rect>
                          </property>
@@ -4250,8 +4262,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>860</width>
-                           <height>362</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -5274,7 +5286,7 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>858</width>
+                          <width>100</width>
                           <height>450</height>
                          </rect>
                         </property>
@@ -5564,6 +5576,9 @@ color:rgb(52, 52, 52);</string>
                             <property name="cursor">
                              <cursorShape>PointingHandCursor</cursorShape>
                             </property>
+                            <property name="toolTip">
+                             <string>UPDATE CLIENT INFO</string>
+                            </property>
                             <property name="styleSheet">
                              <string notr="true">background-color:transparent;
 border:none;</string>
@@ -5587,6 +5602,9 @@ border:none;</string>
                            <widget class="QToolButton" name="profileDeleteBtn">
                             <property name="cursor">
                              <cursorShape>PointingHandCursor</cursorShape>
+                            </property>
+                            <property name="toolTip">
+                             <string>DELETE CLIENT</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">background-color:transparent;
@@ -5785,6 +5803,12 @@ border:none;</string>
                          </property>
                          <item>
                           <widget class="QToolButton" name="plusSignBtn">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="cursor">
                             <cursorShape>PointingHandCursor</cursorShape>
                            </property>
@@ -5810,13 +5834,16 @@ border:none;</string>
                          <item>
                           <widget class="QToolButton" name="addpetQtoolBtn">
                            <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                              <horstretch>0</horstretch>
                              <verstretch>0</verstretch>
                             </sizepolicy>
                            </property>
                            <property name="cursor">
                             <cursorShape>PointingHandCursor</cursorShape>
+                           </property>
+                           <property name="toolTip">
+                            <string>ADD PET</string>
                            </property>
                            <property name="styleSheet">
                             <string notr="true">background-color:transparent;
@@ -6846,13 +6873,19 @@ border:none;</string>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_42">
                        <property name="spacing">
-                        <number>40</number>
+                        <number>35</number>
                        </property>
                        <property name="leftMargin">
                         <number>30</number>
                        </property>
                        <item alignment="Qt::AlignLeft">
                         <widget class="QFrame" name="frame_19">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>
@@ -6867,10 +6900,10 @@ border:none;</string>
                            <number>0</number>
                           </property>
                           <property name="rightMargin">
-                           <number>0</number>
+                           <number>5</number>
                           </property>
                           <property name="bottomMargin">
-                           <number>50</number>
+                           <number>5</number>
                           </property>
                           <item alignment="Qt::AlignTop">
                            <widget class="QFrame" name="frame_17">
@@ -6899,44 +6932,6 @@ border:none;</string>
                              <property name="bottomMargin">
                               <number>0</number>
                              </property>
-                             <item alignment="Qt::AlignLeft">
-                              <widget class="QPushButton" name="reminderBtn">
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="minimumSize">
-                                <size>
-                                 <width>40</width>
-                                 <height>40</height>
-                                </size>
-                               </property>
-                               <property name="maximumSize">
-                                <size>
-                                 <width>40</width>
-                                 <height>40</height>
-                                </size>
-                               </property>
-                               <property name="styleSheet">
-                                <string notr="true"/>
-                               </property>
-                               <property name="text">
-                                <string/>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="../resource.qrc">
-                                 <normaloff>:/Icons/Icons/checklist.png</normaloff>:/Icons/Icons/checklist.png</iconset>
-                               </property>
-                               <property name="iconSize">
-                                <size>
-                                 <width>30</width>
-                                 <height>30</height>
-                                </size>
-                               </property>
-                              </widget>
-                             </item>
                             </layout>
                            </widget>
                           </item>
@@ -6990,6 +6985,58 @@ border:none;</string>
                               </widget>
                              </item>
                             </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="reminderBtn">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>130</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>CHECK REMINDERS</string>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QPushButton{
+	
+	font: 87 11pt &quot;Montserrat Black&quot;;
+	color:rgb(52, 52, 52);
+	background-color:rgb(129, 191, 218);
+	border-radius: 5px;
+}
+
+QPushButton:hover{
+	background-color:rgb(110, 163, 186);
+
+}</string>
+                            </property>
+                            <property name="text">
+                             <string>Reminders</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="../resource.qrc">
+                              <normaloff>:/Icons/Icons/checklist.png</normaloff>:/Icons/Icons/checklist.png</iconset>
+                            </property>
+                            <property name="iconSize">
+                             <size>
+                              <width>20</width>
+                              <height>20</height>
+                             </size>
+                            </property>
                            </widget>
                           </item>
                          </layout>
@@ -7414,6 +7461,9 @@ color:#78B3CE;</string>
                                    </property>
                                    <item>
                                     <widget class="QToolButton" name="petProfileEditBtn">
+                                     <property name="toolTip">
+                                      <string>UPDATE PET INFO</string>
+                                     </property>
                                      <property name="styleSheet">
                                       <string notr="true">
 
@@ -7791,6 +7841,9 @@ color:#78B3CE;</string>
                                    </property>
                                    <item>
                                     <widget class="QToolButton" name="petProfileDeleteBtn">
+                                     <property name="toolTip">
+                                      <string>DELETE PET PROFILE</string>
+                                     </property>
                                      <property name="styleSheet">
                                       <string notr="true">
 #petProfileDeleteBtn{
@@ -8061,7 +8114,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8303,6 +8356,9 @@ QFrame{
                             <verstretch>0</verstretch>
                            </sizepolicy>
                           </property>
+                          <property name="toolTip">
+                           <string>PRINT SERVICE HISTORY</string>
+                          </property>
                           <property name="styleSheet">
                            <string notr="true">border:none;
 background:none;</string>
@@ -8370,8 +8426,8 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>90</width>
-                          <height>33</height>
+                          <width>858</width>
+                          <height>252</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -8593,7 +8649,7 @@ QComboBox QLineEdit {
                             <number>0</number>
                            </property>
                            <property name="bottomMargin">
-                            <number>5</number>
+                            <number>0</number>
                            </property>
                            <item>
                             <widget class="QFrame" name="frame_63">
@@ -8617,9 +8673,6 @@ background-color: transparent;
                              <layout class="QVBoxLayout" name="verticalLayout_54">
                               <property name="leftMargin">
                                <number>0</number>
-                              </property>
-                              <property name="bottomMargin">
-                               <number>9</number>
                               </property>
                               <item alignment="Qt::AlignTop">
                                <widget class="QLabel" name="label_137">
@@ -8872,7 +8925,7 @@ background-color: transparent;
                               <enum>QFrame::Raised</enum>
                              </property>
                              <layout class="QVBoxLayout" name="verticalLayout_57">
-                              <item>
+                              <item alignment="Qt::AlignTop">
                                <widget class="QLabel" name="addNoteLabel">
                                 <property name="styleSheet">
                                  <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
@@ -8893,6 +8946,72 @@ color:rgb(39, 39, 39);</string>
 	font-size:12pt;
 	color:rgb(39, 39, 39);
 	padding-left: 10px;
+	padding-top: 10px;
+	background-color:rgb(245, 245, 245);
+}
+QTextEdit:focus{
+    border: 1px solid rgb(235, 235, 235);
+	background-color:rgb(227, 227, 227);
+}
+
+#addNoteLineEdit QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+#addNoteLineEdit QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+#addNoteLineEdit QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+#addNoteLineEdit QScrollBar::add-line:vertical,
+#addNoteLineEdit QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#addNoteLineEdit QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+</string>
+                                </property>
+                                <property name="lineWrapMode">
+                                 <enum>QTextEdit::WidgetWidth</enum>
+                                </property>
+                               </widget>
+                              </item>
+                              <item alignment="Qt::AlignTop">
+                               <widget class="QLabel" name="prescriptionLabel">
+                                <property name="styleSheet">
+                                 <string notr="true">font: 63 12pt &quot;Montserrat SemiBold&quot;;
+color:rgb(39, 39, 39);</string>
+                                </property>
+                                <property name="text">
+                                 <string>Prescription(Optional)</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QTextEdit" name="prescriptionTextedit">
+                                <property name="styleSheet">
+                                 <string notr="true">QTextEdit{
+    border-radius: 10px;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
+	font-size:12pt;
+	color:rgb(39, 39, 39);
+	padding-left: 10px;
+	padding-top: 10px;
 	background-color:rgb(245, 245, 245);
 }
 QTextEdit:focus{
@@ -8900,9 +9019,6 @@ QTextEdit:focus{
 	background-color:rgb(227, 227, 227);
 }
 </string>
-                                </property>
-                                <property name="lineWrapMode">
-                                 <enum>QTextEdit::WidgetWidth</enum>
                                 </property>
                                </widget>
                               </item>
@@ -10331,6 +10447,9 @@ QPushButton:hover{
                       <property name="focusPolicy">
                        <enum>Qt::NoFocus</enum>
                       </property>
+                      <property name="toolTip">
+                       <string>ACCEPT APPOINTMENT</string>
+                      </property>
                       <property name="text">
                        <string>Accept</string>
                       </property>
@@ -10346,6 +10465,9 @@ QPushButton:hover{
                       </property>
                       <property name="focusPolicy">
                        <enum>Qt::NoFocus</enum>
+                      </property>
+                      <property name="toolTip">
+                       <string>DECLINE APPOINTMENT</string>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">QPushButton{
@@ -10573,6 +10695,9 @@ QPushButton:checked {
                       <property name="focusPolicy">
                        <enum>Qt::NoFocus</enum>
                       </property>
+                      <property name="toolTip">
+                       <string>PROFILE TAB</string>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true"/>
                       </property>
@@ -10592,6 +10717,9 @@ QPushButton:checked {
                       <property name="focusPolicy">
                        <enum>Qt::NoFocus</enum>
                       </property>
+                      <property name="toolTip">
+                       <string>SECURITY TAB</string>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true"/>
                       </property>
@@ -10610,6 +10738,9 @@ QPushButton:checked {
                       </property>
                       <property name="focusPolicy">
                        <enum>Qt::NoFocus</enum>
+                      </property>
+                      <property name="toolTip">
+                       <string>USER MANAGEMENT TAB</string>
                       </property>
                       <property name="styleSheet">
                        <string notr="true"/>
@@ -10631,7 +10762,7 @@ QPushButton:checked {
                     </sizepolicy>
                    </property>
                    <property name="currentIndex">
-                    <number>2</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="profileTab">
                     <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -11826,6 +11957,9 @@ border-radius: 10px;
                         </item>
                         <item>
                          <widget class="QPushButton" name="addAccountBtn">
+                          <property name="toolTip">
+                           <string>ADD ACCOUNT</string>
+                          </property>
                           <property name="styleSheet">
                            <string notr="true">QPushButton{
 	font: 63 14pt &quot;Montserrat SemiBold&quot;;
@@ -11893,8 +12027,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>72</width>
-                          <height>18</height>
+                          <width>840</width>
+                          <height>423</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
