@@ -716,6 +716,8 @@ class AddAppointmentCard(QWidget):
             f"Send reminders to {count} selected appointment(s)?\n\n"
             f"This will remind selected patients."
         )
+        self.main_window.confirmCard.yesButton.setStyleSheet(reset_yes_style)
+        self.main_window.confirmCard.noButton.setStyleSheet(reset_no_style)
         self.main_window.confirmCard.show_card()
 
         def clicked_yes():
@@ -734,10 +736,13 @@ class AddAppointmentCard(QWidget):
 
             # Hide confirm card
             self.main_window.confirmCard.hide()
+            self.main_window.confirmCard.yesButton.setStyleSheet(original_yes_style)
+            self.main_window.confirmCard.noButton.setStyleSheet(original_no_style)
 
         def clicked_no():
             self.main_window.confirmCard.hide()
-
+            self.main_window.confirmCard.yesButton.setStyleSheet(original_yes_style)
+            self.main_window.confirmCard.noButton.setStyleSheet(original_no_style)
         # Disconnect previous connections
         try:
             self.main_window.confirmCard.yesButton.clicked.disconnect()
@@ -1760,6 +1765,8 @@ class ScheduledServiceCardManager:
             f"Send reminders for {count} selected scheduled service(s)?\n\n"
             f"This will remind selected patients about their return dates."
         )
+        self.main_window.confirmCard.yesButton.setStyleSheet(reset_yes_style)
+        self.main_window.confirmCard.noButton.setStyleSheet(reset_no_style)
         self.main_window.confirmCard.show_card()
 
         def clicked_yes():
@@ -1776,9 +1783,13 @@ class ScheduledServiceCardManager:
             # Send reminders
             self.send_scheduled_reminders_simple(data)
             self.main_window.confirmCard.hide()
+            self.main_window.confirmCard.yesButton.setStyleSheet(original_yes_style)
+            self.main_window.confirmCard.noButton.setStyleSheet(original_no_style)
 
         def clicked_no():
             self.main_window.confirmCard.hide()
+            self.main_window.confirmCard.yesButton.setStyleSheet(original_yes_style)
+            self.main_window.confirmCard.noButton.setStyleSheet(original_no_style)
 
         # Disconnect previous connections
         try:
