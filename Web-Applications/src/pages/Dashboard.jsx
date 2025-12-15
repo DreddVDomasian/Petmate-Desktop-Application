@@ -1,44 +1,11 @@
-// import React from 'react';
-// import { Routes, Route } from 'react-router-dom';
-
-
-// // Import styles
-// import '../styles/Dashboard.css';
-
-// // Import all components
-// import SideNav from '../components/navigation/SideNav';
-// import AddPets from '../components/forms/AddPets';
-// import ViewPets from '../components/view/ViewPets';
-// import SetAppointment from '../components/forms/SetAppointment';
-// import ViewAppointments from '../components/view/ViewAppointments';
-// import Settings from '../components/common/Settings';
-
-// function Dashboard() {
-//     return (
-//         <div className="dashboard"> 
-//             <SideNav />
-//             <main className="rightside">
-//                 <Routes>
-//                     <Route path="addpets" element={<AddPets />} />
-//                     <Route path="viewpets" element={<ViewPets />} />
-//                     <Route path="setappointment" element={<SetAppointment />} />
-//                     <Route path="viewappointments" element={<ViewAppointments />} />
-//                     <Route path="settings" element={<Settings />} />
-//                     {/* Add more routes as needed */}
-//                 </Routes>
-//             </main>
-//         </div>
-//     );
-// }
-
-// export default Dashboard;
-
 import React, { useState, useEffect } from 'react'
 import ProfileContent from '../components/view/ProfileContent'
 import AddPetModal from '../components/forms/AddPetModal'
 import BookAppointmentModal from '../components/forms/BookAppointmentModal'
-import PetDetailsModal from '../components/modals/PetDetailsModal' // Add this import
+import PetDetailsModal from '../components/modals/PetDetailsModal' 
 import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal'
+import AppointmentDetailsModalEdit from '../components/modals/AppointmentDetailsModalEdit' // Imported na
+
 import '../styles/Dashboard.css';
 
 function Dashboard(props) {
@@ -50,6 +17,10 @@ function Dashboard(props) {
 
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+
+  // new state for edit appointment modal
+  const [showEditAppointmentModal, setShowEditAppointmentModal] = useState(false);
+  
   // new state for lists & loading
   const [pets, setPets] = useState([]);
   const [appointments, setAppointments] = useState([]);
@@ -68,6 +39,21 @@ function Dashboard(props) {
     setSelectedAppointment(null);
     setShowAppointmentModal(false);
   };
+
+  // --- ADDED: Logic para lumipat from View to Edit ---
+  const handleSwitchToEdit = (appointment) => {
+    setShowAppointmentModal(false); // Close View Modal
+    setSelectedAppointment(appointment); // Ensure data is set
+    setShowEditAppointmentModal(true);   // Open Edit Modal
+  };
+
+  // --- ADDED: Logic pag successful ang edit ---
+  const handleEditSuccess = () => {
+    setShowEditAppointmentModal(false); // Close Edit Modal
+    fetchAppointments(); // Refresh appointment list
+    triggerRefresh();    // Trigger global refresh
+  };
+
   const fetchPets = async () => {
     setLoading(true);
     try {
@@ -146,8 +132,8 @@ function Dashboard(props) {
         onRefresh={triggerRefresh}
         onViewPetDetails={handleViewPetDetails}
         onViewAppointmentDetails={handleViewAppointmentDetails}
-        activeTab={activeTab}           // Pass activeTab
-        setActiveTab={setActiveTab}     // Pass setActiveTab
+        activeTab={activeTab}           
+        setActiveTab={setActiveTab}     
       />
 
       {/* Modals */}
@@ -159,11 +145,25 @@ function Dashboard(props) {
           triggerRefresh();
         }}
       />
+      
+      {/* --- MODIFIED: View Modal now has onEdit prop --- */}
       <AppointmentDetailsModal
         isOpen={showAppointmentModal}
         onClose={handleCloseAppointmentModal}
         appointment={selectedAppointment}
+        onEdit={handleSwitchToEdit} 
       />
+
+      {/* --- ADDED: Edit Modal Component --- */}
+      {showEditAppointmentModal && (
+        <AppointmentDetailsModalEdit 
+          isOpen={showEditAppointmentModal}
+          onClose={() => setShowEditAppointmentModal(false)}
+          appointment={selectedAppointment}
+          onSuccess={handleEditSuccess}
+        />
+      )}
+
       <BookAppointmentModal
         isOpen={activeModal === 'bookAppointment'}
         onClose={closeModal}
