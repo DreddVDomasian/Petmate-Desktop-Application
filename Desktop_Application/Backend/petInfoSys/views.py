@@ -1782,9 +1782,7 @@ class ManualReminderView(APIView):
         except DesktopUser.DoesNotExist:
             return Response({'error': 'Admin access required'}, status=403)
 
-        appointment_id = request.data.get('appointment_id')
         appointment_ids = request.data.get('appointment_ids', [])  # NEW: for batch
-        service_id = request.data.get('service_id')
         service_ids = request.data.get('service_ids', [])  # NEW: for batch
 
         # Step 1: Check SMS balance first
@@ -1793,27 +1791,19 @@ class ManualReminderView(APIView):
         # Determine how many SMS we need to send
         total_recipients = 0
 
-        if appointment_id:
-            total_recipients = 1
-        elif appointment_ids:
+        if appointment_ids:
             total_recipients = len(appointment_ids)
-        elif service_id:
-            total_recipients = 1
         elif service_ids:
             total_recipients = len(service_ids)
 
         if total_recipients == 0:
             return Response({'error': 'No appointments or services specified'}, status=400)
-
         has_balance, balance_info, balance_msg = has_sufficient_sms_balance(total_recipients)
-
         results = {
             'successful': [],
             'failed': [],
             'total': total_recipients
         }
-
-        # =========== BATCH APPOINTMENT HANDLING ===========
         if appointment_ids:
             for appt_id in appointment_ids:
                 try:
@@ -1917,158 +1907,125 @@ class ManualReminderView(APIView):
             }, status=200 if successful_count > 0 else 400)
 
             # =========== SINGLE APPOINTMENT HANDLING (original code) ===========
-        elif appointment_id:
-            try:
-                appointment = WalkInAppointment.objects.select_related('owner', 'pet', 'service_type').get(
-                    id=appointment_id)
 
-                if appointment.status in ['cancelled', 'completed']:
-                    return Response({
-                        'error': 'Cannot send reminder for cancelled/completed appointment'
-                    }, status=400)
+        elif service_ids:
+            for svc_id in service_ids:
+                try:
+                    service = Service.objects.select_related('owner', 'pet', 'service_type').get(id=svc_id)
 
-                email_success = send_appointment_reminder_email(
-                    patient_email=appointment.owner.email,
-                    patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
-                    pet_name=appointment.pet.petName,
-                    service_type=appointment.service_type.name if appointment.service_type else "Unknown",
-                    appointment_date=appointment.date.strftime("%B %d, %Y"),
-                    appointment_time=appointment.prefTime.strftime("%I:%M %p"),
-                    booking_id=appointment.booking_id,
-                    reminder_type='manual'
-                )
+                    if not service.return_date:
+                        results['failed'].append({
+                            'id': svc_id,
+                            'reason': 'Service has no return date'
+                        })
+                        continue
 
-                sms_success = False
-                sms_message = None
+                    if service.status in ['completed', 'cancelled']:
+                        results['failed'].append({
+                            'id': svc_id,
+                            'reason': f'Service is {service.status}'
+                        })
+                        continue
 
-                if has_balance and appointment.owner.phoneNumber:
-                    sms_result = send_appointment_reminder_sms(
-                        phone_number=appointment.owner.phoneNumber,
-                        patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
-                        pet_name=appointment.pet.petName,
-                        service_type=appointment.service_type.name if appointment.service_type else "Unknown",
-                        appointment_date=appointment.date.strftime("%B %d, %Y"),
-                        appointment_time=appointment.prefTime.strftime("%I:%M %p"),
-                        booking_id=appointment.booking_id,
-                        reminder_type='manual'
-                    )
-                    sms_success = sms_result.get('success', False)
-                    sms_message = sms_result.get('message', 'SMS sent')
-                else:
-                    if not has_balance:
-                        sms_message = 'SMS skipped: Insufficient balance'
-                    elif not appointment.owner.phoneNumber:
-                        sms_message = 'SMS skipped: No phone number'
-
-                if email_success:
-                    AppointmentReminder.objects.create(
-                        appointment=appointment,
-                        reminder_type='manual',
-                        scheduled_send_time=timezone.now(),
-                        sent_at=timezone.now(),
-                        sms_sent=sms_success,
-                        notes=f"Email: {email_success}, SMS: {sms_success} ({sms_message})"
-                    )
-
-                    response_data = {
-                        'success': True,
-                        'message': 'Reminder sent successfully',
-                        'email_sent': email_success,
-                        'sms_sent': sms_success,
-                        'sms_message': sms_message,
-                        'balance_check': {
-                            'has_sufficient_balance': has_balance,
-                            'message': balance_msg,
-                            'balance_info': balance_info
-                        }
-                    }
-
-                    if not has_balance:
-                        response_data['warning'] = 'SMS skipped due to insufficient balance'
-
-                    return Response(response_data, status=200)
-                else:
-                    return Response({'error': 'Failed to send email reminder'}, status=500)
-
-            except WalkInAppointment.DoesNotExist:
-                return Response({'error': 'Appointment not found'}, status=404)
-
-        # =========== SERVICE RETURN HANDLING (keep existing code) ===========
-        elif service_id:
-            try:
-                service = Service.objects.select_related('owner', 'pet', 'service_type').get(id=service_id)
-
-                if not service.return_date:
-                    return Response({
-                        'error': 'Service has no return date'
-                    }, status=400)
-
-                if service.status in ['completed', 'cancelled']:
-                    return Response({
-                        'error': 'Cannot send reminder for completed/cancelled service'
-                    }, status=400)
-
-                email_success = send_service_return_reminder_email(
-                    patient_email=service.owner.email,
-                    patient_name=f"{service.owner.firstName} {service.owner.lastName}",
-                    pet_name=service.pet.petName,
-                    service_type=service.service_type.name if service.service_type else "Unknown",
-                    return_date=service.return_date.strftime("%B %d, %Y"),
-                    service_id=service.id
-                )
-
-                sms_success = False
-                sms_message = None
-
-                if has_balance and service.owner.phoneNumber:
-                    sms_result = send_service_return_reminder_sms(
-                        phone_number=service.owner.phoneNumber,
+                    # Send email
+                    email_success = send_service_return_reminder_email(
+                        patient_email=service.owner.email,
                         patient_name=f"{service.owner.firstName} {service.owner.lastName}",
                         pet_name=service.pet.petName,
                         service_type=service.service_type.name if service.service_type else "Unknown",
                         return_date=service.return_date.strftime("%B %d, %Y"),
                         service_id=service.id
                     )
-                    sms_success = sms_result.get('success', False)
-                    sms_message = sms_result.get('message', 'SMS sent')
-                else:
-                    if not has_balance:
-                        sms_message = 'SMS skipped: Insufficient balance'
-                    elif not service.owner.phoneNumber:
-                        sms_message = 'SMS skipped: No phone number'
 
-                if email_success:
-                    AppointmentReminder.objects.create(
-                        service=service,
-                        reminder_type='service_return',
-                        scheduled_send_time=timezone.now(),
-                        sent_at=timezone.now(),
-                        sms_sent=sms_success,
-                        notes=f"Email: {email_success}, SMS: {sms_success} ({sms_message})"
-                    )
+                    # ============= SMS FOR SERVICE RETURNS =============
+                    sms_success = False
+                    sms_message = None
 
-                    response_data = {
-                        'success': True,
-                        'message': 'Service return reminder sent successfully',
-                        'email_sent': email_success,
-                        'sms_sent': sms_success,
-                        'sms_message': sms_message,
-                        'balance_check': {
-                            'has_sufficient_balance': has_balance,
-                            'message': balance_msg,
-                            'balance_info': balance_info
-                        }
-                    }
+                    # Check if owner has phone number (primary or secondary)
+                    owner_has_phone = (service.owner.phoneNumber and service.owner.phoneNumber.strip()) or \
+                                      (service.owner.SecondaryNumber and service.owner.SecondaryNumber.strip())
 
-                    if not has_balance:
-                        response_data['warning'] = 'SMS skipped due to insufficient balance'
+                    if email_success and has_balance and owner_has_phone:
+                        # Choose which phone number to use
+                        phone_to_use = service.owner.phoneNumber if (
+                                    service.owner.phoneNumber and service.owner.phoneNumber.strip()) else service.owner.SecondaryNumber
 
-                    return Response(response_data, status=200)
-                else:
-                    return Response({'error': 'Failed to send service reminder'}, status=500)
+                        try:
+                            from .sms_utils import send_service_return_reminder_sms
+                            sms_result = send_service_return_reminder_sms(
+                                phone_number=phone_to_use,
+                                patient_name=f"{service.owner.firstName} {service.owner.lastName}",
+                                pet_name=service.pet.petName,
+                                service_type=service.service_type.name if service.service_type else "Unknown",
+                                return_date=service.return_date.strftime("%B %d, %Y"),
+                                service_id=service.id
+                            )
+                            sms_success = sms_result.get('success', False)
+                            sms_message = sms_result.get('message', 'SMS sent')
 
-            except Service.DoesNotExist:
-                return Response({'error': 'Service not found'}, status=404)
+                            print(f"✅ SMS sent for service {svc_id} to {phone_to_use}")
+
+                        except Exception as e:
+                            sms_message = f'SMS error: {str(e)[:50]}'
+                            print(f"❌ SMS error for service {svc_id}: {e}")
+                    else:
+                        if not email_success:
+                            sms_message = 'SMS skipped: Email failed'
+                        elif not has_balance:
+                            sms_message = 'SMS skipped: Insufficient balance'
+                        elif not owner_has_phone:
+                            sms_message = 'SMS skipped: No phone number'
+                        else:
+                            sms_message = 'SMS skipped'
+                    # ==================================================
+
+                    if email_success:
+                        # Log this manual reminder
+                        AppointmentReminder.objects.create(
+                            service=service,
+                            reminder_type='service_return',
+                            scheduled_send_time=timezone.now(),
+                            sent_at=timezone.now(),
+                            sms_sent=sms_success,
+                            notes=f"Email: {email_success}, SMS: {sms_success} ({sms_message})"
+                        )
+
+                        results['successful'].append({
+                            'id': svc_id,
+                            'email_sent': email_success,
+                            'sms_sent': sms_success,
+                            'sms_message': sms_message
+                        })
+                    else:
+                        results['failed'].append({
+                            'id': svc_id,
+                            'reason': 'Email failed to send'
+                        })
+
+                except Service.DoesNotExist:
+                    results['failed'].append({
+                        'id': svc_id,
+                        'reason': 'Service not found'
+                    })
+                except Exception as e:
+                    results['failed'].append({
+                        'id': svc_id,
+                        'reason': str(e)
+                    })
+
+            successful_count = len(results['successful'])
+            failed_count = len(results['failed'])
+
+            return Response({
+                'success': successful_count > 0,
+                'message': f'Processed {successful_count} successful, {failed_count} failed',
+                'results': results,
+                'balance_check': {
+                    'has_sufficient_balance': has_balance,
+                    'message': balance_msg,
+                    'balance_info': balance_info
+                }
+            }, status=200 if successful_count > 0 else 400)
 
         else:
             return Response({'error': 'Either appointment_id, appointment_ids, service_id, or service_ids is required'},
