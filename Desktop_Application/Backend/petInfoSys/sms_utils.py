@@ -409,7 +409,7 @@ def send_appointment_reminder_sms(phone_number, patient_name, pet_name, service_
     return sms_service.send_sms(phone_number, message)
 
 def send_service_return_reminder_sms(phone_number, patient_name, pet_name, service_type,
-                                     return_date, service_id):
+                                    return_date, service_id):
         """
         Send service return reminder SMS
 
