@@ -1,6 +1,7 @@
 import { getCookie } from '../../utils/csrf'
 
-const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUpdated }) => {
+// Added onEdit to the props
+const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUpdated, onEdit }) => {
   if (!isOpen || !appointment) return null;
 
   const formatDate = (dateString) => {
@@ -142,7 +143,15 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUp
         </div>
 
         <div className="modal-actions close-appointment-details">
-          <button className="btn" onClick={onClose}>Close</button>
+          {/* Only show Edit if an onEdit function is provided */}
+          <button 
+            className="btn-edit "
+            onClick={() => onEdit && onEdit(appointment)}
+          >
+            Edit
+          </button>
+          
+          <button className="btn-btn" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
