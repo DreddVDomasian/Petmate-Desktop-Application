@@ -272,6 +272,36 @@ header {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Ito ung sa view details CLOSE button */
+.btn-btn {
+  display: inline-block;
+  background-color: #f09ba2;
+  color: var(--dark);
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Ito ung sa view details EDIT button */
+.btn-edit {
+  display: inline-block;
+  background-color: var(--secondary);
+  color: var(--dark);
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 .btn:hover {
   background-color: #f8c67a;
   transform: translateY(-3px);
