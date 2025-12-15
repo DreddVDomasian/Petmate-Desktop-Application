@@ -1820,7 +1820,7 @@ class ManualReminderView(APIView):
                     # Send email
                     email_success = send_appointment_reminder_email(
                         patient_email=appointment.owner.email,
-                        patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
+                        patient_name=f"{appointment.owner.lastName}",
                         pet_name=appointment.pet.petName,
                         service_type=appointment.service_type.name if appointment.service_type else "Unknown",
                         appointment_date=appointment.date.strftime("%B %d, %Y"),
@@ -1831,32 +1831,32 @@ class ManualReminderView(APIView):
 
                     # =================SAVING CREDIT UNCOMMENT NALANG PAG I TRY==================
                     # Send SMS if balance permits
-                    # sms_success = False
-                    # sms_message = None
-
-                    # if has_balance and appointment.owner.phoneNumber:
-                    #     sms_result = send_appointment_reminder_sms(
-                    #         phone_number=appointment.owner.phoneNumber,
-                    #         patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
-                    #         pet_name=appointment.pet.petName,
-                    #         service_type=appointment.service_type.name if appointment.service_type else "Unknown",
-                    #         appointment_date=appointment.date.strftime("%B %d, %Y"),
-                    #         appointment_time=appointment.prefTime.strftime("%I:%M %p"),
-                    #         booking_id=appointment.booking_id,
-                    #         reminder_type='manual'
-                    #     )
-                    #     sms_success = sms_result.get('success', False)
-                    #     sms_message = sms_result.get('message', 'SMS sent')
-                    # else:
-                    #     if not has_balance:
-                    #         sms_message = 'SMS skipped: Insufficient balance'
-                    #     elif not appointment.owner.phoneNumber:
-                    #         sms_message = 'SMS skipped: No phone number'
-
-                    # ============== I COMMENT NAMAN TO PAG I TRY SMS===============
                     sms_success = False
-                    sms_message = "SMS temporarily disabled"
-                    # ============== I COMMENT NAMAN TO PAG I TRY SMS===============
+                    sms_message = None
+
+                    if has_balance and appointment.owner.phoneNumber:
+                        sms_result = send_appointment_reminder_sms(
+                            phone_number=appointment.owner.phoneNumber,
+                            patient_name=f"{appointment.owner.firstName} {appointment.owner.lastName}",
+                            pet_name=appointment.pet.petName,
+                            service_type=appointment.service_type.name if appointment.service_type else "Unknown",
+                            appointment_date=appointment.date.strftime("%B %d, %Y"),
+                            appointment_time=appointment.prefTime.strftime("%I:%M %p"),
+                            booking_id=appointment.booking_id,
+                            reminder_type='appointment'
+                        )
+                        sms_success = sms_result.get('success', False)
+                        sms_message = sms_result.get('message', 'SMS sent')
+                    else:
+                        if not has_balance:
+                            sms_message = 'SMS skipped: Insufficient balance'
+                        elif not appointment.owner.phoneNumber:
+                            sms_message = 'SMS skipped: No phone number'
+
+                    # # ============== I COMMENT NAMAN TO PAG I TRY SMS===============
+                    # sms_success = False
+                    # sms_message = "SMS temporarily disabled"
+                    # # ============== I COMMENT NAMAN TO PAG I TRY SMS===============
 
                     if email_success or sms_success:
                         # Log this manual reminder
@@ -1954,7 +1954,7 @@ class ManualReminderView(APIView):
                             from .sms_utils import send_service_return_reminder_sms
                             sms_result = send_service_return_reminder_sms(
                                 phone_number=phone_to_use,
-                                patient_name=f"{service.owner.firstName} {service.owner.lastName}",
+                                patient_name=f"{service.owner.lastName}",
                                 pet_name=service.pet.petName,
                                 service_type=service.service_type.name if service.service_type else "Unknown",
                                 return_date=service.return_date.strftime("%B %d, %Y"),

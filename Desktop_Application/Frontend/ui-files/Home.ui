@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>10</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1576,7 +1576,7 @@ border:none;</string>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_89">
                      <item>
-                      <widget class="QLabel" name="noAppointmentsToday">
+                      <widget class="QLabel" name="noAppointmentToday">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
@@ -3661,7 +3661,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>440</height>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -12027,8 +12027,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>840</width>
-                          <height>423</height>
+                          <width>100</width>
+                          <height>30</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
@@ -12629,7 +12629,7 @@ color:rgb(168, 168, 168);</string>
                         <property name="geometry">
                          <rect>
                           <x>0</x>
-                          <y>0</y>
+                          <y>-183</y>
                           <width>830</width>
                           <height>706</height>
                          </rect>
@@ -12828,7 +12828,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="monStart"/>
+                                <widget class="QTimeEdit" name="monStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_34">
@@ -12844,7 +12848,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="monEnd"/>
+                                <widget class="QTimeEdit" name="monEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>
@@ -12977,7 +12985,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="teusStart"/>
+                                <widget class="QTimeEdit" name="teusStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::StrongFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_39">
@@ -12993,7 +13005,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="teusEnd"/>
+                                <widget class="QTimeEdit" name="teusEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::StrongFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>
@@ -13134,7 +13150,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="wedStart"/>
+                                <widget class="QTimeEdit" name="wedStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_41">
@@ -13150,7 +13170,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="wedEnd"/>
+                                <widget class="QTimeEdit" name="wedEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>
@@ -13277,7 +13301,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="thursStart"/>
+                                <widget class="QTimeEdit" name="thursStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_42">
@@ -13293,7 +13321,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="thursEnd"/>
+                                <widget class="QTimeEdit" name="thursEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>
@@ -13420,7 +13452,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="friStart"/>
+                                <widget class="QTimeEdit" name="friStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_44">
@@ -13436,7 +13472,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="friEnd"/>
+                                <widget class="QTimeEdit" name="friEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>
@@ -13563,7 +13603,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="satStart"/>
+                                <widget class="QTimeEdit" name="satStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_45">
@@ -13579,7 +13623,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="satEnd"/>
+                                <widget class="QTimeEdit" name="satEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>
@@ -13706,7 +13754,11 @@ font-size:14px;</string>
                                 <number>0</number>
                                </property>
                                <item>
-                                <widget class="QTimeEdit" name="sunStart"/>
+                                <widget class="QTimeEdit" name="sunStart">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                                <item>
                                 <widget class="QLabel" name="label_46">
@@ -13722,7 +13774,11 @@ font-size:14px;</string>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QTimeEdit" name="sunEnd"/>
+                                <widget class="QTimeEdit" name="sunEnd">
+                                 <property name="focusPolicy">
+                                  <enum>Qt::ClickFocus</enum>
+                                 </property>
+                                </widget>
                                </item>
                               </layout>
                              </widget>

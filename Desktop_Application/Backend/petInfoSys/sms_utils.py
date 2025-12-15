@@ -377,10 +377,9 @@ def send_appointment_reminder_sms(phone_number, patient_name, pet_name, service_
     # Create message based on reminder type
     if reminder_type == 'appointment':
         message = (
-            f"PetMate Animal Clinic Reminder: Hi {patient_name}, "
-            f"your appointment for {pet_name} ({service_type}) "
-            f"is on {formatted_date} at {appointment_time}. "
-            f"Booking ID: {booking_id}"
+            f"PetMate Animal Clinic Reminder: \n\nHi {patient_name},\n "
+            f"\nPet: {pet_name}\n Service: {service_type}\n "
+            f"Date: {formatted_date} \n Time: {appointment_time}.\n "
         )
     elif reminder_type == 'service_return':
         message = (
@@ -396,15 +395,6 @@ def send_appointment_reminder_sms(phone_number, patient_name, pet_name, service_
             f"on {formatted_date}. Thank you!"
         )
 
-    # Ensure message length is reasonable
-    if len(message) > 160:
-        # Create shorter version
-        message = (
-            f"PetMate Reminder: Hi {patient_name}, "
-            f"{pet_name}'s {service_type} "
-            f"on {formatted_date}. "
-            f"ID: {booking_id}"
-        )
 
     return sms_service.send_sms(phone_number, message)
 
@@ -439,18 +429,11 @@ def send_service_return_reminder_sms(phone_number, patient_name, pet_name, servi
 
         # Create message for service return
         message = (
-            f"PetMate Animal Clinic: Hi {patient_name}, "
-            f"{pet_name}'s {service_type} return visit "
-            f"is scheduled for {formatted_date}. "
-            f"Please visit us for follow-up care."
+            f"PetMate Animal Clinic: \nHi {patient_name},\n "
+            f"\nPET: {pet_name}\n SERVICE: {service_type}\n"
+            f"RETURN DATE: {formatted_date}.\n"
         )
 
-        # Ensure message length is reasonable
-        if len(message) > 160:
-            message = (
-                f"PetMate Reminder: {patient_name}, "
-                f"{pet_name}'s {service_type} return "
-                f"on {formatted_date}. Service ID: {service_id}"
-            )
+
 
         return sms_service.send_sms(phone_number, message)

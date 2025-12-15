@@ -85,7 +85,7 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUp
     "Unknown Pet";
 
   const service = appointment.appointment_reason ||
-    appointment.service_type_name ||
+    appointment.service_type_name||
     "General Consultation";
 
   return (
