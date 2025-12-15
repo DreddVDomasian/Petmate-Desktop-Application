@@ -513,6 +513,7 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
                       className="form-control"
                       value={editForm.birthDay}
                       onChange={handleEditChange}
+                      max={new Date().toLocaleDateString('en-CA')}
                     />
                   </div>
                   <div className="new-form-group" style={{ flex: 1 }}>
