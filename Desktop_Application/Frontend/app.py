@@ -2851,6 +2851,7 @@ class MainUI(QMainWindow):
 
         series = QBarSeries()
         series.append(set0)
+        series.setBarWidth(0.80)
 
         chart = QChart()
         chart.addSeries(series)
@@ -2862,6 +2863,7 @@ class MainUI(QMainWindow):
         chart.legend().setFont(QFont("Montserrat", 12))
 
         chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
+        chart.setAnimationDuration(1000)
         chart.setTheme(QChart.ChartTheme.ChartThemeLight)
 
 
@@ -2929,6 +2931,7 @@ class MainUI(QMainWindow):
         chart.legend().setFont(QFont("Montserrat", 12))
 
         chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
+        chart.setAnimationDuration(1000)
         chart.setTheme(QChart.ChartTheme.ChartThemeLight)
         for s in series.slices():
             s.setExplodeDistanceFactor(0.2)
