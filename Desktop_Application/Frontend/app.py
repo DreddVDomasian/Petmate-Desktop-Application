@@ -2851,8 +2851,7 @@ class MainUI(QMainWindow):
 
         series = QBarSeries()
         series.append(set0)
-        series.setBarWidth(0.80)
-
+        series.setBarWidth(0.9)
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle("Total Every Service")
@@ -2862,7 +2861,8 @@ class MainUI(QMainWindow):
         chart.legend().setAlignment(Qt.AlignmentFlag.AlignTop)
         chart.legend().setFont(QFont("Montserrat", 12))
 
-        chart.setAnimationOptions(QChart.AnimationOption.AllAnimations)
+
+        chart.setAnimationOptions(QChart.AnimationOption.SeriesAnimations)
         chart.setAnimationDuration(1000)
         chart.setTheme(QChart.ChartTheme.ChartThemeLight)
 
@@ -2875,6 +2875,7 @@ class MainUI(QMainWindow):
         series.attachAxis(axis_x)
 
         chart_view = QChartView(chart)
+
         chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         shadow = QGraphicsDropShadowEffect()
@@ -2926,6 +2927,7 @@ class MainUI(QMainWindow):
         chart.setTitle("Species Distribution")
         chart.setTitleFont(QFont("Montserrat ExtraBold", 20))
 
+
         chart.legend().setVisible(True)
         chart.legend().setAlignment(Qt.AlignmentFlag.AlignTop)
         chart.legend().setFont(QFont("Montserrat", 12))
@@ -2934,8 +2936,9 @@ class MainUI(QMainWindow):
         chart.setAnimationDuration(1000)
         chart.setTheme(QChart.ChartTheme.ChartThemeLight)
         for s in series.slices():
-            s.setExplodeDistanceFactor(0.2)
-            s.setLabelVisible(True)
+            s.setExplodeDistanceFactor(0.4)
+            s.setLabelVisible(False)
+
 
         series.hovered.connect(lambda slice, state: slice.setExploded(state))
 
@@ -2977,7 +2980,7 @@ class MainUI(QMainWindow):
         label = self.findChild(QLabel, "noAppointmentToday")
 
         if not label:
-            print("wala nga tangina")
+            print("noAppointmentToday not found")
             return
 
         label.setVisible(len(data) == 0)

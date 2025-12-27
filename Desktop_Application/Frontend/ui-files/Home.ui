@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1472,7 +1472,7 @@ border:none;</string>
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>379</height>
+                     <height>400</height>
                     </size>
                    </property>
                    <property name="styleSheet">
@@ -1562,7 +1562,7 @@ border:none;</string>
                       <x>0</x>
                       <y>0</y>
                       <width>858</width>
-                      <height>379</height>
+                      <height>400</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -4201,7 +4201,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>860</width>
-                           <height>318</height>
+                           <height>322</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -5324,7 +5324,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <x>0</x>
                           <y>0</y>
                           <width>858</width>
-                          <height>427</height>
+                          <height>431</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -8427,7 +8427,7 @@ background:none;</string>
                           <x>0</x>
                           <y>0</y>
                           <width>858</width>
-                          <height>252</height>
+                          <height>263</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -12554,8 +12554,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>93</width>
-                             <height>51</height>
+                             <width>90</width>
+                             <height>43</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12629,9 +12629,9 @@ color:rgb(168, 168, 168);</string>
                         <property name="geometry">
                          <rect>
                           <x>0</x>
-                          <y>-183</y>
+                          <y>0</y>
                           <width>830</width>
-                          <height>706</height>
+                          <height>692</height>
                          </rect>
                         </property>
                         <property name="styleSheet">

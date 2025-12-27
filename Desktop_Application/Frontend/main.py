@@ -27,7 +27,6 @@ def load_fonts():
     except Exception as e:
         print(f"❌ Error loading font: {e}")
 
-
 def main():
     app = QApplication(sys.argv)
     load_fonts()

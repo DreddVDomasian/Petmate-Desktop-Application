@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>867</width>
-    <height>88</height>
+    <height>86</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,18 +40,21 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>50</height>
+       <height>75</height>
       </size>
      </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame{
+      <string notr="true">#homeAppointments{
 	background-color:#fcfcfc;
 	border-radius : 5px;
 	border-bottom: #272727;
 	border-right: #272727;
+}
+#homeAppointments:hover{
+	background-color: #81BFDA;
 }</string>
      </property>
      <property name="frameShape">
