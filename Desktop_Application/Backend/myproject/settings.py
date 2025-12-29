@@ -27,10 +27,17 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ["localhost",
-                 "127.0.0.1",
-                 ".ngrok.io",
-                ".ngrok-free.app","triggerless-brianna-pseudoviperous.ngrok-free.dev"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".ngrok.io",
+    ".ngrok-free.app",
+    "triggerless-brianna-pseudoviperous.ngrok-free.dev",
+    ".railway.app",  # For Railway deployment
+    os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Railway auto domain
+]
+# Remove empty strings from ALLOWED_HOSTS
+ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
 
 
 # Application definition
@@ -50,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -158,6 +166,10 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"  # where collectstatic will copy them
 TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]  # global templates
+
+# WhiteNoise configuration for static files in production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
 
@@ -189,6 +201,16 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://triggerless-brianna-pseudoviperous.ngrok-free.dev",
 ]
+
+# Add your deployed frontend URL here after deployment
+# Example: "https://your-frontend-domain.vercel.app"
+if os.getenv('FRONTEND_URL'):
+    CSRF_TRUSTED_ORIGINS.append(os.getenv('FRONTEND_URL'))
+    
+# Add Railway domain
+if os.getenv('RAILWAY_PUBLIC_DOMAIN'):
+    railway_domain = f"https://{os.getenv('RAILWAY_PUBLIC_DOMAIN')}"
+    CSRF_TRUSTED_ORIGINS.append(railway_domain)
 
 CORS_ALLOWED_HEADERS = [
     'accept',
