@@ -63,3 +63,32 @@ class APIWorker(QThread):
         except Exception as e:
             self.error.emit(f'Error: {str(e)}')
             self.finished.emit(False, {'error': str(e)})
+
+
+class DataLoaderWorker(QThread):
+    """Worker specifically for loading list data (patients, services, etc.)"""
+    
+    finished = pyqtSignal(bool, object)  # (success, data)
+    error = pyqtSignal(str)
+    
+    def __init__(self, url, timeout=10):
+        super().__init__()
+        self.url = url
+        self.timeout = timeout
+    
+    def run(self):
+        """Execute GET request in background"""
+        try:
+            response = requests.get(self.url, timeout=self.timeout)
+            response.raise_for_status()
+            data = response.json()
+            self.finished.emit(True, data)
+        except requests.exceptions.Timeout:
+            self.error.emit('Request timeout')
+            self.finished.emit(False, None)
+        except requests.exceptions.ConnectionError:
+            self.error.emit('Connection error')
+            self.finished.emit(False, None)
+        except Exception as e:
+            self.error.emit(str(e))
+            self.finished.emit(False, None)
