@@ -116,7 +116,7 @@ PHILSMS_BALANCE_URL = 'https://dashboard.philsms.com/api/v3/sms/'
 
 
 # Database configuration
-# Use Railway's MYSQL_URL if available, otherwise use local DB_* env vars
+# Priority: MYSQL_URL > Railway vars (MYSQLHOST) > Local docker-compose (DB_HOST)
 if os.getenv('MYSQL_URL'):
     # Railway deployment - use the full connection URL
     DATABASES = {
@@ -125,6 +125,18 @@ if os.getenv('MYSQL_URL'):
             conn_max_age=600,
             conn_health_checks=True,
         )
+    }
+elif os.getenv('MYSQLHOST'):
+    # Railway deployment - use individual MySQL variables
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('MYSQLDATABASE', 'railway'),
+            'USER': os.getenv('MYSQLUSER', 'root'),
+            'PASSWORD': os.getenv('MYSQLPASSWORD'),
+            'HOST': os.getenv('MYSQLHOST'),
+            'PORT': os.getenv('MYSQLPORT', '3306'),
+        }
     }
 else:
     # Local development with docker-compose
