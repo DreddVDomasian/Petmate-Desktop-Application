@@ -3,6 +3,6 @@ builder = "DOCKERFILE"
 dockerfilePath = "Desktop_Application/Backend/Dockerfile"
 
 [deploy]
-startCommand = "python manage.py migrate && python manage.py create_default_admin && gunicorn myproject.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+startCommand = "sh -c 'python manage.py migrate && python manage.py create_default_admin || true && gunicorn myproject.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile - --error-logfile -'"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
