@@ -20,8 +20,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('petInfoSys.urls')),  # ✅ Make sure this exists
+    path("admin/", admin.site.urls),
+    path("api/", include("petInfoSys.urls")),  # make sure this line exists
 ]
 
 if settings.DEBUG:
