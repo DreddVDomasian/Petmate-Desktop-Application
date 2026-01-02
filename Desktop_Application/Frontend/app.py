@@ -772,49 +772,78 @@ class MainUI(QMainWindow):
         )
         self.patient_loading_overlay.show()
 
-        # Use QTimer to let UI update before blocking operation
-        QTimer.singleShot(100, lambda: self._save_patient(data, required_fields))
+        # Store for callback
+        self._patient_required_fields = required_fields
 
-    def _save_patient(self, data, required_fields):
-        """Background save operation for patient"""
-        try:
-            # proceed to save patient
-            if add_new_patient(data):
-                # Hide loading overlay
-                if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
-                    self.patient_loading_overlay.close()
-                    self.patient_loading_overlay = None
+        # Use async helper for non-blocking POST request
+        self.api.post(
+            url="/api/patients/",
+            data=data,
+            on_success=self._on_patient_added,
+            on_error=self._on_patient_error
+        )
 
-                self.navigate_to_page(2)
-                self.load_patients(1, search_term=None)
+    def _on_patient_added(self, response):
+        """Callback when patient is successfully added"""
+        # Hide loading overlay
+        if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
+            self.patient_loading_overlay.close()
+            self.patient_loading_overlay = None
 
-                self.clearInputs()
+        self.navigate_to_page(2)
+        self.load_patients(1, search_term=None)
 
-                # Reset styles to default
-                for widget in required_fields.values():
-                    if isinstance(widget, QLineEdit):
-                        widget.setStyleSheet(default_style)
-                    elif isinstance(widget, QComboBox):
-                        widget.setStyleSheet(default_combobox_style)
+        self.clearInputs()
 
-                toast = Toast(self, icon_path="Icons/check.png")
-                toast.show_toast()
-            else:
-                # Hide loading overlay
-                if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
-                    self.patient_loading_overlay.close()
-                    self.patient_loading_overlay = None
+        # Reset styles to default
+        if hasattr(self, '_patient_required_fields'):
+            for widget in self._patient_required_fields.values():
+                if isinstance(widget, QLineEdit):
+                    widget.setStyleSheet(default_style)
+                elif isinstance(widget, QComboBox):
+                    widget.setStyleSheet(default_combobox_style)
 
-                toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
-                toast.show_toast()
-        except Exception as e:
-            # Hide loading overlay
-            if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
-                self.patient_loading_overlay.close()
-                self.patient_loading_overlay = None
+        toast = Toast(self, icon_path="Icons/check.png")
+        toast.show_toast()
 
-            toast = Toast(self, f"Error: {str(e)}", icon_path="Icons/warning.png")
-            toast.show_toast()
+    def _on_patient_error(self, error_msg):
+        """Callback when patient addition fails"""
+        # Hide loading overlay
+        if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
+            self.patient_loading_overlay.close()
+            self.patient_loading_overlay = None
+
+        toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
+        toast.show_toast()
+
+    def show_loading_label(self, layout, message="Loading..."):
+        """Show a loading label in the given layout"""
+        # Clear existing items
+        while layout.count():
+            child = layout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+        
+        # Create loading label
+        loading_label = QLabel(message)
+        loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        loading_label.setStyleSheet("""
+            QLabel {
+                font: 57 16pt "Montserrat Medium";
+                color: #999;
+                padding: 40px;
+            }
+        """)
+        loading_label.setObjectName("loadingLabel")
+        layout.addWidget(loading_label)
+    
+    def clear_loading_label(self, layout):
+        """Clear loading label if present"""
+        for i in range(layout.count()):
+            widget = layout.itemAt(i).widget()
+            if widget and widget.objectName() == "loadingLabel":
+                widget.deleteLater()
+                break
     def on_phone_number_changed(self, text):
         """Real-time phone number formatting with numbers-only input and length limits"""
         # If text is empty, return
@@ -896,18 +925,8 @@ class MainUI(QMainWindow):
     def load_patients(self, page=1, search_term=None):
         """Load patients list asynchronously (non-blocking)"""
         try:
-            # 1. Clear existing cards immediately
-            items_to_delete = []
-            while self.patientListLayout.count():
-                child = self.patientListLayout.takeAt(0)
-                if child and child.widget():
-                    items_to_delete.append(child.widget())
-            
-            for widget in items_to_delete:
-                try:
-                    widget.deleteLater()
-                except RuntimeError:
-                    pass
+            # 1. Show loading label immediately
+            self.show_loading_label(self.patientListLayout, "Loading patients...")
             
             # 2. Build URL
             if search_term and search_term.strip():
@@ -1785,6 +1804,9 @@ class MainUI(QMainWindow):
                 self.scheduled_current_filter = "pending"
                 target_layout = self.pendingLayout
                 print(f"DEBUG: Status filter = pending (default)")
+
+            # Show loading label immediately in the target layout
+            self.show_loading_label(target_layout, "Loading scheduled services...")
 
             # Update state
             self.scheduled_current_page = page
