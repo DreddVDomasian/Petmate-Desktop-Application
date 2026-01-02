@@ -208,7 +208,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:63342",
     "http://localhost",
     "file://",
-    "web-production-f564f.up.railway.app"
+    "https://web-production-f564f.up.railway.app"
 ]
 
 # Allow credentials so cookies (session, csrf) are accepted from the frontend dev origin
