@@ -115,16 +115,29 @@ PHILSMS_API_URL = 'https://dashboard.philsms.com/api/v3/sms/send'
 PHILSMS_BALANCE_URL = 'https://dashboard.philsms.com/api/v3/sms/'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+# Database configuration
+# Use Railway's MYSQL_URL if available, otherwise use local DB_* env vars
+if os.getenv('MYSQL_URL'):
+    # Railway deployment - use the full connection URL
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('MYSQL_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    # Local development with docker-compose
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME', 'informationsystem'),
+            'USER': os.getenv('DB_USER', 'root'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'password'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '3306'),
+        }
+    }
 
 
 # Password validation
