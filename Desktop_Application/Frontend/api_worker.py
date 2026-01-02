@@ -1,7 +1,7 @@
 """
 API Worker Thread - Makes API calls without blocking the UI
 """
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 import requests
 
 
