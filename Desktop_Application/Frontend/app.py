@@ -815,6 +815,35 @@ class MainUI(QMainWindow):
 
         toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
         toast.show_toast()
+
+    def show_loading_label(self, layout, message="Loading..."):
+        """Show a loading label in the given layout"""
+        # Clear existing items
+        while layout.count():
+            child = layout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+        
+        # Create loading label
+        loading_label = QLabel(message)
+        loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        loading_label.setStyleSheet("""
+            QLabel {
+                font: 57 16pt "Montserrat Medium";
+                color: #999;
+                padding: 40px;
+            }
+        """)
+        loading_label.setObjectName("loadingLabel")
+        layout.addWidget(loading_label)
+    
+    def clear_loading_label(self, layout):
+        """Clear loading label if present"""
+        for i in range(layout.count()):
+            widget = layout.itemAt(i).widget()
+            if widget and widget.objectName() == "loadingLabel":
+                widget.deleteLater()
+                break
     def on_phone_number_changed(self, text):
         """Real-time phone number formatting with numbers-only input and length limits"""
         # If text is empty, return
@@ -896,18 +925,8 @@ class MainUI(QMainWindow):
     def load_patients(self, page=1, search_term=None):
         """Load patients list asynchronously (non-blocking)"""
         try:
-            # 1. Clear existing cards immediately
-            items_to_delete = []
-            while self.patientListLayout.count():
-                child = self.patientListLayout.takeAt(0)
-                if child and child.widget():
-                    items_to_delete.append(child.widget())
-            
-            for widget in items_to_delete:
-                try:
-                    widget.deleteLater()
-                except RuntimeError:
-                    pass
+            # 1. Show loading label immediately
+            self.show_loading_label(self.patientListLayout, "Loading patients...")
             
             # 2. Build URL
             if search_term and search_term.strip():
@@ -1785,6 +1804,9 @@ class MainUI(QMainWindow):
                 self.scheduled_current_filter = "pending"
                 target_layout = self.pendingLayout
                 print(f"DEBUG: Status filter = pending (default)")
+
+            # Show loading label immediately in the target layout
+            self.show_loading_label(target_layout, "Loading scheduled services...")
 
             # Update state
             self.scheduled_current_page = page

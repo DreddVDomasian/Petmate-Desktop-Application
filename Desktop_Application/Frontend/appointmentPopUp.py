@@ -511,6 +511,11 @@ class AddAppointmentCard(QWidget):
         try:
             self.status_filter_global = status_filter
             current_layout = self.get_layout_for_status(status_filter)
+            
+            # Show loading label immediately
+            if current_layout:
+                self.show_loading_label(current_layout, "Loading appointments...")
+            
             # Build API URL
             url = f"{API_BASE_URL}/api/walkIn/?request=accepted&page={page}"
             if status_filter:
@@ -612,6 +617,29 @@ class AddAppointmentCard(QWidget):
 
 
         return layout
+    
+    def show_loading_label(self, layout, message="Loading..."):
+        """Show a loading label in the given layout"""
+        from PyQt6.QtWidgets import QLabel
+        # Clear existing items
+        while layout.count():
+            child = layout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+        
+        # Create loading label
+        loading_label = QLabel(message)
+        loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        loading_label.setStyleSheet("""
+            QLabel {
+                font: 57 16pt "Montserrat Medium";
+                color: #999;
+                padding: 40px;
+            }
+        """)
+        loading_label.setObjectName("loadingLabel")
+        layout.addWidget(loading_label)
+    
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
         if response.status_code == 200:
