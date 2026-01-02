@@ -1848,8 +1848,8 @@ class MainUI(QMainWindow):
                     if hasattr(self, 'scheduled_pagination_widget'):
                         delattr(self, 'scheduled_pagination_widget')
 
-                # NOW show loading label AFTER clearing
-                self.show_loading_label(target_layout, "Loading scheduled services...")
+            # Show loading label after clearing everything so it stays visible
+            self.show_loading_label(target_layout, "Loading scheduled services...")
 
             # Get selected month from combobox
             selected_month = self.monthComboBox.currentText()  # e.g., 'August'
@@ -1889,6 +1889,12 @@ class MainUI(QMainWindow):
         try:
             print(f"DEBUG: API response data type = {type(data)}")
             
+            # Remove loading label/stretches before rendering data
+            while target_layout.count():
+                child = target_layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
             # Check if the API supports pagination
             if isinstance(data, dict) and 'results' in data:
                 # Paginated response
@@ -1947,10 +1953,21 @@ class MainUI(QMainWindow):
     def _on_scheduled_error(self, error_msg, target_layout):
         """Callback when scheduled services loading fails"""
         print(f"DEBUG: Error loading scheduled services: {error_msg}")
+        # Clear loading label
+        while target_layout.count():
+            child = target_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
         self.show_scheduled_empty_state(target_layout, error=True)
     
     def show_scheduled_empty_state(self, layout, is_search=False, error=False):
         """Show appropriate empty state message for scheduled services"""
+        # Clear existing items (including loading label)
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
         empty_label = QLabel()
 
         if error:
