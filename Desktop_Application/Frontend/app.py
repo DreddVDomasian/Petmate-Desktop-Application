@@ -413,6 +413,12 @@ class MainUI(QMainWindow):
         self.profileStackedWidget.setCurrentIndex(0)
         if index in self.page_to_nav_button:
             self.page_to_nav_button[index].setChecked(True)
+        
+        # Load data when navigating to appointment page
+        if index == 3:  # Appointment page
+            if hasattr(self, 'appointmentCard'):
+                self.appointmentCard.load_appointments(1, "pending", search_term=None)
+        
         # Your existing Add Patient logic
         if index == 1:
             if is_update:
@@ -824,18 +830,21 @@ class MainUI(QMainWindow):
             if child and child.widget():
                 child.widget().deleteLater()
         
-        # Create loading label
+        # Create loading label with same styling as empty state
         loading_label = QLabel(message)
         loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         loading_label.setStyleSheet("""
-            QLabel {
-                font: 57 16pt "Montserrat Medium";
-                color: #999;
-                padding: 40px;
-            }
+            font: 81 16pt 'Montserrat ExtraBold';
+            color: rgb(168,168,168);
+            padding: 60px;
+            background: transparent;
         """)
+        loading_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         loading_label.setObjectName("loadingLabel")
-        layout.addWidget(loading_label)
+        
+        layout.addStretch()
+        layout.addWidget(loading_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch()
     
     def clear_loading_label(self, layout):
         """Clear loading label if present"""
