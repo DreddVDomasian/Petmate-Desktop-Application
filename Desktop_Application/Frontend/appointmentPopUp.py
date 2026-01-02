@@ -147,7 +147,7 @@ class AddAppointmentCard(QWidget):
         anim.setEasingCurve(QEasingCurve.Type.OutCubic)
         anim.start()
         self.anim = anim  # Keep reference para di ma-garbage collect
-        self.load_appointments(1, "pending", search_term=None)
+        # Don't load appointments here - already loaded when navigating to page
     def eventFilter(self, obj, event):
         if obj == self.parent() and event.type() == event.Type.Resize:
             if self.isVisible():
@@ -159,59 +159,62 @@ class AddAppointmentCard(QWidget):
 
     #SET UP COMBO BOXES AND DATA SUBMITTING
     def load_service_types_to_combobox(self):
-        """Load ALL service types for the combobox - returns IDs not names"""
-        try:
-            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true&no_pagination=true")
+        """Load ALL service types for the combobox - returns IDs not names - async"""
+        # Don't block UI - load async
+        self.api.get(
+            url="/api/service-types/?is_active=true&no_pagination=true",
+            on_success=self._on_service_types_combobox_loaded,
+            on_error=lambda error: self._on_service_types_combobox_error(error)
+        )
+    
+    def _on_service_types_combobox_loaded(self, data):
+        """Callback when service types data is loaded"""
+        # Handle both response formats
+        if isinstance(data, list):
+            service_types = data
+        elif isinstance(data, dict) and 'results' in data:
+            service_types = data['results']
+        else:
+            service_types = []
 
-            if response.status_code == 200:
-                data = response.json()
+        self.serviceTypeComboBox.clear()
+        self.serviceTypeComboBox.addItem("Select Service Type", None)
 
-                # Handle both response formats
-                if isinstance(data, list):
-                    service_types = data
-                elif isinstance(data, dict) and 'results' in data:
-                    service_types = data['results']
-                else:
-                    service_types = []
+        for service_type in service_types:
+            if service_type.get('is_active', True):
+                name = service_type.get('name', '')
+                service_id = service_type.get('id')
+                if name and service_id:
+                    # Store ID as data, name as display text
+                    self.serviceTypeComboBox.addItem(name, service_id)
 
-                self.serviceTypeComboBox.clear()
-                self.serviceTypeComboBox.addItem("Select Service Type", None)
-
-                for service_type in service_types:
-                    if service_type.get('is_active', True):
-                        name = service_type.get('name', '')
-                        service_id = service_type.get('id')
-                        if name and service_id:
-                            # Store ID as data, name as display text
-                            self.serviceTypeComboBox.addItem(name, service_id)
-
-                if self.serviceTypeComboBox.count() == 1:
-                    self.serviceTypeComboBox.addItem("No service types available", None)
-
-        except Exception as e:
-            print(f"Error loading service types: {e}")
-            self.serviceTypeComboBox.clear()
-            self.serviceTypeComboBox.addItem("Select Service Type", None)
-            self.serviceTypeComboBox.addItem("Error loading services", None)
+        if self.serviceTypeComboBox.count() == 1:
+            self.serviceTypeComboBox.addItem("No service types available", None)
+    
+    def _on_service_types_combobox_error(self, error):
+        """Callback when service types loading fails"""
+        print(f"Error loading service types: {error}")
+        self.serviceTypeComboBox.clear()
+        self.serviceTypeComboBox.addItem("Select Service Type", None)
+        self.serviceTypeComboBox.addItem("Error loading services", None)
     def load_patients_to_combobox(self):
-        """Load ALL patients for the combobox without pagination"""
-        try:
-            response = requests.get(f"{API_BASE_URL}/api/patient-combobox-data/")
-            if response.status_code == 200:
-                patients = response.json()  # This will be the direct list, no pagination
-                self.selectPatientPopUp.clear()
-                self.selectPatientPopUp.addItem("", None)
+        """Load ALL patients for the combobox without pagination - async"""
+        # Don't block UI - load async
+        self.api.get(
+            url="/api/patient-combobox-data/",
+            on_success=self._on_patients_combobox_loaded,
+            on_error=lambda error: print(f"Error loading patients for combobox: {error}")
+        )
+    
+    def _on_patients_combobox_loaded(self, patients):
+        """Callback when patients data is loaded"""
+        self.selectPatientPopUp.clear()
+        self.selectPatientPopUp.addItem("", None)
 
-                for patient in patients:
-                    self.selectPatientPopUp.addItem(patient['full_name'], patient['id'])
+        for patient in patients:
+            self.selectPatientPopUp.addItem(patient['full_name'], patient['id'])
 
-                self.set_dynamic_completer(self.selectPatientPopUp)
-
-            else:
-                print("Failed to load patients for combobox")
-
-        except Exception as e:
-            print(f"Error loading patients for combobox: {e}")
+        self.set_dynamic_completer(self.selectPatientPopUp)
     def on_patient_selected(self, index):
         patient_id = self.selectPatientPopUp.itemData(index)
         if not patient_id:
@@ -627,18 +630,21 @@ class AddAppointmentCard(QWidget):
             if child and child.widget():
                 child.widget().deleteLater()
         
-        # Create loading label
+        # Create loading label with same styling as empty state
         loading_label = QLabel(message)
         loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         loading_label.setStyleSheet("""
-            QLabel {
-                font: 57 16pt "Montserrat Medium";
-                color: #999;
-                padding: 40px;
-            }
+            font: 81 16pt 'Montserrat ExtraBold';
+            color: rgb(168,168,168);
+            padding: 60px;
+            background: transparent;
         """)
+        loading_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         loading_label.setObjectName("loadingLabel")
-        layout.addWidget(loading_label)
+        
+        layout.addStretch()
+        layout.addWidget(loading_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addStretch()
     
     def open_pet_from_appointment(self, pet_id):
         response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
