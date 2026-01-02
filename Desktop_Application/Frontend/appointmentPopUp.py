@@ -1506,7 +1506,7 @@ class ReminderWorker(QThread):
                     'admin_id': self.data['admin_id'],
                     'appointment_ids': self.data['appointment_ids']
                 },
-                timeout=30  # Longer timeout for batch
+                timeout=120  # 2 minutes timeout for sending multiple emails/SMS
             )
 
             if response.status_code == 200:

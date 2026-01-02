@@ -33,6 +33,7 @@ from delete import Delete
 from duplicateDialog import DuplicateDialog
 from updateFunction import Update
 from config_loader import API_BASE_URL
+from async_helper import AsyncHelper
 import requests
 import webbrowser
 
@@ -48,6 +49,8 @@ class MainUI(QMainWindow):
         super(MainUI, self).__init__()
         uic.loadUi("ui-files/Home.ui", self)
 
+        # ⭐ Initialize Async Helper for smooth API calls
+        self.api = AsyncHelper(self, base_url=API_BASE_URL)
 
         # Initialize delete and update functions
         self.deleteFunction = Delete(self)
@@ -858,69 +861,71 @@ class MainUI(QMainWindow):
 
     #CLIENT RECORD PAGE
     def load_patients(self, page=1, search_term=None):
+        """Load patients list asynchronously (non-blocking)"""
         try:
-
+            # 1. Clear existing cards immediately
             items_to_delete = []
             while self.patientListLayout.count():
                 child = self.patientListLayout.takeAt(0)
                 if child and child.widget():
                     items_to_delete.append(child.widget())
-
-            # Delete after removing from layout
+            
             for widget in items_to_delete:
                 try:
                     widget.deleteLater()
                 except RuntimeError:
-                    pass  # Already deleted
-
-            # Build API URL based on search or normal load
+                    pass
+            
+            # 2. Build URL
             if search_term and search_term.strip():
                 import urllib.parse
                 encoded_term = urllib.parse.quote(search_term.strip())
-                url = f"{API_BASE_URL}/api/patient-search/?page={page}&search={encoded_term}"
+                url = f"/api/patient-search/?page={page}&search={encoded_term}"
             else:
-                url = f"{API_BASE_URL}/api/patients/?page={page}"
-
-            # Make API request with timeout
-            try:
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-                data = response.json()
-                patients = data.get('results', [])
-
-                # ✅ Update pagination info - ensure valid page number
-                self.patient_currentPage = max(1, page)
-                self.current_patient_page = self.patient_currentPage
-                self.total_patient_pages = data.get('total_pages', 1)
-                self.total_patient_count = data.get('count', 0)
-
-            except requests.exceptions.RequestException as e:
-                print(f"Request error: {e}")
-                self.show_empty_state(search_term is not None, error=True)
-                return
-            except ValueError as e:
-                print(f"JSON decode error: {e}")
-                self.show_empty_state(search_term is not None, error=True)
-                return
-
-            if not patients and page > 1:
-                return self.load_patients(page - 1, search_term)
-
-            # Handle empty results
-            if not patients:
-                self.show_empty_state(search_term is not None)
-                return
-
-            # Create patient cards
-            self.create_patient_cards(patients)
-
-            # Add pagination controls
-            self.add_patient_pagination_controls(search_term)
-
+                url = f"/api/patients/?page={page}"
+            
+            # 3. Make async request (non-blocking!)
+            self.api.get(
+                url,
+                on_success=lambda data: self._on_patients_loaded(data, page, search_term),
+                on_error=lambda error: self._on_patients_error(error, search_term),
+                timeout=10
+            )
+            
         except Exception as e:
             import traceback
             traceback.print_exc()
             self.show_empty_state(False, error=True)
+    
+    def _on_patients_loaded(self, data, page, search_term):
+        """Callback when patients data is received"""
+        patients = data.get('results', [])
+        
+        # Update pagination info
+        self.patient_currentPage = max(1, page)
+        self.current_patient_page = self.patient_currentPage
+        self.total_patient_pages = data.get('total_pages', 1)
+        self.total_patient_count = data.get('count', 0)
+        
+        # Handle empty results
+        if not patients and page > 1:
+            return self.load_patients(page - 1, search_term)
+        
+        if not patients:
+            self.show_empty_state(search_term is not None)
+            return
+        
+        # Create patient cards
+        self.create_patient_cards(patients)
+        
+        # Add pagination controls
+        self.add_patient_pagination_controls(search_term)
+    
+    def _on_patients_error(self, error_msg, search_term):
+        """Callback when patient loading fails"""
+        print(f"Error loading patients: {error_msg}")
+        self.show_empty_state(search_term is not None, error=True)
+    
     def show_empty_state(self, is_search, error=False):
         """Show appropriate empty state message"""
         empty_label = QLabel()
@@ -1368,8 +1373,19 @@ class MainUI(QMainWindow):
         self.serviceHistoryBtn.clicked.connect(lambda: self.service_stackedWidget(0))
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
     def load_services_for_pet(self, pet_id):
-        response = requests.get(f"{API_BASE_URL}/api/services/?pet_id={pet_id}")
-        services = response.json() if response.status_code == 200 else []
+        """Load services for a pet asynchronously"""
+        self.api.get(
+            f'/api/services/?pet_id={pet_id}',
+            on_success=self._on_services_loaded,
+            on_error=lambda e: self._on_services_loaded([])
+        )
+    
+    def _on_services_loaded(self, services):
+        """Callback when services data is received"""
+        if isinstance(services, dict):  # API returns dict with results
+            services = services.get('results', services)
+        if not isinstance(services, list):
+            services = []
 
         header = self.findChild(QWidget, "serviceTableHeader")
 
@@ -1766,7 +1782,7 @@ class MainUI(QMainWindow):
 
             # Build API URL with pagination and filters
             # First try the new endpoint with all parameters
-            url = f"{API_BASE_URL}/api/scheduled-services/"
+            url = "/api/scheduled-services/"
             params = {
                 'page': page,
                 'month': selected_month,
@@ -1779,80 +1795,85 @@ class MainUI(QMainWindow):
 
             print(f"DEBUG: API params = {params}")
 
-            # Make API request
-            try:
-                response = requests.get(url, params=params, timeout=10)
-                print(f"DEBUG: API response status = {response.status_code}")
-
-                if response.status_code != 200:
-                    print(f"DEBUG: API response text = {response.text}")
-                    print(f"Failed to load scheduled services: {response.status_code}")
-                    self.show_scheduled_empty_state(target_layout, error=True)
-                    return
-
-                data = response.json()
-                print(f"DEBUG: API response data type = {type(data)}")
-
-                # Check if the API supports pagination
-                if isinstance(data, dict) and 'results' in data:
-                    # Paginated response
-                    scheduled_services = data.get('results', [])
-                    self.scheduled_total_pages = data.get('total_pages', 1)
-                    self.scheduled_total_count = data.get('count', 0)
-                    print(
-                        f"DEBUG: Got paginated response: {len(scheduled_services)} services, {self.scheduled_total_pages} pages")
-                else:
-                    # Non-paginated response or direct list
-                    scheduled_services = data or []
-                    self.scheduled_total_pages = 1
-                    self.scheduled_total_count = len(scheduled_services)
-                    print(f"DEBUG: Got direct list response: {len(scheduled_services)} services")
-
-                    # If we got a list but expected status filter, we need to filter manually
-                    if self.scheduled_current_filter and scheduled_services:
-                        # Check if items have status field
-                        if 'status' in scheduled_services[0]:
-                            scheduled_services = [s for s in scheduled_services if
-                                                  s.get('status', '').lower() == self.scheduled_current_filter]
-                            print(f"DEBUG: After manual status filtering: {len(scheduled_services)} services")
-
-                print(f"DEBUG: Final service count = {len(scheduled_services)}")
-
-                # If no results and we're not on page 1, go back to page 1
-                if not scheduled_services and page > 1:
-                    print(f"DEBUG: No results, going back to page 1")
-                    self.load_scheduled_services(page=1, search_term=search_term)
-                    return
-
-                # Show empty state if no results
-                if not scheduled_services:
-                    print(f"DEBUG: Showing empty state")
-                    self.show_scheduled_empty_state(target_layout, is_search=bool(search_term))
-                    return
-
-                # Create and add cards
-                print(f"DEBUG: Creating {len(scheduled_services)} cards")
-                for service in scheduled_services:
-                    card = self.create_scheduled_card(service)
-                    target_layout.addWidget(card)
-
-                # Add pagination controls if needed
-                if self.scheduled_total_pages > 1:
-                    print(f"DEBUG: Adding pagination controls")
-                    self.add_scheduled_pagination_controls(target_layout, search_term)
-                else:
-                    print(f"DEBUG: No pagination needed (only 1 page)")
-
-            except requests.exceptions.RequestException as e:
-                print(f"DEBUG: Request error: {e}")
-                self.show_scheduled_empty_state(target_layout, error=True)
-                return
-
+            # Make async API request (non-blocking!)
+            self.api.get(
+                url,
+                on_success=lambda data: self._on_scheduled_loaded(data, target_layout, page, search_term),
+                on_error=lambda e: self._on_scheduled_error(e, target_layout),
+                params=params,
+                timeout=10
+            )
+            
         except Exception as e:
-            print(f"DEBUG: General error in load_scheduled_services: {e}")
             import traceback
             traceback.print_exc()
-            self.show_scheduled_empty_state(self.pendingLayout, error=True)
+            self.show_scheduled_empty_state(target_layout, error=True)
+    
+    def _on_scheduled_loaded(self, data, target_layout, page, search_term):
+        """Callback when scheduled services data is received"""
+        try:
+            print(f"DEBUG: API response data type = {type(data)}")
+            
+            # Check if the API supports pagination
+            if isinstance(data, dict) and 'results' in data:
+                # Paginated response
+                scheduled_services = data.get('results', [])
+                self.scheduled_total_pages = data.get('total_pages', 1)
+                self.scheduled_total_count = data.get('count', 0)
+                print(f"DEBUG: Got paginated response: {len(scheduled_services)} services, {self.scheduled_total_pages} pages")
+            else:
+                # Non-paginated response or direct list
+                scheduled_services = data or []
+                self.scheduled_total_pages = 1
+                self.scheduled_total_count = len(scheduled_services)
+                print(f"DEBUG: Got direct list response: {len(scheduled_services)} services")
+
+                # If we got a list but expected status filter, we need to filter manually
+                if self.scheduled_current_filter and scheduled_services:
+                    # Check if items have status field
+                    if 'status' in scheduled_services[0]:
+                        scheduled_services = [s for s in scheduled_services if
+                                              s.get('status', '').lower() == self.scheduled_current_filter]
+                        print(f"DEBUG: After manual status filtering: {len(scheduled_services)} services")
+
+            print(f"DEBUG: Final service count = {len(scheduled_services)}")
+
+            # If no results and we're not on page 1, go back to page 1
+            if not scheduled_services and page > 1:
+                print(f"DEBUG: No results, going back to page 1")
+                self.load_scheduled_services(page=1, search_term=search_term)
+                return
+
+            # Show empty state if no results
+            if not scheduled_services:
+                print(f"DEBUG: Showing empty state")
+                self.show_scheduled_empty_state(target_layout, is_search=bool(search_term))
+                return
+
+            # Create and add cards
+            print(f"DEBUG: Creating {len(scheduled_services)} cards")
+            for service in scheduled_services:
+                card = self.create_scheduled_card(service)
+                target_layout.addWidget(card)
+
+            # Add pagination controls if needed
+            if self.scheduled_total_pages > 1:
+                print(f"DEBUG: Adding pagination controls")
+                self.add_scheduled_pagination_controls(target_layout, search_term)
+            else:
+                print(f"DEBUG: No pagination needed (only 1 page)")
+
+        except Exception as e:
+            print(f"DEBUG: Error in _on_scheduled_loaded: {e}")
+            import traceback
+            traceback.print_exc()
+            self.show_scheduled_empty_state(target_layout, error=True)
+    
+    def _on_scheduled_error(self, error_msg, target_layout):
+        """Callback when scheduled services loading fails"""
+        print(f"DEBUG: Error loading scheduled services: {error_msg}")
+        self.show_scheduled_empty_state(target_layout, error=True)
+    
     def show_scheduled_empty_state(self, layout, is_search=False, error=False):
         """Show appropriate empty state message for scheduled services"""
         empty_label = QLabel()
@@ -2837,8 +2858,15 @@ class MainUI(QMainWindow):
 
 
     def setup_bar_graph(self):
-
-        data = fetch_json(f"{API_BASE_URL}/api/serviceCounts/")
+        """Load bar graph data asynchronously"""
+        self.api.get(
+            '/api/serviceCounts/',
+            on_success=self._populate_bar_graph,
+            on_error=lambda e: print("BAR GRAPH ERROR —", e)
+        )
+    
+    def _populate_bar_graph(self, data):
+        """Populate bar graph with loaded data"""
         if data is None:
             print("BAR GRAPH ERROR — No data")
             return
@@ -2899,9 +2927,15 @@ class MainUI(QMainWindow):
         layout.addWidget(chart_view)
 
     def setup_pie_graph(self):
-
-        data = fetch_json(f"{API_BASE_URL}/api/speciesCounts/")
-
+        """Load pie graph data asynchronously"""
+        self.api.get(
+            '/api/speciesCounts/',
+            on_success=self._populate_pie_graph,
+            on_error=lambda e: self._populate_pie_graph({"dogs": 0, "cats": 0, "others": 0})
+        )
+    
+    def _populate_pie_graph(self, data):
+        """Populate pie graph with loaded data"""
         if not data:
             print("PIE GRAPH — No data found, using zero fallback")
             data = {"dogs": 0, "cats": 0, "others": 0}
@@ -2965,12 +2999,16 @@ class MainUI(QMainWindow):
         layout.addWidget(chart_view)
 
     def appointments_today(self):
-        try:
-            res = requests.get(f"{API_BASE_URL}/api/todaysAppointments/", timeout=5)
-            data = res.json()
-        except Exception as e:
-            print("❌ API ERROR:", e)
-            return
+        """Load today's appointments asynchronously"""
+        self.api.get(
+            '/api/todaysAppointments/',
+            on_success=self._on_appointments_loaded,
+            on_error=lambda e: print("❌ API ERROR:", e),
+            timeout=5
+        )
+    
+    def _on_appointments_loaded(self, data):
+        """Callback when appointments data is received"""
 
         container = self.findChild(QWidget, "appointmentsTodayScroll")
         if not container:
