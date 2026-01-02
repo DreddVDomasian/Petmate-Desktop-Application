@@ -8,6 +8,7 @@ from PyQt6.QtGui import QPixmap, QIcon
 from toast import Toast
 from shadowEffects import create_card_shadow
 from Desktop_Application.Backend.api_client import desktop_login, send_otp, verify_otp_and_reset_password
+from api_worker import APIWorker
 import requests
 from config_loader import API_BASE_URL
 
@@ -325,14 +326,25 @@ class LoginDialog(QDialog):
         self.loginBtn.repaint()  # Force UI update
         QApplication.processEvents()  # Process pending events
 
-        # Attempt login via API
-        success, response = desktop_login(username, password)
+        # Start API call in background thread
+        self.login_worker = APIWorker(
+            'POST',
+            f"{API_BASE_URL}/api/desktop-login/",
+            {'username': username, 'password': password},
+            timeout=10
+        )
+        self.login_worker.finished.connect(self.on_login_finished)
+        self.login_worker.error.connect(self.on_login_error)
+        self.login_worker.start()
 
+    def on_login_finished(self, success, response):
+        """Handle login response from API worker"""
+        stay_signed_in = self.staySignedInCheckbox.isChecked()
         if success:
             # Save credentials if "Stay Signed In" is checked
             if stay_signed_in:
                 settings = QSettings("PetMate", "DesktopApp")
-                settings.setValue("username", username)
+                settings.setValue("username", self.usernameInput.text())
                 settings.setValue("stay_signed_in", True)
             else:
                 # Clear any saved credentials
@@ -341,13 +353,20 @@ class LoginDialog(QDialog):
                 settings.setValue("stay_signed_in", False)
 
             # Store user data and check if first-time setup is needed
-            self.user_data = response['user']
+            self.user_data = response.get('user')
             self.accept()  # Login successful
         else:
             toast = Toast(parent=self, message="Username or password not found", icon_path="Icons/warning.png", duration=2000)
             toast.show_toast()
             self.loginBtn.setText("Login")
             self.loginBtn.setEnabled(True)
+
+    def on_login_error(self, error_msg):
+        """Handle login error"""
+        toast = Toast(parent=self, message=error_msg, icon_path="Icons/warning.png", duration=2000)
+        toast.show_toast()
+        self.loginBtn.setText("Login")
+        self.loginBtn.setEnabled(True)
 
     def close_app(self):
         self.reject()  # Close the application
