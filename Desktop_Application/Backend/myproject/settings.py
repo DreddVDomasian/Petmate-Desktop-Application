@@ -208,7 +208,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:63342",
     "http://localhost",
     "file://",
-    "https://web-production-f564f.up.railway.app"
+    "https://web-production-f564f.up.railway.app",
+    "https://petmate-management.vercel.app"
 ]
 
 # Allow credentials so cookies (session, csrf) are accepted from the frontend dev origin
@@ -227,6 +228,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://triggerless-brianna-pseudoviperous.ngrok-free.dev",
     "https://web-production-f564f.up.railway.app",
+    "https://petmate-management.vercel.app"
 ]
 
 # Add your deployed frontend URL here after deployment
