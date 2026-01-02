@@ -56,14 +56,14 @@ class AddAppointmentCard(QWidget):
         # submit data
         self.addAppointmentBtn.clicked.connect(self.submit_appointment_data)
 
-        # load data
-        self.load_appointments(1,"pending", search_term=None)
+        # load data - deferred to not block initialization
+        # Don't load appointments here - will be loaded when navigating to page
         self.setup_status_filters()
-        self.web_Appointment(1, "pending")
+        # Don't load web appointments here - will be loaded when clicking website tab
         self.status_filter_global = "pending"
-        self.main_window.websiteBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
+        self.main_window.websiteBtn.clicked.connect(lambda: QTimer.singleShot(0, lambda: self.web_Appointment(1, "pending")))
         self.main_window.reminderbtns.setVisible(False)
-        self.main_window.appointmentBtn.clicked.connect(lambda: self.web_Appointment(1, "pending"))
+        self.main_window.appointmentBtn.clicked.connect(lambda: QTimer.singleShot(0, lambda: self.web_Appointment(1, "pending")))
         self.setup_search()
 
         self.setup_time_combo_box()
@@ -510,33 +510,34 @@ class AddAppointmentCard(QWidget):
             self.is_appointment_searching = False
             self.load_appointments(1, self.status_filter_global)
     def load_appointments(self, page=1, status_filter="pending", search_term=None):
-        """Updated load_appointments with search support"""
+        """Updated load_appointments with search support - ASYNC"""
+        self.status_filter_global = status_filter
+        current_layout = self.get_layout_for_status(status_filter)
+        
+        # Show loading label immediately
+        if current_layout:
+            self.show_loading_label(current_layout, "Loading appointments...")
+        
+        # Build API URL
+        url = f"/api/walkIn/?request=accepted&page={page}"
+        if status_filter:
+            url += f"&status={status_filter}"
+        if search_term:
+            import urllib.parse
+            encoded_term = urllib.parse.quote(search_term.strip())
+            url += f"&search={encoded_term}"
+
+        # Use async API call - non-blocking!
+        self.api.get(
+            url=url,
+            on_success=lambda data: self._on_appointments_loaded(data, page, status_filter, search_term, current_layout),
+            on_error=lambda error: self._on_appointments_error(error, status_filter, current_layout),
+            timeout=10
+        )
+    
+    def _on_appointments_loaded(self, data, page, status_filter, search_term, current_layout):
+        """Callback when appointments data is loaded"""
         try:
-            self.status_filter_global = status_filter
-            current_layout = self.get_layout_for_status(status_filter)
-            
-            # Show loading label immediately
-            if current_layout:
-                self.show_loading_label(current_layout, "Loading appointments...")
-            
-            # Build API URL
-            url = f"{API_BASE_URL}/api/walkIn/?request=accepted&page={page}"
-            if status_filter:
-                url += f"&status={status_filter}"
-            if search_term:
-                import urllib.parse
-                encoded_term = urllib.parse.quote(search_term.strip())
-                url += f"&search={encoded_term}"
-
-            response = requests.get(url, timeout=10)
-            if response.status_code != 200:
-                print(f"Failed to load appointments: {response.status_code}")
-                if current_layout:
-                    self.card_manager.show_empty_state(current_layout)
-                return
-
-            data = response.json()
-
             # Handle paginated response
             if isinstance(data, dict) and 'results' in data:
                 appointments = data.get('results', [])
@@ -554,7 +555,8 @@ class AddAppointmentCard(QWidget):
 
             if hasattr(self.main_window, 'reminderbtns'):
                 self.main_window.reminderbtns.setVisible(False)
-            # ✅ CRITICAL FIX: Clear the cards list BEFORE clearing layout
+            
+            # Clear the cards list BEFORE clearing layout
             self.card_manager.appointment_cards.clear()
 
             # Clear current layout
@@ -586,10 +588,15 @@ class AddAppointmentCard(QWidget):
                     pass
 
         except Exception as e:
-            print(f"Error loading appointments: {e}")
-            current_layout = self.get_layout_for_status(status_filter)
+            print(f"Error processing appointments: {e}")
             if current_layout:
                 self.card_manager.show_empty_state(current_layout, "Error loading appointments")
+    
+    def _on_appointments_error(self, error_msg, status_filter, current_layout):
+        """Callback when appointments loading fails"""
+        print(f"Error loading appointments: {error_msg}")
+        if current_layout:
+            self.card_manager.show_empty_state(current_layout, "Error loading appointments")
     def distribute_appointment_cards(self, appointments, target_layout=None):
         """Add appointment cards to a single target layout (the active status layout)."""
         if target_layout is None:
@@ -623,7 +630,7 @@ class AddAppointmentCard(QWidget):
     
     def show_loading_label(self, layout, message="Loading..."):
         """Show a loading label in the given layout"""
-        from PyQt6.QtWidgets import QLabel
+        from PyQt6.QtWidgets import QLabel, QSizePolicy
         # Clear existing items
         while layout.count():
             child = layout.takeAt(0)
@@ -639,7 +646,7 @@ class AddAppointmentCard(QWidget):
             padding: 60px;
             background: transparent;
         """)
-        loading_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        loading_label.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding))
         loading_label.setObjectName("loadingLabel")
         
         layout.addStretch()
@@ -980,19 +987,32 @@ class AddAppointmentCard(QWidget):
     #-------------------------------------------WEB REQUEST---------------------------------------
 
     def web_Appointment(self, page=1, request_filter="pending"):
-        """Paginated loader for web appointment requests."""
+        """Paginated loader for web appointment requests - ASYNC"""
+        # Select layout based on request_filter
+        layout_map = {
+            "pending": self.pendingWebLayout,
+            "accepted": self.acceptedWebLayout,
+            "declined": self.declinedWebLayout,
+        }
+        target_layout = layout_map[request_filter]
+        
+        # Show loading label immediately
+        self.show_loading_label(target_layout, "Loading web appointments...")
 
         # Build URL
-        url = f"{API_BASE_URL}/api/walkIn/?request={request_filter}&page={page}"
+        url = f"/api/walkIn/?request={request_filter}&page={page}"
 
+        # Use async API call - non-blocking!
+        self.api.get(
+            url=url,
+            on_success=lambda data: self._on_web_appointments_loaded(data, page, request_filter, target_layout),
+            on_error=lambda error: self._on_web_appointments_error(error, target_layout),
+            timeout=10
+        )
+    
+    def _on_web_appointments_loaded(self, data, page, request_filter, target_layout):
+        """Callback when web appointments data is loaded"""
         try:
-            response = requests.get(url, timeout=10)
-            if response.status_code != 200:
-                print("Failed to load web appointments")
-                return
-
-            data = response.json()
-
             # Extract pagination
             results = data.get("results", [])
             current_page = data.get("current_page", 1)
@@ -1003,14 +1023,6 @@ class AddAppointmentCard(QWidget):
             if not results and page > 1:
                 return self.web_Appointment(page - 1, request_filter)
 
-            # Select layout based on request_filter
-            layout_map = {
-                "pending": self.pendingWebLayout,
-                "accepted": self.acceptedWebLayout,
-                "declined": self.declinedWebLayout,
-            }
-            target_layout = layout_map[request_filter]
-
             # Clear layout
             while target_layout.count():
                 child = target_layout.takeAt(0)
@@ -1020,7 +1032,8 @@ class AddAppointmentCard(QWidget):
             # Add cards
             for appoint in results:
                 card = self.create_walkin_card(appoint)
-                target_layout.addWidget(card)
+                if card:
+                    target_layout.addWidget(card)
 
             # If empty
             if not results:
@@ -1035,7 +1048,18 @@ class AddAppointmentCard(QWidget):
             )
 
         except Exception as e:
-            print(f"Error loading web appointments: {e}")
+            print(f"Error processing web appointments: {e}")
+            self.add_empty_label(target_layout, "Error loading appointments")
+    
+    def _on_web_appointments_error(self, error_msg, target_layout):
+        """Callback when web appointments loading fails"""
+        print(f"Error loading web appointments: {error_msg}")
+        # Clear layout and show error
+        while target_layout.count():
+            child = target_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+        self.add_empty_label(target_layout, "Error loading appointments")
     def add_web_pagination_controls(self, layout, current_page, total_pages, request_filter):
         # Remove old pagination widget
         try:

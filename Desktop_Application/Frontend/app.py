@@ -12,7 +12,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget, QComboBox, QButtonGroup, QMessageBox, \
-    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect
+    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect, QSizePolicy
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
     QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime
@@ -121,10 +121,11 @@ class MainUI(QMainWindow):
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
 
-        # Load data AFTER all state is initialized
-        self.load_patients(1, search_term=None)
-        self.load_scheduled_services()
-        self.load_staff_accounts()
+        # Defer data loading to after window is shown - don't block initialization!
+        # These will load in background after UI is displayed
+        QTimer.singleShot(0, lambda: self.load_patients(1, search_term=None))
+        QTimer.singleShot(0, lambda: self.load_scheduled_services())
+        QTimer.singleShot(0, lambda: self.load_staff_accounts())
 
         # Setup remaining UI elements
         self.setup_shadow()
@@ -146,18 +147,18 @@ class MainUI(QMainWindow):
 
         self.temp_passwords = {}
 
-        # Analytics/Homepage
+        # Analytics/Homepage - defer to not block startup
         self.stackedWidget.setCurrentIndex(0)
-        self.appointments_today()
-        self.setup_bar_graph()
-        self.setup_pie_graph()
+        QTimer.singleShot(0, lambda: self.appointments_today())
+        QTimer.singleShot(0, lambda: self.setup_bar_graph())
+        QTimer.singleShot(0, lambda: self.setup_pie_graph())
 
 
         self.homeBtn.clicked.connect(self.refresh_analytics)
         self.homeBtn_2.clicked.connect(self.refresh_analytics)
 
         self.setup_office_hours()
-        self.load_service_types_to_main_combobox()
+        QTimer.singleShot(0, lambda: self.load_service_types_to_main_combobox())
 
         #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
@@ -306,15 +307,18 @@ class MainUI(QMainWindow):
         self.pendingReturnBtn.setChecked(True)
         self.pendingReturnBtn.clicked.connect(lambda: (
             self.returnStackedWidget.setCurrentIndex(0),
-            self.load_scheduled_services(1, self.scheduled_search_term)
+            self.show_loading_label(self.pendingLayout, "Loading scheduled services..."),
+            QTimer.singleShot(0, lambda: self.load_scheduled_services(1, self.scheduled_search_term))
         ))
         self.completeReurnBtn.clicked.connect(lambda: (
             self.returnStackedWidget.setCurrentIndex(1),
-            self.load_scheduled_services(1, self.scheduled_search_term)
+            self.show_loading_label(self.completedLayout, "Loading scheduled services..."),
+            QTimer.singleShot(0, lambda: self.load_scheduled_services(1, self.scheduled_search_term))
         ))
         self.overdueReturnBtn.clicked.connect(lambda: (
             self.returnStackedWidget.setCurrentIndex(2),
-            self.load_scheduled_services(1, self.scheduled_search_term)
+            self.show_loading_label(self.overdueLayout, "Loading scheduled services..."),
+            QTimer.singleShot(0, lambda: self.load_scheduled_services(1, self.scheduled_search_term))
         ))
 
         #Web management stackwidget
@@ -414,10 +418,11 @@ class MainUI(QMainWindow):
         if index in self.page_to_nav_button:
             self.page_to_nav_button[index].setChecked(True)
         
-        # Load data when navigating to appointment page
+        # Load data when navigating to appointment page - deferred to not block UI
         if index == 3:  # Appointment page
             if hasattr(self, 'appointmentCard'):
-                self.appointmentCard.load_appointments(1, "pending", search_term=None)
+                # Use QTimer to defer loading until after page is shown
+                QTimer.singleShot(0, lambda: self.appointmentCard.load_appointments(1, "pending", search_term=None))
         
         # Your existing Add Patient logic
         if index == 1:
@@ -839,7 +844,7 @@ class MainUI(QMainWindow):
             padding: 60px;
             background: transparent;
         """)
-        loading_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        loading_label.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding))
         loading_label.setObjectName("loadingLabel")
         
         layout.addStretch()
@@ -960,6 +965,12 @@ class MainUI(QMainWindow):
     
     def _on_patients_loaded(self, data, page, search_term):
         """Callback when patients data is received"""
+        # Clear the layout first (removes loading label)
+        while self.patientListLayout.count():
+            child = self.patientListLayout.takeAt(0)
+            if child and child.widget():
+                child.widget().deleteLater()
+        
         patients = data.get('results', [])
         
         # Update pagination info
@@ -1814,9 +1825,6 @@ class MainUI(QMainWindow):
                 target_layout = self.pendingLayout
                 print(f"DEBUG: Status filter = pending (default)")
 
-            # Show loading label immediately in the target layout
-            self.show_loading_label(target_layout, "Loading scheduled services...")
-
             # Update state
             self.scheduled_current_page = page
             self.scheduled_search_term = search_term or ""
@@ -1839,6 +1847,9 @@ class MainUI(QMainWindow):
                 finally:
                     if hasattr(self, 'scheduled_pagination_widget'):
                         delattr(self, 'scheduled_pagination_widget')
+
+                # NOW show loading label AFTER clearing
+                self.show_loading_label(target_layout, "Loading scheduled services...")
 
             # Get selected month from combobox
             selected_month = self.monthComboBox.currentText()  # e.g., 'August'
