@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgobject-2.0-0 \
     libcairo2 \
     libffi-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip, setuptools, wheel to avoid build/hash issues
@@ -25,6 +26,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the Django project
 COPY . .
+
+# Collect static files
+RUN python manage.py collectstatic --noinput || true
 
 # Expose port
 EXPOSE 8000
