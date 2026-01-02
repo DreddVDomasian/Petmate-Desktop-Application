@@ -2838,7 +2838,7 @@ class MainUI(QMainWindow):
 
     def setup_bar_graph(self):
 
-        data = fetch_json(f"{API_BASE_URL}/api/serviceCounts")
+        data = fetch_json(f"{API_BASE_URL}/api/serviceCounts/")
         if data is None:
             print("BAR GRAPH ERROR — No data")
             return
@@ -2900,7 +2900,7 @@ class MainUI(QMainWindow):
 
     def setup_pie_graph(self):
 
-        data = fetch_json(f"{API_BASE_URL}/api/speciesCounts")
+        data = fetch_json(f"{API_BASE_URL}/api/speciesCounts/")
 
         if not data:
             print("PIE GRAPH — No data found, using zero fallback")
