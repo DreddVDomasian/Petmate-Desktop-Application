@@ -34,6 +34,7 @@ from duplicateDialog import DuplicateDialog
 from updateFunction import Update
 from config_loader import API_BASE_URL
 from async_helper import AsyncHelper
+from loading_overlay import LoadingOverlay
 import requests
 import webbrowser
 
@@ -763,24 +764,56 @@ class MainUI(QMainWindow):
 
         self.ignore_duplicates = False
 
-        # proceed to save patient
-        if add_new_patient(data):
-            self.navigate_to_page(2)
-            self.load_patients(1, search_term=None)
+        # Show loading overlay
+        self.patient_loading_overlay = LoadingOverlay(self)
+        self.patient_loading_overlay.set_message(
+            "Adding Patient...",
+            "Please wait while we save the patient information"
+        )
+        self.patient_loading_overlay.show()
 
-            self.clearInputs()
+        # Use QTimer to let UI update before blocking operation
+        QTimer.singleShot(100, lambda: self._save_patient(data, required_fields))
 
-            # Reset styles to default
-            for widget in required_fields.values():
-                if isinstance(widget, QLineEdit):
-                    widget.setStyleSheet(default_style)
-                elif isinstance(widget, QComboBox):
-                    widget.setStyleSheet(default_combobox_style)
+    def _save_patient(self, data, required_fields):
+        """Background save operation for patient"""
+        try:
+            # proceed to save patient
+            if add_new_patient(data):
+                # Hide loading overlay
+                if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
+                    self.patient_loading_overlay.close()
+                    self.patient_loading_overlay = None
 
-            toast = Toast(self, icon_path="Icons/check.png")
-            toast.show_toast()
-        else:
-            toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
+                self.navigate_to_page(2)
+                self.load_patients(1, search_term=None)
+
+                self.clearInputs()
+
+                # Reset styles to default
+                for widget in required_fields.values():
+                    if isinstance(widget, QLineEdit):
+                        widget.setStyleSheet(default_style)
+                    elif isinstance(widget, QComboBox):
+                        widget.setStyleSheet(default_combobox_style)
+
+                toast = Toast(self, icon_path="Icons/check.png")
+                toast.show_toast()
+            else:
+                # Hide loading overlay
+                if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
+                    self.patient_loading_overlay.close()
+                    self.patient_loading_overlay = None
+
+                toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
+                toast.show_toast()
+        except Exception as e:
+            # Hide loading overlay
+            if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
+                self.patient_loading_overlay.close()
+                self.patient_loading_overlay = None
+
+            toast = Toast(self, f"Error: {str(e)}", icon_path="Icons/warning.png")
             toast.show_toast()
     def on_phone_number_changed(self, text):
         """Real-time phone number formatting with numbers-only input and length limits"""
