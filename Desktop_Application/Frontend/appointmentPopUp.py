@@ -23,6 +23,7 @@ from datetime import datetime
 from loading_overlay import LoadingOverlay
 from functools import partial
 from config_loader import API_BASE_URL
+from async_helper import AsyncHelper
 import requests
 
 class AddAppointmentCard(QWidget):
@@ -32,6 +33,9 @@ class AddAppointmentCard(QWidget):
         uic.loadUi("ui-files/addAppointmentCard.ui", self)
         self.card_manager = AppointmentCardManager(self)
         self.scheduled_card_manager = ScheduledServiceCardManager(self.main_window)
+        
+        # Initialize async helper for non-blocking API calls
+        self.api = AsyncHelper(self, base_url=API_BASE_URL)
 
         #layouts
         self.setup_stackLayout()
@@ -408,44 +412,39 @@ class AddAppointmentCard(QWidget):
         )
         self.appointment_loading_overlay.show()
 
-        # Use QTimer to let UI update before blocking operation
-        from PyQt6.QtCore import QTimer
-        QTimer.singleShot(100, lambda: self._save_appointment(appointment_data))
+        # Use async helper for non-blocking POST request
+        self.api.post(
+            url="/api/walkIn/",
+            data=appointment_data,
+            on_success=self._on_appointment_added,
+            on_error=self._on_appointment_error
+        )
 
-    def _save_appointment(self, appointment_data):
-        """Background save operation for appointment"""
-        try:
-            # send data to backend
-            if add_new_appointment(appointment_data):
-                # Hide loading overlay
-                if hasattr(self, 'appointment_loading_overlay') and self.appointment_loading_overlay:
-                    self.appointment_loading_overlay.close()
-                    self.appointment_loading_overlay = None
+    def _on_appointment_added(self, response):
+        """Callback when appointment is successfully added"""
+        # Hide loading overlay
+        if hasattr(self, 'appointment_loading_overlay') and self.appointment_loading_overlay:
+            self.appointment_loading_overlay.close()
+            self.appointment_loading_overlay = None
 
-                toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
-                toast.show_toast()
-                self.refresh_appointments_safely()
-                self.close()
-                self.update_time_slots_availability()
-                self.serviceTypeComboBox.setCurrentIndex(-1)
-                self.timeComboBox.setCurrentIndex(-1)  # Reset time combo box
-                self.load_appointments(1, "pending", search_term=None)
-            else:
-                # Hide loading overlay
-                if hasattr(self, 'appointment_loading_overlay') and self.appointment_loading_overlay:
-                    self.appointment_loading_overlay.close()
-                    self.appointment_loading_overlay = None
+        toast = Toast(self.main_window, "Appointment added!", icon_path="Icons/check.png")
+        toast.show_toast()
+        self.refresh_appointments_safely()
+        self.close()
+        self.update_time_slots_availability()
+        self.serviceTypeComboBox.setCurrentIndex(-1)
+        self.timeComboBox.setCurrentIndex(-1)  # Reset time combo box
+        self.load_appointments(1, "pending", search_term=None)
 
-                toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
-                toast.show_toast()
-        except Exception as e:
-            # Hide loading overlay
-            if hasattr(self, 'appointment_loading_overlay') and self.appointment_loading_overlay:
-                self.appointment_loading_overlay.close()
-                self.appointment_loading_overlay = None
+    def _on_appointment_error(self, error_msg):
+        """Callback when appointment addition fails"""
+        # Hide loading overlay
+        if hasattr(self, 'appointment_loading_overlay') and self.appointment_loading_overlay:
+            self.appointment_loading_overlay.close()
+            self.appointment_loading_overlay = None
 
-            toast = Toast(self.main_window, f"Error: {str(e)}", icon_path="Icons/warning.png")
-            toast.show_toast()
+        toast = Toast(self.main_window, "Failed to add appointment!", icon_path="Icons/warning.png")
+        toast.show_toast()
     def is_time_slot_available(self, date, time):
         """Check if the selected time slot has available appointments (max 4 ACCEPTED per slot)"""
         try:
