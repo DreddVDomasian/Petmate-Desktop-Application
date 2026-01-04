@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { apiCall } from "../../utils/api";
 
 export default function ForgotPasswordModal({ onClose, onBack }) {
   const [email, setEmail] = useState("");
@@ -36,11 +36,12 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
     setIsSending(true);
 
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/api/send-reset-otp/",
-        { email, source: 'web' },
-        { withCredentials: true }
-      );
+      const response = await apiCall('/api/send-reset-otp/', {
+        method: 'POST',
+        body: JSON.stringify({ email, source: 'web' }),
+        credentials: 'include'
+      });
+
       setMessage("OTP sent to your email!");
       setMessageType("success");
       setStep(2);
@@ -71,11 +72,12 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
     }
 
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/api/verify-reset-otp/",
-        { email, otp, new_password: newPassword },
-        { withCredentials: true }
-      );
+      const response = await apiCall('/api/verify-reset-otp/', {
+        method: 'POST',
+        body: JSON.stringify({ email, otp, new_password: newPassword }),
+        credentials: 'include'
+      });
+
       setMessage("Password reset successfully!");
       setMessageType("success");
       setStep(3);

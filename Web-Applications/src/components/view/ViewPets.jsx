@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../../utils/csrf';
+import { apiCall } from "../../utils/api";
 
 export default function ViewPets() {
     const [pets, setPets] = useState([]);
@@ -54,7 +55,8 @@ export default function ViewPets() {
 
     const fetchUserPets = async () => {
         try {
-            const res = await fetch('/api/pets/', {
+            const res = await apiCall('/api/pets/', {
+                method: 'GET',
                 credentials: 'include',
                 headers: {
                   'X-CSRFToken': getCookie('csrftoken') || ''
@@ -79,7 +81,8 @@ export default function ViewPets() {
     const fetchPetServices = async (petId) => {
         setServicesLoading(true);
         try {
-            const res = await fetch(`/api/services/?pet_id=${petId}`, {
+            const res = await apiCall(`/api/services/?pet_id=${petId}`, {
+                method: 'GET',
                 credentials: 'include',
                 headers: {
                   'X-CSRFToken': getCookie('csrftoken') || ''

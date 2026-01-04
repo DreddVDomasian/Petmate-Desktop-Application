@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf'; // Make sure this path is correct
+import { apiCall } from '../../utils/api';
 
 const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
   // COPY STATE FROM OLD AddPets.jsx
@@ -108,10 +109,9 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
 
       console.log("Sending payload:", payload);
 
-      const res = await fetch("/api/pets/", {
+      const res = await apiCall("/api/pets/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",
         },
         credentials: "include",

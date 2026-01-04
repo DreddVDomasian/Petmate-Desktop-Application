@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf'; // Uncomment kung need
+import { apiCall } from "../../utils/api";
 
 const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }) => {
 
@@ -88,7 +89,9 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
 
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`);
+      const response = await apiCall(`/api/check-time-slot/?date=${date}&time=${time}`, {
+        method: 'GET'
+      });
       if (response.ok) return await response.json();
       return { available: true, is_past: false, is_full: false, message: 'Available' };
     } catch (error) {

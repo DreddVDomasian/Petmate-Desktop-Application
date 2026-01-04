@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf';
+import { apiCall } from "../../utils/api";
 
 const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY STATE FROM OLD SetAppointment.jsx
@@ -69,7 +70,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const res = await fetch("/api/pets/", {
+        const res = await apiCall("/api/pets/", {
+          method: "GET",
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -99,7 +101,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setServicesError(null);
 
         // Use relative path since your API is on the same domain
-        const res = await fetch("/api/service-types/?is_active=true&no_pagination=true", {
+        const res = await apiCall("/api/service-types/?is_active=true&no_pagination=true", {
+          method: "GET",
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -166,7 +169,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     const fetchOfficeHours = async () => {
       try {
         setLoadingHours(true);
-        const res = await fetch("/api/office-hours/", {
+        const res = await apiCall("/api/office-hours/", {
+          method: "GET",
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -234,7 +238,8 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY checkTimeSlotAvailability FROM OLD SetAppointment.jsx
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
+      const response = await apiCall(`/api/check-time-slot/?date=${date}&time=${time}`, {
+        method: "GET",
         credentials: "include",
         headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
       });
@@ -421,10 +426,9 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         status: "pending",
       };
 
-      const res = await fetch("/api/walkIn/", {
+      const res = await apiCall("/api/walkIn/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",
         },
         body: JSON.stringify(appointmentData),
@@ -457,209 +461,4 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
 
   // COPY getTimeSlotStyle FROM OLD SetAppointment.jsx
   const getTimeSlotStyle = (slot) => {
-    if (slot.isPast) {
-      return {
-        color: '#ccc',
-        fontStyle: 'italic',
-        textDecoration: 'line-through'
-      };
-    }
-    if (!slot.available && slot.isFull) {
-      return {
-        color: '#999',
-        fontStyle: 'italic'
-      };
-    }
-    return {
-      color: 'inherit',
-      fontStyle: 'normal'
-    };
-  };
-
-  // Check availability when date changes
-  useEffect(() => {
-    if (form.preferredDate && !loadingHours) {
-      const timeSlotsForDay = getTimeSlotsForDay(form.preferredDate);
-      if (timeSlotsForDay.length > 0) {
-        checkAllTimeSlots(form.preferredDate, timeSlotsForDay);
-      } else {
-        setAvailableTimes([]);
-      }
-    } else {
-      setAvailableTimes([]);
-    }
-  }, [form.preferredDate, loadingHours]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal active">
-      <div className="new-modal-content">
-        <div className="new-modal-header">
-          <h3 className="modal-title">Book Appointment</h3>
-          <button className="modal-close" onClick={onClose}>&times;</button>
-        </div>
-        <div className="modal-body">
-          <form onSubmit={handleSubmit}>
-            <div className="new-form-group">
-              <label htmlFor="appointmentPet">Select Pet</label>
-              <select
-                name="pet"
-                className="form-control"
-                value={form.pet}
-                onChange={handleChange}
-                disabled={loadingPets}
-                required
-              >
-                <option value="">
-                  {loadingPets ? "Loading pets..." : "Select Pet"}
-                </option>
-                {pets.map((pet) => (
-                  <option key={pet.id} value={pet.id}>
-                    {pet.petName}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="new-form-group">
-              <label htmlFor="appointmentService">Service</label>
-              <select
-                name="service"
-                value={form.service}
-                className="form-control"
-                onChange={handleChange}
-                disabled={loadingServices}
-                required
-              >
-                <option value="">
-                  {loadingServices ? "Loading services..." : "Select Service"}
-                </option>
-                {services.map((service) => (
-                  <option key={service.id} value={service.id}>  {/* Store ID in value */}
-                    {service.name}
-                  </option>
-                ))}
-              </select>
-              {services.length === 0 && !loadingServices && (
-                <div className="form-text" style={{ color: '#ff6b6b', fontSize: '12px' }}>
-                  No services available. Please contact the clinic.
-                </div>
-              )}
-            </div>
-
-            <div className="new-form-row">
-              <div className="new-form-group">
-                <label htmlFor="appointmentDate">Preferred Date</label>
-                <input
-                  ref={dateRef}
-                  type="text"
-                  className="form-control"
-                  placeholder="Preferred Date"
-                  readOnly
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="appointmentTime">Preferred Time</label>
-                <select
-                  name="preferredTime"
-                  className="form-control"
-                  value={form.preferredTime}
-                  onChange={handleChange}
-                  disabled={!form.preferredDate || checkingAvailability || loadingHours}
-                  required
-                >
-                  <option value="">
-                    {loadingHours ? "Loading hours..." :
-                      checkingAvailability ? "Checking availability..." :
-                        !form.preferredDate ? "Select date first" :
-                          "Select Time"}
-                  </option>
-                  {availableTimes.map((slot, index) => (
-                    <option
-                      key={index}
-                      value={slot.value}
-                      disabled={!slot.available || slot.isPast}
-                      style={getTimeSlotStyle(slot)}
-                    >
-                      {slot.label}
-                      {slot.isPast && ' (PASSED)'}
-                      {!slot.available && slot.isFull && !slot.isPast && ' (FULL)'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* NEW: Show day status message */}
-            {form.preferredDate && !loadingHours && (
-              (() => {
-                const dayName = getDayName(form.preferredDate);
-                const dayHours = officeHours[dayName];
-
-                if (!dayHours || dayHours.status === 'closed') {
-                  return (
-                    <div className="day-status-message closed">
-                      <i className="fas fa-times-circle"></i>
-                      <span>Closed on {dayName.charAt(0).toUpperCase() + dayName.slice(1)}</span>
-                    </div>
-                  );
-                }
-
-                if (dayHours.status === 'appointment_only') {
-                  return (
-                    <div className="day-status-message appointment-only">
-                      <i className="fas fa-calendar-check"></i>
-                      <span>Appointment Only on {dayName.charAt(0).toUpperCase() + dayName.slice(1)}</span>
-                    </div>
-                  );
-                }
-
-                if (dayHours.status === 'open' && availableTimes.length === 0) {
-                  return (
-                    <div className="day-status-message no-slots">
-                      <i className="fas fa-clock"></i>
-                      <span>No available time slots for {dayName.charAt(0).toUpperCase() + dayName.slice(1)}</span>
-                    </div>
-                  );
-                }
-
-                return null;
-              })()
-            )}
-
-            {availableTimes.length > 0 && availableTimes.every(slot => !slot.available || slot.isPast) && (
-              <div style={{
-                color: '#ff6b6b',
-                textAlign: 'center',
-                margin: '10px 0',
-                fontSize: '14px',
-                fontWeight: 'bold'
-              }}>
-                {availableTimes.every(slot => slot.isPast)
-                  ? "All time slots for today have already passed. Please choose another date."
-                  : "All time slots are fully booked for this date. Please choose another date."
-                }
-              </div>
-            )}
-
-            <div className="new-form-group bookBtns modal-actions">
-              <button
-                type="submit"
-                className="btn new-btn-primary"
-                disabled={submitting || checkingAvailability || loadingHours ||
-                  (form.preferredDate && (!officeHours[getDayName(form.preferredDate)] ||
-                    officeHours[getDayName(form.preferredDate)].status !== 'open'))}
-              >
-                {submitting ? "Booking Appointment..." : "Book Appointment"}
-              </button>
-              <button type="button" className="btn" onClick={onClose}>Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default BookAppointmentModal;
+    if

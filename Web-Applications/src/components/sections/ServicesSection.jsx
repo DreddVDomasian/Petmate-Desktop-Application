@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // import AOS styles
+import { apiCall } from "../../utils/api";
 
 function ServicesSection() {
     const [services, setServices] = useState([]);
@@ -23,8 +24,11 @@ function ServicesSection() {
 
     const fetchServices = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/service-types/?is_active=true&no_pagination=true');
-            const serviceData = Array.isArray(response.data) ? response.data : (response.data.results || []);
+            const response = await apiCall('/api/service-types/?is_active=true&no_pagination=true', {
+                method: 'GET'
+            });
+            const data = await response.json();
+            const serviceData = Array.isArray(data) ? data : (data.results || []);
 
             const servicesWithIcons = serviceData.map(service => ({
                 id: service.id,
