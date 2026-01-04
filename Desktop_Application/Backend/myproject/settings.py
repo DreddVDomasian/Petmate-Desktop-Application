@@ -252,7 +252,10 @@ if os.getenv('RAILWAY_PUBLIC_DOMAIN'):
     railway_domain = f"https://{os.getenv('RAILWAY_PUBLIC_DOMAIN')}"
     CSRF_TRUSTED_ORIGINS.append(railway_domain)
 
-CORS_ALLOWED_HEADERS = [
+# django-cors-headers uses CORS_ALLOW_HEADERS (not CORS_ALLOWED_HEADERS).
+# If the frontend sends non-simple headers (e.g. Cache-Control), the browser will
+# preflight and will fail unless they are listed here.
+CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
     'authorization',
