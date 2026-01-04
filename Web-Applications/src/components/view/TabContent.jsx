@@ -44,6 +44,9 @@ const TabContent = ({
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordMessageType, setPasswordMessageType] = useState("");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
   // RESTRICTION FOR PASSWORD STRENGTH
@@ -56,6 +59,7 @@ const TabContent = ({
   });
 
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   const validatePassword = (pwd) => {
     setPasswordValid({
@@ -72,6 +76,18 @@ const TabContent = ({
     setNewPassword(pwd);
     validatePassword(pwd);
     setPasswordsMatch(pwd === confirmPassword);
+    
+    // Calculate password strength - only show green when ALL requirements are met
+    let score = 0;
+    if (/[A-Z]/.test(pwd)) score += 20;
+    if (/[0-9]/.test(pwd)) score += 20;
+    if (pwd.length >= 8) score += 20;
+    if (/[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]/.test(pwd)) score += 20;
+    if (/[a-z]/.test(pwd)) score += 20;
+    
+    // Only show full strength if ALL requirements are met
+    const allValid = pwd.length >= 8 && /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd) && /[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]/.test(pwd);
+    setPasswordStrength(allValid ? 100 : score);
   };
 
   const handleConfirmPasswordChange = (e) => {
@@ -651,43 +667,94 @@ const TabContent = ({
             <div className="profile-info">
               <div className="form-group">
                 <label>Current Password</label>
-                <input 
-                  type="password" 
-                  className="form-control"
-                  placeholder="Enter current password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required
-                />
+                <div className="password-input-wrapper">
+                  <input 
+                    type={showCurrentPassword ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                  />
+                  <img
+                    src={showCurrentPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                    alt={showCurrentPassword ? "Hide Password" : "Show Password"}
+                    className="toggle-password-icon"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  />
+                </div>
               </div>
               <div className="form-group">
                 <label>New Password</label>
-                <input 
-                  type="password" 
-                  className="form-control"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onChange={handleNewPasswordChange} 
-                  required
-                />
+                <div className="password-input-wrapper">
+                  <input 
+                    type={showNewPassword ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={handleNewPasswordChange} 
+                    required
+                  />
+                  <img
+                    src={showNewPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                    alt={showNewPassword ? "Hide Password" : "Show Password"}
+                    className="toggle-password-icon"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  />
+                </div>
               </div>
               <div className="form-group">
                 <label>Confirm New Password</label>
-                <input 
-                  type="password" 
-                  className="form-control"
-                  placeholder="Confirm new password"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  required
-                />
+                <div className="password-input-wrapper">
+                  <input 
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    required
+                  />
+                  <img
+                    src={showConfirmPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                    alt={showConfirmPassword ? "Hide Password" : "Show Password"}
+                    className="toggle-password-icon"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="password-rules">
-            <p className="rules-title">Password must contain:</p>
+              <p className="rules-title">Password must contain:</p>
 
-            <ul className="password-checklist">
+              <div className="password-strength-wrapper">
+                <div className="password-bar" aria-hidden>
+                  <div
+                    className={
+                      "password-bar-fill " +
+                      (passwordStrength === 100 ? "fill-strong" :
+                        passwordStrength >= 60 ? "fill-medium" :
+                          passwordStrength >= 30 ? "fill-weak" :
+                            "fill-very-weak")
+                    }
+                    style={{ width: `${passwordStrength}%` }}
+                  />
+                </div>
+                <div className="password-label">
+                  {passwordStrength === 100 ? "Strong password." : passwordStrength >= 60 ? "Medium password." : "Weak password. Must contain:"}
+                </div>
+              </div>
+
+              <div className={`password-match-indicator ${passwordsMatch && confirmPassword ? "match" : confirmPassword && !passwordsMatch ? "no-match" : ""}`}>
+                {confirmPassword && (
+                  <>
+                    <span className="icon">{passwordsMatch ? "✔" : "✖"}</span>
+                    {passwordsMatch ? "Passwords match" : "Passwords do not match"}
+                  </>
+                )}
+              </div>
+
+              <ul className="password-checklist">
                 <li className={!newPassword ? "neutral" : (passwordValid.length ? "valid" : "invalid")}>
                   <span className="icon">{passwordValid.length ? "✔" : "✖"}</span> 
                   At least 8 characters
@@ -709,7 +776,7 @@ const TabContent = ({
                   At least 1 special character
                 </li>
               </ul>
-          </div>
+            </div>
 
             
             {passwordMessage && (

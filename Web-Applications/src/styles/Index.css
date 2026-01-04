@@ -405,21 +405,30 @@ header {
 .phone-input .prefix {
     background: #f0f0f0;
     padding: 13px;
-    border: 1px solid #ccc;
+    border: 2px solid #ddd;
     border-right: none;
-    border-radius: 8px 0px 0px 8px ;
-}
-
-.login-container input[type="text"] {
-    /* Nasa APP.CSS TO eh loko! */
-    border-radius: 0 !important;
+    border-radius: 8px 0px 0px 8px;
+    font-size: 16px;
 }
 
 .phone-input input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 0 5px 5px 0;
+    padding: 12px;
+    border: 2px solid #ddd !important;
+    border-left: none !important;
+    border-radius: 0 8px 8px 0 !important;
     width: 100%;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+.phone-input:focus-within .prefix {
+    border-color: #ff8c00;
+}
+
+.phone-input:focus-within input {
+    border-color: #ff8c00 !important;
+    outline: none;
 }
 
 

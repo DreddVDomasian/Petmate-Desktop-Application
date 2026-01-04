@@ -19,6 +19,8 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
   const [verificationData, setVerificationData] = useState(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordValid, setPasswordValid] = useState({
     length: false,
     uppercase: false,
@@ -28,14 +30,24 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
   });
 
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   useEffect(() => {
     let score = 0;
-    if (/[A-Z]/.test(password)) score += 33;
-    if (/[0-9]/.test(password)) score += 33;
-    if (password.length >= 8) score += 34;
-    setPasswordStrength(score);
+    if (/[A-Z]/.test(password)) score += 20;
+    if (/[0-9]/.test(password)) score += 20;
+    if (password.length >= 8) score += 20;
+    if (/[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]/.test(password)) score += 20;
+    if (/[a-z]/.test(password)) score += 20;
+    
+    // Only show full strength if ALL requirements are met
+    const allValid = password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]/.test(password);
+    setPasswordStrength(allValid ? 100 : score);
   }, [password]);
+
+  useEffect(() => {
+    setPasswordsMatch(password === confirmPassword);
+  }, [password, confirmPassword]);
 
   const validatePassword = (pwd) => {
     setPasswordValid({
@@ -312,28 +324,44 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
               <div className="form-group password-pair">
                 <div className="form-group">
                   <label htmlFor="signupPassword">Password</label>
-                  <input
-                    id="signupPassword"
-                    type="password"
-                    name="password"
-                    value={password}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setPassword(v);
-                      validatePassword(v);
-                    }}
-                    required
-                  />
-                  <div className="form-group">
-                    <label htmlFor="signupConfirm">Confirm Password</label>
+                  <div className="password-input-wrapper">
                     <input
-                      id="signupConfirm"
-                      type="password"
-                      name="confirmPassword"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      id="signupPassword"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={password}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setPassword(v);
+                        validatePassword(v);
+                      }}
                       required
                     />
+                    <img
+                      src={showPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                      alt={showPassword ? "Hide Password" : "Show Password"}
+                      className="toggle-password-icon"
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="signupConfirm">Confirm Password</label>
+                    <div className="password-input-wrapper">
+                      <input
+                        id="signupConfirm"
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                      />
+                      <img
+                        src={showConfirmPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                        alt={showConfirmPassword ? "Hide Password" : "Show Password"}
+                        className="toggle-password-icon"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      />
+                    </div>
                   </div>
 
                   <div className="password-strength-wrapper">
@@ -341,17 +369,27 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       <div
                         className={
                           "password-bar-fill " +
-                          (passwordStrength >= 76 ? "fill-strong" :
-                            passwordStrength >= 51 ? "fill-medium" :
-                              passwordStrength >= 26 ? "fill-weak" :
+                          (passwordStrength === 100 ? "fill-strong" :
+                            passwordStrength >= 60 ? "fill-medium" :
+                              passwordStrength >= 30 ? "fill-weak" :
                                 "fill-very-weak")
                         }
                         style={{ width: `${passwordStrength}%` }}
                       />
                     </div>
                     <div className="password-label">
-                      {passwordStrength >= 66 ? "Strong password." : passwordStrength >= 33 ? "Medium password." : "Weak password. Must contain:"}
+                      {passwordStrength === 100 ? "Strong password." : passwordStrength >= 60 ? "Medium password." : "Weak password. Must contain:"}
                     </div>
+
+                    <div className={`password-match-indicator ${passwordsMatch && confirmPassword ? "match" : confirmPassword && !passwordsMatch ? "no-match" : ""}`}>
+                      {confirmPassword && (
+                        <>
+                          <span className="icon">{passwordsMatch ? "✔" : "✖"}</span>
+                          {passwordsMatch ? "Passwords match" : "Passwords do not match"}
+                        </>
+                      )}
+                    </div>
+
                     <ul className="password-checklist vertical">
                       <li className={passwordValid.uppercase ? "valid" : ""}><span className="icon">{passwordValid.uppercase ? "✔" : "✖"}</span> At least 1 uppercase</li>
                       <li className={passwordValid.number ? "valid" : ""}><span className="icon">{passwordValid.number ? "✔" : "✖"}</span> At least 1 number</li>

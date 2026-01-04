@@ -149,9 +149,30 @@ input, textarea, select {
     box-sizing: border-box;
 }
 
-.login-container input:focus {
+/* Signup Modal Select Inputs */
+.login-container select,
+.addressSelect {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+    background-color: white;
+    cursor: pointer;
+}
+
+.login-container input:focus,
+.login-container select:focus,
+.addressSelect:focus {
     outline: none;
     border-color: #ff8c00;
+}
+
+.password-input-wrapper input:focus {
+    outline: none;
+    border-color: transparent;
 }
 
 
@@ -193,4 +214,51 @@ input, textarea, select {
 
 .signup-link a:hover {
     color: #e67c00;
+}
+
+/* Hide browser default password reveal button */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+/* Password Input Wrapper with Toggle */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #ddd;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.password-input-wrapper:focus-within {
+    border-color: #ff8c00;
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+    border: none;
+    padding: 12px;
+    padding-right: 40px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.toggle-password-icon {
+    position: absolute;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.toggle-password-icon:hover {
+    opacity: 1;
 }

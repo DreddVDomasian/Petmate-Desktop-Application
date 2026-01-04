@@ -967,3 +967,74 @@ header {
 .invalid {
   color: #dc3545;  /* red */
 }
+
+/* Password Strength Bar */
+.password-strength-wrapper {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.password-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.password-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.password-bar-fill.fill-very-weak {
+  background-color: #dc3545;
+  width: 0%;
+}
+
+.password-bar-fill.fill-weak {
+  background-color: #fd7e14;
+}
+
+.password-bar-fill.fill-medium {
+  background-color: #ffc107;
+}
+
+.password-bar-fill.fill-strong {
+  background-color: #28a745;
+}
+
+.password-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* Password Match Indicator */
+.password-match-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 10px 0 15px 0;
+  height: 20px;
+  min-height: 20px;
+}
+
+.password-match-indicator.match {
+  color: #28a745;
+}
+
+.password-match-indicator.no-match {
+  color: #dc3545;
+}
+
+.password-match-indicator .icon {
+  font-weight: bold;
+  font-size: 16px;
+}

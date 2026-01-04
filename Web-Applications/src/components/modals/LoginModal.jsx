@@ -5,6 +5,7 @@ import ForgotPasswordModal from "../modals/ForgetPasswordModal";
 
 function LoginModal({ onClose, onOpenSignup, visible }) {
   const [showForgot, setShowForgot] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   if (!visible) return null;
@@ -67,7 +68,20 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
 
                 <div className="form-group">
                   <label htmlFor="loginPassword">Password</label>
-                  <input type="password" id="loginPassword" name="password" required />
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="loginPassword"
+                      name="password"
+                      required
+                    />
+                    <img
+                      src={showPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                      alt={showPassword ? "Hide Password" : "Show Password"}
+                      className="toggle-password-icon"
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  </div>
                 </div>
 
                 <div className="form-options">
