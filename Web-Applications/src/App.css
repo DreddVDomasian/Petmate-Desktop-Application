@@ -148,7 +148,9 @@ input, textarea, select {
     transition: border-color 0.3s;
     box-sizing: border-box;
 }
-
+.login-container input[type="password"]{
+    border: none;
+}
 /* Signup Modal Select Inputs */
 .login-container select,
 .addressSelect {
@@ -230,7 +232,7 @@ input::-ms-clear {
     width: 100%;
     border-radius: 8px;
     overflow: hidden;
-    border: 2px solid #ddd;
+    border: 1px solid #ddd; /* single thin border to avoid doubling with input */
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
