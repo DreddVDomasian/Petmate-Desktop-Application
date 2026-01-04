@@ -4,6 +4,7 @@ import barangays from "../../data/barangays.json";
 import React, { useState, useEffect } from "react";
 import { getCookie } from "../../utils/csrf";
 import ClaimAccountModal from "./ClaimAccountModal";
+import { apiCall } from "../../utils/api";
 
 function SignupModal({ onClose, onOpenLogin, visible }) {
   if (!visible) return null;
@@ -57,10 +58,9 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
     // First check if email has existing walk-in record
     (async () => {
       try {
-        const checkRes = await fetch('/api/check-existing-patient/', {
+        const checkRes = await apiCall('/api/check-existing-patient/', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken') || ''
           },
           body: JSON.stringify({ email: data.email })
@@ -116,10 +116,9 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
     const { confirmPassword, ...submitData } = data;
     
     try {
-      const res = await fetch('/api/register/', {
+      const res = await apiCall('/api/register/', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'X-CSRFToken': getCookie('csrftoken') || ''
         },
         credentials: 'include',
