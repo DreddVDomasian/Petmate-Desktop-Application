@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [
     "triggerless-brianna-pseudoviperous.ngrok-free.dev",
     ".railway.app",  # For Railway deployment
     os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Railway auto domain
-    "https://petmate-desktop-application.vercel.app/",  # Frontend deployed URL
+    "petmate-desktop-application.vercel.app",  # Frontend deployed URL (no scheme/ slash)
 ]
 # Remove empty strings from ALLOWED_HOSTS
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
@@ -231,7 +231,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://triggerless-brianna-pseudoviperous.ngrok-free.dev",
     "https://web-production-f564f.up.railway.app",
-    "https://petmate-management.vercel.app"
+    "https://petmate-management.vercel.app",
+    "https://petmate-desktop-application.vercel.app"
 ]
 
 # Add your deployed frontend URL here after deployment
