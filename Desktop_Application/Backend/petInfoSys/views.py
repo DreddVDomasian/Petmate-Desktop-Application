@@ -556,6 +556,7 @@ def csrf_token(request):
     return Response({"csrfToken": token})
 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_view(request):

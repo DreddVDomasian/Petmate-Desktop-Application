@@ -201,6 +201,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# REST Framework Settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'petInfoSys.authentication.CsrfExemptSessionAuthentication',
+    ],
+}
+
 #-----------------------WEB APP------------------------
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
