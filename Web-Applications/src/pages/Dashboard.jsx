@@ -6,8 +6,6 @@ import PetDetailsModal from '../components/modals/PetDetailsModal'
 import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal'
 import AppointmentDetailsModalEdit from '../components/modals/AppointmentDetailsModalEdit' // Imported na
 
-import { apiCall } from '../utils/api'
-
 import '../styles/Dashboard.css';
 
 function Dashboard(props) {
@@ -59,10 +57,7 @@ function Dashboard(props) {
   const fetchPets = async () => {
     setLoading(true);
     try {
-      const res = await apiCall('/api/pets/', { 
-        method: 'GET',
-        credentials: 'include' 
-      });
+      const res = await fetch('/api/pets/', { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch pets');
       const data = await res.json();
       setPets(Array.isArray(data) ? data : []);
@@ -75,10 +70,7 @@ function Dashboard(props) {
 
   const fetchAppointments = async () => {
     try {
-      const res = await apiCall('/api/walkIn/', { 
-        method: 'GET',
-        credentials: 'include' 
-      });
+      const res = await fetch('/api/walkIn/', { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch appointments');
       const data = await res.json();
 

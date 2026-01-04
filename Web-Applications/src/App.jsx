@@ -6,7 +6,6 @@ import Dashboard from './pages/Dashboard'
 import Header from './components/navigation/Header' // Import the unified Header
 import './App.css'
 import './styles/Dashboard.css' // Make sure Dashboard.css is imported for global styles
-import { apiCall } from './utils/api'
 
 // Create a Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -19,8 +18,8 @@ const ProtectedRoute = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const res = await apiCall('/api/user/', {
-        method: 'GET',
+      const res = await fetch('/api/user/', {
+        credentials: 'include',
         headers: {
           'Cache-Control': 'no-cache'
         }
