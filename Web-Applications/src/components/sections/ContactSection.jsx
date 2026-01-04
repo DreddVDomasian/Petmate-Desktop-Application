@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'; // Added useEffect
-import axios from 'axios';
+import { apiFetch } from '../../config/api';
 import AOS from 'aos'; // Added AOS import
 import 'aos/dist/aos.css'; // Added AOS CSS
 
@@ -28,25 +28,30 @@ export default function ContactSection() {
 
         try {
             setIsSending(true);
-            await axios.get("http://localhost:8000/api/csrf/", { withCredentials: true });
+            await apiFetch('/api/csrf/');
             const csrf = getCookie("csrftoken") || getCookie("csrf") || getCookie("XSRF-TOKEN");
 
-            const res = await axios.post(
-                "http://127.0.0.1:8000/api/contact-us_message/",
-                { name, email, message },
+            const res = await apiFetch(
+                "/api/contact-us_message/",
                 {
-                    withCredentials: true,
-                    headers: { "X-CSRFToken": csrf }
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrf || ''
+                    },
+                    body: JSON.stringify({ name, email, message })
                 }
             );
 
-            alert(res.data.message);
+            const data = await res.json();
+
+            alert(data.message || 'Message sent!');
             setName("");
             setEmail("");
             setMessage("");
         } catch (err) {
             console.error(err);
-            const errMsg = err.response?.data?.error || "Failed to send message. Please try again.";
+            const errMsg = err?.response?.data?.error || err?.message || "Failed to send message. Please try again.";
             alert(errMsg);
         } finally {
             setIsSending(false);

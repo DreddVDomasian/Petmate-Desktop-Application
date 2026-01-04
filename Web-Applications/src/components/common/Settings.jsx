@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { apiFetch } from "../../config/api";
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("details");
@@ -27,12 +27,11 @@ export default function Settings() {
     const fetchProfile = async () => {
       try {
         //  rely on cookies (withCredentials) and a simple GET
-        const res = await axios.get(
-          "http://localhost:8000/api/user/profile/",
-          { withCredentials: true }
+        const res = await apiFetch(
+          "/api/user/profile/"
         );
 
-        const data = res.data || {};
+        const data = await res.json();
 
         const firstName = data.first_name || data.firstName || "";
         const middleName = data.middle_name || data.middleName || "";
@@ -72,16 +71,24 @@ export default function Settings() {
       const headers = {};
       if (csrf) headers["X-CSRFToken"] = csrf;
 
-      const response = await axios.post(
-        "http://localhost:8000/api/web-reset-password/",
+      const response = await apiFetch(
+        "/api/web-reset-password/",
         {
-          current_password: currentPassword,
-          new_password: newPassword,
-        },
-        { withCredentials: true, headers }
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            ...headers,
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword,
+          })
+        }
       );
 
-      setPasswordMessage(response.data.message || "Password updated successfully!");
+      const respData = await response.json();
+
+      setPasswordMessage(respData.message || "Password updated successfully!");
       setPasswordMessageType("success");
       setCurrentPassword("");
       setNewPassword("");
