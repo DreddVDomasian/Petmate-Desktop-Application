@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     "triggerless-brianna-pseudoviperous.ngrok-free.dev",
     ".railway.app",  # For Railway deployment
     os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Railway auto domain
+    "https://petmate-desktop-application.vercel.app/",  # Frontend deployed URL
 ]
 # Remove empty strings from ALLOWED_HOSTS
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
@@ -211,7 +212,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "file://",
     "https://web-production-f564f.up.railway.app",
-    "https://petmate-management.vercel.app"
+    "https://petmate-desktop-application.vercel.app"
 ]
 
 # Allow credentials so cookies (session, csrf) are accepted from the frontend dev origin
