@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { apiCall } from "../../utils/api";
 
 const OfficeHours = () => {
     const [officeHours, setOfficeHours] = useState([]);
@@ -31,9 +30,7 @@ const OfficeHours = () => {
     const fetchOfficeHours = async () => {
         try {
             setIsLoading(true);
-            const response = await apiCall('/api/office-hours/', {
-              method: 'GET'
-            });
+            const response = await fetch('/api/office-hours/'); // Adjust URL based on your Django settings
             if (!response.ok) {
                 throw new Error('Failed to fetch office hours');
             }

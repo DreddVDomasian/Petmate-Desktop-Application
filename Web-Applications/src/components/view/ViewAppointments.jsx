@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { getCookie } from "../../utils/csrf";
-import { apiCall } from "../../utils/api";
 
 export default function ViewAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -14,7 +13,7 @@ export default function ViewAppointments() {
     setLoading(true);
     setError(null);
     try {
-      const res = await apiCall("/api/walkIn/", {
+      const res = await fetch("/api/walkIn/", {
         method: "GET",
         credentials: "include",
         headers: {
@@ -70,7 +69,7 @@ export default function ViewAppointments() {
   // New function to check time slot availability
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await apiCall(`/api/check-time-slot/?date=${date}&time=${time}`, {
+      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
         credentials: "include",
         headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
       });

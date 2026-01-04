@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf';
-import { apiCall } from "../../utils/api";
 
 const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY STATE FROM OLD SetAppointment.jsx
@@ -70,8 +69,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const res = await apiCall("/api/pets/", {
-          method: "GET",
+        const res = await fetch("/api/pets/", {
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -101,8 +99,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setServicesError(null);
 
         // Use relative path since your API is on the same domain
-        const res = await apiCall("/api/service-types/?is_active=true&no_pagination=true", {
-          method: "GET",
+        const res = await fetch("/api/service-types/?is_active=true&no_pagination=true", {
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -169,8 +166,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     const fetchOfficeHours = async () => {
       try {
         setLoadingHours(true);
-        const res = await apiCall("/api/office-hours/", {
-          method: "GET",
+        const res = await fetch("/api/office-hours/", {
           credentials: "include",
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
@@ -238,8 +234,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY checkTimeSlotAvailability FROM OLD SetAppointment.jsx
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await apiCall(`/api/check-time-slot/?date=${date}&time=${time}`, {
-        method: "GET",
+      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
         credentials: "include",
         headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
       });
@@ -426,9 +421,10 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         status: "pending",
       };
 
-      const res = await apiCall("/api/walkIn/", {
+      const res = await fetch("/api/walkIn/", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",
         },
         body: JSON.stringify(appointmentData),

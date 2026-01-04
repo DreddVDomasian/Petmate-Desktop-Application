@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import PetCard from './PetCard'
 import AppointmentCard from './AppointmentCard'
-import { apiCall } from "../../utils/api";
 
 const TabContent = ({ 
   activeTab,
@@ -138,10 +137,11 @@ const TabContent = ({
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const res = await apiCall('/api/user/', {
-          method: 'GET',
-          credentials: 'include',
-          headers: { 'X-CSRFToken': getCookie('csrftoken') || '' }
+        const res = await fetch("/api/user/profile/", {
+          credentials: "include",
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken") || "",
+          },
         });
 
         if (res.ok) {
@@ -223,17 +223,20 @@ const TabContent = ({
 
       console.log("=== FRONTEND DEBUG: Sending update data ===", updateData);
 
-      const res = await apiCall('/api/user/', {
-        method: 'PATCH',
+      const response = await fetch("/api/user/profile/", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf,
+        },
+        credentials: "include",
         body: JSON.stringify(updateData),
-        headers: { 'X-CSRFToken': getCookie('csrftoken') || '' },
-        credentials: 'include'
       });
 
-      console.log("=== FRONTEND DEBUG: Response status ===", res.status);
+      console.log("=== FRONTEND DEBUG: Response status ===", response.status);
 
-      if (res.ok) {
-        const updatedData = await res.json();
+      if (response.ok) {
+        const updatedData = await response.json();
         console.log("=== FRONTEND DEBUG: Update successful ===", updatedData);
         alert("Profile updated successfully!");
         setIsEditingProfile(false);
@@ -249,9 +252,9 @@ const TabContent = ({
         setUserBarangay(updatedData.barangay || userBarangay);
         setUserDetailedAddress(updatedData.detailedAddress || userDetailedAddress);
       } else {
-        const errorText = await res.text();
-        console.log("=== FRONTEND DEBUG: Update failed ===", res.status, errorText);
-        throw new Error(`Failed with status: ${res.status}`);
+        const errorText = await response.text();
+        console.log("=== FRONTEND DEBUG: Update failed ===", response.status, errorText);
+        throw new Error(`Failed with status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -282,25 +285,28 @@ const TabContent = ({
       const headers = {};
       if (csrf) headers["X-CSRFToken"] = csrf;
 
-      const res = await apiCall('/api/web-reset-password/', {
-        method: 'POST',
+      const response = await fetch("/api/web-reset-password/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        credentials: "include",
         body: JSON.stringify({
           current_password: currentPassword,
           new_password: newPassword,
         }),
-        headers: { 'X-CSRFToken': getCookie('csrftoken') || '' },
-        credentials: 'include'
       });
 
-      if (res.ok) {
-        const data = await res.json();
+      if (response.ok) {
+        const data = await response.json();
         setPasswordMessage(data.message || "Password updated successfully!");
         setPasswordMessageType("success");
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
       } else {
-        const errorData = await res.json();
+        const errorData = await response.json();
         throw new Error(errorData.error || errorData.detail || "Failed to update password");
       }
     } catch (error) {
