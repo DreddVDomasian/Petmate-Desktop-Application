@@ -37,7 +37,7 @@ After adding the environment variable, you need to trigger a new deployment:
 2. Click the three dots (...) on the latest deployment
 3. Select **Redeploy**
 
-**Option B: Via Git Push**
+**Option b: Via Git Push**
 1. Make a small commit to your repository:
    ```bash
    git commit --allow-empty -m "Trigger redeployment with env vars"
