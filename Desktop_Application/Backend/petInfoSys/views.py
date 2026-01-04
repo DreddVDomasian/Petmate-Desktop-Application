@@ -679,7 +679,11 @@ def login_view(request):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
         django_login(auth_request, user)
-        return Response({'ok': True, 'username': user.username})
+        
+        # Explicitly save session to ensure it's persisted
+        auth_request.session.save()
+        
+        return Response({'ok': True, 'username': user.username, 'user_id': user.id})
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
