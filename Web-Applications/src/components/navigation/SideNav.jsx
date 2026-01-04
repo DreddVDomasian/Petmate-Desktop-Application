@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { apiFetch } from '../../config/api';
 import { getCookie } from '../../utils/csrf';
+import { apiFetch } from '../../config/api';
+import { getCookie } from '../../utils/csrf';
 
 export default function SideNav({ defaultActive = 'addclient', onNavigate = () => {} }) {
   const [active, setActive] = useState(defaultActive);
