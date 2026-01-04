@@ -255,6 +255,7 @@ CORS_ALLOWED_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'cache-control',  # allow fetch/axios default cache header
 ]
 
 SESSION_COOKIE_AGE = 3600  # 1 hour
