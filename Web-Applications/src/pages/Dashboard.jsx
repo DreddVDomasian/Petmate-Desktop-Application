@@ -5,6 +5,7 @@ import BookAppointmentModal from '../components/forms/BookAppointmentModal'
 import PetDetailsModal from '../components/modals/PetDetailsModal' 
 import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal'
 import AppointmentDetailsModalEdit from '../components/modals/AppointmentDetailsModalEdit' // Imported na
+import { apiFetch } from '../config/api'
 
 import '../styles/Dashboard.css';
 
@@ -57,7 +58,7 @@ function Dashboard(props) {
   const fetchPets = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/pets/', { credentials: 'include' });
+      const res = await apiFetch('/api/pets/');
       if (!res.ok) throw new Error('Failed to fetch pets');
       const data = await res.json();
       setPets(Array.isArray(data) ? data : []);
@@ -70,7 +71,7 @@ function Dashboard(props) {
 
   const fetchAppointments = async () => {
     try {
-      const res = await fetch('/api/walkIn/', { credentials: 'include' });
+      const res = await apiFetch('/api/walkIn/');
       if (!res.ok) throw new Error('Failed to fetch appointments');
       const data = await res.json();
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf';
+import { apiFetch } from '../../config/api';
 
 const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY STATE FROM OLD SetAppointment.jsx
@@ -69,8 +70,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const res = await fetch("/api/pets/", {
-          credentials: "include",
+        const res = await apiFetch("/api/pets/", {
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
         if (res.ok) {
@@ -99,8 +99,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setServicesError(null);
 
         // Use relative path since your API is on the same domain
-        const res = await fetch("/api/service-types/?is_active=true&no_pagination=true", {
-          credentials: "include",
+        const res = await apiFetch("/api/service-types/?is_active=true&no_pagination=true", {
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
 
@@ -166,8 +165,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     const fetchOfficeHours = async () => {
       try {
         setLoadingHours(true);
-        const res = await fetch("/api/office-hours/", {
-          credentials: "include",
+        const res = await apiFetch("/api/office-hours/", {
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
         if (res.ok) {
@@ -421,14 +419,13 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         status: "pending",
       };
 
-      const res = await fetch("/api/walkIn/", {
+      const res = await apiFetch("/api/walkIn/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",
         },
         body: JSON.stringify(appointmentData),
-        credentials: "include",
       });
 
       if (res.status === 201) {

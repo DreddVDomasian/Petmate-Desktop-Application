@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Index from './pages/Index'
 import Dashboard from './pages/Dashboard'
 import Header from './components/navigation/Header' // Import the unified Header
+import { apiFetch } from './config/api'
 import './App.css'
 import './styles/Dashboard.css' // Make sure Dashboard.css is imported for global styles
 
@@ -18,8 +19,7 @@ const ProtectedRoute = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const res = await fetch('/api/user/', {
-        credentials: 'include',
+      const res = await apiFetch('/api/user/', {
         headers: {
           'Cache-Control': 'no-cache'
         }

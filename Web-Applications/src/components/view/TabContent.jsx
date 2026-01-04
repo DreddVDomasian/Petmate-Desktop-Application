@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import PetCard from './PetCard'
 import AppointmentCard from './AppointmentCard'
+import { apiFetch } from '../../config/api'
+import { getCookie } from '../../utils/csrf'
 
 const TabContent = ({ 
   activeTab,
@@ -153,8 +155,7 @@ const TabContent = ({
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const res = await fetch("/api/user/profile/", {
-          credentials: "include",
+        const res = await apiFetch("/api/user/profile/", {
           headers: {
             "X-CSRFToken": getCookie("csrftoken") || "",
           },
@@ -239,13 +240,12 @@ const TabContent = ({
 
       console.log("=== FRONTEND DEBUG: Sending update data ===", updateData);
 
-      const response = await fetch("/api/user/profile/", {
+      const response = await apiFetch("/api/user/profile/", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": csrf,
         },
-        credentials: "include",
         body: JSON.stringify(updateData),
       });
 
@@ -301,13 +301,12 @@ const TabContent = ({
       const headers = {};
       if (csrf) headers["X-CSRFToken"] = csrf;
 
-      const response = await fetch("/api/web-reset-password/", {
+      const response = await apiFetch("/api/web-reset-password/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...headers,
         },
-        credentials: "include",
         body: JSON.stringify({
           current_password: currentPassword,
           new_password: newPassword,

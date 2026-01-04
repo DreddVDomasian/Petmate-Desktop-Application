@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/csrf";
+import { apiFetch } from "../../config/api";
 import ForgotPasswordModal from "../modals/ForgetPasswordModal";
 
 function LoginModal({ onClose, onOpenSignup, visible }) {
@@ -22,13 +23,12 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
 
     (async () => {
       try {
-        const res = await fetch("/api/login/", {
+        const res = await apiFetch("/api/login/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken") || "",
           },
-          credentials: "include",
           body: JSON.stringify({ email, password }),
         });
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getCookie } from "../../utils/csrf";
+import { apiFetch } from "../../config/api";
 
 function ClaimAccountModal({ visible, verificationData, onClose, onSuccess }) {
   if (!visible) return null;
@@ -30,13 +31,12 @@ function ClaimAccountModal({ visible, verificationData, onClose, onSuccess }) {
     setMessage("");
     
     try {
-      const res = await fetch('/api/verify-claim-account/', {
+      const res = await apiFetch('/api/verify-claim-account/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCookie('csrftoken') || ''
         },
-        credentials: 'include',
         body: JSON.stringify({
           verification_id: verificationData.verification_id,
           otp: otp,
@@ -69,7 +69,7 @@ function ClaimAccountModal({ visible, verificationData, onClose, onSuccess }) {
 // In ClaimAccountModal.jsx, update the handleResendOTP function:
 const handleResendOTP = async () => {
   try {
-    const res = await fetch('/api/check-existing-patient/', {
+    const res = await apiFetch('/api/check-existing-patient/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

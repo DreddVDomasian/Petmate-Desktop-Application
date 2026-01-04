@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../../utils/csrf';
+import { apiFetch } from '../../config/api';
 
 export default function ViewPets() {
     const [pets, setPets] = useState([]);
@@ -54,8 +55,7 @@ export default function ViewPets() {
 
     const fetchUserPets = async () => {
         try {
-            const res = await fetch('/api/pets/', {
-                credentials: 'include',
+            const res = await apiFetch('/api/pets/', {
                 headers: {
                   'X-CSRFToken': getCookie('csrftoken') || ''
                 }
@@ -79,8 +79,7 @@ export default function ViewPets() {
     const fetchPetServices = async (petId) => {
         setServicesLoading(true);
         try {
-            const res = await fetch(`/api/services/?pet_id=${petId}`, {
-                credentials: 'include',
+            const res = await apiFetch(`/api/services/?pet_id=${petId}`, {
                 headers: {
                   'X-CSRFToken': getCookie('csrftoken') || ''
                 }
@@ -207,13 +206,12 @@ export default function ViewPets() {
             finalSpecies = editForm.customSpecies.trim();
         }
         try {
-            const res = await fetch(`/api/pets/${selectedPet.id}/`, {
+            const res = await apiFetch(`/api/pets/${selectedPet.id}/`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
                   'X-CSRFToken': getCookie('csrftoken') || ''
                 },
-                credentials: 'include',
                 body: JSON.stringify({
                   petName: editForm.petName,
                   petColor: editForm.petColor,
@@ -254,12 +252,11 @@ export default function ViewPets() {
         if (!petToDelete) return;
 
         try {
-            const res = await fetch(`/api/pets/${petToDelete.id}/`, {
+            const res = await apiFetch(`/api/pets/${petToDelete.id}/`, {
                 method: 'DELETE',
                 headers: {
                   'X-CSRFToken': getCookie('csrftoken') || ''
-                },
-                credentials: 'include'
+                }
             });
 
             if (res.ok) {

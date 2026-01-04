@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { apiFetch } from '../../config/api';
+import { getCookie } from '../../utils/csrf';
 
 export default function SideNav({ defaultActive = 'addclient', onNavigate = () => {} }) {
   const [active, setActive] = useState(defaultActive);
@@ -11,8 +13,7 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
   // Enhanced auth check function
   const checkAuth = async () => {
     try {
-      const res = await fetch('/api/user/', {
-        credentials: 'include',
+      const res = await apiFetch('/api/user/', {
         headers: {
           'Cache-Control': 'no-cache'
         }
@@ -83,9 +84,8 @@ export default function SideNav({ defaultActive = 'addclient', onNavigate = () =
 
     try {
       // Call logout API
-      await fetch('/api/logout/', {
+      await apiFetch('/api/logout/', {
         method: 'POST',
-        credentials: 'include',
         headers: {
           'X-CSRFToken': getCookie('csrftoken') || ''
         }

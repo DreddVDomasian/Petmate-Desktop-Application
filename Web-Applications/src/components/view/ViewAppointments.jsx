@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getCookie } from "../../utils/csrf";
+import { apiFetch } from "../../config/api";
 
 export default function ViewAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -13,9 +14,8 @@ export default function ViewAppointments() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/walkIn/", {
+      const res = await apiFetch("/api/walkIn/", {
         method: "GET",
-        credentials: "include",
         headers: {
           Accept: "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",
@@ -69,8 +69,7 @@ export default function ViewAppointments() {
   // New function to check time slot availability
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
-        credentials: "include",
+      const response = await apiFetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
         headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
       });
 

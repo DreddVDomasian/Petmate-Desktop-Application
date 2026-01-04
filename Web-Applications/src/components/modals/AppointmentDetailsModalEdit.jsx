@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { getCookie } from '../../utils/csrf'; // Uncomment kung need
+import { getCookie } from '../../utils/csrf';
+import { apiFetch } from '../../config/api';
 
 const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }) => {
 
@@ -88,7 +89,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
 
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`);
+      const response = await apiFetch(`/api/check-time-slot/?date=${date}&time=${time}`);
       if (response.ok) return await response.json();
       return { available: true, is_past: false, is_full: false, message: 'Available' };
     } catch (error) {
@@ -151,7 +152,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
   // Fetch Pets
   useEffect(() => {
     if (isOpen) {
-      fetch("/api/pets/")
+      apiFetch("/api/pets/")
         .then(res => res.json())
         .then(data => setPets(Array.isArray(data) ? data : []))
         .catch(err => console.error(err))
@@ -162,7 +163,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
   // Fetch Services
   useEffect(() => {
     if (isOpen) {
-      fetch("/api/service-types/?is_active=true&no_pagination=true")
+      apiFetch("/api/service-types/?is_active=true&no_pagination=true")
         .then(res => res.json())
         .then(data => {
             const list = Array.isArray(data) ? data : (data.results || []);
@@ -177,7 +178,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
   // Fetch Office Hours
   useEffect(() => {
     if (isOpen) {
-      fetch("/api/office-hours/")
+      apiFetch("/api/office-hours/")
         .then(res => res.json())
         .then(data => {
             const hoursObj = {};

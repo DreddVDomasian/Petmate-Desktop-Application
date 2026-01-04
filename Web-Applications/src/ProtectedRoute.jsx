@@ -1,6 +1,7 @@
 // ProtectedRoute.jsx
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { apiFetch } from './config/api';
 
 export default function ProtectedRoute({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -12,8 +13,7 @@ export default function ProtectedRoute({ children }) {
 
   const checkAuthentication = async () => {
     try {
-      const res = await fetch('/api/user/', {
-        credentials: 'include',
+      const res = await apiFetch('/api/user/', {
         headers: { 'Cache-Control': 'no-cache' }
       });
 

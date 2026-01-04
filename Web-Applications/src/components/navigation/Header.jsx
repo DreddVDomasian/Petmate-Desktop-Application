@@ -1,6 +1,8 @@
 // Header.jsx (fixed with proper home and section navigation)
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { apiFetch } from '../../config/api'
+import { getCookie } from '../../utils/csrf'
 import LoginModal from "../modals/LoginModal";
 import SignupModal from "../modals/SignupModal";
 
@@ -16,8 +18,7 @@ const Header = () => {
 
   const checkAuth = async () => {
     try {
-      const res = await fetch('/api/user/', {
-        credentials: 'include',
+      const res = await apiFetch('/api/user/', {
         headers: {
           'Cache-Control': 'no-cache'
         }
@@ -82,9 +83,8 @@ const Header = () => {
     if (!window.confirm('Are you sure you want to logout?')) return
 
     try {
-      await fetch('/api/logout/', {
+      await apiFetch('/api/logout/', {
         method: 'POST',
-        credentials: 'include',
         headers: {
           'X-CSRFToken': getCookie('csrftoken') || ''
         }

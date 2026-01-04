@@ -1,9 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
+import { apiFetch } from './config/api'
 
 // Ensure CSRF cookie is set for API calls
-fetch('/api/csrf/', { credentials: 'include' }).catch(() => {});
+apiFetch('/api/csrf/').catch(() => {});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
