@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -656,6 +657,7 @@ def register_view(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@csrf_exempt
 @api_view(["POST"])
 def login_view(request):
     """
@@ -681,6 +683,7 @@ def login_view(request):
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@csrf_exempt
 @api_view(["POST"])
 def logout_view(request):
     try:
