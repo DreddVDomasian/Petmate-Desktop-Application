@@ -26,7 +26,7 @@ from django.middleware.csrf import get_token
 from rest_framework import status as drf_status
 import threading
 import random
-from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
+from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage, get_connection
 from django.contrib.auth.models import User
 from .sms_utils import send_appointment_reminder_sms, send_service_return_reminder_sms
 from django.utils.html import strip_tags
@@ -1273,22 +1273,40 @@ def send_reset_otp(request):
             user_type=user_type
         )
 
+    # Fail fast if SMTP isn't configured in production.
+    if not getattr(settings, 'EMAIL_HOST_USER', None) or not getattr(settings, 'EMAIL_HOST_PASSWORD', None):
+        return Response(
+            {
+                'error': 'Email service is not configured on the server. Please try again later.'
+            },
+            status=503
+        )
+
     try:
         subject = "🐾 PetMate Animal Clinic - Password Reset OTP"
-        from_email = 'petmateanimalclinic@gmail.com'
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None)
         to = [email]
 
         # Render HTML template (with OTP)
         html_content = render_to_string('otp_email.html', {'otp': otp})
         text_content = strip_tags(html_content)
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
+        connection = get_connection(timeout=timeout_seconds)
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        msg.send(fail_silently=False)
 
         return Response({'message': 'OTP sent successfully to your email.'}, status=200)
     except Exception as e:
-        return Response({'error': f'Failed to send email: {str(e)}'}, status=500)
+        return Response(
+            {
+                'error': 'Failed to send email. Please try again later.',
+                'details': str(e)
+            },
+            status=503
+        )
 
 
 @api_view(['POST'])
@@ -1513,19 +1531,33 @@ def contact_us_message(request):
     if not all([name, email, message]):
         return Response({'error': 'All fields are required.'}, status=400)
 
+    # Fail fast if SMTP isn't configured in production.
+    if not getattr(settings, 'EMAIL_HOST_USER', None) or not getattr(settings, 'EMAIL_HOST_PASSWORD', None):
+        return Response(
+            {
+                'error': 'Email service is not configured on the server. Please try again later.'
+            },
+            status=503
+        )
+
     try:
         subject = "New Contact Form Message"
         full_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
 
         clinic_email = getattr(settings, 'EMAIL_HOST_USER', None) or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or clinic_email
+
+        timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
+        connection = get_connection(timeout=timeout_seconds)
 
         # Send incoming message to clinic (from clinic, reply_to = user)
         email_message = EmailMessage(
             subject=subject,
             body=full_message,
-            from_email=clinic_email,
+            from_email=from_email,
             to=[clinic_email],
-            reply_to=[email]
+            reply_to=[email],
+            connection=connection,
         )
         email_message.send(fail_silently=False)
 
@@ -1542,8 +1574,9 @@ def contact_us_message(request):
             confirmation = EmailMessage(
                 subject=confirm_subject,
                 body=confirm_body,
-                from_email=clinic_email,
+                from_email=from_email,
                 to=[email],
+                connection=connection,
             )
             confirmation.send(fail_silently=True)  # don't fail the whole request if confirmation fails
         except Exception:
@@ -1553,7 +1586,13 @@ def contact_us_message(request):
         return Response({'message': 'Your message has been received. We will get back to you shortly.'}, status=201)
 
     except Exception as e:
-        return Response({'error': f'Failed to submit message: {str(e)}'}, status=500)
+        return Response(
+            {
+                'error': 'Failed to submit message. Please try again later.',
+                'details': str(e)
+            },
+            status=503
+        )
 
 
 # ---------EMAIL REMINDER---------------
