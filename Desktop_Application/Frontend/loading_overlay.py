@@ -5,11 +5,12 @@ import os
 
 
 class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
-    def __init__(self, parent=None, message="Loading...", submessage=None):
+    def __init__(self, parent=None, message="Loading...", submessage=None, indeterminate=True):
         super().__init__(parent)
 
         # Load your UI file
-        ui_path = "ui-files/loading_overlay.ui"  # Make sure this is the correct path
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        ui_path = os.path.join(base_dir, "ui-files", "loading_overlay.ui")
 
         print(f"DEBUG: Loading UI from: {ui_path}")
         print(f"DEBUG: UI file exists: {os.path.exists(ui_path)}")
@@ -20,7 +21,7 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
         except Exception as e:
             print(f"❌ Error loading UI: {e}")
             # Fallback to manual creation
-            self._create_fallback_ui()
+            self._create_fallback_ui(message=message, submessage=submessage)
             return
 
         # Make it frameless
@@ -30,13 +31,12 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
         # Update messages
         self.set_message(message, submessage)
 
-        # Make progress bar indeterminate
-        if hasattr(self, 'progressBar'):
-            self.progressBar.setRange(0, 0)  # Indeterminate mode
+        self._indeterminate = None
+        self.set_indeterminate(indeterminate)
 
         # Don't center in __init__ - wait for showEvent
 
-    def _create_fallback_ui(self):
+    def _create_fallback_ui(self, message="Loading...", submessage=None):
         """Create UI manually if loading fails"""
         print("DEBUG: Creating fallback UI")
         from PyQt6.QtWidgets import QVBoxLayout, QLabel, QProgressBar
@@ -44,7 +44,7 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
         layout = QVBoxLayout(self)
         layout.setContentsMargins(30, 30, 30, 30)
 
-        self.loadingText = QLabel("Sending Reminders...")
+        self.loadingText = QLabel(message or "Loading...")
         self.loadingText.setStyleSheet("""
             font: 81 16pt "Montserrat ExtraBold";
             color: #333;
@@ -52,7 +52,7 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
         """)
         layout.addWidget(self.loadingText)
 
-        self.loadingSubtext = QLabel("Please wait while we send the emails")
+        self.loadingSubtext = QLabel(submessage or "Please wait")
         self.loadingSubtext.setStyleSheet("""
             font: 57 12pt "Montserrat Medium";
             color: #666;
@@ -61,6 +61,7 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
         layout.addWidget(self.loadingSubtext)
 
         self.progressBar = QProgressBar()
+        # Default to indeterminate; callers can switch to determinate via set_indeterminate(False)
         self.progressBar.setRange(0, 0)
         self.progressBar.setTextVisible(False)
         self.progressBar.setStyleSheet("""
@@ -140,6 +141,21 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
             y = parent_rect.y() + (parent_rect.height() - self.height()) // 2
             print(f"DEBUG: Fallback position: ({x}, {y})")
             self.move(x, y)
+            return
+
+        # Startup / no-parent case: center on the primary screen
+        try:
+            from PyQt6.QtWidgets import QApplication
+
+            screen = QApplication.primaryScreen()
+            if screen:
+                rect = screen.availableGeometry()
+                x = rect.x() + (rect.width() - self.width()) // 2
+                y = rect.y() + (rect.height() - self.height()) // 2
+                print(f"DEBUG: Screen fallback position: ({x}, {y})")
+                self.move(x, y)
+        except Exception as e:
+            print(f"DEBUG: Screen centering failed: {e}")
 
     def set_message(self, message, submessage=None):
         """Update the loading message"""
@@ -147,3 +163,33 @@ class LoadingOverlay(QFrame):  # Changed from QWidget to QFrame!
             self.loadingText.setText(message)
         if submessage and hasattr(self, 'loadingSubtext'):
             self.loadingSubtext.setText(submessage)
+
+    def set_indeterminate(self, indeterminate: bool):
+        """Toggle progress bar indeterminate/determinate mode."""
+        if not hasattr(self, 'progressBar'):
+            self._indeterminate = indeterminate
+            return
+
+        if self._indeterminate == indeterminate:
+            return
+
+        self._indeterminate = indeterminate
+        if indeterminate:
+            self.progressBar.setRange(0, 0)
+        else:
+            self.progressBar.setRange(0, 100)
+            # Ensure it starts from 0 unless already set
+            try:
+                if self.progressBar.value() < 0 or self.progressBar.value() > 100:
+                    self.progressBar.setValue(0)
+            except Exception:
+                self.progressBar.setValue(0)
+
+    def set_progress(self, value: int):
+        """Set determinate progress (0-100). No-op if indeterminate."""
+        if not hasattr(self, 'progressBar'):
+            return
+        if self._indeterminate:
+            return
+        value = max(0, min(100, int(value)))
+        self.progressBar.setValue(value)

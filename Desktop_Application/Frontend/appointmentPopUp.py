@@ -1265,6 +1265,7 @@ class AddAppointmentCard(QWidget):
         self.main_window.declineAppointmentBtn.clicked.connect(
             lambda _, r_id=appoint['id']: self.declined_booking(r_id))
     def accepted_booking(self, walkin_id, owner_id):
+        self._set_review_action_busy(True)
         # Non-blocking: fetch appointment details, check slot availability, then accept.
         self.api.get(
             url=f"/api/walkIn/{walkin_id}/",
@@ -1308,6 +1309,7 @@ class AddAppointmentCard(QWidget):
                     icon_path="Icons/warning.png"
                 )
                 toast.show_toast()
+                self._set_review_action_busy(False)
                 return
         except Exception as e:
             print(f"Error interpreting slot response: {e}")
@@ -1354,6 +1356,8 @@ class AddAppointmentCard(QWidget):
         toast = Toast(self.main_window, "Appointment accepted successfully!", icon_path="Icons/check.png")
         toast.show_toast()
 
+        self._set_review_action_busy(False)
+
     def _maybe_set_desktop_record_show(self, owner_id, owner_data):
         try:
             if isinstance(owner_data, dict) and owner_data.get('desktop_record') == 'hide':
@@ -1371,7 +1375,9 @@ class AddAppointmentCard(QWidget):
         print(f"Failed to accept walk-in: {err}")
         toast = Toast(self.main_window, "Failed to accept appointment!", icon_path="Icons/warning.png")
         toast.show_toast()
+        self._set_review_action_busy(False)
     def declined_booking(self, walkin_id):
+        self._set_review_action_busy(True)
         # Non-blocking decline
         self.api.patch(
             url=f"/api/walkIn/{walkin_id}/",
@@ -1401,10 +1407,33 @@ class AddAppointmentCard(QWidget):
                       icon_path="Icons/check.png")
         toast.show_toast()
 
+        self._set_review_action_busy(False)
+
     def _on_decline_failed(self, err):
         print(f"Failed to decline walk-in: {err}")
         toast = Toast(self.main_window, "Failed to decline appointment!", icon_path="Icons/warning.png")
         toast.show_toast()
+        self._set_review_action_busy(False)
+
+    def _set_review_action_busy(self, busy: bool):
+        """Disable accept/decline buttons during async review actions."""
+        try:
+            accept_btn = getattr(self.main_window, 'acceptAppointmentBtn', None)
+            decline_btn = getattr(self.main_window, 'declineAppointmentBtn', None)
+
+            if not hasattr(self, '_review_accept_text'):
+                self._review_accept_text = accept_btn.text() if accept_btn else None
+            if not hasattr(self, '_review_decline_text'):
+                self._review_decline_text = decline_btn.text() if decline_btn else None
+
+            if accept_btn:
+                accept_btn.setEnabled(not busy)
+                accept_btn.setText('Processing...' if busy else (self._review_accept_text or accept_btn.text()))
+            if decline_btn:
+                decline_btn.setEnabled(not busy)
+                decline_btn.setText('Processing...' if busy else (self._review_decline_text or decline_btn.text()))
+        except Exception as e:
+            print(f"Failed to set review action busy state: {e}")
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
         empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")

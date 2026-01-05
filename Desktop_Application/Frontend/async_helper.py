@@ -77,6 +77,7 @@ class AsyncAPICall(QThread):
         """Execute API call in background with retry logic"""
         retry_count = 0
         last_error = None
+        retry_after_seconds = None
         
         while retry_count <= self.max_retries:
             try:
@@ -113,20 +114,36 @@ class AsyncAPICall(QThread):
                 last_error = 'Connection error - Cannot reach server'
                 retry_count += 1
             except requests.exceptions.HTTPError as e:
-                # Don't retry on 4xx errors (client errors)
-                if 400 <= e.response.status_code < 500:
-                    self.error.emit(f'HTTP error: {e.response.status_code}')
-                    self.finished.emit(False, None)
-                    return
-                last_error = f'HTTP error: {e.response.status_code}'
-                retry_count += 1
+                status = getattr(e.response, 'status_code', None)
+                # Special-case 429 (rate limited): retry GETs with backoff / Retry-After
+                if status == 429 and self.method == 'GET' and retry_count < self.max_retries:
+                    last_error = 'HTTP error: 429'
+                    try:
+                        ra = e.response.headers.get('Retry-After')
+                        retry_after_seconds = int(ra) if ra and ra.isdigit() else None
+                    except Exception:
+                        retry_after_seconds = None
+                    retry_count += 1
+                else:
+                    # Don't retry on other 4xx errors (client errors)
+                    if status is not None and 400 <= status < 500:
+                        self.error.emit(f'HTTP error: {status}')
+                        self.finished.emit(False, None)
+                        return
+                    last_error = f'HTTP error: {status}' if status is not None else 'HTTP error'
+                    retry_count += 1
             except Exception as e:
                 last_error = str(e)
                 retry_count += 1
             
             # Exponential backoff before retry
             if retry_count <= self.max_retries:
-                time.sleep(0.5 ** retry_count)  # 0.5s, 1s, etc.
+                if retry_after_seconds is not None:
+                    time.sleep(max(0, retry_after_seconds))
+                    retry_after_seconds = None
+                else:
+                    # 0.5s, 1s, 2s, 4s...
+                    time.sleep(0.5 * (2 ** (retry_count - 1)))
         
         # All retries exhausted
         self.error.emit(last_error)
@@ -304,8 +321,9 @@ class AsyncHelper:
         if show_loading:
             try:
                 from loading_overlay import LoadingOverlay
+                parent_widget = loading_widget if loading_widget is not None else (self.parent if hasattr(self, 'parent') else None)
                 loading_modal = LoadingOverlay(
-                    self.parent if hasattr(self, 'parent') else None,
+                    parent_widget,
                     message=loading_title,
                     submessage=loading_subtitle
                 )

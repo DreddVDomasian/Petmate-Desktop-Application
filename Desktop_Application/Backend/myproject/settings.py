@@ -268,8 +268,10 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/hour',
-        'user': '1000/hour',
+        # NOTE: Desktop client may call some endpoints without session auth, which counts as "anon".
+        # Increase these in dev to avoid frequent 429 while iterating.
+        'anon': os.getenv('DRF_THROTTLE_ANON', '10000/hour' if DEBUG else '100/hour'),
+        'user': os.getenv('DRF_THROTTLE_USER', '100000/hour' if DEBUG else '1000/hour'),
     },
     'DEFAULT_METADATA_CLASS': None,  # Disable metadata for OPTIONS requests (reduces overhead)
 }
