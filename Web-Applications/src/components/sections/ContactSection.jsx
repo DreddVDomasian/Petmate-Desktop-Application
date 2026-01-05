@@ -43,15 +43,26 @@ export default function ContactSection() {
                 }
             );
 
-            const data = await res.json();
+            const raw = await res.text();
+            let data = {};
+            try {
+                data = raw ? JSON.parse(raw) : {};
+            } catch {
+                data = {};
+            }
 
-            alert(data.message || 'Message sent!');
+            if (!res.ok) {
+                const msg = data?.error || data?.message || `Failed to send message (HTTP ${res.status}).`;
+                throw new Error(msg);
+            }
+
+            alert(data?.message || 'Message sent!');
             setName("");
             setEmail("");
             setMessage("");
         } catch (err) {
             console.error(err);
-            const errMsg = err?.response?.data?.error || err?.message || "Failed to send message. Please try again.";
+            const errMsg = err?.message || "Failed to send message. Please try again.";
             alert(errMsg);
         } finally {
             setIsSending(false);

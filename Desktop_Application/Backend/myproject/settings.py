@@ -55,6 +55,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# Optional transactional email via SendGrid (HTTP API) to avoid SMTP blocks.
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
+if SENDGRID_API_KEY:
+    INSTALLED_APPS.append('anymail')
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -94,25 +99,32 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # ===========================
 # EMAIL CONFIGURATION (GMAIL)
 # ===========================
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
-
-# Default ports: TLS=587, SSL=465
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '465' if EMAIL_USE_SSL else '587'))
-
-# TLS and SSL should not both be enabled.
-EMAIL_USE_TLS = (os.getenv('EMAIL_USE_TLS', 'True') == 'True') and not EMAIL_USE_SSL
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-
-# Avoid long request hangs when SMTP is misconfigured/unreachable.
-# Django passes this through to smtplib's socket timeout.
 EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', '15'))
 
-# Default sender. Keep it valid even if env vars are missing.
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') or EMAIL_HOST_USER or 'webmaster@localhost'
-SERVER_EMAIL = os.getenv('SERVER_EMAIL') or DEFAULT_FROM_EMAIL
+if SENDGRID_API_KEY:
+    EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+    ANYMAIL = {
+        'SENDGRID_API_KEY': SENDGRID_API_KEY,
+    }
+    # Required for SendGrid: must be a verified sender in your SendGrid account.
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'petmateanimalclinic@gmail.com')
+    SERVER_EMAIL = os.getenv('SERVER_EMAIL') or DEFAULT_FROM_EMAIL
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+
+    # Default ports: TLS=587, SSL=465
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '465' if EMAIL_USE_SSL else '587'))
+
+    # TLS and SSL should not both be enabled.
+    EMAIL_USE_TLS = (os.getenv('EMAIL_USE_TLS', 'True') == 'True') and not EMAIL_USE_SSL
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+
+    # Default sender. Keep it valid even if env vars are missing.
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') or EMAIL_HOST_USER or 'webmaster@localhost'
+    SERVER_EMAIL = os.getenv('SERVER_EMAIL') or DEFAULT_FROM_EMAIL
 
 
 # ===========================

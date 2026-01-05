@@ -1273,8 +1273,10 @@ def send_reset_otp(request):
             user_type=user_type
         )
 
-    # Fail fast if SMTP isn't configured in production.
-    if not getattr(settings, 'EMAIL_HOST_USER', None) or not getattr(settings, 'EMAIL_HOST_PASSWORD', None):
+    # Fail fast if email isn't configured (SMTP or SendGrid).
+    has_sendgrid = bool(getattr(settings, 'SENDGRID_API_KEY', '') or getattr(settings, 'ANYMAIL', {}).get('SENDGRID_API_KEY'))
+    has_smtp = bool(getattr(settings, 'EMAIL_HOST_USER', None) and getattr(settings, 'EMAIL_HOST_PASSWORD', None))
+    if not (has_sendgrid or has_smtp):
         return Response(
             {
                 'error': 'Email service is not configured on the server. Please try again later.'
@@ -1292,7 +1294,10 @@ def send_reset_otp(request):
         text_content = strip_tags(html_content)
 
         timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
-        connection = get_connection(timeout=timeout_seconds)
+        if str(getattr(settings, 'EMAIL_BACKEND', '')).endswith('smtp.EmailBackend'):
+            connection = get_connection(timeout=timeout_seconds)
+        else:
+            connection = get_connection()
 
         msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
         msg.attach_alternative(html_content, "text/html")
@@ -1531,8 +1536,10 @@ def contact_us_message(request):
     if not all([name, email, message]):
         return Response({'error': 'All fields are required.'}, status=400)
 
-    # Fail fast if SMTP isn't configured in production.
-    if not getattr(settings, 'EMAIL_HOST_USER', None) or not getattr(settings, 'EMAIL_HOST_PASSWORD', None):
+    # Fail fast if email isn't configured (SMTP or SendGrid).
+    has_sendgrid = bool(getattr(settings, 'SENDGRID_API_KEY', '') or getattr(settings, 'ANYMAIL', {}).get('SENDGRID_API_KEY'))
+    has_smtp = bool(getattr(settings, 'EMAIL_HOST_USER', None) and getattr(settings, 'EMAIL_HOST_PASSWORD', None))
+    if not (has_sendgrid or has_smtp):
         return Response(
             {
                 'error': 'Email service is not configured on the server. Please try again later.'
@@ -1548,7 +1555,10 @@ def contact_us_message(request):
         from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or clinic_email
 
         timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
-        connection = get_connection(timeout=timeout_seconds)
+        if str(getattr(settings, 'EMAIL_BACKEND', '')).endswith('smtp.EmailBackend'):
+            connection = get_connection(timeout=timeout_seconds)
+        else:
+            connection = get_connection()
 
         # Send incoming message to clinic (from clinic, reply_to = user)
         email_message = EmailMessage(
@@ -1603,8 +1613,14 @@ def send_appointment_reminder_email(patient_email, patient_name, pet_name, servi
     """Send appointment reminder email"""
     try:
         subject = "🐾 PetMate Animal Clinic - Appointment Reminder"
-        from_email = 'petmateanimalclinic@gmail.com'
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'webmaster@localhost'
         to = [patient_email]
+
+        timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
+        if str(getattr(settings, 'EMAIL_BACKEND', '')).endswith('smtp.EmailBackend'):
+            connection = get_connection(timeout=timeout_seconds)
+        else:
+            connection = get_connection()
 
         print(f"=== DEBUG EMAIL START ===")
         print(f"DEBUG EMAIL: Sending to {patient_email}")
@@ -1629,7 +1645,7 @@ def send_appointment_reminder_email(patient_email, patient_name, pet_name, servi
             return False
 
         print(f"DEBUG EMAIL: Creating EmailMultiAlternatives")
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
         msg.attach_alternative(html_content, "text/html")
 
         print(f"DEBUG EMAIL: Attempting to send...")
@@ -2082,8 +2098,14 @@ def send_service_return_reminder_email(patient_email, patient_name, pet_name, se
     """Send service return reminder email"""
     try:
         subject = "🐾 PetMate Animal Clinic - Service Return Reminder"
-        from_email = 'petmateanimalclinic@gmail.com'
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'webmaster@localhost'
         to = [patient_email]
+
+        timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
+        if str(getattr(settings, 'EMAIL_BACKEND', '')).endswith('smtp.EmailBackend'):
+            connection = get_connection(timeout=timeout_seconds)
+        else:
+            connection = get_connection()
 
         # Render HTML template
         html_content = render_to_string('service_return_reminder.html', {
@@ -2095,7 +2117,7 @@ def send_service_return_reminder_email(patient_email, patient_name, pet_name, se
         })
         text_content = strip_tags(html_content)
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
