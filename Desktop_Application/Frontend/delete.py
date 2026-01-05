@@ -78,17 +78,31 @@ class Delete:
 
                 if self.delete_type == "pet":
                     owner_id = getattr(self.ui, "selected_patient_id", None)
+
+                    # Invalidate cached pets for this owner
+                    if owner_id and hasattr(self.ui, 'api'):
+                        self.ui.api.invalidate_cache(f"/api/pets/?owner_id={owner_id}")
+                        if hasattr(self.ui, '_pets_sig_by_owner'):
+                            self.ui._pets_sig_by_owner.pop(owner_id, None)
+
                     self.ui.load_scheduled_services()
                     if hasattr(self.ui, "appointmentCard"):
                         self.ui.appointmentCard.load_appointments(1)
                     if owner_id:
-                        self.ui.load_pets_for_owner(owner_id)
+                        self.ui.load_pets_for_owner(owner_id, force_refresh=True, show_loading_on_miss=False)
                     else:
                         print("Warning: owner_id not found after pet deletion")
                     self.ui.stackedWidget.setCurrentIndex(5)
                 elif self.delete_type == "service":
+                    # Invalidate cached services for this pet
+                    pet_id = getattr(self.ui, 'selected_pet_id', None)
+                    if pet_id and hasattr(self.ui, 'api'):
+                        self.ui.api.invalidate_cache(f"/api/services/?pet_id={pet_id}")
+                        if hasattr(self.ui, '_services_sig_by_pet'):
+                            self.ui._services_sig_by_pet.pop(pet_id, None)
+
                     self.ui.load_scheduled_services()
-                    self.ui.load_services_for_pet(self.ui.selected_pet_id)
+                    self.ui.load_services_for_pet(self.ui.selected_pet_id, force_refresh=True, show_loading_on_miss=False)
                 elif self.delete_type == "service_type":
                     self.ui.addServiceCard.load_service_types(self.ui.addServiceCard.service_currentPage)
             else:

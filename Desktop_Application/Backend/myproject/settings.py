@@ -139,17 +139,31 @@ PHILSMS_API_URL = 'https://dashboard.philsms.com/api/v3/sms/send'
 PHILSMS_BALANCE_URL = 'https://dashboard.philsms.com/api/v3/sms/'
 
 
-# Database configuration
+# Database configuration with connection pooling and optimization
 # Priority: MYSQL_URL > Railway vars (MYSQLHOST) > Local docker-compose (DB_HOST)
+
+# Database connection pooling configuration (PyMySQL supports connection pool)
+DB_CONFIG = {
+    'CONN_MAX_AGE': 600,  # Persistent connections (10 minutes)
+    'CONN_HEALTH_CHECKS': True,  # Health check before using connection
+    'OPTIONS': {
+        'charset': 'utf8mb4',  # Better UTF-8 support
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+    },
+    'AUTOCOMMIT': True,  # Use autocommit for better performance
+}
+
 if os.getenv('MYSQL_URL'):
     # Railway deployment - use the full connection URL
     DATABASES = {
         'default': dj_database_url.config(
             default=os.getenv('MYSQL_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
+            conn_max_age=DB_CONFIG['CONN_MAX_AGE'],
+            conn_health_checks=DB_CONFIG['CONN_HEALTH_CHECKS'],
         )
     }
+    # Merge options
+    DATABASES['default'].update(DB_CONFIG)
 elif os.getenv('MYSQLHOST'):
     # Railway deployment - use individual MySQL variables
     DATABASES = {
@@ -160,6 +174,7 @@ elif os.getenv('MYSQLHOST'):
             'PASSWORD': os.getenv('MYSQLPASSWORD'),
             'HOST': os.getenv('MYSQLHOST'),
             'PORT': os.getenv('MYSQLPORT', '3306'),
+            **DB_CONFIG
         }
     }
 else:
@@ -172,8 +187,21 @@ else:
             'PASSWORD': os.getenv('DB_PASSWORD', 'password'),
             'HOST': os.getenv('DB_HOST', 'localhost'),
             'PORT': os.getenv('DB_PORT', '3306'),
+            **DB_CONFIG
         }
     }
+
+# Cache configuration for API responses (reduces database queries)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'pet-clinic-cache',
+        'TIMEOUT': 300,  # 5 minutes default timeout
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,  # Increase cache size
+        }
+    }
+}
 
 
 # Password validation
@@ -224,11 +252,36 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST Framework Settings
+# REST Framework Settings with optimizations
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'petInfoSys.authentication.CsrfExemptSessionAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,  # Optimize pagination - return smaller page sizes
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '1000/hour',
+    },
+    'DEFAULT_METADATA_CLASS': None,  # Disable metadata for OPTIONS requests (reduces overhead)
+}
+
+# Cache timeouts for different data types
+CACHE_TIMEOUTS = {
+    'PATIENTS': 300,  # 5 minutes
+    'PETS': 300,  # 5 minutes
+    'SERVICES': 600,  # 10 minutes
+    'SERVICE_TYPES': 1800,  # 30 minutes (rarely changes)
+    'STAFF': 1800,  # 30 minutes
+    'REMINDERS': 180,  # 3 minutes
 }
 
 #-----------------------WEB APP------------------------

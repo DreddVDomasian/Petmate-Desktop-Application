@@ -37,6 +37,7 @@ from async_helper import AsyncHelper
 from loading_overlay import LoadingOverlay
 import requests
 import webbrowser
+import json
 
 from PyQt6.QtCharts import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QPieSeries, QHorizontalBarSeries
 from PyQt6.QtGui import QColor, QPainter, QFont, QBrush
@@ -85,6 +86,11 @@ class MainUI(QMainWindow):
         self.selected_patient_id = None
         self.selected_service_id = None
         self.selected_pet_id = None
+
+        # Profile cache signatures (used to avoid re-render if refresh returns same data)
+        self._pets_sig_by_owner: dict[int, str] = {}
+        self._services_sig_by_pet: dict[int, str] = {}
+        self._pet_sig_by_id: dict[int, str] = {}
 
         # Initialize pagination state
         self.patient_currentPage = 1
@@ -1188,6 +1194,7 @@ class MainUI(QMainWindow):
 
     #PATIENT PROFILE PAGE
     def show_patient_profile(self, patient):
+        """Show patient profile with loading modal for pets"""
         parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
         full_name = " ".join(p for p in parts if p)
         self.profileNameLabel.setText(full_name.title())
@@ -1202,9 +1209,12 @@ class MainUI(QMainWindow):
 
         self.selected_patient_id = patient['id']
         self.profileEditBtn.clicked.connect(lambda: self.updateFunction.update_patient_info(self.selected_patient_id))
-        self.load_pets_for_owner(self.selected_patient_id)
-        # Navigate to the profile page
+        
+        # Navigate to the profile page FIRST (shows skeleton loaders)
         self.navigate_to_page(5, owner_id=patient['id'])
+        
+        # THEN load pets with async call + loading modal
+        self.load_pets_for_owner(self.selected_patient_id)
 
     #PET INFO DATA SUBMIT
     def setup_species_field(self):
@@ -1277,8 +1287,15 @@ class MainUI(QMainWindow):
         # print("Submitting data:", data)
 
         if add_new_pet(data):
+            # Invalidate + refresh cache for this owner's pets
+            owner_id = self.selected_patient_id
+            if owner_id:
+                self.api.invalidate_cache(f"/api/pets/?owner_id={owner_id}")
+                self._pets_sig_by_owner.pop(owner_id, None)
+
             self.profileStackedWidget.setCurrentIndex(0)
-            self.load_pets_for_owner(self.selected_patient_id)
+            # Force refresh, but avoid modal flash since this is an immediate UI update
+            self.load_pets_for_owner(owner_id, force_refresh=True, show_loading_on_miss=False)
 
             self.clearInputs()
 
@@ -1341,15 +1358,62 @@ class MainUI(QMainWindow):
         self.age.setReadOnly(True)  # computed only
 
     #PET CARD LOADING IN PATIENT PROFILE
-    def load_pets_for_owner(self, owner_id):
-        response = requests.get(f"{API_BASE_URL}/api/pets/?owner_id={owner_id}")
-        pets = response.json() if response.status_code == 200 else []
+    def load_pets_for_owner(self, owner_id, force_refresh: bool = False, show_loading_on_miss: bool = True):
+        """Cache-first pet list load.
+
+        Behavior:
+            - If cached: render immediately (no modal), then refresh in background.
+            - If not cached: fetch with loading modal, then cache result.
+        """
+        url = f'/api/pets/?owner_id={owner_id}'
+        cache_ttl = 120
+
+        cached = None if force_refresh else self.api.get_cached(url, cache_ttl=cache_ttl)
+        if cached is not None and not force_refresh:
+            self._on_pets_loaded(cached, owner_id=owner_id)
+            # Refresh quietly in background; update UI only if changed
+            self.api.get(
+                url,
+                on_success=lambda fresh: self._refresh_pets_if_changed(owner_id, fresh),
+                on_error=lambda _e: None,
+                show_loading=False,
+                use_cache=False,
+                timeout=10
+            )
+            return
+
+        # No cache yet (or forced refresh): fetch, then cache
+        self.api.get(
+            url,
+            on_success=lambda data: self._on_pets_loaded(data, owner_id=owner_id),
+            on_error=self._on_pets_load_error,
+            show_loading=bool(show_loading_on_miss and not force_refresh),
+            loading_title="Loading pets...",
+            loading_subtitle="Please wait while we fetch your pets",
+            use_cache=True,
+            cache_ttl=cache_ttl,
+            timeout=10
+        )
+
+    def _on_pets_loaded(self, response, owner_id: int | None = None):
+        """Callback when pets data is received"""
+        # Handle API response format
+        if isinstance(response, dict):
+            pets = response.get('results', response.get('data', []))
+        else:
+            pets = response if isinstance(response, list) else []
+
+        if owner_id is not None:
+            self._pets_sig_by_owner[owner_id] = self._data_signature(pets)
 
         # clear pet cards lang, wag galawin addPetButton
         while self.gridLayout_6.count() > 1:
             item = self.gridLayout_6.takeAt(1)  # skip first item (addPetButton)
             if item and item.widget():
                 item.widget().deleteLater()
+
+        if not pets:
+            return
 
         container_width = self.scrollAreaWidgetContents.width()
         card_width = 401
@@ -1384,8 +1448,27 @@ class MainUI(QMainWindow):
                 col = 0
                 row += 1
 
+    def _on_pets_load_error(self, error_msg):
+        """Handle error loading pets"""
+        print(f"Error loading pets: {error_msg}")
+        Toast(self, f"Error loading pets: {error_msg}", icon_path="Icons/warning.png").show_toast()
+
+    def _refresh_pets_if_changed(self, owner_id: int, response):
+        """Background refresh: update pet cards only if server data changed."""
+        if isinstance(response, dict):
+            pets = response.get('results', response.get('data', []))
+        else:
+            pets = response if isinstance(response, list) else []
+
+        new_sig = self._data_signature(pets)
+        if self._pets_sig_by_owner.get(owner_id) == new_sig:
+            return
+
+        self._on_pets_loaded(pets, owner_id=owner_id)
+
     #PET PROFILE PAGE
     def show_pet_profile(self, pet):
+        """Show pet profile with loading modal for services"""
         self.petProfileNameLabel.setText((pet.get('petName') or "").title())
         self.petColorLabel.setText((pet.get('petColor') or "").title())
         self.petRemarksLabel.setText((pet.get('remarks') or "None"))  # no .capitalize() if None
@@ -1417,8 +1500,11 @@ class MainUI(QMainWindow):
         # Keep track of which pet is selected
         self.selected_pet_id = pet["id"]
         self.petProfileEditBtn.clicked.connect(lambda: self.updateFunction.update_pet_info(self.selected_pet_id))
-        # Navigate to pet profile page (adjust index if needed)
+        
+        # Navigate to pet profile page FIRST (shows skeleton loaders)
         self.navigate_to_page(6, pet_id=pet["id"])
+        
+        # THEN load services with async call + loading modal
         self.load_services_for_pet(pet["id"])
     def open_reminderPopup(self):
         if not hasattr(self, "reminderPopup") or self.reminderPopup is None:
@@ -1444,20 +1530,50 @@ class MainUI(QMainWindow):
         self.serviceHistoryBtn.setChecked(True)
         self.serviceHistoryBtn.clicked.connect(lambda: self.service_stackedWidget(0))
         self.addNewServiceBtn.clicked.connect(lambda: self.serviceHistoryStackedWidget.setCurrentIndex(1))
-    def load_services_for_pet(self, pet_id):
-        """Load services for a pet asynchronously"""
+    def load_services_for_pet(self, pet_id, force_refresh: bool = False, show_loading_on_miss: bool = True):
+        """Cache-first service history load.
+
+        Behavior:
+            - If cached: render immediately (no modal), then refresh in background.
+            - If not cached: fetch with loading modal, then cache result.
+        """
+        url = f'/api/services/?pet_id={pet_id}'
+        cache_ttl = 120
+
+        cached = None if force_refresh else self.api.get_cached(url, cache_ttl=cache_ttl)
+        if cached is not None and not force_refresh:
+            self._on_services_loaded(cached, pet_id=pet_id)
+            self.api.get(
+                url,
+                on_success=lambda fresh: self._refresh_services_if_changed(pet_id, fresh),
+                on_error=lambda _e: None,
+                show_loading=False,
+                use_cache=False,
+                timeout=10
+            )
+            return
+
         self.api.get(
-            f'/api/services/?pet_id={pet_id}',
-            on_success=self._on_services_loaded,
-            on_error=lambda e: self._on_services_loaded([])
+            url,
+            on_success=lambda data: self._on_services_loaded(data, pet_id=pet_id),
+            on_error=self._on_services_load_error,
+            show_loading=bool(show_loading_on_miss and not force_refresh),
+            loading_title="Loading services...",
+            loading_subtitle="Please wait while we fetch the service history",
+            use_cache=True,
+            cache_ttl=cache_ttl,
+            timeout=10
         )
     
-    def _on_services_loaded(self, services):
+    def _on_services_loaded(self, services, pet_id: int | None = None):
         """Callback when services data is received"""
         if isinstance(services, dict):  # API returns dict with results
             services = services.get('results', services)
         if not isinstance(services, list):
             services = []
+
+        if pet_id is not None:
+            self._services_sig_by_pet[pet_id] = self._data_signature(services)
 
         header = self.findChild(QWidget, "serviceTableHeader")
 
@@ -1533,6 +1649,40 @@ class MainUI(QMainWindow):
 
             self.serviceListLayout.insertWidget(0, service_card)
 
+    def _on_services_load_error(self, error_msg):
+        """Handle error loading services"""
+        print(f"Error loading services: {error_msg}")
+        # Show empty state instead of breaking
+        header = self.findChild(QWidget, "serviceTableHeader")
+        header.setVisible(False)
+        empty_label = QLabel("EMPTY")
+        empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+        self.serviceListLayout.addStretch()
+        self.serviceListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.serviceListLayout.addStretch()
+        Toast(self, f"Could not load services", icon_path="Icons/warning.png").show_toast()
+
+    def _refresh_services_if_changed(self, pet_id: int, response):
+        """Background refresh: update service cards only if server data changed."""
+        services = response
+        if isinstance(services, dict):
+            services = services.get('results', services)
+        if not isinstance(services, list):
+            services = []
+
+        new_sig = self._data_signature(services)
+        if self._services_sig_by_pet.get(pet_id) == new_sig:
+            return
+
+        self._on_services_loaded(services, pet_id=pet_id)
+
+    def _data_signature(self, data_obj) -> str:
+        """Stable signature for change detection (order-independent for dict keys)."""
+        try:
+            return json.dumps(data_obj, sort_keys=True, default=str, ensure_ascii=False)
+        except Exception:
+            return str(data_obj)
+
     def toggle_note(self, frame, open_btn, close_btn, show, upper_frame=None):
         frame.setVisible(show)
         open_btn.setVisible(not show)
@@ -1558,16 +1708,62 @@ class MainUI(QMainWindow):
             QMessageBox.warning(self, "Missing Info", "Please select a patient and a pet first.")
     #PET PROFILE RELOAD
     def refresh_current_pet_profile(self):
-        """Refresh the current pet profile without affecting navigation history"""
-        if hasattr(self, 'selected_pet_id') and self.selected_pet_id:
+        """Refresh the current pet profile without affecting navigation history (cache-first)."""
+        pet_id = getattr(self, 'selected_pet_id', None)
+        if not pet_id:
+            return
+
+        self._load_pet_detail_cache_first(pet_id, on_ready=self.update_pet_profile_ui, show_loading_on_miss=False)
+
+    def _load_pet_detail_cache_first(self, pet_id: int, on_ready, show_loading_on_miss: bool = True):
+        """Load a pet detail dict cache-first, then refresh in background if changed."""
+        url = f"/api/pets/{pet_id}/"
+        cache_ttl = 120
+
+        cached = self.api.get_cached(url, cache_ttl=cache_ttl)
+        if cached is not None:
             try:
-                response = requests.get(f"{API_BASE_URL}/api/pets/{self.selected_pet_id}/")
-                if response.status_code == 200:
-                    pet = response.json()
-                    # Update the UI elements directly without navigation
-                    self.update_pet_profile_ui(pet)
+                self._pet_sig_by_id[pet_id] = self._data_signature(cached)
+                on_ready(cached)
             except Exception as e:
-                print(f"Error refreshing pet profile: {e}")
+                print(f"Error using cached pet detail: {e}")
+
+            # Quiet refresh; only apply if changed
+            self.api.get(
+                url,
+                on_success=lambda fresh: self._refresh_pet_detail_if_changed(pet_id, fresh, on_ready),
+                on_error=lambda _e: None,
+                show_loading=False,
+                use_cache=False,
+                timeout=10
+            )
+            return
+
+        # No cache yet
+        self.api.get(
+            url,
+            on_success=lambda fresh: self._apply_pet_detail(pet_id, fresh, on_ready),
+            on_error=lambda e: print(f"Failed to load pet {pet_id}: {e}"),
+            show_loading=bool(show_loading_on_miss),
+            loading_title="Loading pet profile...",
+            loading_subtitle="Please wait",
+            use_cache=True,
+            cache_ttl=cache_ttl,
+            timeout=10
+        )
+
+    def _apply_pet_detail(self, pet_id: int, pet, on_ready):
+        try:
+            self._pet_sig_by_id[pet_id] = self._data_signature(pet)
+            on_ready(pet)
+        except Exception as e:
+            print(f"Error applying pet detail: {e}")
+
+    def _refresh_pet_detail_if_changed(self, pet_id: int, pet, on_ready):
+        new_sig = self._data_signature(pet)
+        if self._pet_sig_by_id.get(pet_id) == new_sig:
+            return
+        self._apply_pet_detail(pet_id, pet, on_ready)
     def update_pet_profile_ui(self, pet):
         """Update pet profile UI elements without navigation"""
         self.petProfileNameLabel.setText((pet.get('petName') or "").title())
@@ -1598,47 +1794,20 @@ class MainUI(QMainWindow):
 
     #PET SERVICE SUBMIT/EDIT
     def load_service_types_to_main_combobox(self):
-        """Load service types into the main UI's serviceTypeComboBox"""
+        """Load service types into the main UI's serviceTypeComboBox asynchronously"""
         try:
-            # Fetch only active service types
-            response = requests.get(f"{API_BASE_URL}/api/service-types/?is_active=true&no_pagination=true")
+            # Initialize combobox with placeholder
+            service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
+            if service_combo:
+                service_combo.clear()
+                service_combo.addItem("Select Service", None)  # Add placeholder
 
-            if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, list):
-                    service_types = data  # Direct list from no_pagination
-                elif isinstance(data, dict) and 'results' in data:
-                    service_types = data['results']  # Paginated response
-                else:
-                    service_types = []  # Get the results array
-
-                # Get the combobox from your main UI
-                service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
-
-                if service_combo:
-                    service_combo.clear()
-                    service_combo.addItem("Select Service", None)  # Add placeholder
-
-                    # Add service types to combobox
-                    for service_type in service_types:
-                        if service_type.get('is_active', True):
-                            name = service_type.get('name', '')
-                            if name:  # Only add if name exists
-                                service_combo.addItem(name, service_type.get('id'))
-
-                    # If no service types were added (only placeholder)
-                    if service_combo.count() == 1:
-                        service_combo.addItem("No service types available", None)
-
-                    print(f"Loaded {service_combo.count() - 1} service types to main combobox")
-
-            else:
-                print(f"Failed to load service types for main UI: {response.status_code}")
-                service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
-                if service_combo:
-                    service_combo.clear()
-                    service_combo.addItem("Select Service", None)
-                    service_combo.addItem("Error loading services", None)
+            # Fetch service types asynchronously
+            self.api.get(
+                "/api/service-types/?is_active=true&no_pagination=true",
+                on_success=self._on_service_types_loaded,
+                on_error=self._on_service_types_error
+            )
 
         except Exception as e:
             print(f"Error loading service types for main UI combobox: {e}")
@@ -1646,7 +1815,50 @@ class MainUI(QMainWindow):
             if service_combo:
                 service_combo.clear()
                 service_combo.addItem("Select Service", None)
-                service_combo.addItem("Error loading services", None)
+
+    def _on_service_types_loaded(self, data):
+        """Callback when service types data is received"""
+        try:
+            # Parse response
+            if isinstance(data, list):
+                service_types = data  # Direct list from no_pagination
+            elif isinstance(data, dict) and 'results' in data:
+                service_types = data['results']  # Paginated response
+            else:
+                service_types = []
+
+            # Get the combobox from your main UI
+            service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
+
+            if service_combo:
+                service_combo.clear()
+                service_combo.addItem("Select Service", None)  # Add placeholder
+
+                # Add service types to combobox
+                for service_type in service_types:
+                    if service_type.get('is_active', True):
+                        name = service_type.get('name', '')
+                        if name:  # Only add if name exists
+                            service_combo.addItem(name, service_type.get('id'))
+
+                # If no service types were added (only placeholder)
+                if service_combo.count() == 1:
+                    service_combo.addItem("No service types available", None)
+
+                print(f"Loaded {service_combo.count() - 1} service types to main combobox")
+
+        except Exception as e:
+            print(f"Error processing service types: {e}")
+
+    def _on_service_types_error(self, error_msg):
+        """Callback when service types loading fails"""
+        print(f"Failed to load service types: {error_msg}")
+        service_combo = self.findChild(QComboBox, "serviceTypeComboBox")
+        if service_combo:
+            service_combo.clear()
+            service_combo.addItem("Select Service", None)
+            service_combo.addItem("Error loading services", None)
+
     def submit_service_data(self):
         service_type_id = self.serviceTypeComboBox.currentData()
 
@@ -1698,13 +1910,19 @@ class MainUI(QMainWindow):
             toast = Toast(self, "Service added!", icon_path="Icons/check.png")
             toast.show_toast()
 
+            # Invalidate + refresh cache for this pet's services
+            pet_id = self.selected_pet_id
+            if pet_id:
+                self.api.invalidate_cache(f"/api/services/?pet_id={pet_id}")
+                self._services_sig_by_pet.pop(pet_id, None)
+
             if hasattr(self, 'selected_pet_id') and self.selected_pet_id:
                 self.refresh_current_pet_profile()
-                self.load_services_for_pet(self.selected_pet_id)
+                self.load_services_for_pet(self.selected_pet_id, force_refresh=True, show_loading_on_miss=False)
 
             self.serviceHistoryBtn.setChecked(True)
             self.serviceHistoryStackedWidget.setCurrentIndex(0)
-            self.load_services_for_pet(self.selected_pet_id)
+            self.load_services_for_pet(self.selected_pet_id, force_refresh=True, show_loading_on_miss=False)
             self.load_scheduled_services()
             # Clear fields or reset
             self.clearInputs()
@@ -2088,12 +2306,17 @@ class MainUI(QMainWindow):
 
             page_layout.addWidget(page_btn)
     def open_pet_from_service(self, pet_id):
-        response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
-        if response.status_code == 200:
-            pet = response.json()
-            self.selected_pet_id = pet["id"]
-            self.selected_patient_id = pet["owner"]["id"]
-            self.show_pet_profile(pet)
+        def open_profile_with_pet(pet):
+            try:
+                self.selected_pet_id = pet.get("id")
+                owner = pet.get("owner") or {}
+                if isinstance(owner, dict):
+                    self.selected_patient_id = owner.get("id")
+                self.show_pet_profile(pet)
+            except Exception as e:
+                print(f"Failed to open pet profile from service: {e}")
+
+        self._load_pet_detail_cache_first(int(pet_id), on_ready=open_profile_with_pet, show_loading_on_miss=True)
 
     #DATE PICK AND DATE FORMATING LOGIC
     def setup_dates(self):
@@ -2657,7 +2880,7 @@ class MainUI(QMainWindow):
             toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
             toast.show_toast()
     def load_staff_accounts(self):
-        """Load all staff accounts into the scroll area"""
+        """Load all staff accounts asynchronously with loading indicator"""
         try:
             # Clear existing content
             scroll_layout = self.accountUserLayout
@@ -2667,24 +2890,64 @@ class MainUI(QMainWindow):
                     if child.widget():
                         child.widget().deleteLater()
 
-            # Fetch staff accounts from API
-            response = requests.get(f"{API_BASE_URL}/api/desktop-users/")
+            # Show loading label while fetching
+            loading_label = QLabel("Loading staff accounts...")
+            loading_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+            loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            scroll_layout.addWidget(loading_label)
 
-            if response.status_code == 200:
-                data = response.json()
-                staff_accounts = [user for user in data.get('users', []) if user['role'] == 'staff']
-
-                # Create all staff cards at once (like patient cards)
-                self.create_staff_cards(staff_accounts)
-
-            else:
-                toast = Toast(self, "Failed to load staff accounts!", icon_path="Icons/warning.png")
-                toast.show_toast()
+            # Fetch staff accounts from API asynchronously
+            self.api.get(
+                "/api/desktop-users/",
+                on_success=self._on_staff_accounts_loaded,
+                on_error=self._on_staff_accounts_error
+            )
 
         except Exception as e:
             print(f"Error loading staff accounts: {e}")
             toast = Toast(self, "Error loading staff accounts", icon_path="Icons/warning.png")
             toast.show_toast()
+
+    def _on_staff_accounts_loaded(self, data):
+        """Callback when staff accounts data is received"""
+        try:
+            # Clear loading label
+            scroll_layout = self.accountUserLayout
+            while scroll_layout.count():
+                child = scroll_layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
+            # Extract staff accounts
+            staff_accounts = [user for user in data.get('users', []) if user['role'] == 'staff']
+
+            # Create all staff cards
+            if staff_accounts:
+                self.create_staff_cards(staff_accounts)
+            else:
+                empty_label = QLabel("No staff accounts")
+                empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")
+                empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                scroll_layout.addWidget(empty_label)
+
+        except Exception as e:
+            print(f"Error processing staff accounts: {e}")
+            toast = Toast(self, "Error processing staff accounts", icon_path="Icons/warning.png")
+            toast.show_toast()
+
+    def _on_staff_accounts_error(self, error_msg):
+        """Callback when staff accounts loading fails"""
+        print(f"Error loading staff accounts: {error_msg}")
+        scroll_layout = self.accountUserLayout
+        while scroll_layout.count():
+            child = scroll_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+        
+        error_label = QLabel("Failed to load staff accounts")
+        error_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(255, 100, 100);")
+        error_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        scroll_layout.addWidget(error_label)
     def create_staff_cards(self, accounts):
         """Create multiple staff cards from account data"""
         self.accountCards = []

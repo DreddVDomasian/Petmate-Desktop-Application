@@ -60,11 +60,45 @@ class ReminderPopup(QWidget):
         self.hide()
 
     def load_reminder(self, pet_id):
-        response = requests.get(f"{API_BASE_URL}/api/reminders/?pet_id={pet_id}")
-        if response.status_code == 200:
-            reminders = response.json()
+        api = getattr(self.main_window, 'api', None)
+        if api is None:
+            return
 
-        else:
+        url = f"/api/reminders/?pet_id={pet_id}"
+        cache_ttl = 60
+
+        cached = api.get_cached(url, cache_ttl=cache_ttl)
+        if cached is not None:
+            self._render_reminders(cached)
+            # Quiet refresh
+            api.get(
+                url,
+                on_success=self._render_reminders,
+                on_error=lambda _e: None,
+                show_loading=False,
+                use_cache=False,
+                timeout=10
+            )
+            return
+
+        api.get(
+            url,
+            on_success=self._render_reminders,
+            on_error=lambda _e: self._render_reminders([]),
+            show_loading=True,
+            loading_title="Loading reminders...",
+            loading_subtitle="Please wait",
+            use_cache=True,
+            cache_ttl=cache_ttl,
+            timeout=10
+        )
+
+    def _render_reminders(self, reminders):
+        if isinstance(reminders, dict) and 'results' in reminders:
+            reminders = reminders.get('results', [])
+        if reminders is None:
+            reminders = []
+        if not isinstance(reminders, list):
             reminders = []
 
         while self.reminderLayout.count():
@@ -105,18 +139,47 @@ class ReminderPopup(QWidget):
         if not url:
             return
 
-        response = requests.patch(url, json={"status": "completed"})
-        if response.status_code in [200, 202]:
+        api = getattr(self.main_window, 'api', None)
+        if api is None:
+            return
+
+        def on_done(_data):
             print("Reminder marked as completed")
 
-            # Refresh pet profile UI without navigation
+            # Invalidate caches affected by reminder completion
+            try:
+                pet_id = getattr(self.main_window, 'selected_pet_id', None)
+                if pet_id:
+                    # Pet detail may change (has_reminder)
+                    api.invalidate_cache(f"/api/pets/{pet_id}/")
+                    if hasattr(self.main_window, '_pet_sig_by_id'):
+                        self.main_window._pet_sig_by_id.pop(int(pet_id), None)
+
+                    # Service return completion affects service history list
+                    api.invalidate_cache(f"/api/services/?pet_id={pet_id}")
+                    if hasattr(self.main_window, '_services_sig_by_pet'):
+                        self.main_window._services_sig_by_pet.pop(int(pet_id), None)
+            except Exception as e:
+                print(f"Cache invalidate warning: {e}")
+
             if self.main_window:
                 self.main_window.refresh_current_pet_profile()
 
-            # Delay UI refresh to avoid deleting active widgets mid-callback
             QTimer.singleShot(100, lambda: self._safe_refresh())
-        else:
-            print("Failed:", response.text)
+
+        def on_err(e):
+            print(f"Failed to complete reminder: {e}")
+
+        api.patch(
+            url,
+            data={"status": "completed"},
+            on_success=on_done,
+            on_error=on_err,
+            show_loading=True,
+            loading_title="Updating reminder...",
+            loading_subtitle="Please wait",
+            timeout=15
+        )
 
     def _safe_refresh(self):
         """Safely reload reminders and services after completion"""

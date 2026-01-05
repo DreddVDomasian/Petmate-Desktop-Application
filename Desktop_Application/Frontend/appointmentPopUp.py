@@ -654,18 +654,11 @@ class AddAppointmentCard(QWidget):
         layout.addStretch()
     
     def open_pet_from_appointment(self, pet_id):
-        response = requests.get(f"{API_BASE_URL}/api/pets/{pet_id}/")
-        if response.status_code == 200:
-            pet = response.json()
-
-            # Extract both IDs
-            self.main_window.selected_pet_id = pet["id"]
-            self.main_window.selected_patient_id = pet["owner"]["id"]
-
-            # Open pet profile with full data
-            self.main_window.show_pet_profile(pet)
-        else:
-            print(f"Failed to fetch pet {pet_id}: {response.status_code}")
+        try:
+            # Delegate to main window (cache-first + background refresh)
+            self.main_window.open_pet_from_service(pet_id)
+        except Exception as e:
+            print(f"Failed to open pet {pet_id} from appointment: {e}")
     def cancelled_appointment(self, appointment_id):
         self.main_window.confirmCard.confirmationMessage.setText(
             "Are you sure you want to cancel \nthis appointment?"

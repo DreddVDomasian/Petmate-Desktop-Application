@@ -339,12 +339,12 @@ class LoginDialog(QDialog):
 
     def on_login_finished(self, success, response):
         """Handle login response from API worker"""
-        stay_signed_in = self.staySignedInCheckbox.isChecked()
+        stay_signed_in = self.staySignedIn.isChecked()
         if success:
             # Save credentials if "Stay Signed In" is checked
             if stay_signed_in:
                 settings = QSettings("PetMate", "DesktopApp")
-                settings.setValue("username", self.usernameInput.text())
+                settings.setValue("username", self.loginUserName.text())
                 settings.setValue("stay_signed_in", True)
             else:
                 # Clear any saved credentials

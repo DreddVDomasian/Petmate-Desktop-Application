@@ -24,3 +24,8 @@ cssselect2==0.8.0
 pydyf==0.11.0
 pyphen==0.17.2
 
+# Performance & caching optimization (already built-in to Django)
+# Optional: for Redis caching (recommended for production)
+# django-redis==5.4.0
+# redis==5.0.0
+
