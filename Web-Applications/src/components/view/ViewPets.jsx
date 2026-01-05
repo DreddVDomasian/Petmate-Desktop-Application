@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../../utils/csrf';
-import { apiFetch, normalizeList } from '../../config/api';
+import { apiFetch, normalizeList, readJsonSafe } from '../../config/api';
 
 export default function ViewPets() {
     const [pets, setPets] = useState([]);
@@ -62,8 +62,8 @@ export default function ViewPets() {
             });
 
             if (res.ok) {
-          const petsData = await res.json();
-          setPets(normalizeList(petsData));
+        const petsData = await readJsonSafe(res);
+        setPets(normalizeList(petsData));
             }
             else {
                 console.error('Failed to fetch pets');
@@ -80,6 +80,8 @@ export default function ViewPets() {
     };
     const fetchPetServices = async (petId) => {
         setServicesLoading(true);
+      // Always clear previous results so the modal can't render a non-array.
+      setServices([]);
         try {
         const headers = {
           'X-CSRFToken': getCookie('csrftoken') || ''
@@ -90,8 +92,8 @@ export default function ViewPets() {
           apiFetch(`/api/walkIn/?pet_id=${petId}`, { headers })
         ]);
 
-        const servicesData = servicesRes.ok ? await servicesRes.json() : null;
-        const apptsData = apptsRes.ok ? await apptsRes.json() : null;
+            const servicesData = servicesRes.ok ? await readJsonSafe(servicesRes) : null;
+            const apptsData = apptsRes.ok ? await readJsonSafe(apptsRes) : null;
 
         const servicesList = normalizeList(servicesData);
         const apptsList = normalizeList(apptsData);
@@ -123,7 +125,7 @@ export default function ViewPets() {
           return bTime - aTime;
         });
 
-        setServices(combined);
+        setServices(Array.isArray(combined) ? combined : []);
 
         if (!servicesRes.ok) console.error('Failed to fetch services');
         if (!apptsRes.ok) console.error('Failed to fetch appointments');
@@ -359,6 +361,9 @@ export default function ViewPets() {
         );
     }
 
+    const safePets = Array.isArray(pets) ? pets : [];
+    const safeServices = Array.isArray(services) ? services : [];
+
   return (
     <div className="view-pets-container">
       <div className="pets-header">
@@ -374,7 +379,7 @@ export default function ViewPets() {
         </div>
       ) : (
         <div className="pets-grid">
-          {pets.map((pet) => (
+          {safePets.map((pet) => (
             <div
               key={pet.id}
               className="pet-card"
@@ -516,7 +521,7 @@ export default function ViewPets() {
 
                     {servicesLoading ? (
                         <div className="loading">Loading services...</div>
-                    ) : services.length === 0 ? (
+                    ) : safeServices.length === 0 ? (
                         <div className="empty-services">
                             <img src="/assets/icons/no-services.png" alt="No services" className="empty-icon" />
                             <h4>No Services Yet</h4>
@@ -524,7 +529,7 @@ export default function ViewPets() {
                         </div>
                     ) : (
                         <div className="services-list">
-                            {services.map(service => (
+                        {safeServices.map(service => (
                           <div key={`${service.kind}-${service.id}`} className="service-item">
                                     <div className="service-main">
                               <div className="service-type">{service.service_type}</div>
