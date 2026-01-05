@@ -402,6 +402,9 @@ const TabContent = ({
     });
   }, [activeTab, loading, pets]);
 
+  const safePets = Array.isArray(pets) ? pets : [];
+  const safeAppointments = Array.isArray(appointments) ? appointments : [];
+
   return (
     <>
       {/* My Pets Tab */}
@@ -413,11 +416,11 @@ const TabContent = ({
           <div style={{ height: '12px', marginBottom: '20px' }} />
           {loading ? (
             <LoadingState />
-          ) : pets.length === 0 ? (
+          ) : safePets.length === 0 ? (
             <EmptyPetsState />
           ) : (
             <div className="pets-grid">
-              {pets.map(pet => (
+              {safePets.map(pet => (
                 <PetCard 
                   key={pet.id} 
                   pet={pet} 
@@ -455,11 +458,11 @@ const TabContent = ({
 
           {loading ? (
             <LoadingState />
-          ) : appointments.length === 0 ? (
+          ) : safeAppointments.length === 0 ? (
             <EmptyAppointmentsState />
           ) : (
             <div className="appointments-list">
-              {appointments.map(appointment => (
+              {safeAppointments.map(appointment => (
                 <AppointmentCard 
                   key={appointment.id} 
                   appointment={appointment} 
