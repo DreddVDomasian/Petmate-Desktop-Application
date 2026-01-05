@@ -5,7 +5,6 @@ import { getCookie } from '../../utils/csrf';
 import { apiFetch, readJsonSafe, normalizeList } from '../../config/api';
 
 const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
-  // COPY STATE FROM OLD SetAppointment.jsx
   const [form, setForm] = useState({
     pet: "",
     service: "",
@@ -17,10 +16,12 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   const [services, setServices] = useState([]);
   const [loadingPets, setLoadingPets] = useState(true);
   const [loadingServices, setLoadingServices] = useState(true);
-  const [servicesError, setServicesError] = useState(null); // Add this
+  const [servicesError, setServicesError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
   const [availableTimes, setAvailableTimes] = useState([]);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
+
   const [officeHours, setOfficeHours] = useState({});
   const [loadingHours, setLoadingHours] = useState(true);
 
