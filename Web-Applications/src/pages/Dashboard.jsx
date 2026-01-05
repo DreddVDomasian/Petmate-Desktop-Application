@@ -5,7 +5,7 @@ import BookAppointmentModal from '../components/forms/BookAppointmentModal'
 import PetDetailsModal from '../components/modals/PetDetailsModal' 
 import AppointmentDetailsModal from '../components/modals/AppointmentDetailsModal'
 import AppointmentDetailsModalEdit from '../components/modals/AppointmentDetailsModalEdit' // Imported na
-import { apiFetch } from '../config/api'
+import { apiFetch, readJsonSafe, normalizeList } from '../config/api'
 
 import '../styles/Dashboard.css';
 
@@ -60,8 +60,8 @@ function Dashboard(props) {
     try {
       const res = await apiFetch('/api/pets/');
       if (!res.ok) throw new Error('Failed to fetch pets');
-      const data = await res.json();
-      setPets(Array.isArray(data) ? data : []);
+      const data = await readJsonSafe(res);
+      setPets(normalizeList(data));
     } catch (err) {
       console.error('fetchPets error', err);
     } finally {
@@ -73,12 +73,8 @@ function Dashboard(props) {
     try {
       const res = await apiFetch('/api/walkIn/');
       if (!res.ok) throw new Error('Failed to fetch appointments');
-      const data = await res.json();
-
-      // Extract the actual appointments array from the paginated response
-      const appointmentsList = data.results || [];
-
-      setAppointments(Array.isArray(appointmentsList) ? appointmentsList : []);
+      const data = await readJsonSafe(res);
+      setAppointments(normalizeList(data));
     } catch (err) {
       console.error('fetchAppointments error', err);
     }

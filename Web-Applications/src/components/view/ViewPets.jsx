@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../../utils/csrf';
-import { apiFetch } from '../../config/api';
+import { apiFetch, normalizeList } from '../../config/api';
 
 export default function ViewPets() {
     const [pets, setPets] = useState([]);
@@ -62,15 +62,17 @@ export default function ViewPets() {
             });
 
             if (res.ok) {
-                const petsData = await res.json();
-                setPets(petsData);
+          const petsData = await res.json();
+          setPets(normalizeList(petsData));
             }
             else {
                 console.error('Failed to fetch pets');
+          setPets([]);
             }
         }
         catch (error) {
             console.error('Error fetching pets:', error);
+        setPets([]);
         }
         finally {
             setLoading(false);
@@ -87,7 +89,7 @@ export default function ViewPets() {
 
             if (res.ok) {
                 const servicesData = await res.json();
-                setServices(servicesData);
+          setServices(normalizeList(servicesData));
             } else {
                 console.error('Failed to fetch services');
                 setServices([]);

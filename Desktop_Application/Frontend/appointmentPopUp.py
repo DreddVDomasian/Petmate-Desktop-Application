@@ -222,20 +222,57 @@ class AddAppointmentCard(QWidget):
             self.selectPetPopUp.addItem("", None)
             return
 
-        url = f"{API_BASE_URL}/api/pets/?owner_id={patient_id}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            pets = response.json()
-            self.selectPetPopUp.clear()
-            self.selectPetPopUp.addItem("", None)
-            for pet in pets:
-                self.selectPetPopUp.addItem(pet['petName'], pet['id'])
+        # Non-blocking load; also handle paginated/error dict responses safely.
+        self.selectPetPopUp.clear()
+        self.selectPetPopUp.addItem("", None)
 
-            self.set_dynamic_completer(self.selectPetPopUp)
-        else:
-            print("Failed to load pets")
-            self.selectPetPopUp.clear()
-            self.selectPetPopUp.addItem("", None)
+        self.api.get(
+            url="/api/pets/",
+            params={"owner_id": patient_id},
+            on_success=self._on_pets_for_patient_loaded,
+            on_error=lambda err: self._on_pets_for_patient_error(err),
+            timeout=15,
+            show_loading=True,
+            loading_title="Loading pets...",
+            loading_subtitle="Please wait"
+        )
+
+    def _normalize_pets_response(self, data):
+        """Return a list of pet dicts from API response."""
+        if data is None:
+            return []
+        if isinstance(data, list):
+            return [p for p in data if isinstance(p, dict)]
+        if isinstance(data, dict):
+            # Common DRF pagination shape
+            if isinstance(data.get('results'), list):
+                return [p for p in data.get('results') if isinstance(p, dict)]
+            # Single object shape
+            if 'id' in data and ('petName' in data or 'pet_name' in data):
+                return [data]
+            # Error shape (e.g., {'detail': '...'}): treat as empty
+            return []
+        # Unexpected types (e.g., string)
+        return []
+
+    def _on_pets_for_patient_loaded(self, data):
+        pets = self._normalize_pets_response(data)
+
+        self.selectPetPopUp.clear()
+        self.selectPetPopUp.addItem("", None)
+
+        for pet in pets:
+            name = pet.get('petName') or pet.get('pet_name') or ""
+            pet_id = pet.get('id')
+            if name and pet_id is not None:
+                self.selectPetPopUp.addItem(name, pet_id)
+
+        self.set_dynamic_completer(self.selectPetPopUp)
+
+    def _on_pets_for_patient_error(self, err):
+        print(f"Failed to load pets: {err}")
+        self.selectPetPopUp.clear()
+        self.selectPetPopUp.addItem("", None)
     def on_date_field_clicked(self, dateEdit):
         if self.main_window:
             self.main_window.show_custom_calendar(dateEdit)
@@ -1228,90 +1265,146 @@ class AddAppointmentCard(QWidget):
         self.main_window.declineAppointmentBtn.clicked.connect(
             lambda _, r_id=appoint['id']: self.declined_booking(r_id))
     def accepted_booking(self, walkin_id, owner_id):
-        # First check if the time slot is still available
+        # Non-blocking: fetch appointment details, check slot availability, then accept.
+        self.api.get(
+            url=f"/api/walkIn/{walkin_id}/",
+            on_success=lambda appointment_data: self._on_accept_details_loaded(appointment_data, walkin_id, owner_id),
+            on_error=lambda err: self._accept_without_slot_check(walkin_id, owner_id, err),
+            timeout=10,
+            show_loading=True,
+            loading_title="Accepting appointment...",
+            loading_subtitle="Checking availability"
+        )
+
+    def _on_accept_details_loaded(self, appointment_data, walkin_id, owner_id):
         try:
-            # Get the appointment details to check date and time
-            appointment_url = f"{API_BASE_URL}/api/walkIn/{walkin_id}/"
-            appointment_response = requests.get(appointment_url)
+            date = appointment_data.get('date')
+            time = appointment_data.get('prefTime')
+            if not date or not time:
+                # If missing fields, proceed with acceptance (matches previous behavior of being permissive).
+                return self._accept_patch(walkin_id, owner_id)
 
-            if appointment_response.status_code == 200:
-                appointment_data = appointment_response.json()
-                date = appointment_data.get('date')
-                time = appointment_data.get('prefTime')
-
-                # Check if time slot is available
-                if not self.is_time_slot_available(date, time):
-                    toast = Toast(self.main_window,
-                                  "This time slot is already fully booked! Cannot accept this appointment.",
-                                  icon_path="Icons/warning.png")
-                    toast.show_toast()
-                    return  # Don't proceed with acceptance
-
+            self.api.get(
+                url="/api/check-time-slot/",
+                params={'date': date, 'time': time},
+                on_success=lambda slot_data: self._on_slot_checked(slot_data, walkin_id, owner_id),
+                on_error=lambda err: self._accept_without_slot_check(walkin_id, owner_id, err),
+                timeout=10,
+                show_loading=True,
+                loading_title="Accepting appointment...",
+                loading_subtitle="Checking time slot"
+            )
         except Exception as e:
-            print(f"Error checking time slot before acceptance: {e}")
-            # Continue anyway if there's an error checking
+            print(f"Error preparing slot check: {e}")
+            self._accept_patch(walkin_id, owner_id)
 
-        # If time slot is available, proceed with acceptance
-        url = f"{API_BASE_URL}/api/walkIn/{walkin_id}/"
+    def _on_slot_checked(self, slot_data, walkin_id, owner_id):
+        try:
+            # API returns {'available': bool, ...}
+            if isinstance(slot_data, dict) and not slot_data.get('available', True):
+                toast = Toast(
+                    self.main_window,
+                    "This time slot is already fully booked! Cannot accept this appointment.",
+                    icon_path="Icons/warning.png"
+                )
+                toast.show_toast()
+                return
+        except Exception as e:
+            print(f"Error interpreting slot response: {e}")
 
-        # First, update the walk-in request status
-        response = requests.patch(url, json={"request": "accepted"})
+        self._accept_patch(walkin_id, owner_id)
 
-        if response.status_code in [200, 202]:
-            # Update basicInfo desktop_record to 'show' if owner_id is provided
-            if owner_id:
-                owner_url = f"{API_BASE_URL}/api/patients/{owner_id}/"
-                # Get current owner data first
-                owner_response = requests.get(owner_url)
-                if owner_response.status_code == 200:
-                    owner_data = owner_response.json()
-                    # Only update if current desktop_record is 'hide'
-                    if owner_data.get('desktop_record') == 'hide':
-                        update_response = requests.patch(owner_url, json={"desktop_record": "show"})
-                        print(f"Updated desktop_record to show: {update_response.status_code}")
+    def _accept_without_slot_check(self, walkin_id, owner_id, err):
+        # Preserve previous behavior: proceed even if slot check fails.
+        print(f"Slot check failed (continuing anyway): {err}")
+        self._accept_patch(walkin_id, owner_id)
 
-            # Refresh the appointments and navigate
-            self.web_Appointment()
-            self.main_window.navigate_to_page(3)
-            self.main_window.walkInOrWeb.setCurrentIndex(1)
-            self.load_appointments()
-            self.main_window.statusStackedWidget.setCurrentIndex(0)
-            self.main_window.pendingBtn.setChecked(True)
-            self.main_window.walkInBtn.setChecked(True)
-            self.main_window.load_patients(1, None)
+    def _accept_patch(self, walkin_id, owner_id):
+        self.api.patch(
+            url=f"/api/walkIn/{walkin_id}/",
+            data={"request": "accepted"},
+            on_success=lambda _: self._on_accepted_saved(walkin_id, owner_id),
+            on_error=lambda err: self._on_accept_failed(err),
+            timeout=15,
+            show_loading=True,
+            loading_title="Accepting appointment...",
+            loading_subtitle="Saving changes"
+        )
 
-            toast = Toast(self.main_window, "Appointment accepted successfully!", icon_path="Icons/check.png")
-            toast.show_toast()
-        else:
-            print("Failed to accept walk-in:", response.text)
-            toast = Toast(self.main_window, "Failed to accept appointment!", icon_path="Icons/warning.png")
-            toast.show_toast()
+    def _on_accepted_saved(self, walkin_id, owner_id):
+        # Best-effort update: set desktop_record to 'show' (non-blocking).
+        if owner_id:
+            self.api.get(
+                url=f"/api/patients/{owner_id}/",
+                on_success=lambda owner_data: self._maybe_set_desktop_record_show(owner_id, owner_data),
+                on_error=lambda err: print(f"Failed to fetch owner before desktop_record update: {err}"),
+                timeout=10
+            )
+
+        # Refresh the appointments and navigate
+        self.web_Appointment()
+        self.main_window.navigate_to_page(3)
+        self.main_window.walkInOrWeb.setCurrentIndex(1)
+        self.load_appointments()
+        self.main_window.statusStackedWidget.setCurrentIndex(0)
+        self.main_window.pendingBtn.setChecked(True)
+        self.main_window.walkInBtn.setChecked(True)
+        self.main_window.load_patients(1, None)
+
+        toast = Toast(self.main_window, "Appointment accepted successfully!", icon_path="Icons/check.png")
+        toast.show_toast()
+
+    def _maybe_set_desktop_record_show(self, owner_id, owner_data):
+        try:
+            if isinstance(owner_data, dict) and owner_data.get('desktop_record') == 'hide':
+                self.api.patch(
+                    url=f"/api/patients/{owner_id}/",
+                    data={"desktop_record": "show"},
+                    on_success=lambda _: None,
+                    on_error=lambda err: print(f"Failed to update desktop_record: {err}"),
+                    timeout=10
+                )
+        except Exception as e:
+            print(f"Error updating desktop_record: {e}")
+
+    def _on_accept_failed(self, err):
+        print(f"Failed to accept walk-in: {err}")
+        toast = Toast(self.main_window, "Failed to accept appointment!", icon_path="Icons/warning.png")
+        toast.show_toast()
     def declined_booking(self, walkin_id):
-        # Update the walk-in appointment request to 'declined'
-        url = f"{API_BASE_URL}/api/walkIn/{walkin_id}/"
+        # Non-blocking decline
+        self.api.patch(
+            url=f"/api/walkIn/{walkin_id}/",
+            data={"request": "declined"},
+            on_success=lambda _: self._on_declined_saved(),
+            on_error=lambda err: self._on_decline_failed(err),
+            timeout=15,
+            show_loading=True,
+            loading_title="Declining appointment...",
+            loading_subtitle="Saving changes"
+        )
 
-        response = requests.patch(url, json={"request": "declined"})
+    def _on_declined_saved(self):
+        # For declined bookings, desktop_record remains unchanged
+        self.web_Appointment()
+        self.main_window.navigate_to_page(3)
+        self.main_window.walkInOrWeb.setCurrentIndex(0)
+        self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
+        self.main_window.DeclinedBtn.setChecked(True)
+        self.web_Appointment(1, "declined")
 
-        if response.status_code in [200, 202]:
-            # For declined bookings, desktop_record remains unchanged
-            self.web_Appointment()
-            self.main_window.navigate_to_page(3)
-            self.main_window.walkInOrWeb.setCurrentIndex(0)
-            self.main_window.webAppointmentStackWidget.setCurrentIndex(2)
-            self.main_window.DeclinedBtn.setChecked(True)
-            self.web_Appointment(1, "declined")
+        # Refresh time slot availability
+        if hasattr(self, 'setup_time_combo_box'):
+            self.setup_time_combo_box()
 
-            # Refresh time slot availability
-            if hasattr(self, 'setup_time_combo_box'):
-                self.setup_time_combo_box()
+        toast = Toast(self.main_window, "Appointment declined! Time slot is now available.",
+                      icon_path="Icons/check.png")
+        toast.show_toast()
 
-            toast = Toast(self.main_window, "Appointment declined! Time slot is now available.",
-                          icon_path="Icons/check.png")
-            toast.show_toast()
-        else:
-            print("Failed to decline walk-in:", response.text)
-            toast = Toast(self.main_window, "Failed to decline appointment!", icon_path="Icons/warning.png")
-            toast.show_toast()
+    def _on_decline_failed(self, err):
+        print(f"Failed to decline walk-in: {err}")
+        toast = Toast(self.main_window, "Failed to decline appointment!", icon_path="Icons/warning.png")
+        toast.show_toast()
     def add_empty_label(self, layout, message="EMPTY"):
         empty_label = QLabel(message)
         empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color:rgb(168,168,168);")

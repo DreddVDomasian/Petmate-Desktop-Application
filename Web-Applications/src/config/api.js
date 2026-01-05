@@ -37,8 +37,35 @@ export const apiFetch = (path, options = {}) => {
   return fetch(url, fetchOptions);
 };
 
+/**
+ * Safely parse JSON from a Response (handles empty/non-JSON bodies).
+ * @param {Response} res
+ */
+export const readJsonSafe = async (res) => {
+  const text = await res.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Normalize common DRF responses (array vs {results: []}).
+ * @param {any} data
+ * @returns {Array}
+ */
+export const normalizeList = (data) => {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.results)) return data.results;
+  return [];
+};
+
 export default {
   getApiUrl,
   apiFetch,
+  readJsonSafe,
+  normalizeList,
   baseUrl: API_BASE_URL,
 };

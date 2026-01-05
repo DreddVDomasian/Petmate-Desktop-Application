@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf';
-import { apiFetch } from '../../config/api';
+import { apiFetch, readJsonSafe, normalizeList } from '../../config/api';
 
 const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY STATE FROM OLD SetAppointment.jsx
@@ -74,13 +74,15 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
         if (res.ok) {
-          const data = await res.json();
-          setPets(data);
+          const data = await readJsonSafe(res);
+          setPets(normalizeList(data));
         } else {
           console.error("Failed to fetch pets");
+          setPets([]);
         }
       } catch (error) {
         console.error("Error fetching pets:", error);
+        setPets([]);
       } finally {
         setLoadingPets(false);
       }
@@ -232,8 +234,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
   // COPY checkTimeSlotAvailability FROM OLD SetAppointment.jsx
   const checkTimeSlotAvailability = async (date, time) => {
     try {
-      const response = await fetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
-        credentials: "include",
+      const response = await apiFetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
         headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
       });
 

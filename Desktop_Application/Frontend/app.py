@@ -39,7 +39,6 @@ import requests
 import webbrowser
 import json
 
-from PyQt6.QtCharts import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QPieSeries, QHorizontalBarSeries
 from PyQt6.QtGui import QColor, QPainter, QFont, QBrush
 from PyQt6.QtWidgets import QVBoxLayout
 from analytics import fetch_json
@@ -709,7 +708,15 @@ class MainUI(QMainWindow):
     #PATIEN INFO SUBMIT/CHECK DUPLICATE
     def setup_comboboxes(self):
         self.ui_handler = UIHandler(self.provinceComboBox, self.cityComboBox, self.barangayComboBox)
-        self.ui_handler.load_provinces()
+        # Avoid blocking startup: load AddressJSON asynchronously, then populate provinces.
+        self.provinceComboBox.setEnabled(False)
+        self.cityComboBox.setEnabled(False)
+        self.barangayComboBox.setEnabled(False)
+
+        self.ui_handler.load_address_data_async(
+            on_ready=self._on_address_data_ready,
+            on_error=lambda err: Toast(self, "Failed to load address data", icon_path="Icons/warning.png").show_toast()
+        )
         combo_boxes = [self.provinceComboBox, self.cityComboBox, self.barangayComboBox]
         placeholders = ["Select Province", "Select City", "Select Barangay"]
         for cb, text in zip(combo_boxes, placeholders):
@@ -717,6 +724,13 @@ class MainUI(QMainWindow):
             cb.lineEdit().setReadOnly(False)
             cb.lineEdit().setPlaceholderText(text)
             cb.lineEdit().setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+    def _on_address_data_ready(self):
+        try:
+            self.ui_handler.load_provinces()
+            self.provinceComboBox.setEnabled(True)
+        except Exception as e:
+            print(f"Failed to populate provinces: {e}")
     def submit_data(self):
         required_fields = {
             "firstName": self.firstNameEdit,
@@ -1286,31 +1300,54 @@ class MainUI(QMainWindow):
         # (Optional) Debug: confirm payload is clean
         # print("Submitting data:", data)
 
-        if add_new_pet(data):
-            # Invalidate + refresh cache for this owner's pets
-            owner_id = self.selected_patient_id
-            if owner_id:
-                self.api.invalidate_cache(f"/api/pets/?owner_id={owner_id}")
-                self._pets_sig_by_owner.pop(owner_id, None)
+        # Store for callback
+        self._pet_required_fields = required_fields
+        self._pet_owner_id = self.selected_patient_id
 
-            self.profileStackedWidget.setCurrentIndex(0)
-            # Force refresh, but avoid modal flash since this is an immediate UI update
+        # Non-blocking POST with loading overlay
+        self.api.post(
+            url="/api/pets/",
+            data=data,
+            on_success=self._on_pet_added,
+            on_error=self._on_pet_add_error,
+            timeout=20,
+            show_loading=True,
+            loading_title="Adding Pet...",
+            loading_subtitle="Please wait while we save the pet information"
+        )
+
+    def _on_pet_added(self, response):
+        owner_id = getattr(self, '_pet_owner_id', None)
+
+        # Invalidate + refresh cache for this owner's pets
+        if owner_id:
+            self.api.invalidate_cache(f"/api/pets/?owner_id={owner_id}")
+            self._pets_sig_by_owner.pop(owner_id, None)
+
+        self.profileStackedWidget.setCurrentIndex(0)
+        # Force refresh, but avoid modal flash since this is an immediate UI update
+        if owner_id:
             self.load_pets_for_owner(owner_id, force_refresh=True, show_loading_on_miss=False)
 
-            self.clearInputs()
+        self.clearInputs()
 
-            # reset styles for required widgets
-            for widget in required_fields.values():
-                if isinstance(widget, QLineEdit):
-                    widget.setStyleSheet(default_style)
-                elif isinstance(widget, QComboBox):
-                    widget.setStyleSheet(default_combobox_style)
+        # reset styles for required widgets
+        required_fields = getattr(self, '_pet_required_fields', {})
+        for widget in required_fields.values():
+            if isinstance(widget, QLineEdit):
+                widget.setStyleSheet(default_style)
+            elif isinstance(widget, QComboBox):
+                widget.setStyleSheet(default_combobox_style)
 
-            toast = Toast(self, icon_path="Icons/check.png")
-            toast.show_toast()
-        else:
-            toast = Toast(self, "Failed to add pet!", icon_path="Icons/warning.png")
-            toast.show_toast()
+        toast = Toast(self, icon_path="Icons/check.png")
+        toast.show_toast()
+
+        self._pet_required_fields = None
+        self._pet_owner_id = None
+
+    def _on_pet_add_error(self, error_msg):
+        toast = Toast(self, "Failed to add pet!", icon_path="Icons/warning.png")
+        toast.show_toast()
     def setup_pet_buttons(self):
         self.profileStackedWidget.setCurrentIndex(0)
         for btn in [self.addpetQtoolBtn, self.plusSignBtn]:
@@ -1906,30 +1943,50 @@ class MainUI(QMainWindow):
             "prescription": prescription
         }
 
-        if add_new_service(service_data):
-            toast = Toast(self, "Service added!", icon_path="Icons/check.png")
-            toast.show_toast()
+        # Store for callback
+        self._service_required_fields = required_fields
+        self._service_pet_id = self.selected_pet_id
 
-            # Invalidate + refresh cache for this pet's services
-            pet_id = self.selected_pet_id
-            if pet_id:
-                self.api.invalidate_cache(f"/api/services/?pet_id={pet_id}")
-                self._services_sig_by_pet.pop(pet_id, None)
+        # Non-blocking POST with loading overlay
+        self.api.post(
+            url="/api/services/",
+            data=service_data,
+            on_success=self._on_service_added,
+            on_error=self._on_service_add_error,
+            timeout=25,
+            show_loading=True,
+            loading_title="Adding Service...",
+            loading_subtitle="Please wait while we save the service"
+        )
 
-            if hasattr(self, 'selected_pet_id') and self.selected_pet_id:
-                self.refresh_current_pet_profile()
-                self.load_services_for_pet(self.selected_pet_id, force_refresh=True, show_loading_on_miss=False)
+    def _on_service_added(self, response):
+        toast = Toast(self, "Service added!", icon_path="Icons/check.png")
+        toast.show_toast()
 
-            self.serviceHistoryBtn.setChecked(True)
-            self.serviceHistoryStackedWidget.setCurrentIndex(0)
+        pet_id = getattr(self, '_service_pet_id', None)
+
+        # Invalidate + refresh cache for this pet's services
+        if pet_id:
+            self.api.invalidate_cache(f"/api/services/?pet_id={pet_id}")
+            self._services_sig_by_pet.pop(pet_id, None)
+
+        if hasattr(self, 'selected_pet_id') and self.selected_pet_id:
+            self.refresh_current_pet_profile()
             self.load_services_for_pet(self.selected_pet_id, force_refresh=True, show_loading_on_miss=False)
-            self.load_scheduled_services()
-            # Clear fields or reset
-            self.clearInputs()
 
-        else:
-            toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
-            toast.show_toast()
+        self.serviceHistoryBtn.setChecked(True)
+        self.serviceHistoryStackedWidget.setCurrentIndex(0)
+        if self.selected_pet_id:
+            self.load_services_for_pet(self.selected_pet_id, force_refresh=True, show_loading_on_miss=False)
+        self.load_scheduled_services()
+        self.clearInputs()
+
+        self._service_required_fields = None
+        self._service_pet_id = None
+
+    def _on_service_add_error(self, error_msg):
+        toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
+        toast.show_toast()
     def service_stackedWidget(self,index):
         self.serviceHistoryBtn.setChecked(True)
         self.dateEdit.setEnabled(True)
@@ -3226,6 +3283,8 @@ class MainUI(QMainWindow):
             print("BAR GRAPH ERROR — No data")
             return
 
+        from PyQt6.QtCharts import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis
+
         set0 = QBarSet("Services")
         values = list(data.values())
         categories = list(data.keys())
@@ -3294,6 +3353,8 @@ class MainUI(QMainWindow):
         if not data:
             print("PIE GRAPH — No data found, using zero fallback")
             data = {"dogs": 0, "cats": 0, "others": 0}
+
+        from PyQt6.QtCharts import QChart, QChartView, QPieSeries
 
         dogs = data.get("dogs", 0)
         cats = data.get("cats", 0)
