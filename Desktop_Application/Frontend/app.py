@@ -2626,14 +2626,6 @@ class MainUI(QMainWindow):
         else:
             self.passForConfirm.setStyleSheet(default_style)
 
-        # Verify password using the SAME login logic
-        if not self.verify_password(password):
-            toast = Toast(self, "Incorrect password! Please try again.", icon_path="Icons/warning.png")
-            toast.show_toast()
-            self.passForConfirm.setStyleSheet(error_style)
-            self.passForConfirm.clear()
-            self.passForConfirm.setFocus()
-            return
         # Prepare data for API
         profile_data = {
             "full_name": self.profileFullName.text().strip(),
@@ -2641,35 +2633,64 @@ class MainUI(QMainWindow):
             "phone": self.profilePhone.text().strip()
         }
 
-        # Send update request
-        if self.update_user_profile(profile_data):
-            toast = Toast(self, "Profile updated successfully!", icon_path="Icons/check.png")
+        # Async verify password then async PATCH update profile
+        self._set_settings_busy(True, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
+
+        def _invalid_password():
+            self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
+            toast = Toast(self, "Incorrect password! Please try again.", icon_path="Icons/warning.png")
             toast.show_toast()
-            self.profileEdit_cancel()  # Return to view mode
-        else:
-            toast = Toast(self, "Failed to update profile!", icon_path="Icons/warning.png")
+            self.passForConfirm.setStyleSheet(error_style)
+            self.passForConfirm.clear()
+            self.passForConfirm.setFocus()
+
+        def _verify_error(err: str):
+            self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
+            toast = Toast(self, f"Failed to verify password ({err})", icon_path="Icons/warning.png")
             toast.show_toast()
-    def update_user_profile(self, profile_data):
-        """Send PATCH request to update user profile"""
-        try:
-            user_id = self.current_user['id']
-            response = requests.patch(
-                f"{API_BASE_URL}/api/desktop-users/{user_id}/",
-                json=profile_data
+
+        def _do_update_profile():
+            user_id = (self.current_user or {}).get('id')
+            if not user_id:
+                self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
+                toast = Toast(self, "No user session found", icon_path="Icons/warning.png")
+                toast.show_toast()
+                return
+
+            self.api.patch(
+                url=f"/api/desktop-users/{user_id}/",
+                data=profile_data,
+                on_success=lambda updated_user: self._on_profile_updated(updated_user),
+                on_error=lambda e: self._on_profile_update_failed(e),
+                timeout=15,
+                show_loading=True,
+                loading_title="Updating profile...",
+                loading_subtitle="Saving changes"
             )
 
-            if response.status_code == 200:
-                # Update current user data
-                updated_user = response.json()
-                self.current_user.update(updated_user)
-                return True
-            else:
-                print(f"Update failed: {response.status_code} - {response.text}")
-                return False
+        self._verify_password_async(
+            password,
+            on_valid=_do_update_profile,
+            on_invalid=_invalid_password,
+            on_error=_verify_error
+        )
 
-        except Exception as e:
-            print(f"Error updating profile: {e}")
-            return False
+    def _on_profile_updated(self, updated_user):
+        try:
+            if isinstance(updated_user, dict) and self.current_user is not None:
+                self.current_user.update(updated_user)
+        except Exception:
+            pass
+        toast = Toast(self, "Profile updated successfully!", icon_path="Icons/check.png")
+        toast.show_toast()
+        self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
+        self.profileEdit_cancel()  # Return to view mode
+
+    def _on_profile_update_failed(self, err: str):
+        self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
+        toast = Toast(self, "Failed to update profile!", icon_path="Icons/warning.png")
+        toast.show_toast()
+        print(f"Profile update failed: {err}")
     def profileEdit_cancel(self):
         """Cancel editing and revert to original data"""
         self.settingsProfileEditBtn.show()
@@ -2761,21 +2782,43 @@ class MainUI(QMainWindow):
             self.show_security_error("\n• ".join(errors))
             return
 
-        # Verify password
-        if not self.verify_password(password):
+        self._set_settings_busy(True, self.changeUsernameBtn)
+
+        def _invalid_password():
+            self._set_settings_busy(False, self.changeUsernameBtn)
             self.show_security_error("Incorrect password!")
             self.changeUsernamePass.setStyleSheet(error_style)
             self.changeUsernamePass.clear()
             self.changeUsernamePass.setFocus()
-            return
 
-        # Update username via API
-        if self.update_username(new_username):
-            self.show_security_success("Username updated successfully!")
-            self.clear_security_fields()
-            self.logout_after_update()
-        else:
-            self.show_security_error("Failed to update username!")
+        def _verify_error(err: str):
+            self._set_settings_busy(False, self.changeUsernameBtn)
+            self.show_security_error(f"Failed to verify password ({err})")
+
+        def _do_update_username():
+            user_id = (self.current_user or {}).get('id')
+            if not user_id:
+                self._set_settings_busy(False, self.changeUsernameBtn)
+                self.show_security_error("No user session found")
+                return
+
+            self.api.patch(
+                url=f"/api/desktop-users/{user_id}/",
+                data={"username": new_username},
+                on_success=lambda updated_user: self._on_username_updated(updated_user),
+                on_error=lambda e: self._on_username_update_failed(e),
+                timeout=15,
+                show_loading=True,
+                loading_title="Updating username...",
+                loading_subtitle="Saving changes"
+            )
+
+        self._verify_password_async(
+            password,
+            on_valid=_do_update_username,
+            on_invalid=_invalid_password,
+            on_error=_verify_error
+        )
     def change_password(self):
         """Handle password change"""
         current_password = self.currentPassEdit.text().strip()
@@ -2788,14 +2831,102 @@ class MainUI(QMainWindow):
             self.show_security_error("\n• ".join(errors))
             return
 
-        # Verify current password is now done in the API, but you can keep frontend verification too
-        # Update password via API
-        if self.update_password(new_password):
-            self.show_security_success("Password updated successfully!")
-            self.clear_security_fields()
-            self.logout_after_update()
-        else:
-            self.show_security_error("Failed to update password! Current password may be incorrect.")
+        self._set_settings_busy(True, self.changePasswordBtn)
+
+        user_id = (self.current_user or {}).get('id')
+        password_data = {
+            "user_id": user_id,
+            "current_password": current_password,
+            "new_password": new_password
+        }
+
+        def _on_changed(data):
+            self._set_settings_busy(False, self.changePasswordBtn)
+            if isinstance(data, dict) and data.get('success'):
+                self.show_security_success("Password updated successfully!")
+                self.clear_security_fields()
+                self.logout_after_update()
+            else:
+                self.show_security_error("Failed to update password! Current password may be incorrect.")
+
+        def _on_change_err(err: str):
+            self._set_settings_busy(False, self.changePasswordBtn)
+            # 400/401 shows up here as "HTTP error: <code>"
+            if "HTTP error: 400" in str(err) or "HTTP error: 401" in str(err):
+                self.show_security_error("Failed to update password! Current password may be incorrect.")
+            else:
+                self.show_security_error(f"Failed to update password ({err})")
+
+        self.api.post(
+            url="/api/desktop-change-password/",
+            data=password_data,
+            on_success=_on_changed,
+            on_error=_on_change_err,
+            timeout=15,
+            show_loading=True,
+            loading_title="Updating password...",
+            loading_subtitle="Saving changes"
+        )
+
+    def _on_username_updated(self, updated_user):
+        try:
+            if isinstance(updated_user, dict) and self.current_user is not None:
+                self.current_user.update(updated_user)
+        except Exception:
+            pass
+        self._set_settings_busy(False, self.changeUsernameBtn)
+        self.show_security_success("Username updated successfully!")
+        self.clear_security_fields()
+        self.logout_after_update()
+
+    def _on_username_update_failed(self, err: str):
+        self._set_settings_busy(False, self.changeUsernameBtn)
+        self.show_security_error("Failed to update username!")
+        print(f"Username update failed: {err}")
+
+    def _set_settings_busy(self, busy: bool, *widgets):
+        """Disable/enable settings action buttons during async requests."""
+        for w in widgets:
+            try:
+                if w is not None:
+                    w.setEnabled(not busy)
+            except Exception:
+                pass
+
+    def _verify_password_async(self, password: str, on_valid, on_invalid, on_error=None):
+        """Verify the current user's password via /api/desktop-login/ without blocking the UI."""
+        username = (self.current_user or {}).get('username')
+        if not username:
+            if on_error:
+                on_error('No username in session')
+            return
+
+        def _ok(_data):
+            try:
+                on_valid()
+            except Exception:
+                on_valid()
+
+        def _err(err: str):
+            # 400/401 means invalid credentials; other errors are connectivity/server
+            if "HTTP error: 400" in str(err) or "HTTP error: 401" in str(err):
+                on_invalid()
+                return
+            if on_error:
+                on_error(err)
+            else:
+                on_invalid()
+
+        self.api.post(
+            url="/api/desktop-login/",
+            data={"username": username, "password": password},
+            on_success=_ok,
+            on_error=_err,
+            timeout=10,
+            show_loading=True,
+            loading_title="Verifying password...",
+            loading_subtitle="Please wait"
+        )
     def validate_username_fields(self, new_username, password):
         """Validate username change fields"""
         errors = []
@@ -2944,40 +3075,52 @@ class MainUI(QMainWindow):
         self.load_staff_accounts()
     def generate_staff_account(self):
         """Generate a new staff account"""
-        try:
-            if not self.current_user or self.current_user.get('role') != 'admin':
-                toast = Toast(self, "Only administrators can create staff accounts", icon_path="Icons/warning.png")
+        if not self.current_user or self.current_user.get('role') != 'admin':
+            toast = Toast(self, "Only administrators can create staff accounts", icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
+
+        self._set_settings_busy(True, self.addAccountBtn)
+
+        def _on_created(data):
+            self._set_settings_busy(False, self.addAccountBtn)
+            try:
+                staff_account = (data or {}).get('staff_account')
+                if not isinstance(staff_account, dict):
+                    raise ValueError('Invalid staff_account payload')
+                if staff_account.get('temp_password'):
+                    self.temp_passwords[staff_account['id']] = staff_account['temp_password']
+                toast = Toast(
+                    self,
+                    f"Staff account created!\nUsername: {staff_account.get('username','')}\nPassword: {staff_account.get('temp_password','')}",
+                    icon_path="Icons/check.png"
+                )
                 toast.show_toast()
-                return
-
-            # Generate account via API
-            response = requests.post(
-                f"{API_BASE_URL}/api/desktop-create-staff/",
-                json={
-                    'admin_id': self.current_user['id'],
-                    'full_name': f"Staff User"  # Generic name, can be changed later
-                }
-            )
-
-            if response.status_code == 201:
-                data = response.json()
-                staff_account = data['staff_account']
-                self.temp_passwords[staff_account['id']] = staff_account['temp_password']
-                # Show success message with credentials
-                toast = Toast(self, f"Staff account created!\nUsername: {staff_account['username']}\nPassword: {staff_account['temp_password']}", icon_path="Icons/check.png")
+            except Exception as e:
+                print(f"Error reading staff account response: {e}")
+                toast = Toast(self, "Staff account created, but response was unexpected", icon_path="Icons/check.png")
                 toast.show_toast()
+            self.load_staff_accounts()
 
-                # Refresh the accounts list
-                self.load_staff_accounts()
-            else:
-                toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
-                toast.show_toast()
-
-
-        except Exception as e:
-            print(f"Error generating staff account: {e}")
+        def _on_create_err(err: str):
+            self._set_settings_busy(False, self.addAccountBtn)
+            print(f"Error generating staff account: {err}")
             toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
             toast.show_toast()
+
+        self.api.post(
+            url="/api/desktop-create-staff/",
+            data={
+                'admin_id': self.current_user['id'],
+                'full_name': "Staff User"
+            },
+            on_success=_on_created,
+            on_error=_on_create_err,
+            timeout=15,
+            show_loading=True,
+            loading_title="Creating staff account...",
+            loading_subtitle="Please wait"
+        )
     def load_staff_accounts(self):
         """Load all staff accounts asynchronously with loading indicator"""
         try:
@@ -3089,72 +3232,119 @@ class MainUI(QMainWindow):
             self.accountCards.append(card_ui)
     def reset_staff_password(self, account):
         """Reset staff account password"""
-        try:
-            if not self.current_user or self.current_user.get('role') != 'admin':
-                toast = Toast(self, "Only administrators can reset passwords", icon_path="Icons/warning.png")
-                toast.show_toast()
-                return
+        if not self.current_user or self.current_user.get('role') != 'admin':
+            toast = Toast(self, "Only administrators can reset passwords", icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
 
-            reply = QMessageBox.question(
-                self,
-                "Reset Password",
-                f"Reset password for {account['username']}? This will generate new temporary credentials.",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        # Use custom ConfirmCard instead of default QMessageBox
+        username = account.get('username', 'this account')
+        self.confirmCard.confirmationMessage.setText(
+            f"Reset password for {username}?\n\nThis will generate new temporary credentials."
+        )
+        self.confirmCard.yesButton.setText("RESET")
+        self.confirmCard.noButton.setText("CANCEL")
+        self.confirmCard.yesButton.setStyleSheet(reset_yes_style)
+        self.confirmCard.noButton.setStyleSheet(reset_no_style)
+
+        try:
+            self.confirmCard.yesButton.clicked.disconnect()
+            self.confirmCard.noButton.clicked.disconnect()
+        except Exception:
+            pass
+
+        def clicked_no():
+            self.confirmCard.close()
+            self.restore_confirm_card_default()
+
+        def clicked_yes():
+            # Hide confirm card immediately, then proceed with async call
+            self.confirmCard.close()
+            self.restore_confirm_card_default()
+
+            def _on_reset(data):
+                new_pw = (data or {}).get('new_password', '')
+                toast = Toast(self, f"Password reset!\nNew password: {new_pw}", icon_path="Icons/check.png")
+                toast.show_toast()
+                self.load_staff_accounts()
+
+            def _on_reset_err(err: str):
+                print(f"Error resetting password: {err}")
+                toast = Toast(self, "Failed to reset password", icon_path="Icons/warning.png")
+                toast.show_toast()
+
+            self.api.post(
+                url="/api/desktop-reset-password/",
+                data={
+                    'admin_id': self.current_user['id'],
+                    'staff_id': account['id']
+                },
+                on_success=_on_reset,
+                on_error=_on_reset_err,
+                timeout=15,
+                show_loading=True,
+                loading_title="Resetting password...",
+                loading_subtitle="Please wait"
             )
 
-            if reply == QMessageBox.StandardButton.Yes:
-                # Call reset API (you'll need to create this endpoint)
-                response = requests.post(
-                    f"{API_BASE_URL}/api/desktop-reset-password/",  # You'll need to create this
-                    json={
-                        'admin_id': self.current_user['id'],
-                        'staff_id': account['id']
-                    }
-                )
-
-                if response.status_code == 200:
-                    data = response.json()
-                    toast = Toast(self, f"Password reset!\nNew password: {data['new_password']}", icon_path="Icons/check.png")
-                    toast.show_toast()
-                    self.load_staff_accounts()  # Refresh
-                else:
-                    toast = Toast(self, "Reset failed",icon_path="Icons/warning.png")
-                    toast.show_toast()
-
-        except Exception as e:
-            toast = Toast(self, "Failed to reset password", icon_path="Icons/warning.png")
-            toast.show_toast()
-            print(f"Error resetting password: {e}")
+        self.confirmCard.yesButton.clicked.connect(clicked_yes)
+        self.confirmCard.noButton.clicked.connect(clicked_no)
+        self.confirmCard.show_card()
     def delete_staff_account(self, account):
         """Delete staff account"""
-        try:
-            if not self.current_user or self.current_user.get('role') != 'admin':
-                toast = Toast(self, "Only administrators can delete accounts", icon_path="Icons/warning.png")
-                toast.show_toast()
-                return
+        if not self.current_user or self.current_user.get('role') != 'admin':
+            toast = Toast(self, "Only administrators can delete accounts", icon_path="Icons/warning.png")
+            toast.show_toast()
+            return
 
-            reply = QMessageBox.question(
-                self,
-                "Delete Account",
-                f"Delete {account['username']}? This action cannot be undone.",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        # Use custom ConfirmCard instead of default QMessageBox
+        username = account.get('username', 'this account')
+        self.confirmCard.confirmationMessage.setText(
+            f"Delete {username}?\n\nThis action cannot be undone."
+        )
+        # Keep default delete styling/text (YES/NO), but ensure correct styles
+        self.confirmCard.yesButton.setText("DELETE")
+        self.confirmCard.noButton.setText("CANCEL")
+        self.confirmCard.yesButton.setStyleSheet(original_yes_style)
+        self.confirmCard.noButton.setStyleSheet(original_no_style)
+
+        try:
+            self.confirmCard.yesButton.clicked.disconnect()
+            self.confirmCard.noButton.clicked.disconnect()
+        except Exception:
+            pass
+
+        def clicked_no():
+            self.confirmCard.close()
+            self.restore_confirm_card_default()
+
+        def clicked_yes():
+            self.confirmCard.close()
+            self.restore_confirm_card_default()
+
+            def _on_deleted(_data):
+                toast = Toast(self, "Account deleted successfully", icon_path="Icons/check.png")
+                toast.show_toast()
+                self.load_staff_accounts()
+
+            def _on_delete_err(err: str):
+                print(f"Error deleting account: {err}")
+                toast = Toast(self, "Failed to delete account", icon_path="Icons/warning.png")
+                toast.show_toast()
+
+            self.api.delete(
+                url=f"/api/desktop-users/{account['id']}/",
+                on_success=_on_deleted,
+                on_error=_on_delete_err,
+                timeout=15,
+                show_loading=True,
+                loading_title="Deleting account...",
+                loading_subtitle="Please wait"
             )
 
-            if reply == QMessageBox.StandardButton.Yes:
-                response = requests.delete(f"{API_BASE_URL}/api/desktop-users/{account['id']}/")
-
-                if response.status_code == 204:
-                    toast = Toast(self, "Account deleted successfully", icon_path="Icons/check.png")
-                    toast.show_toast()
-                    self.load_staff_accounts()  # Refresh
-                else:
-                    toast = Toast(self, "Delete Failed", icon_path="Icons/warning.png")
-                    toast.show_toast()
-
-        except Exception as e:
-            print(f"Error deleting account: {e}")
-            toast = Toast(self, "Failed to delete account", icon_path="Icons/warning.png")
-            toast.show_toast()
+        self.confirmCard.yesButton.clicked.connect(clicked_yes)
+        self.confirmCard.noButton.clicked.connect(clicked_no)
+        self.confirmCard.show_card()
 
     #WIDGET AND FONT SCALING FOR RESPONSIVENESS
     def scale_widget_font(self, widget, base_size, min_size=8, max_size=20, family=None):
