@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../../utils/csrf';
+import { apiFetch, normalizeList, readJsonSafe } from '../../config/api';
 
 const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) => {
   const [services, setServices] = useState([]);
@@ -50,21 +51,54 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
 
   const fetchPetServices = async (petId) => {
     setServicesLoading(true);
+    setServices([]);
     try {
-      const res = await fetch(`/api/services/?pet_id=${petId}`, {
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken') || ''
-        }
+      const headers = {
+        'X-CSRFToken': getCookie('csrftoken') || ''
+      };
+
+      const [servicesRes, apptsRes] = await Promise.all([
+        apiFetch(`/api/services/?pet_id=${petId}`, { headers }),
+        apiFetch(`/api/walkIn/?pet_id=${petId}`, { headers })
+      ]);
+
+      const servicesData = servicesRes.ok ? await readJsonSafe(servicesRes) : null;
+      const apptsData = apptsRes.ok ? await readJsonSafe(apptsRes) : null;
+
+      const servicesList = normalizeList(servicesData);
+      const apptsList = normalizeList(apptsData);
+
+      const serviceItems = servicesList.map((svc) => ({
+        kind: 'service',
+        id: svc.id,
+        service_type: svc.service_type || svc.service_type_name || 'N/A',
+        date: svc.date,
+        return_date: svc.return_date,
+        status: svc.status,
+        notes: svc.notes
+      }));
+
+      const apptItems = apptsList.map((appt) => ({
+        kind: 'appointment',
+        id: appt.id,
+        service_type: appt.service_type_name || appt.service_type || 'Appointment',
+        date: appt.date,
+        return_date: null,
+        status: appt.status,
+        notes: null,
+        prefTime: appt.prefTime
+      }));
+
+      const combined = [...serviceItems, ...apptItems].sort((a, b) => {
+        const aTime = a?.date ? new Date(a.date).getTime() : 0;
+        const bTime = b?.date ? new Date(b.date).getTime() : 0;
+        return bTime - aTime;
       });
 
-      if (res.ok) {
-        const servicesData = await res.json();
-        setServices(servicesData);
-      } else {
-        console.error('Failed to fetch services');
-        setServices([]);
-      }
+      setServices(Array.isArray(combined) ? combined : []);
+
+      if (!servicesRes.ok) console.error('Failed to fetch services');
+      if (!apptsRes.ok) console.error('Failed to fetch appointments');
     } catch (error) {
       console.error('Error fetching services:', error);
       setServices([]);
@@ -260,6 +294,8 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
 
   if (!isOpen || !pet) return null;
 
+  const safeServices = Array.isArray(services) ? services : [];
+
   return (
     <>
       {/* Main Pet Details Modal */}
@@ -383,7 +419,7 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
 
                 {servicesLoading ? (
                   <div className="loading" style={{ textAlign: 'center', padding: '40px' }}>Loading services...</div>
-                ) : services.length === 0 ? (
+                ) : safeServices.length === 0 ? (
                   <div className="empty-services" style={{ textAlign: 'center', padding: '40px', color: 'var(--dark)' }}>
                     <i className="fas fa-clipboard-list" style={{ fontSize: '3rem', color: 'var(--primary)', marginBottom: '15px', opacity: '0.5' }}></i>
                     <h4>No Services Yet</h4>
@@ -391,8 +427,8 @@ const PetDetailsModal = ({ isOpen, onClose, pet, onPetUpdated, onPetDeleted }) =
                   </div>
                 ) : (
                   <div className="services-list">
-                    {services.map(service => (
-                      <div key={service.id} className="service-item" style={{ 
+                    {safeServices.map(service => (
+                      <div key={`${service.kind}-${service.id}`} className="service-item" style={{ 
                         padding: '20px', 
                         border: '1px solid #eee', 
                         borderRadius: '8px', 
