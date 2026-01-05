@@ -1112,6 +1112,11 @@ class WalkInListCreateView(generics.ListCreateAPIView):
             'service_type', 'owner', 'pet'
         )
 
+        # Optional pet filter
+        pet_id = self.request.query_params.get('pet_id')
+        if pet_id:
+            queryset = queryset.filter(pet_id=pet_id)
+
         # Check if user has staff permissions (desktop or admin)
         is_staff_user = user.is_authenticated and (user.is_staff or user.is_superuser)
 
