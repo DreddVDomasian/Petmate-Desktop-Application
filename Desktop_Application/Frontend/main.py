@@ -3,9 +3,6 @@ import os
 
 from PyQt6.QtGui import QFontDatabase
 from PyQt6.QtWidgets import QApplication, QDialog
-from app import MainUI
-from login_dialog import LoginDialog
-from first_time_setup_dialog import FirstTimeSetupDialog
 from PyQt6.QtCore import QSettings
 
 
@@ -31,6 +28,74 @@ def main():
     app = QApplication(sys.argv)
     load_fonts()
 
+    # Ensure project root is on sys.path so absolute imports like
+    # `Desktop_Application.Backend...` work even when running this file directly.
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
+
+    # Show a startup loading modal and keep it visible until the first window
+    # (login or main UI) is actually shown.
+    startup_overlay = None
+    try:
+        from PyQt6.QtCore import Qt, QTimer
+        from loading_overlay import LoadingOverlay
+
+        startup_overlay = LoadingOverlay(
+            None,
+            message="Starting PetMate...",
+            submessage="Loading application",
+            indeterminate=False
+        )
+        startup_overlay.setWindowFlags(
+            startup_overlay.windowFlags() | Qt.WindowType.WindowStaysOnTopHint
+        )
+        startup_overlay.set_progress(5)
+        startup_overlay.show()
+        app.processEvents()
+
+        def _set_startup_progress(value: int, title: str = None, subtitle: str = None):
+            if startup_overlay is None:
+                return
+            if title is not None or subtitle is not None:
+                startup_overlay.set_message(title or "Starting PetMate...", subtitle)
+            startup_overlay.set_indeterminate(False)
+            startup_overlay.set_progress(value)
+            app.processEvents()
+
+        _set_startup_progress(10, "Starting PetMate...", "Loading modules")
+
+        # Deferred imports so the overlay can paint before heavy initialization
+        from login_dialog import LoginDialog
+        from first_time_setup_dialog import FirstTimeSetupDialog
+        from app import MainUI
+
+        _set_startup_progress(35, "Starting PetMate...", "Preparing login")
+    except Exception:
+        # If anything goes wrong during early startup, ensure the overlay closes
+        if startup_overlay is not None:
+            startup_overlay.hide()
+            startup_overlay.deleteLater()
+            app.processEvents()
+        raise
+
+    def _hide_startup_overlay():
+        nonlocal startup_overlay
+        if startup_overlay is None:
+            return
+
+        # Finish the bar before hiding
+        try:
+            startup_overlay.set_indeterminate(False)
+            startup_overlay.set_progress(100)
+            app.processEvents()
+        except Exception:
+            pass
+        startup_overlay.hide()
+        startup_overlay.deleteLater()
+        startup_overlay = None
+
     while True:
         # Check if user should stay signed in
         settings = QSettings("PetMate", "DesktopApp")
@@ -47,7 +112,18 @@ def main():
 
         # Show login dialog if not staying signed in
         if not stay_signed_in:
+            # Make sure the login dialog is on screen before hiding the startup overlay
             login_dialog = LoginDialog()
+            try:
+                if startup_overlay is not None:
+                    startup_overlay.set_message("Starting PetMate...", "Opening login")
+                    startup_overlay.set_progress(55)
+                    app.processEvents()
+            except Exception:
+                pass
+            login_dialog.show()
+            app.processEvents()
+            QTimer.singleShot(0, _hide_startup_overlay)
             result = login_dialog.exec()
 
             if result != QDialog.DialogCode.Accepted:
@@ -70,8 +146,57 @@ def main():
             if stay_signed_in:
                 settings.setValue("user_data", user_data)
 
-        # Create main window
-        main_window = MainUI(user_data=user_data)
+        # Create main window (can be slow); keep overlay visible until shown
+        if startup_overlay is None:
+            # If we already hid it (e.g., after login), show a brief one again
+            try:
+                from PyQt6.QtCore import Qt
+                from loading_overlay import LoadingOverlay
+
+                startup_overlay = LoadingOverlay(
+                    None,
+                    message="Opening PetMate...",
+                    submessage="Preparing dashboard",
+                    indeterminate=False
+                )
+                startup_overlay.setWindowFlags(
+                    startup_overlay.windowFlags() | Qt.WindowType.WindowStaysOnTopHint
+                )
+                startup_overlay.set_progress(60)
+                startup_overlay.show()
+                app.processEvents()
+            except Exception:
+                startup_overlay = None
+
+        try:
+            if startup_overlay is not None:
+                startup_overlay.set_message("Opening PetMate...", "Building dashboard")
+                startup_overlay.set_progress(70)
+                app.processEvents()
+        except Exception:
+            pass
+
+        def _dashboard_progress(value: int, title: str = None, subtitle: str = None):
+            if startup_overlay is None:
+                return
+            try:
+                if title is not None or subtitle is not None:
+                    startup_overlay.set_message(title or "Opening PetMate...", subtitle)
+                startup_overlay.set_indeterminate(False)
+                startup_overlay.set_progress(value)
+                app.processEvents()
+            except Exception:
+                pass
+
+        main_window = MainUI(user_data=user_data, startup_progress=_dashboard_progress)
+
+        try:
+            if startup_overlay is not None:
+                startup_overlay.set_message("Opening PetMate...", "Finalizing")
+                startup_overlay.set_progress(95)
+                app.processEvents()
+        except Exception:
+            pass
 
         # Add a flag to track logout
         main_window._user_logged_out = False
@@ -97,6 +222,8 @@ def main():
             main_window.logoutBtn.clicked.connect(handle_logout)
 
         main_window.show()
+        app.processEvents()
+        QTimer.singleShot(0, _hide_startup_overlay)
         app.exec()  # This will block until main window is closed
 
         # After main window closes, check if we should restart

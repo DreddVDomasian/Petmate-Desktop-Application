@@ -46,9 +46,23 @@ from analytics import fetch_json
 
 
 class MainUI(QMainWindow):
-    def __init__(self,user_data=None):
+    def __init__(self, user_data=None, startup_progress=None):
         super(MainUI, self).__init__()
+
+        # Optional callback for startup progress reporting (value 0-100, title, subtitle)
+        self._startup_progress = startup_progress
+
+        def _sp(value: int, title: str = None, subtitle: str = None):
+            try:
+                if callable(self._startup_progress):
+                    self._startup_progress(int(value), title, subtitle)
+            except Exception:
+                pass
+
+        _sp(72, "Opening PetMate...", "Loading dashboard UI")
         uic.loadUi("ui-files/Home.ui", self)
+
+        _sp(76, "Opening PetMate...", "Initializing helpers")
 
         # ⭐ Initialize Async Helper for smooth API calls
         self.api = AsyncHelper(self, base_url=API_BASE_URL)
@@ -56,6 +70,8 @@ class MainUI(QMainWindow):
         # Initialize delete and update functions
         self.deleteFunction = Delete(self)
         self.updateFunction = Update(self)
+
+        _sp(80, "Opening PetMate...", "Wiring UI components")
 
         #users
         self.current_user = user_data
@@ -74,12 +90,16 @@ class MainUI(QMainWindow):
         self.setup_add_service()
         self.setup_pet_buttons()
 
+        _sp(86, "Opening PetMate...", "Loading user settings")
+
         #Settings
         self.UserManagementTabBtn.hide()
         self.role_base()
         self.load_user_profile(self.current_user)
         self.setup_security_tab()
         self.setup_user_management_tab()
+
+        _sp(90, "Opening PetMate...", "Preparing initial data")
 
         #CRITICAL: Initialize state variables ONCE
         self.selected_patient_id = None
@@ -132,6 +152,8 @@ class MainUI(QMainWindow):
         QTimer.singleShot(0, lambda: self.load_scheduled_services())
         QTimer.singleShot(0, lambda: self.load_staff_accounts())
 
+        _sp(94, "Opening PetMate...", "Finalizing")
+
         # Setup remaining UI elements
         self.setup_shadow()
         self.setup_all_back_buttons()
@@ -164,6 +186,8 @@ class MainUI(QMainWindow):
 
         self.setup_office_hours()
         QTimer.singleShot(0, lambda: self.load_service_types_to_main_combobox())
+
+        _sp(97, "Opening PetMate...", "Almost ready")
 
         #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
@@ -2676,17 +2700,35 @@ class MainUI(QMainWindow):
     def load_user_profile(self, current_user):
         self.passwordFrame.hide()
         self.spacer.show()
-        id = current_user['id']
-        response = requests.get(f"{API_BASE_URL}/api/desktop-users/{id}")
-        userData = response.json()
+        user_id = (current_user or {}).get('id')
+        if not user_id:
+            return
 
-        self.profileFullName.setText(userData["full_name"])
-        self.profileUserName.setText(userData["username"])
-        self.profileEmail.setText(userData["email"])
-        self.profilePhone.setText(userData["phone"])
-        self.accountRole.setText(f"Role: {userData['role']}")
-        date = self.format_date(userData["created_at"])
-        self.MemberSince.setText(f"Member Since: {date}")
+        try:
+            response = requests.get(f"{API_BASE_URL}/api/desktop-users/{user_id}")
+            userData = response.json() if response.ok else {}
+        except Exception:
+            userData = {}
+
+        full_name = userData.get("full_name") or userData.get("fullName")
+        if not full_name:
+            first = userData.get("firstName") or userData.get("first_name") or ""
+            middle = userData.get("middleName") or userData.get("middle_name") or ""
+            last = userData.get("lastName") or userData.get("last_name") or ""
+            full_name = " ".join([p for p in [first, middle, last] if p]).strip()
+
+        self.profileFullName.setText(full_name or "")
+        self.profileUserName.setText(userData.get("username", ""))
+        self.profileEmail.setText(userData.get("email", ""))
+        self.profilePhone.setText(userData.get("phone", ""))
+        role = userData.get('role', '')
+        self.accountRole.setText(f"Role: {role}" if role else "")
+        created_at = userData.get("created_at")
+        if created_at:
+            date = self.format_date(created_at)
+            self.MemberSince.setText(f"Member Since: {date}")
+        else:
+            self.MemberSince.setText("")
 
         # Apply view style when loading
         self.apply_profile_view_style()
@@ -3274,7 +3316,9 @@ class MainUI(QMainWindow):
         self.api.get(
             '/api/serviceCounts/',
             on_success=self._populate_bar_graph,
-            on_error=lambda e: print("BAR GRAPH ERROR —", e)
+            on_error=lambda e: print("BAR GRAPH ERROR —", e),
+            use_cache=True,
+            cache_ttl=300
         )
     
     def _populate_bar_graph(self, data):
@@ -3345,7 +3389,9 @@ class MainUI(QMainWindow):
         self.api.get(
             '/api/speciesCounts/',
             on_success=self._populate_pie_graph,
-            on_error=lambda e: self._populate_pie_graph({"dogs": 0, "cats": 0, "others": 0})
+            on_error=lambda e: self._populate_pie_graph({"dogs": 0, "cats": 0, "others": 0}),
+            use_cache=True,
+            cache_ttl=300
         )
     
     def _populate_pie_graph(self, data):
@@ -3420,7 +3466,9 @@ class MainUI(QMainWindow):
             '/api/todaysAppointments/',
             on_success=self._on_appointments_loaded,
             on_error=lambda e: print("❌ API ERROR:", e),
-            timeout=5
+            timeout=5,
+            use_cache=True,
+            cache_ttl=60
         )
     
     def _on_appointments_loaded(self, data):
@@ -3519,13 +3567,13 @@ class MainUI(QMainWindow):
             else:
                 # Show error toast
                 toast = Toast(self, "Failed to load office hours",
-                              icon_path="Icons/error.png", is_error=True)
+                              icon_path="Icons/error.png")
                 toast.show_toast()
 
         except Exception as e:
             # Show error toast
             toast = Toast(self, f"Failed to load office hours: {str(e)}",
-                          icon_path="Icons/error.png", is_error=True)
+                          icon_path="Icons/error.png")
             toast.show_toast()
     def setup_office_hours(self):
         """Initialize office hours tab"""
