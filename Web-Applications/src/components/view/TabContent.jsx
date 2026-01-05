@@ -392,19 +392,7 @@ const TabContent = ({
     return `${userFirstName}${userMiddleName ? ' ' + userMiddleName : ''}${userLastName ? ' ' + userLastName : ''}`.trim() || 'Not available';
   };
 
-  // Debug: log incoming props/state to trace why pets from DB don't show
-  useEffect(() => {
-    console.log('TabContent debug -> activeTab, loading, pets length:', {
-      activeTab,
-      loading,
-      petsLength: Array.isArray(pets) ? pets.length : pets,
-      petsSample: Array.isArray(pets) && pets.length ? pets.slice(0,3) : pets
-    });
-  }, [activeTab, loading, pets]);
-
-  const safePets = Array.isArray(pets) ? pets : [];
-  const safeAppointments = Array.isArray(appointments) ? appointments : [];
-
+  
   return (
     <>
       {/* My Pets Tab */}
