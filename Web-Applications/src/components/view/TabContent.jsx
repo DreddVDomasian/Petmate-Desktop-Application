@@ -392,6 +392,9 @@ const TabContent = ({
     return `${userFirstName}${userMiddleName ? ' ' + userMiddleName : ''}${userLastName ? ' ' + userLastName : ''}`.trim() || 'Not available';
   };
 
+  const safePets = Array.isArray(pets) ? pets : [];
+  const safeAppointments = Array.isArray(appointments) ? appointments : [];
+
   
   return (
     <>
