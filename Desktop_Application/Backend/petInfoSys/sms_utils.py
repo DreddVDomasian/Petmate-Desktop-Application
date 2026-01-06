@@ -377,9 +377,9 @@ def send_appointment_reminder_sms(phone_number, patient_name, pet_name, service_
     # Create message based on reminder type
     if reminder_type == 'appointment':
         message = (
-            f"PetMate Animal Clinic Reminder: \n\nHi {patient_name},\n "
-            f"\nPet: {pet_name}\n Service: {service_type}\n "
-            f"Date: {formatted_date} \n Time: {appointment_time}.\n "
+            f"PetMate Animal Clinic Appointment Reminder: \n\nHi {patient_name},\n "
+            f"\nPet: {pet_name}\nService: {service_type}\n"
+            f"Date: {formatted_date}\nTime: {appointment_time}.\n "
         )
     elif reminder_type == 'service_return':
         message = (
@@ -430,7 +430,7 @@ def send_service_return_reminder_sms(phone_number, patient_name, pet_name, servi
         # Create message for service return
         message = (
             f"PetMate Animal Clinic: \nHi {patient_name},\n "
-            f"\nPET: {pet_name}\n SERVICE: {service_type}\n"
+            f"\nReturn visit for {pet_name}\nSERVICE: {service_type}\n"
             f"RETURN DATE: {formatted_date}.\n"
         )
 

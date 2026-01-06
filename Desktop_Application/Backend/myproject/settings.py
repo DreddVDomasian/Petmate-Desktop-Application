@@ -114,6 +114,10 @@ if SENDGRID_API_KEY:
     SERVER_EMAIL = os.getenv('SERVER_EMAIL') or DEFAULT_FROM_EMAIL
     # Optional: where customer replies should go (e.g., a monitored inbox).
     DEFAULT_REPLY_TO_EMAIL = os.getenv('DEFAULT_REPLY_TO_EMAIL', '')
+
+    # Where "Contact Us" messages should be delivered.
+    # This is often a Gmail inbox even when SendGrid is used for sending.
+    CONTACT_US_INBOX_EMAIL = os.getenv('CONTACT_US_INBOX_EMAIL', '') or DEFAULT_REPLY_TO_EMAIL
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
@@ -131,6 +135,9 @@ else:
     DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') or EMAIL_HOST_USER or 'webmaster@localhost'
     SERVER_EMAIL = os.getenv('SERVER_EMAIL') or DEFAULT_FROM_EMAIL
     DEFAULT_REPLY_TO_EMAIL = os.getenv('DEFAULT_REPLY_TO_EMAIL', '')
+
+    # Where "Contact Us" messages should be delivered.
+    CONTACT_US_INBOX_EMAIL = os.getenv('CONTACT_US_INBOX_EMAIL', '') or DEFAULT_REPLY_TO_EMAIL or EMAIL_HOST_USER
 
 
 # ===========================

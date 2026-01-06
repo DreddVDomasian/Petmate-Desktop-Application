@@ -95,18 +95,43 @@ class Update:
             Toast(self.ui, "No patient selected!", icon_path="Icons/warning.png").show_toast()
             return
 
+        # Normalize phone numbers (same rules as add-patient)
+        raw_phone = self.ui.phoneNumberEdit.text().strip()
+        normalized_phone = getattr(self.ui, 'validate_phone_number', None)
+        if callable(normalized_phone):
+            formatted_phone = normalized_phone(raw_phone)
+        else:
+            formatted_phone = raw_phone
+
+        if not formatted_phone:
+            Toast(self.ui, "Invalid phone number. Use 09xxxxxxxxx or +639xxxxxxxxx", icon_path="Icons/warning.png").show_toast()
+            return
+
+        raw_secondary = self.ui.secondaryPhoneEdit.text().strip()
+        if raw_secondary:
+            if callable(normalized_phone):
+                formatted_secondary = normalized_phone(raw_secondary)
+            else:
+                formatted_secondary = raw_secondary
+
+            if not formatted_secondary:
+                Toast(self.ui, "Invalid secondary phone number.", icon_path="Icons/warning.png").show_toast()
+                return
+        else:
+            formatted_secondary = None
+
         # Collect data from widgets (same as before)
         data = {
             "firstName": self.ui.firstNameEdit.text().strip(),
             "lastName": self.ui.lastNameEdit.text().strip(),
             "middleName": self.ui.middleNameEdit.text().strip() or None,
             "email": self.ui.emailEdit.text().strip() or None,
-            "phoneNumber": self.ui.phoneNumberEdit.text().strip(),
+            "phoneNumber": formatted_phone,
             "province": self.ui.provinceComboBox.currentText(),
             "city": self.ui.cityComboBox.currentText(),
             "barangay": self.ui.barangayComboBox.currentText(),
             "detailedAddress": self.ui.detailedAddressEdit.text().strip() or None,
-            "SecondaryNumber": self.ui.secondaryPhoneEdit.text().strip() or None
+            "SecondaryNumber": formatted_secondary
         }
         # Validate combo boxes (same as before)
         for combo, name in [

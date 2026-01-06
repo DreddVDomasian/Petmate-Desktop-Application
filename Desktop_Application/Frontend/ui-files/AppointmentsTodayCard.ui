@@ -99,6 +99,9 @@ color: rgb(120, 120, 120);</string>
         <property name="text">
          <string>riu</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item>
@@ -109,6 +112,9 @@ color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
          <string>Grooming</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

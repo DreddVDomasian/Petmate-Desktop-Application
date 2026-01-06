@@ -1291,8 +1291,21 @@ def send_reset_otp(request):
 
     try:
         subject = "🐾 PetMate Animal Clinic - Password Reset OTP"
-        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None)
+        from_email = (
+            getattr(settings, 'DEFAULT_FROM_EMAIL', None)
+            or getattr(settings, 'EMAIL_HOST_USER', None)
+            or 'webmaster@localhost'
+        )
         to = [email]
+
+        # If SendGrid is enabled, a placeholder sender will usually be rejected.
+        if has_sendgrid and (not from_email or from_email.endswith('@localhost')):
+            return Response(
+                {
+                    'error': 'Email sender is not configured. Set DEFAULT_FROM_EMAIL to a verified sender (e.g., noreply@yourdomain.com).'
+                },
+                status=503
+            )
 
         # Render HTML template (with OTP)
         html_content = render_to_string('otp_email.html', {'otp': otp})
@@ -1305,6 +1318,9 @@ def send_reset_otp(request):
             connection = get_connection()
 
         msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
+        reply_to = getattr(settings, 'DEFAULT_REPLY_TO_EMAIL', '')
+        if reply_to:
+            msg.reply_to = [reply_to]
         msg.attach_alternative(html_content, "text/html")
         msg.send(fail_silently=False)
 
@@ -1556,8 +1572,16 @@ def contact_us_message(request):
         subject = "New Contact Form Message"
         full_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
 
-        clinic_email = getattr(settings, 'EMAIL_HOST_USER', None) or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
-        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or clinic_email
+        # Deliver contact messages to a dedicated inbox (often a Gmail inbox),
+        # not necessarily the transactional sender.
+        clinic_email = (
+            getattr(settings, 'CONTACT_US_INBOX_EMAIL', None)
+            or getattr(settings, 'DEFAULT_REPLY_TO_EMAIL', None)
+            or getattr(settings, 'EMAIL_HOST_USER', None)
+            or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+        )
+
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'webmaster@localhost'
 
         timeout_seconds = int(getattr(settings, 'EMAIL_TIMEOUT', 15) or 15)
         if str(getattr(settings, 'EMAIL_BACKEND', '')).endswith('smtp.EmailBackend'):
