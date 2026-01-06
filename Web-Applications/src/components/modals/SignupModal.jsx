@@ -220,6 +220,7 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       value={phoneNum}
                       onInput={(e) => {
                         const digits = e.target.value.replace(/\D/g, ""); // numeric only
+                        digits = digits.replace(/^0+/, "");
                         setPhoneNum(digits);
                       }}
                     />
@@ -238,6 +239,7 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       value={phoneNum2}
                       onInput={(e) => {
                         const digits = e.target.value.replace(/\D/g, ""); // numbers only
+                        digits = digits.replace(/^0+/, "");
                         setPhoneNum2(digits);
                       }}
                     />
