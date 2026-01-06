@@ -628,8 +628,16 @@ class MainUI(QMainWindow):
 
     #FORM INPUT CHECKER
     def setup_phone_validator(self):
-        # Set up phone number validators - numbers only
-        phone_validator = QRegularExpressionValidator(QRegularExpression(r'^[0-9]{0,11}$'))
+        # Allow common PH formats while typing:
+        # - 09XXXXXXXXX (11 digits)
+        # - 9XXXXXXXXX (10 digits)
+        # - 63XXXXXXXXXX (12 digits)
+        # - +63XXXXXXXXXX (13 chars)
+        phone_validator = QRegularExpressionValidator(
+            QRegularExpression(r'^(?:0\d{0,10}|9\d{0,9}|63\d{0,10}|\+63\d{0,10})$')
+        )
+        self.phoneNumberEdit.setMaxLength(13)
+        self.secondaryPhoneEdit.setMaxLength(13)
         self.phoneNumberEdit.setValidator(phone_validator)
         self.secondaryPhoneEdit.setValidator(phone_validator)
 
@@ -912,27 +920,64 @@ class MainUI(QMainWindow):
         # Store cursor position
         cursor_pos = self.phoneNumberEdit.cursorPosition()
 
-        # Auto-format from 09 to +639 in real-time
-        if text.startswith('09') and len(text) >= 2:
-            if len(text) == 11:  # 09 + 9 digits = complete number
-                formatted = '+63' + text[1:]
-                if formatted != text:
-                    # Temporarily disconnect to avoid recursion
-                    self.phoneNumberEdit.textChanged.disconnect(self.on_phone_number_changed)
-                    self.phoneNumberEdit.setText(formatted)
-                    # Reconnect the signal
-                    self.phoneNumberEdit.textChanged.connect(self.on_phone_number_changed)
-                    # Move cursor to end
-                    self.phoneNumberEdit.setCursorPosition(len(formatted))
+        # Normalize as user types and enforce max lengths.
+        # Important: once it becomes +63..., do NOT allow adding extra digits.
+        if text.startswith('+63'):
+            digits_after = ''.join(ch for ch in text[3:] if ch.isdigit())
+            if len(digits_after) > 10:
+                digits_after = digits_after[:10]
+            normalized = '+63' + digits_after
+            if normalized != text:
+                self.phoneNumberEdit.blockSignals(True)
+                self.phoneNumberEdit.setText(normalized)
+                self.phoneNumberEdit.blockSignals(False)
+                self.phoneNumberEdit.setCursorPosition(len(normalized))
+            return
 
-            # If user tries to type beyond 11 digits, truncate
+        # If user typed 63... without plus, convert to +63... and cap to 10 digits after 63
+        if text.startswith('63'):
+            rest = ''.join(ch for ch in text[2:] if ch.isdigit())
+            if len(rest) > 10:
+                rest = rest[:10]
+            normalized = '+63' + rest
+            if normalized != text:
+                self.phoneNumberEdit.blockSignals(True)
+                self.phoneNumberEdit.setText(normalized)
+                self.phoneNumberEdit.blockSignals(False)
+                self.phoneNumberEdit.setCursorPosition(len(normalized))
+            return
+
+        # Auto-format from 09XXXXXXXXX → +639XXXXXXXXX (when complete)
+        if text.startswith('09'):
+            if len(text) == 11:
+                normalized = '+63' + text[1:]
+                if normalized != text:
+                    self.phoneNumberEdit.blockSignals(True)
+                    self.phoneNumberEdit.setText(normalized)
+                    self.phoneNumberEdit.blockSignals(False)
+                    self.phoneNumberEdit.setCursorPosition(len(normalized))
             elif len(text) > 11:
-                # Temporarily disconnect to avoid recursion
-                self.phoneNumberEdit.textChanged.disconnect(self.on_phone_number_changed)
+                self.phoneNumberEdit.blockSignals(True)
                 self.phoneNumberEdit.setText(text[:11])
-                # Reconnect the signal
-                self.phoneNumberEdit.textChanged.connect(self.on_phone_number_changed)
+                self.phoneNumberEdit.blockSignals(False)
                 self.phoneNumberEdit.setCursorPosition(cursor_pos)
+            return
+
+        # If user typed 9XXXXXXXXX (10 digits), convert to +63... when complete
+        if text.startswith('9'):
+            digits_only = ''.join(ch for ch in text if ch.isdigit())
+            if len(digits_only) == 10:
+                normalized = '+63' + digits_only
+                self.phoneNumberEdit.blockSignals(True)
+                self.phoneNumberEdit.setText(normalized)
+                self.phoneNumberEdit.blockSignals(False)
+                self.phoneNumberEdit.setCursorPosition(len(normalized))
+            elif len(digits_only) > 10:
+                self.phoneNumberEdit.blockSignals(True)
+                self.phoneNumberEdit.setText(digits_only[:10])
+                self.phoneNumberEdit.blockSignals(False)
+                self.phoneNumberEdit.setCursorPosition(min(cursor_pos, 10))
+            return
     def on_secondary_phone_changed(self, text):
         """Real-time secondary phone number formatting with numbers-only input and length limits"""
         # If text is empty, return
@@ -942,27 +987,59 @@ class MainUI(QMainWindow):
         # Store cursor position
         cursor_pos = self.secondaryPhoneEdit.cursorPosition()
 
-        # Auto-format from 09 to +639 in real-time
-        if text.startswith('09') and len(text) >= 2:
-            if len(text) == 11:  # 09 + 9 digits = complete number
-                formatted = '+63' + text[1:]
-                if formatted != text:
-                    # Temporarily disconnect to avoid recursion
-                    self.secondaryPhoneEdit.textChanged.disconnect(self.on_secondary_phone_changed)
-                    self.secondaryPhoneEdit.setText(formatted)
-                    # Reconnect the signal
-                    self.secondaryPhoneEdit.textChanged.connect(self.on_secondary_phone_changed)
-                    # Move cursor to end
-                    self.secondaryPhoneEdit.setCursorPosition(len(formatted))
+        if text.startswith('+63'):
+            digits_after = ''.join(ch for ch in text[3:] if ch.isdigit())
+            if len(digits_after) > 10:
+                digits_after = digits_after[:10]
+            normalized = '+63' + digits_after
+            if normalized != text:
+                self.secondaryPhoneEdit.blockSignals(True)
+                self.secondaryPhoneEdit.setText(normalized)
+                self.secondaryPhoneEdit.blockSignals(False)
+                self.secondaryPhoneEdit.setCursorPosition(len(normalized))
+            return
 
-            # If user tries to type beyond 11 digits, truncate
+        if text.startswith('63'):
+            rest = ''.join(ch for ch in text[2:] if ch.isdigit())
+            if len(rest) > 10:
+                rest = rest[:10]
+            normalized = '+63' + rest
+            if normalized != text:
+                self.secondaryPhoneEdit.blockSignals(True)
+                self.secondaryPhoneEdit.setText(normalized)
+                self.secondaryPhoneEdit.blockSignals(False)
+                self.secondaryPhoneEdit.setCursorPosition(len(normalized))
+            return
+
+        if text.startswith('09'):
+            if len(text) == 11:
+                normalized = '+63' + text[1:]
+                if normalized != text:
+                    self.secondaryPhoneEdit.blockSignals(True)
+                    self.secondaryPhoneEdit.setText(normalized)
+                    self.secondaryPhoneEdit.blockSignals(False)
+                    self.secondaryPhoneEdit.setCursorPosition(len(normalized))
             elif len(text) > 11:
-                # Temporarily disconnect to avoid recursion
-                self.secondaryPhoneEdit.textChanged.disconnect(self.on_secondary_phone_changed)
+                self.secondaryPhoneEdit.blockSignals(True)
                 self.secondaryPhoneEdit.setText(text[:11])
-                # Reconnect the signal
-                self.secondaryPhoneEdit.textChanged.connect(self.on_secondary_phone_changed)
+                self.secondaryPhoneEdit.blockSignals(False)
                 self.secondaryPhoneEdit.setCursorPosition(cursor_pos)
+            return
+
+        if text.startswith('9'):
+            digits_only = ''.join(ch for ch in text if ch.isdigit())
+            if len(digits_only) == 10:
+                normalized = '+63' + digits_only
+                self.secondaryPhoneEdit.blockSignals(True)
+                self.secondaryPhoneEdit.setText(normalized)
+                self.secondaryPhoneEdit.blockSignals(False)
+                self.secondaryPhoneEdit.setCursorPosition(len(normalized))
+            elif len(digits_only) > 10:
+                self.secondaryPhoneEdit.blockSignals(True)
+                self.secondaryPhoneEdit.setText(digits_only[:10])
+                self.secondaryPhoneEdit.blockSignals(False)
+                self.secondaryPhoneEdit.setCursorPosition(min(cursor_pos, 10))
+            return
 
     def check_duplicate_patient(self, data):
         try:
@@ -2563,8 +2640,10 @@ class MainUI(QMainWindow):
             return False
     def setup_profile_validation(self):
         """Setup validation for profile form fields"""
-        # Phone number validator (numbers only, max 11 digits)
-        phone_validator = QRegularExpressionValidator(QRegularExpression(r'^[0-9]{0,11}$'))
+        phone_validator = QRegularExpressionValidator(
+            QRegularExpression(r'^(?:0\d{0,10}|9\d{0,9}|63\d{0,10}|\+63\d{0,10})$')
+        )
+        self.profilePhone.setMaxLength(13)
         self.profilePhone.setValidator(phone_validator)
 
         # Connect phone formatting
@@ -2578,22 +2657,59 @@ class MainUI(QMainWindow):
 
         cursor_pos = self.profilePhone.cursorPosition()
 
-        # Auto-format from 09 to +639 in real-time
-        if text.startswith('09') and len(text) >= 2:
-            if len(text) == 11:  # 09 + 9 digits = complete number
-                formatted = '+63' + text[1:]
-                if formatted != text:
-                    self.profilePhone.textChanged.disconnect(self.on_profile_phone_changed)
-                    self.profilePhone.setText(formatted)
-                    self.profilePhone.textChanged.connect(self.on_profile_phone_changed)
-                    self.profilePhone.setCursorPosition(len(formatted))
+        if text.startswith('+63'):
+            digits_after = ''.join(ch for ch in text[3:] if ch.isdigit())
+            if len(digits_after) > 10:
+                digits_after = digits_after[:10]
+            normalized = '+63' + digits_after
+            if normalized != text:
+                self.profilePhone.blockSignals(True)
+                self.profilePhone.setText(normalized)
+                self.profilePhone.blockSignals(False)
+                self.profilePhone.setCursorPosition(len(normalized))
+            return
 
-            # If user tries to type beyond 11 digits, truncate
+        if text.startswith('63'):
+            rest = ''.join(ch for ch in text[2:] if ch.isdigit())
+            if len(rest) > 10:
+                rest = rest[:10]
+            normalized = '+63' + rest
+            if normalized != text:
+                self.profilePhone.blockSignals(True)
+                self.profilePhone.setText(normalized)
+                self.profilePhone.blockSignals(False)
+                self.profilePhone.setCursorPosition(len(normalized))
+            return
+
+        if text.startswith('09'):
+            if len(text) == 11:
+                normalized = '+63' + text[1:]
+                if normalized != text:
+                    self.profilePhone.blockSignals(True)
+                    self.profilePhone.setText(normalized)
+                    self.profilePhone.blockSignals(False)
+                    self.profilePhone.setCursorPosition(len(normalized))
             elif len(text) > 11:
-                self.profilePhone.textChanged.disconnect(self.on_profile_phone_changed)
+                self.profilePhone.blockSignals(True)
                 self.profilePhone.setText(text[:11])
-                self.profilePhone.textChanged.connect(self.on_profile_phone_changed)
+                self.profilePhone.blockSignals(False)
                 self.profilePhone.setCursorPosition(cursor_pos)
+            return
+
+        if text.startswith('9'):
+            digits_only = ''.join(ch for ch in text if ch.isdigit())
+            if len(digits_only) == 10:
+                normalized = '+63' + digits_only
+                self.profilePhone.blockSignals(True)
+                self.profilePhone.setText(normalized)
+                self.profilePhone.blockSignals(False)
+                self.profilePhone.setCursorPosition(len(normalized))
+            elif len(digits_only) > 10:
+                self.profilePhone.blockSignals(True)
+                self.profilePhone.setText(digits_only[:10])
+                self.profilePhone.blockSignals(False)
+                self.profilePhone.setCursorPosition(min(cursor_pos, 10))
+            return
     def validate_profile_fields(self):
         """Validate profile form fields"""
         errors = []
