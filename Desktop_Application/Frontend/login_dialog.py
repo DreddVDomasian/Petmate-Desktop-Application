@@ -7,7 +7,7 @@ import resources_rc
 from PyQt6.QtGui import QPixmap, QIcon
 from toast import Toast
 from shadowEffects import create_card_shadow
-from Desktop_Application.Backend.api_client import desktop_login, send_otp, verify_otp_and_reset_password
+from Desktop_Application.Frontend.api_client import desktop_login, send_otp, verify_otp_and_reset_password
 from api_worker import APIWorker
 import requests
 from config_loader import API_BASE_URL
@@ -323,18 +323,15 @@ class LoginDialog(QDialog):
 
     def on_login_finished(self, success, response):
         """Handle login response from API worker"""
-        stay_signed_in = self.staySignedIn.isChecked()
         if success:
-            # Save credentials if "Stay Signed In" is checked
-            if stay_signed_in:
-                settings = QSettings("PetMate", "DesktopApp")
+            # Only save username for convenience.
+            # Persisting "stay signed in" is handled in main.py (and delayed until
+            # after first-time setup is completed) to avoid setup loops.
+            settings = QSettings("PetMate", "DesktopApp")
+            if self.staySignedIn.isChecked():
                 settings.setValue("username", self.loginUserName.text())
-                settings.setValue("stay_signed_in", True)
             else:
-                # Clear any saved credentials
-                settings = QSettings("PetMate", "DesktopApp")
                 settings.remove("username")
-                settings.setValue("stay_signed_in", False)
 
             # Store user data and check if first-time setup is needed
             self.user_data = response.get('user')

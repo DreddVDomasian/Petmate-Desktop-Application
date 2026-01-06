@@ -28,6 +28,16 @@ def main():
     app = QApplication(sys.argv)
     load_fonts()
 
+    # Ensure relative paths like ui-files/ and Icons/ still work when packaged.
+    # For PyInstaller onedir builds, keeping cwd at the exe directory avoids missing UI/assets.
+    try:
+        if getattr(sys, 'frozen', False):
+            os.chdir(os.path.dirname(sys.executable))
+        else:
+            os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    except Exception:
+        pass
+
     # Ensure project root is on sys.path so absolute imports like
     # `Desktop_Application.Backend...` work even when running this file directly.
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -101,6 +111,10 @@ def main():
         settings = QSettings("PetMate", "DesktopApp")
         stay_signed_in = settings.value("stay_signed_in", False, type=bool)
 
+        # If the user just logged in this cycle, we delay persisting "stay signed in"
+        # until after first-time setup is completed.
+        stay_signed_in_requested = False
+
         user_data = None
         if stay_signed_in:
             # Try to get user data from settings
@@ -131,20 +145,29 @@ def main():
 
             user_data = login_dialog.user_data
 
-            # Save user data if "Stay Signed In" is checked
-            if login_dialog.staySignedIn.isChecked():
-                settings.setValue("user_data", user_data)
-                settings.setValue("stay_signed_in", True)
+            stay_signed_in_requested = bool(login_dialog.staySignedIn.isChecked())
 
         # Check if first-time setup is required
         if user_data and user_data.get('force_password_change', False):
             setup_dialog = FirstTimeSetupDialog(user_data)
             if setup_dialog.exec() != QDialog.DialogCode.Accepted:
+                # User closed/cancelled setup. Clear "stay signed in" so we don't loop.
+                settings = QSettings("PetMate", "DesktopApp")
+                settings.remove("username")
+                settings.setValue("stay_signed_in", False)
+                settings.remove("user_data")
                 continue  # Restart login process
             user_data = setup_dialog.user_data
-            # Update saved user data if staying signed in
-            if stay_signed_in:
+
+            # Persist stay-signed-in only after setup is complete.
+            if stay_signed_in or stay_signed_in_requested:
                 settings.setValue("user_data", user_data)
+                settings.setValue("stay_signed_in", True)
+
+        # If no first-time setup is needed, persist stay-signed-in right after login.
+        if user_data and (stay_signed_in_requested and not user_data.get('force_password_change', False)):
+            settings.setValue("user_data", user_data)
+            settings.setValue("stay_signed_in", True)
 
         # Create main window (can be slow); keep overlay visible until shown
         if startup_overlay is None:

@@ -21,7 +21,7 @@ from uiLogic import UIHandler
 from input_styles import *
 from toast import Toast
 import resources_rc
-from Desktop_Application.Backend.api_client import add_new_patient, add_new_pet, add_new_service,desktop_login
+from Desktop_Application.Frontend.api_client import add_new_patient, add_new_pet, add_new_service, desktop_login
 from confirm_card import ConfirmCard
 from ReminderPopUp import ReminderPopup
 from appointmentPopUp import AddAppointmentCard

@@ -8,7 +8,8 @@ from PyQt6 import uic
 from PyQt6.QtCore import Qt
 from shadowEffects import create_card_shadow
 import resources_rc
-from Desktop_Application.Backend.api_client import first_time_setup
+from Desktop_Application.Frontend.api_client import first_time_setup
+from ui_utils import setup_phone_input
 
 
 class FirstTimeSetupDialog(QDialog):
@@ -69,6 +70,9 @@ class FirstTimeSetupDialog(QDialog):
 
         # Pre-fill username (can be changed)
         self.username.setText(self.user_data['username'])
+
+        # Apply PH phone validator + +63 normalization
+        setup_phone_input(self.PhoneNum)
 
         # Connect signals
         self.completeSetupBtn.clicked.connect(self.complete_setup)

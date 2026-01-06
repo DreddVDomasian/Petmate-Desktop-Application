@@ -18,7 +18,7 @@ from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QDate,QTimer,QThr
 from input_styles import *
 from  shadowEffects import *
 from toast import Toast
-from Desktop_Application.Backend.api_client import add_new_appointment
+from Desktop_Application.Frontend.api_client import add_new_appointment
 from datetime import datetime
 from loading_overlay import LoadingOverlay
 from functools import partial
