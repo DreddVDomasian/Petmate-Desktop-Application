@@ -11,6 +11,7 @@ from Desktop_Application.Backend.api_client import desktop_login, send_otp, veri
 from api_worker import APIWorker
 import requests
 from config_loader import API_BASE_URL
+from ui_utils import setup_password_toggle
 
 
 # Worker thread for OTP sending to prevent UI freezing
@@ -78,26 +79,9 @@ class LoginDialog(QDialog):
 
         self.password_toggle()
     def password_toggle(self):
-        self.setup_password_toggle(self.loginPassword,self.loginShowPass)
-        self.setup_password_toggle(self.newPass,self.loginShowPass_2)
-        self.setup_password_toggle(self.confirmPass,self.loginShowPass_3)
-
-    def setup_password_toggle(self, line_edit, tool_button, icon_show="Icons/eye.png", icon_hide="Icons/hide.png"):
-
-        # Store toggle state inside the button so it's reusable
-        tool_button.password_visible = False
-
-        def toggle():
-            if tool_button.password_visible:
-                line_edit.setEchoMode(QLineEdit.EchoMode.Password)
-                tool_button.setIcon(QIcon(icon_show))
-            else:
-                line_edit.setEchoMode(QLineEdit.EchoMode.Normal)
-                tool_button.setIcon(QIcon(icon_hide))
-
-            tool_button.password_visible = not tool_button.password_visible
-
-        tool_button.clicked.connect(toggle)
+        setup_password_toggle(self.loginPassword, self.loginShowPass)
+        setup_password_toggle(self.newPass, self.loginShowPass_2)
+        setup_password_toggle(self.confirmPass, self.loginShowPass_3)
 
     def navigate_login(self, index):
         self.LoginStackedWidget.setCurrentIndex(index)

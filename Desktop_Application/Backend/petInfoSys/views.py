@@ -1651,6 +1651,9 @@ def send_appointment_reminder_email(patient_email, patient_name, pet_name, servi
 
         print(f"DEBUG EMAIL: Creating EmailMultiAlternatives")
         msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
+        reply_to = getattr(settings, 'DEFAULT_REPLY_TO_EMAIL', '')
+        if reply_to:
+            msg.reply_to = [reply_to]
         msg.attach_alternative(html_content, "text/html")
 
         print(f"DEBUG EMAIL: Attempting to send...")
@@ -2123,6 +2126,9 @@ def send_service_return_reminder_email(patient_email, patient_name, pet_name, se
         text_content = strip_tags(html_content)
 
         msg = EmailMultiAlternatives(subject, text_content, from_email, to, connection=connection)
+        reply_to = getattr(settings, 'DEFAULT_REPLY_TO_EMAIL', '')
+        if reply_to:
+            msg.reply_to = [reply_to]
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
@@ -2135,7 +2141,7 @@ def send_service_return_reminder_email(patient_email, patient_name, pet_name, se
 def api_service_counts(request):
     # Count WalkInAppointments by service type name
     data = (
-        WalkInAppointment.objects.values('service_type__name')
+        WalkInAppointment.objects.filter(owner__desktop_record='show').values('service_type__name')
         .annotate(total=Count('service_type__name'))
         .order_by('service_type__name')
     )
@@ -2154,14 +2160,11 @@ def api_species_counts(request):
     else:
         month = datetime.today().month  # ✅ Default = current month
 
-    # ✅ Monthly filtering (ALL species now respect the selected month)
-    cats = Pet.objects.filter(species__icontains="cat", date_added__month=month).count()
-    dogs = Pet.objects.filter(species__icontains="dog", date_added__month=month).count()
-    others = Pet.objects.filter(date_added__month=month).exclude(
-        species__icontains="cat"
-    ).exclude(
-        species__icontains="dog"
-    ).count()
+    # Only count pets that belong to records visible in Desktop (deleted/hidden patients are excluded).
+    base_qs = Pet.objects.filter(owner__desktop_record='show', date_added__month=month)
+    cats = base_qs.filter(species__icontains="cat").count()
+    dogs = base_qs.filter(species__icontains="dog").count()
+    others = base_qs.exclude(species__icontains="cat").exclude(species__icontains="dog").count()
 
     return Response({
         "month": month,
@@ -2395,9 +2398,12 @@ def check_existing_patient(request):
             msg = EmailMultiAlternatives(
                 subject=subject,
                 body=text_content,
-                from_email='petmateanimalclinic@gmail.com',
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'webmaster@localhost',
                 to=[email]
             )
+            reply_to = getattr(settings, 'DEFAULT_REPLY_TO_EMAIL', '')
+            if reply_to:
+                msg.reply_to = [reply_to]
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 

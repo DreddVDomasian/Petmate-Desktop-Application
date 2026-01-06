@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -3661,7 +3661,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>30</height>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4201,7 +4201,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>860</width>
-                           <height>322</height>
+                           <height>318</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -5324,7 +5324,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <x>0</x>
                           <y>0</y>
                           <width>858</width>
-                          <height>431</height>
+                          <height>427</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -8427,7 +8427,7 @@ background:none;</string>
                           <x>0</x>
                           <y>0</y>
                           <width>858</width>
-                          <height>263</height>
+                          <height>252</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -10801,7 +10801,6 @@ QLineEdit{
 	background-color:rgb(245, 245, 245);
 }
 QLineEdit:focus{
-    border: 1px solid rgb(235, 235, 235);
 	background-color:rgb(227, 227, 227);
 }
 
@@ -10809,7 +10808,12 @@ QLineEdit:disabled{
 	background-color:rgb(225, 225, 225);
 	color:rgb(66, 66, 66);
 
-}</string>
+}
+#passForConfirm{
+	border-radius:none;
+}
+
+</string>
                        </property>
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
@@ -11160,10 +11164,10 @@ QLineEdit:disabled{
                                   <number>10</number>
                                  </property>
                                  <property name="rightMargin">
-                                  <number>5</number>
+                                  <number>0</number>
                                  </property>
                                  <property name="bottomMargin">
-                                  <number>10</number>
+                                  <number>5</number>
                                  </property>
                                  <item>
                                   <widget class="QLabel" name="label_38">
@@ -11173,37 +11177,109 @@ QLineEdit:disabled{
                                   </widget>
                                  </item>
                                  <item>
-                                  <widget class="QLineEdit" name="passForConfirm">
-                                   <property name="enabled">
-                                    <bool>true</bool>
+                                  <widget class="QFrame" name="frame_92">
+                                   <property name="frameShape">
+                                    <enum>QFrame::StyledPanel</enum>
                                    </property>
-                                   <property name="sizePolicy">
-                                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                                     <horstretch>0</horstretch>
-                                     <verstretch>0</verstretch>
-                                    </sizepolicy>
+                                   <property name="frameShadow">
+                                    <enum>QFrame::Raised</enum>
                                    </property>
-                                   <property name="minimumSize">
-                                    <size>
-                                     <width>0</width>
-                                     <height>45</height>
-                                    </size>
-                                   </property>
-                                   <property name="maximumSize">
-                                    <size>
-                                     <width>16777215</width>
-                                     <height>80</height>
-                                    </size>
-                                   </property>
-                                   <property name="echoMode">
-                                    <enum>QLineEdit::Password</enum>
-                                   </property>
-                                   <property name="readOnly">
-                                    <bool>false</bool>
-                                   </property>
-                                   <property name="placeholderText">
-                                    <string>Password</string>
-                                   </property>
+                                   <layout class="QHBoxLayout" name="horizontalLayout_124">
+                                    <property name="spacing">
+                                     <number>0</number>
+                                    </property>
+                                    <property name="leftMargin">
+                                     <number>0</number>
+                                    </property>
+                                    <property name="topMargin">
+                                     <number>0</number>
+                                    </property>
+                                    <property name="rightMargin">
+                                     <number>5</number>
+                                    </property>
+                                    <property name="bottomMargin">
+                                     <number>5</number>
+                                    </property>
+                                    <item>
+                                     <widget class="QLineEdit" name="passForConfirm">
+                                      <property name="enabled">
+                                       <bool>true</bool>
+                                      </property>
+                                      <property name="sizePolicy">
+                                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                       </sizepolicy>
+                                      </property>
+                                      <property name="minimumSize">
+                                       <size>
+                                        <width>0</width>
+                                        <height>45</height>
+                                       </size>
+                                      </property>
+                                      <property name="maximumSize">
+                                       <size>
+                                        <width>16777215</width>
+                                        <height>80</height>
+                                       </size>
+                                      </property>
+                                      <property name="styleSheet">
+                                       <string notr="true">#passForConfirm{
+	border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}</string>
+                                      </property>
+                                      <property name="echoMode">
+                                       <enum>QLineEdit::Password</enum>
+                                      </property>
+                                      <property name="readOnly">
+                                       <bool>false</bool>
+                                      </property>
+                                      <property name="placeholderText">
+                                       <string>Password</string>
+                                      </property>
+                                     </widget>
+                                    </item>
+                                    <item>
+                                     <widget class="QFrame" name="profileInfoPassShow">
+                                      <property name="styleSheet">
+                                       <string notr="true">#profileInfoPassShow{
+	border-right: 2px solid #d1d5db;
+    border-top: 2px solid #d1d5db;
+    border-bottom: 2px solid #d1d5db;
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	background-color:rgb(245, 245, 245);
+}</string>
+                                      </property>
+                                      <property name="frameShape">
+                                       <enum>QFrame::StyledPanel</enum>
+                                      </property>
+                                      <property name="frameShadow">
+                                       <enum>QFrame::Raised</enum>
+                                      </property>
+                                      <layout class="QVBoxLayout" name="verticalLayout_92">
+                                       <item>
+                                        <widget class="QToolButton" name="showProfileIInfoPassBtn">
+                                         <property name="text">
+                                          <string>...</string>
+                                         </property>
+                                         <property name="icon">
+                                          <iconset resource="../resource.qrc">
+                                           <normaloff>:/Icons/Icons/eye.png</normaloff>:/Icons/Icons/eye.png</iconset>
+                                         </property>
+                                         <property name="iconSize">
+                                          <size>
+                                           <width>30</width>
+                                           <height>30</height>
+                                          </size>
+                                         </property>
+                                        </widget>
+                                       </item>
+                                      </layout>
+                                     </widget>
+                                    </item>
+                                   </layout>
                                   </widget>
                                  </item>
                                 </layout>
@@ -11434,9 +11510,17 @@ QLabel{
 font: 57 12pt &quot;Montserrat SemiBold&quot;;
 	color:rgb(66, 66, 66);
 }
-
-QLineEdit{
+#profileUserName{
     border-radius: 10px;
+	font-family: &quot;Montserrat Medium&quot;;
+	font-weight: 57;
+	color:rgb(66, 66, 66);
+	padding-left: 10px;
+	background-color:rgb(245, 245, 245);
+}
+QLineEdit{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 	font-family: &quot;Montserrat Medium&quot;;
 	font-weight: 57;
 	color:rgb(66, 66, 66);
@@ -11558,7 +11642,7 @@ QLineEdit:focus{
                                 </property>
                                 <layout class="QHBoxLayout" name="horizontalLayout_109">
                                  <property name="spacing">
-                                  <number>10</number>
+                                  <number>0</number>
                                  </property>
                                  <property name="topMargin">
                                   <number>7</number>
@@ -11589,6 +11673,42 @@ QLineEdit:focus{
                                    <property name="placeholderText">
                                     <string>Password</string>
                                    </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QFrame" name="pasToggle">
+                                   <property name="styleSheet">
+                                    <string notr="true">#pasToggle{
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	background-color:rgb(245, 245, 245);
+}</string>
+                                   </property>
+                                   <property name="frameShape">
+                                    <enum>QFrame::StyledPanel</enum>
+                                   </property>
+                                   <property name="frameShadow">
+                                    <enum>QFrame::Raised</enum>
+                                   </property>
+                                   <layout class="QVBoxLayout" name="verticalLayout_91">
+                                    <item>
+                                     <widget class="QToolButton" name="changeUsernamePassShow">
+                                      <property name="text">
+                                       <string>...</string>
+                                      </property>
+                                      <property name="icon">
+                                       <iconset resource="../resource.qrc">
+                                        <normaloff>:/Icons/Icons/eye.png</normaloff>:/Icons/Icons/eye.png</iconset>
+                                      </property>
+                                      <property name="iconSize">
+                                       <size>
+                                        <width>30</width>
+                                        <height>30</height>
+                                       </size>
+                                      </property>
+                                     </widget>
+                                    </item>
+                                   </layout>
                                   </widget>
                                  </item>
                                 </layout>
@@ -11686,7 +11806,7 @@ border-radius: 10px;
                                 </property>
                                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                                  <property name="spacing">
-                                  <number>10</number>
+                                  <number>0</number>
                                  </property>
                                  <item>
                                   <widget class="QLineEdit" name="currentPassEdit">
@@ -11716,6 +11836,42 @@ border-radius: 10px;
                                    </property>
                                   </widget>
                                  </item>
+                                 <item>
+                                  <widget class="QFrame" name="cpToggle">
+                                   <property name="styleSheet">
+                                    <string notr="true">#cpToggle{
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	background-color:rgb(245, 245, 245);
+}</string>
+                                   </property>
+                                   <property name="frameShape">
+                                    <enum>QFrame::StyledPanel</enum>
+                                   </property>
+                                   <property name="frameShadow">
+                                    <enum>QFrame::Raised</enum>
+                                   </property>
+                                   <layout class="QHBoxLayout" name="horizontalLayout_122">
+                                    <item>
+                                     <widget class="QToolButton" name="showCurrentPass">
+                                      <property name="text">
+                                       <string>...</string>
+                                      </property>
+                                      <property name="icon">
+                                       <iconset resource="../resource.qrc">
+                                        <normaloff>:/Icons/Icons/eye.png</normaloff>:/Icons/Icons/eye.png</iconset>
+                                      </property>
+                                      <property name="iconSize">
+                                       <size>
+                                        <width>30</width>
+                                        <height>30</height>
+                                       </size>
+                                      </property>
+                                     </widget>
+                                    </item>
+                                   </layout>
+                                  </widget>
+                                 </item>
                                 </layout>
                                </widget>
                               </item>
@@ -11735,7 +11891,7 @@ border-radius: 10px;
                                 </property>
                                 <layout class="QHBoxLayout" name="horizontalLayout_87">
                                  <property name="spacing">
-                                  <number>35</number>
+                                  <number>0</number>
                                  </property>
                                  <item>
                                   <widget class="QLineEdit" name="newPassEdit">
@@ -11765,6 +11921,42 @@ border-radius: 10px;
                                    </property>
                                   </widget>
                                  </item>
+                                 <item>
+                                  <widget class="QFrame" name="npToggle">
+                                   <property name="styleSheet">
+                                    <string notr="true">#npToggle{
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	background-color:rgb(245, 245, 245);
+}</string>
+                                   </property>
+                                   <property name="frameShape">
+                                    <enum>QFrame::StyledPanel</enum>
+                                   </property>
+                                   <property name="frameShadow">
+                                    <enum>QFrame::Raised</enum>
+                                   </property>
+                                   <layout class="QHBoxLayout" name="horizontalLayout_123">
+                                    <item>
+                                     <widget class="QToolButton" name="showNewPass">
+                                      <property name="text">
+                                       <string>...</string>
+                                      </property>
+                                      <property name="icon">
+                                       <iconset resource="../resource.qrc">
+                                        <normaloff>:/Icons/Icons/eye.png</normaloff>:/Icons/Icons/eye.png</iconset>
+                                      </property>
+                                      <property name="iconSize">
+                                       <size>
+                                        <width>30</width>
+                                        <height>30</height>
+                                       </size>
+                                      </property>
+                                     </widget>
+                                    </item>
+                                   </layout>
+                                  </widget>
+                                 </item>
                                 </layout>
                                </widget>
                               </item>
@@ -11784,7 +11976,7 @@ border-radius: 10px;
                                 </property>
                                 <layout class="QHBoxLayout" name="horizontalLayout_88">
                                  <property name="spacing">
-                                  <number>7</number>
+                                  <number>0</number>
                                  </property>
                                  <item>
                                   <widget class="QLineEdit" name="confirmPassEdit">
@@ -11812,6 +12004,42 @@ border-radius: 10px;
                                    <property name="placeholderText">
                                     <string>Confirm Password</string>
                                    </property>
+                                  </widget>
+                                 </item>
+                                 <item>
+                                  <widget class="QFrame" name="conPToggle">
+                                   <property name="styleSheet">
+                                    <string notr="true">#conPToggle{
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	background-color:rgb(245, 245, 245);
+}</string>
+                                   </property>
+                                   <property name="frameShape">
+                                    <enum>QFrame::StyledPanel</enum>
+                                   </property>
+                                   <property name="frameShadow">
+                                    <enum>QFrame::Raised</enum>
+                                   </property>
+                                   <layout class="QVBoxLayout" name="verticalLayout_90">
+                                    <item>
+                                     <widget class="QToolButton" name="showConfirmPass">
+                                      <property name="text">
+                                       <string>...</string>
+                                      </property>
+                                      <property name="icon">
+                                       <iconset resource="../resource.qrc">
+                                        <normaloff>:/Icons/Icons/eye.png</normaloff>:/Icons/Icons/eye.png</iconset>
+                                      </property>
+                                      <property name="iconSize">
+                                       <size>
+                                        <width>30</width>
+                                        <height>30</height>
+                                       </size>
+                                      </property>
+                                     </widget>
+                                    </item>
+                                   </layout>
                                   </widget>
                                  </item>
                                 </layout>
@@ -12027,8 +12255,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
-                          <height>30</height>
+                          <width>72</width>
+                          <height>18</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
@@ -12554,8 +12782,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>90</width>
-                             <height>43</height>
+                             <width>93</width>
+                             <height>51</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12631,7 +12859,7 @@ color:rgb(168, 168, 168);</string>
                           <x>0</x>
                           <y>0</y>
                           <width>830</width>
-                          <height>692</height>
+                          <height>706</height>
                          </rect>
                         </property>
                         <property name="styleSheet">

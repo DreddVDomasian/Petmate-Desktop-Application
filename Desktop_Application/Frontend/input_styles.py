@@ -14,6 +14,21 @@ default_style = """
             border: 2px solid rgb(197, 197, 197);
         
         }"""
+default_style_passForConfirm = """
+        QLineEdit{
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            font-family: "Montserrat Medium";
+            font-weight: 57;
+            color:rgb(39, 39, 39);
+            padding-left: 10px;
+            background-color:rgb(245, 245, 245);
+        }
+
+        QLineEdit:focus{
+            border: 2px solid rgb(197, 197, 197);
+
+        }"""
 
 default_combobox_style = """
             QComboBox {
@@ -229,6 +244,22 @@ error_style = """
             
             }"""
 
+error_style_passForConfirm = """
+            QLineEdit{
+                border: 2px solid rgb(249, 90, 100);
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+                font-family: "Montserrat Medium";
+                font-weight: 57;
+                color:rgb(39, 39, 39);
+                padding-left: 10px;
+                background-color:rgb(229, 229, 229);
+            }
+
+            QLineEdit:focus{
+                border: 2px solid rgb(197, 197, 197);
+
+            }"""
 
 QframeStyle = """
 QFrame {border:none;}
@@ -350,6 +381,24 @@ profile_edit_style = """
         background-color: #ffffff;
         border: 2px solid #d1d5db;
         border-radius: 8px;
+        padding: 8px 12px;
+        font: 12pt "Montserrat Medium";
+        color: #374151;
+    }
+    QLineEdit:focus {
+        border-color: #FFE9D7;
+        background-color: #f8fafc;
+    }
+"""
+
+profile_edit_style_passForConfirm = """
+    QLineEdit {
+        background-color: #ffffff;
+        border-left: 2px solid #d1d5db;
+        border-top: 2px solid #d1d5db;
+        border-bottom: 2px solid #d1d5db;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
         padding: 8px 12px;
         font: 12pt "Montserrat Medium";
         color: #374151;

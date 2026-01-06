@@ -35,6 +35,7 @@ from updateFunction import Update
 from config_loader import API_BASE_URL
 from async_helper import AsyncHelper
 from loading_overlay import LoadingOverlay
+from ui_utils import setup_password_toggle
 import requests
 import webbrowser
 import json
@@ -620,7 +621,7 @@ class MainUI(QMainWindow):
         self.clearSpeciesBtn.setGraphicsEffect(create_card_shadow())
 
         self.reminderBtn.setGraphicsEffect(create_card_shadow())
-
+        self.profileInfoPassShow.setGraphicsEffect(create_card_shadow())
         #settings shadow
         self.changePassFrame.setGraphicsEffect(create_card_shadow())
         self.profileInfoFrame.setGraphicsEffect(create_card_shadow())
@@ -2507,6 +2508,9 @@ class MainUI(QMainWindow):
 
     #    PROFILE TAB
     def enableProfileEdit(self):
+        # Snapshot current values so Cancel can revert instantly (no API call / no lag)
+        self._capture_profile_snapshot()
+
         self.profileFullName.setEnabled(True)
         self.profileEmail.setEnabled(True)
         self.profilePhone.setEnabled(True)
@@ -2522,6 +2526,41 @@ class MainUI(QMainWindow):
 
         self.settingsProfileSaveBtn.clicked.connect(self.save_profile_changes)
         self.settingsProfileCancelBtn.clicked.connect(self.profileEdit_cancel)
+
+    def _capture_profile_snapshot(self):
+        """Capture current profile UI values so we can restore them on Cancel without fetching."""
+        try:
+            self._profile_snapshot = {
+                "full_name": self.profileFullName.text(),
+                "username": self.profileUserName.text(),
+                "email": self.profileEmail.text(),
+                "phone": self.profilePhone.text(),
+                "role_text": self.accountRole.text() if hasattr(self, "accountRole") else "",
+                "member_since": self.MemberSince.text() if hasattr(self, "MemberSince") else "",
+            }
+        except Exception:
+            self._profile_snapshot = None
+
+    def _restore_profile_snapshot(self) -> bool:
+        """Restore previously captured profile UI values. Returns True if restored."""
+        snap = getattr(self, "_profile_snapshot", None)
+        if not isinstance(snap, dict):
+            return False
+
+        try:
+            self.profileFullName.setText(snap.get("full_name", ""))
+            self.profileUserName.setText(snap.get("username", ""))
+            self.profileEmail.setText(snap.get("email", ""))
+            self.profilePhone.setText(snap.get("phone", ""))
+            if hasattr(self, "accountRole"):
+                self.accountRole.setText(snap.get("role_text", ""))
+            if hasattr(self, "MemberSince"):
+                self.MemberSince.setText(snap.get("member_since", ""))
+
+            self.apply_profile_view_style()
+            return True
+        except Exception:
+            return False
     def setup_profile_validation(self):
         """Setup validation for profile form fields"""
         # Phone number validator (numbers only, max 11 digits)
@@ -2621,10 +2660,11 @@ class MainUI(QMainWindow):
         if not password:
             toast = Toast(self, "Please enter your password to confirm changes", icon_path="Icons/warning.png")
             toast.show_toast()
-            self.passForConfirm.setStyleSheet(error_style)
+            self.passForConfirm.setStyleSheet(error_style_passForConfirm)
             return
         else:
-            self.passForConfirm.setStyleSheet(default_style)
+            self.passForConfirm.setStyleSheet(default_style_passForConfirm)
+            self.passForConfirm.clear()
 
         # Prepare data for API
         profile_data = {
@@ -2640,7 +2680,7 @@ class MainUI(QMainWindow):
             self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
             toast = Toast(self, "Incorrect password! Please try again.", icon_path="Icons/warning.png")
             toast.show_toast()
-            self.passForConfirm.setStyleSheet(error_style)
+            self.passForConfirm.setStyleSheet(error_style_passForConfirm)
             self.passForConfirm.clear()
             self.passForConfirm.setFocus()
 
@@ -2710,8 +2750,11 @@ class MainUI(QMainWindow):
         self.profilePhone.setStyleSheet(default_style)
 
         # Reload original data
-        self.load_user_profile(self.current_user)
+        if not self._restore_profile_snapshot():
+            # Fallback (older sessions / no snapshot)
+            self.load_user_profile(self.current_user)
 
+        self.passForConfirm.clear()
         # Disconnect signals to prevent multiple connections
         try:
             self.settingsProfileSaveBtn.clicked.disconnect()
@@ -2753,19 +2796,37 @@ class MainUI(QMainWindow):
 
         # Apply view style when loading
         self.apply_profile_view_style()
+
+        # Keep snapshot in sync with the latest loaded server values
+        self._capture_profile_snapshot()
     def apply_profile_view_style(self):
         """Apply the view style to profile fields"""
         for field in [self.profileFullName, self.profileEmail,self.profilePhone]:
             field.setStyleSheet(profile_view_style)
     def apply_profile_edit_style(self):
         """Apply the edit style to profile fields"""
-        for field in [self.profileFullName, self.profileEmail, self.profilePhone, self.passForConfirm]:
+        for field in [self.profileFullName, self.profileEmail, self.profilePhone]:
             field.setStyleSheet(profile_edit_style)
+        self.passForConfirm.setStyleSheet(profile_edit_style_passForConfirm)
     #    SECURITY TAB
     def setup_security_tab(self):
         """Initialize security tab connections"""
         self.changeUsernameBtn.clicked.connect(self.change_username)
         self.changePasswordBtn.clicked.connect(self.change_password)
+
+        # Password visibility toggles
+        toggle_pairs = [
+            ("passForConfirm", "showProfileIInfoPassBtn"),
+            ("changeUsernamePass", "changeUsernamePassShow"),
+            ("currentPassEdit", "showCurrentPass"),
+            ("newPassEdit", "showNewPass"),
+            ("confirmPassEdit", "showConfirmPass"),
+        ]
+        for line_edit_name, button_name in toggle_pairs:
+            line_edit = getattr(self, line_edit_name, None)
+            button = getattr(self, button_name, None)
+            if line_edit is not None and button is not None:
+                setup_password_toggle(line_edit, button)
 
         # Clear fields when tab is shown (optional)
         self.securityTab = self.findChild(QWidget, "securityTab")  # Adjust name as needed
@@ -2787,7 +2848,7 @@ class MainUI(QMainWindow):
         def _invalid_password():
             self._set_settings_busy(False, self.changeUsernameBtn)
             self.show_security_error("Incorrect password!")
-            self.changeUsernamePass.setStyleSheet(error_style)
+            self.changeUsernamePass.setStyleSheet(error_style_passForConfirm)
             self.changeUsernamePass.clear()
             self.changeUsernamePass.setFocus()
 
@@ -2939,9 +3000,9 @@ class MainUI(QMainWindow):
 
         if not password:
             errors.append("Password is required")
-            self.changeUsernamePass.setStyleSheet(error_style)
+            self.changeUsernamePass.setStyleSheet(error_style_passForConfirm)
         else:
-            self.changeUsernamePass.setStyleSheet(default_style)
+            self.changeUsernamePass.setStyleSheet(default_style_passForConfirm)
 
         return errors
     def validate_password_fields(self, current_password, new_password, confirm_password):
@@ -2950,30 +3011,30 @@ class MainUI(QMainWindow):
 
         if not current_password:
             errors.append("Current password is required")
-            self.currentPassEdit.setStyleSheet(error_style)
+            self.currentPassEdit.setStyleSheet(error_style_passForConfirm)
         else:
-            self.currentPassEdit.setStyleSheet(default_style)
+            self.currentPassEdit.setStyleSheet(default_style_passForConfirm)
 
         if not new_password:
             errors.append("New password is required")
-            self.newPassEdit.setStyleSheet(error_style)
+            self.newPassEdit.setStyleSheet(error_style_passForConfirm)
         else:
-            self.newPassEdit.setStyleSheet(default_style)
+            self.newPassEdit.setStyleSheet(default_style_passForConfirm)
 
         if not confirm_password:
             errors.append("Please confirm your new password")
-            self.confirmPassEdit.setStyleSheet(error_style)
+            self.confirmPassEdit.setStyleSheet(error_style_passForConfirm)
         else:
-            self.confirmPassEdit.setStyleSheet(default_style)
+            self.confirmPassEdit.setStyleSheet(default_style_passForConfirm)
 
         if new_password and confirm_password and new_password != confirm_password:
             errors.append("New passwords do not match")
-            self.newPassEdit.setStyleSheet(error_style)
-            self.confirmPassEdit.setStyleSheet(error_style)
+            self.newPassEdit.setStyleSheet(error_style_passForConfirm)
+            self.confirmPassEdit.setStyleSheet(error_style_passForConfirm)
 
         if new_password and len(new_password) < 6:  # Minimum password length
             errors.append("New password must be at least 6 characters long")
-            self.newPassEdit.setStyleSheet(error_style)
+            self.newPassEdit.setStyleSheet(error_style_passForConfirm)
 
         return errors
     def update_username(self, new_username):
@@ -3042,7 +3103,7 @@ class MainUI(QMainWindow):
 
         # Reset styles
         for field in [self.changeUsernamePass, self.currentPassEdit, self.newPassEdit, self.confirmPassEdit]:
-            field.setStyleSheet(default_style)
+            field.setStyleSheet(default_style_passForConfirm)
     def show_security_success(self, message):
         """Show success message for security operations"""
         toast = Toast(self, message, icon_path="Icons/check.png")
@@ -3482,6 +3543,14 @@ class MainUI(QMainWindow):
 
     def refresh_analytics(self):
 
+        # Force fresh data: analytics endpoints were cached for performance.
+        try:
+            self.api.invalidate_cache('/api/speciesCounts/')
+            self.api.invalidate_cache('/api/serviceCounts/')
+            self.api.invalidate_cache('/api/todaysAppointments/')
+        except Exception:
+            pass
+
         self.clear_layout(self.SpeciesPieGraph.layout())
         self.clear_layout(self.ServiceBarGraph.layout())
 
@@ -3669,26 +3738,43 @@ class MainUI(QMainWindow):
             print("❌ appointmentsTodayScroll NOT FOUND")
             return
 
-        label = self.findChild(QLabel, "noAppointmentToday")
-
-        if not label:
-            print("noAppointmentToday not found")
-            return
-
-        label.setVisible(len(data) == 0)
-
-
         layout = container.layout()
         if layout is None:
             layout = QVBoxLayout(container)
             container.setLayout(layout)
 
+        label = container.findChild(QLabel, "noAppointmentToday")
+        if not label:
+            print("noAppointmentToday not found")
+            return
+
+        # Treat missing/None data as empty
+        if not data:
+            label.setVisible(True)
+
+            # Clear everything except the empty-state label
+            for i in reversed(range(layout.count())):
+                item = layout.itemAt(i)
+                widget = item.widget() if item else None
+                if widget is not None and widget.objectName() == "noAppointmentToday":
+                    continue
+                item = layout.takeAt(i)
+                if item and item.widget():
+                    item.widget().deleteLater()
+
+            return
+
+        label.setVisible(False)
+
         # Clear old widgets
-        while layout.count():
-            item = layout.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.deleteLater()
+        for i in reversed(range(layout.count())):
+            item = layout.itemAt(i)
+            widget = item.widget() if item else None
+            if widget is not None and widget.objectName() == "noAppointmentToday":
+                continue
+            item = layout.takeAt(i)
+            if item and item.widget():
+                item.widget().deleteLater()
 
         # Populate cards
         for appt in data:
@@ -3743,28 +3829,31 @@ class MainUI(QMainWindow):
                 self.set_time_pickers_enabled(day_prefix, True)
             else:
                 self.set_time_pickers_enabled(day_prefix, False)
-    def load_office_hours(self):
-        """Load office hours from API"""
-        try:
-            response = requests.get(
-                f"{API_BASE_URL}/api/office-hours/",
-                headers={'Content-Type': 'application/json'}
-            )
+    def load_office_hours(self, show_loading: bool = False):
+        """Load office hours from API (non-blocking)."""
 
-            if response.status_code == 200:
-                office_hours = response.json()
-                self.populate_office_hours(office_hours)
-            else:
-                # Show error toast
-                toast = Toast(self, "Failed to load office hours",
-                              icon_path="Icons/error.png")
-                toast.show_toast()
+        def _on_loaded(data):
+            # API returns a list; tolerate other shapes just in case
+            office_hours = data
+            if isinstance(data, dict) and isinstance(data.get('results'), list):
+                office_hours = data.get('results')
+            if not isinstance(office_hours, list):
+                office_hours = []
+            self.populate_office_hours(office_hours)
 
-        except Exception as e:
-            # Show error toast
-            toast = Toast(self, f"Failed to load office hours: {str(e)}",
-                          icon_path="Icons/error.png")
-            toast.show_toast()
+        def _on_err(err: str):
+            Toast(self, f"Failed to load office hours", icon_path="Icons/error.png").show_toast()
+            print(f"Failed to load office hours: {err}")
+
+        self.api.get(
+            url="/api/office-hours/",
+            on_success=_on_loaded,
+            on_error=_on_err,
+            timeout=15,
+            show_loading=bool(show_loading),
+            loading_title="Loading office hours...",
+            loading_subtitle="Please wait"
+        )
     def setup_office_hours(self):
         """Initialize office hours tab"""
         # Connect buttons
@@ -3777,8 +3866,8 @@ class MainUI(QMainWindow):
         # Setup QTimeEdit display format for all days
         self.setup_time_edit_formats()
 
-        # Load current office hours
-        self.load_office_hours()
+        # Load current office hours (async; avoid blocking UI)
+        self.load_office_hours(show_loading=False)
     def setup_time_edit_formats(self):
         """Set display format for all QTimeEdit widgets"""
         days = ['mon', 'teus', 'wed', 'thurs', 'fri', 'sat', 'sun']
@@ -3939,70 +4028,70 @@ class MainUI(QMainWindow):
         return office_hours
     def reset_office_hours(self):
         """Perform the actual reset of office hours"""
-        try:
-            # Define default hours
-            default_hours = [
-                {'day': 'monday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
-                {'day': 'tuesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
-                {'day': 'wednesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
-                {'day': 'thursday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
-                {'day': 'friday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
-                {'day': 'saturday', 'status': 'open', 'start_time': '09:00:00', 'end_time': '16:00:00'},
-                {'day': 'sunday', 'status': 'appointment_only', 'start_time': None, 'end_time': None}
-            ]
+        # Define default hours
+        default_hours = [
+            {'day': 'monday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+            {'day': 'tuesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+            {'day': 'wednesday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+            {'day': 'thursday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+            {'day': 'friday', 'status': 'open', 'start_time': '08:00:00', 'end_time': '18:00:00'},
+            {'day': 'saturday', 'status': 'open', 'start_time': '09:00:00', 'end_time': '16:00:00'},
+            {'day': 'sunday', 'status': 'appointment_only', 'start_time': None, 'end_time': None}
+        ]
 
-            # Populate UI with default values
-            self.populate_office_hours(default_hours)
+        # Populate UI with default values immediately
+        self.populate_office_hours(default_hours)
 
-            # Save defaults to database
-            response = requests.post(
-                f"{API_BASE_URL}/api/office-hours/update/",
-                json=default_hours,
-                headers={'Content-Type': 'application/json'}
-            )
+        def _finish_confirm():
+            # Always restore card and close it
+            try:
+                self.restore_confirm_card_default()
+                self.confirmCard.close()
+            except Exception:
+                pass
 
-            if response.status_code == 200:
-                # SUCCESS TOAST - No buttons, auto-dismiss
-                toast = Toast(self, "Office hours reset to default values!", icon_path="Icons/check.png")
-                toast.show_toast()
-            else:
-                # ERROR TOAST - Use whatever error styling you have
-                toast = Toast(self, "Failed to reset office hours")
-                toast.show_toast()
+        def _on_ok(_data):
+            Toast(self, "Office hours reset to default values!", icon_path="Icons/check.png").show_toast()
+            _finish_confirm()
 
-        except Exception as e:
-            # ERROR TOAST
-            toast = Toast(self, "Failed to reset office hours")
-            toast.show_toast()
+        def _on_err(err: str):
+            Toast(self, "Failed to reset office hours", icon_path="Icons/warning.png").show_toast()
+            print(f"Reset office hours failed: {err}")
+            _finish_confirm()
 
-        # Always restore card and close it
-        self.restore_confirm_card_default()
-        self.confirmCard.close()
+        # Save defaults to database (non-blocking + loading modal)
+        self.api.post(
+            url="/api/office-hours/update/",
+            data=default_hours,
+            on_success=_on_ok,
+            on_error=_on_err,
+            timeout=20,
+            show_loading=True,
+            loading_title="Resetting office hours...",
+            loading_subtitle="Saving default values"
+        )
     def save_office_hours(self):
         """Save office hours to API"""
-        try:
-            office_hours_data = self.collect_office_hours_data()
+        office_hours_data = self.collect_office_hours_data()
 
-            response = requests.post(
-                f"{API_BASE_URL}/api/office-hours/update/",
-                json=office_hours_data,
-                headers={'Content-Type': 'application/json'}
-            )
+        def _on_ok(_data):
+            Toast(self, "Office hours saved successfully!", icon_path="Icons/check.png").show_toast()
+            self.load_office_hours(show_loading=False)  # Reload to confirm (async)
 
-            if response.status_code == 200:
-                # SUCCESS TOAST
-                toast = Toast(self, "Office hours saved successfully!", icon_path="Icons/check.png")
-                toast.show_toast()
-                self.load_office_hours()  # Reload to confirm
-            else:
-                # ERROR TOAST
-                toast = Toast(self, "Failed to save office hours")
-                toast.show_toast()
+        def _on_err(err: str):
+            Toast(self, "Failed to save office hours", icon_path="Icons/warning.png").show_toast()
+            print(f"Save office hours failed: {err}")
 
-        except Exception as e:
-            # ERROR TOAST
-            toast = Toast(self, "Failed to save office hours")
-            toast.show_toast()
+        self.api.post(
+            url="/api/office-hours/update/",
+            data=office_hours_data,
+            on_success=_on_ok,
+            on_error=_on_err,
+            timeout=20,
+            show_loading=True,
+            loading_title="Saving office hours...",
+            loading_subtitle="Please wait"
+        )
     def get_day_status(self, day_prefix):
         """Get status for a specific day from radio buttons"""
         # NEW: Get all 3 radio buttons

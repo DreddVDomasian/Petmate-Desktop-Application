@@ -233,6 +233,7 @@ class AddAppointmentCard(QWidget):
             on_error=lambda err: self._on_pets_for_patient_error(err),
             timeout=15,
             show_loading=True,
+            loading_widget=self.main_window,
             loading_title="Loading pets...",
             loading_subtitle="Please wait"
         )
@@ -1273,6 +1274,7 @@ class AddAppointmentCard(QWidget):
             on_error=lambda err: self._accept_without_slot_check(walkin_id, owner_id, err),
             timeout=10,
             show_loading=True,
+            loading_widget=self.main_window,
             loading_title="Accepting appointment...",
             loading_subtitle="Checking availability"
         )
@@ -1292,6 +1294,7 @@ class AddAppointmentCard(QWidget):
                 on_error=lambda err: self._accept_without_slot_check(walkin_id, owner_id, err),
                 timeout=10,
                 show_loading=True,
+                loading_widget=self.main_window,
                 loading_title="Accepting appointment...",
                 loading_subtitle="Checking time slot"
             )
@@ -1329,6 +1332,7 @@ class AddAppointmentCard(QWidget):
             on_error=lambda err: self._on_accept_failed(err),
             timeout=15,
             show_loading=True,
+            loading_widget=self.main_window,
             loading_title="Accepting appointment...",
             loading_subtitle="Saving changes"
         )
@@ -1386,6 +1390,7 @@ class AddAppointmentCard(QWidget):
             on_error=lambda err: self._on_decline_failed(err),
             timeout=15,
             show_loading=True,
+            loading_widget=self.main_window,
             loading_title="Declining appointment...",
             loading_subtitle="Saving changes"
         )
@@ -1416,22 +1421,18 @@ class AddAppointmentCard(QWidget):
         self._set_review_action_busy(False)
 
     def _set_review_action_busy(self, busy: bool):
-        """Disable accept/decline buttons during async review actions."""
+        """Disable accept/decline buttons during async review actions.
+
+        Note: Visual feedback is provided by the loading modal (show_loading=True).
+        """
         try:
             accept_btn = getattr(self.main_window, 'acceptAppointmentBtn', None)
             decline_btn = getattr(self.main_window, 'declineAppointmentBtn', None)
 
-            if not hasattr(self, '_review_accept_text'):
-                self._review_accept_text = accept_btn.text() if accept_btn else None
-            if not hasattr(self, '_review_decline_text'):
-                self._review_decline_text = decline_btn.text() if decline_btn else None
-
             if accept_btn:
                 accept_btn.setEnabled(not busy)
-                accept_btn.setText('Processing...' if busy else (self._review_accept_text or accept_btn.text()))
             if decline_btn:
                 decline_btn.setEnabled(not busy)
-                decline_btn.setText('Processing...' if busy else (self._review_decline_text or decline_btn.text()))
         except Exception as e:
             print(f"Failed to set review action busy state: {e}")
     def add_empty_label(self, layout, message="EMPTY"):
