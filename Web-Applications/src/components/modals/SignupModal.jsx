@@ -219,7 +219,8 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       maxLength="10"
                       value={phoneNum}
                       onInput={(e) => {
-                        const digits = e.target.value.replace(/\D/g, ""); // numeric only
+                        let digits = e.target.value.replace(/\D/g, ""); // numeric only
+                        // remove leading zeros (user may type 0 but we store without it since +63 prefix is used)
                         digits = digits.replace(/^0+/, "");
                         setPhoneNum(digits);
                       }}
@@ -238,7 +239,8 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       maxLength="10"
                       value={phoneNum2}
                       onInput={(e) => {
-                        const digits = e.target.value.replace(/\D/g, ""); // numbers only
+                        let digits = e.target.value.replace(/\D/g, ""); // numbers only
+                        // remove leading zeros
                         digits = digits.replace(/^0+/, "");
                         setPhoneNum2(digits);
                       }}
