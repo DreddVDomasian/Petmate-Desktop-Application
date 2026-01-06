@@ -98,7 +98,7 @@ function ServicesSection() {
                             key={service.id || service.title}
                             data-aos="fade-up"
                             data-aos-duration="400"
-                            data-aos-delay={index * 100} // stagger effect per card
+                            data-aos-delay={index * 1000} // stagger effect per card
                         >
                             <div className="service-icon">
                                 <i className={service.icon}></i>
