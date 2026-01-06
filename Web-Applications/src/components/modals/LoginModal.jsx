@@ -7,11 +7,12 @@ import ForgotPasswordModal from "../modals/ForgetPasswordModal";
 function LoginModal({ onClose, onOpenSignup, visible }) {
   const [showForgot, setShowForgot] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   if (!visible) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
@@ -21,33 +22,34 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
       return;
     }
 
-    (async () => {
+    setLoading(true);
+    try {
+      const res = await apiFetch("/api/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken") || "",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const text = await res.text();
+      let data = {};
       try {
-        const res = await apiFetch("/api/login/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken") || "",
-          },
-          body: JSON.stringify({ email, password }),
-        });
-
-        const text = await res.text();
-        let data = {};
-        try {
-          data = text ? JSON.parse(text) : {};
-        } catch {
-          data = { error: text || res.statusText };
-        }
-
-        if (!res.ok) throw new Error(data.error || res.statusText || "Login failed");
-
-        onClose();
-        navigate("/dashboard");
-      } catch (err) {
-        alert(err.message);
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = { error: text || res.statusText };
       }
-    })();
+
+      if (!res.ok) throw new Error(data.error || res.statusText || "Login failed");
+
+      onClose();
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,7 +65,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
               <form id="loginForm" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="loginEmail">Email</label>
-                  <input type="email" id="loginEmail" name="email" required />
+                  <input type="email" id="loginEmail" name="email" required disabled={loading} />
                 </div>
 
                 <div className="form-group">
@@ -74,6 +76,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
                       id="loginPassword"
                       name="password"
                       required
+                      disabled={loading}
                     />
                     <img
                       src={showPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
@@ -95,8 +98,8 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
                   </a>
                 </div>
 
-                <button type="submit" className="login-submit-btn">
-                  LOGIN
+                <button type="submit" className="login-submit-btn" disabled={loading}>
+                  {loading ? "Logging in..." : "LOGIN"}
                 </button>
 
                 <div className="signup-link">
