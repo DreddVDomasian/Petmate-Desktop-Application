@@ -8,8 +8,14 @@ function Footer() {
                 <div className="footer-column">
                     <h3>PetMate Animal Clinic</h3>
                     <p>Your trusted partner in pet healthcare. We provide compassionate, comprehensive veterinary care for your beloved companions.</p>
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/PetmaleAnimalClinic"><i class="fab fa-facebook-f"></i></a>
+                    <div className="social-links">
+                        <a
+                            href="https://www.facebook.com/PetmaleAnimalClinic"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i className="fab fa-facebook-f"></i>
+                        </a>
                     </div>
                 </div>
                 <div className="footer-column">
