@@ -283,12 +283,6 @@ const OfficeHours = () => {
                                 </li>
                             ))}
                         </ul>
-                        {hasEmergency && (
-                            <div className="emergency-note" data-aos="fade-up" data-aos-delay={100}>
-                                <h4>Emergency Services</h4>
-                                <p>Available 24/7 for urgent care needs</p>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
