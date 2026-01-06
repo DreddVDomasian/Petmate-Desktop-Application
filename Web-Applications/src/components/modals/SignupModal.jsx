@@ -173,8 +173,11 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
     return cities.find(city => city.mun_code === code)?.name || "";
   };
 
-
-
+  const handlePhoneChange = (setter) => (e) => {
+    let digits = e.target.value.replace(/\D/g, ""); // keep digits only
+    digits = digits.replace(/^0+/, ""); // remove leading zeros
+    setter(digits.slice(0, 10)); // enforce max length
+  };
 
   return (
     <>
@@ -216,14 +219,8 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       name="phoneNum"
                       required
                       placeholder="9123456789"
-                      maxLength="10"
                       value={phoneNum}
-                      onInput={(e) => {
-                        let digits = e.target.value.replace(/\D/g, ""); // numeric only
-                        // remove leading zeros (user may type 0 but we store without it since +63 prefix is used)
-                        digits = digits.replace(/^0+/, "");
-                        setPhoneNum(digits);
-                      }}
+                      onChange={handlePhoneChange(setPhoneNum)}
                     />
                   </div>
                 </div>
@@ -236,14 +233,8 @@ function SignupModal({ onClose, onOpenLogin, visible }) {
                       id="phoneNum2"
                       name="phoneNum2"
                       placeholder="9123456789"
-                      maxLength="10"
                       value={phoneNum2}
-                      onInput={(e) => {
-                        let digits = e.target.value.replace(/\D/g, ""); // numbers only
-                        // remove leading zeros
-                        digits = digits.replace(/^0+/, "");
-                        setPhoneNum2(digits);
-                      }}
+                      onChange={handlePhoneChange(setPhoneNum2)}
                     />
                   </div>
                 </div>
