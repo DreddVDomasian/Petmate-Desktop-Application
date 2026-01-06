@@ -15,6 +15,7 @@ function ServicesSection() {
         AOS.init({
             once: false,        // allows repeatable animations
             duration: 1000,     // default duration in ms
+
         });
 
         // Refresh AOS after services load
@@ -96,7 +97,7 @@ function ServicesSection() {
                             className="service-card"
                             key={service.id || service.title}
                             data-aos="fade-up"
-                            data-aos-duration="1000"
+                            data-aos-duration="400"
                             data-aos-delay={index * 100} // stagger effect per card
                         >
                             <div className="service-icon">

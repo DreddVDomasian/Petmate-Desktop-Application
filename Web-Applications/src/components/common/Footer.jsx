@@ -31,7 +31,7 @@ function Footer() {
                 
             </div>
             <div className="copyright">
-                <p>&copy; 2023 PetMate Animal Clinic. All rights reserved.</p>
+                <p>&copy; 2026 PetMate Animal Clinic. All rights reserved.</p>
             </div>
         </div>
     </footer>
