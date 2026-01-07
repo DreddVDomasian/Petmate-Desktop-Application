@@ -26,7 +26,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
     try {
       const res = await apiFetch("/api/login/", {
         method: "POST",
-        credentials: 'include', // <-- ensure cookies are sent & accepted (important for iOS)
+        credentials: 'include', 
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",

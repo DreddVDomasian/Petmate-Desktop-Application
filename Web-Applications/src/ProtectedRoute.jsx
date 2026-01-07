@@ -13,24 +13,27 @@ export default function ProtectedRoute({ children }) {
 
   const checkAuthentication = async () => {
     try {
-      const res = await apiFetch('/api/user/', {
-        headers: { 'Cache-Control': 'no-cache' }
+      // Bust iOS/Safari cache
+      const res = await apiFetch(`/api/user/?_=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setIsAuthenticated(data.is_authenticated);
-      } else {
+      if (!res.ok) {
         setIsAuthenticated(false);
+        return;
       }
-    } catch (error) {
+
+      const data = await res.json();
+      setIsAuthenticated(Boolean(data?.is_authenticated));
+    } catch {
       setIsAuthenticated(false);
     }
   };
 
-  if (isAuthenticated === null) {
-    return <div>Loading...</div>; // Or a loading spinner
-  }
-
+  if (isAuthenticated === null) return <div>Loading...</div>;
   return isAuthenticated ? children : <Navigate to="/?redirect=true" replace />;
 }
