@@ -148,7 +148,10 @@ input, textarea, select {
     transition: border-color 0.3s;
     box-sizing: border-box;
 }
-.login-container input[type="password"]{
+
+/* Password fields that use .password-input-wrapper should not draw their own border.
+   Otherwise, toggling password -> text shows a second (inner) border. */
+.login-container .password-input-wrapper input {
     border: none;
 }
 /* Signup Modal Select Inputs */
