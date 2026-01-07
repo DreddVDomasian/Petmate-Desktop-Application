@@ -210,13 +210,23 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
   // Flatpickr Logic
   useEffect(() => {
     if (isOpen && dateRef.current && !loadingHours && Object.keys(officeHours).length > 0) {
+
+      const toDateObject = (ymd) => {
+        if (!ymd || typeof ymd !== 'string') return null;
+        const trimmed = ymd.trim();
+        const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+        if (!match) return null;
+        return new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00`);
+      };
       
       // Destroy existing instance
       if (dateRef.current._flatpickr) dateRef.current._flatpickr.destroy();
 
       flatpickr(dateRef.current, {
         dateFormat: "M d, Y",
-        defaultDate: formData.preferredDate || "today",
+        // `formData.preferredDate` is stored as YYYY-MM-DD; Flatpickr would try to parse it
+        // using `dateFormat` and throw "Invalid date provided". Use a Date object instead.
+        defaultDate: toDateObject(formData.preferredDate) || "today",
         minDate: "today",
         disable: [
           function(date) {

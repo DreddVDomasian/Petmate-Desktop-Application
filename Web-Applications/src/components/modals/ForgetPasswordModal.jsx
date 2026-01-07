@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { apiFetch } from "../../config/api";
+import { apiFetch, readJsonSafe } from "../../config/api";
 
 export default function ForgotPasswordModal({ onClose, onBack }) {
   const [email, setEmail] = useState("");
@@ -36,7 +36,7 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
     setIsSending(true);
 
     try {
-      await apiFetch(
+      const res = await apiFetch(
         "/api/send-reset-otp/",
         {
           method: 'POST',
@@ -44,12 +44,19 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
           body: JSON.stringify({ email, source: 'web' })
         }
       );
+
+      if (!res.ok) {
+        const data = await readJsonSafe(res);
+        const msg = data?.error || data?.detail || `Failed to send OTP (${res.status})`;
+        throw new Error(msg);
+      }
+
       setMessage("OTP sent to your email!");
       setMessageType("success");
       setStep(2);
     } catch (error) {
-      console.error("sendOtp error:", error.response?.status, error.response?.data);
-      setMessage(error.response?.data?.error || "Failed to send OTP");
+      console.error("sendOtp error:", error);
+      setMessage(error?.message || "Failed to send OTP");
       setMessageType("error");
     } finally {
       setIsSending(false);
@@ -74,7 +81,7 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
     }
 
     try {
-      await apiFetch(
+      const res = await apiFetch(
         "/api/verify-reset-otp/",
         {
           method: 'POST',
@@ -82,12 +89,19 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
           body: JSON.stringify({ email, otp, new_password: newPassword })
         }
       );
+
+      if (!res.ok) {
+        const data = await readJsonSafe(res);
+        const msg = data?.error || data?.detail || `Failed to reset password (${res.status})`;
+        throw new Error(msg);
+      }
+
       setMessage("Password reset successfully!");
       setMessageType("success");
       setStep(3);
     } catch (error) {
-      console.error("verifyOtp error:", error.response?.status, error.response?.data);
-      setMessage(error.response?.data?.error || "Failed to reset password");
+      console.error("verifyOtp error:", error);
+      setMessage(error?.message || "Failed to reset password");
       setMessageType("error");
     }
   };
