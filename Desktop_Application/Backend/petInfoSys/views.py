@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import ParseError
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
@@ -661,34 +663,39 @@ def register_view(request):
 
 @csrf_exempt
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def login_view(request):
     """
     POST JSON { email, password } -> authenticate and set session cookie
     """
+    # Parse safely (avoid crashing on bad JSON)
     try:
-        data = request.data if hasattr(request, 'data') else request.POST
-        email = data.get('email')
-        password = data.get('password')
+        data = request.data
+    except (ParseError, Exception):
+        data = request.POST
 
-        if not email or not password:
-            return Response({'error': 'Missing email or password'}, status=status.HTTP_400_BAD_REQUEST)
+    # Normalize email (iOS autofill often adds spaces/case)
+    raw_email = (data.get("email") or "")
+    email = raw_email.strip().lower()
 
-        # authenticate; use underlying WSGI request for Django auth
-        auth_request = request._request if hasattr(request, '_request') else request
-        user = authenticate(auth_request, username=email, password=password)
-        if user is None:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+    # Never trim passwords (spaces may be valid)
+    password = data.get("password") or ""
 
-        django_login(auth_request, user)
-        
-        # Explicitly save session to ensure it's persisted
-        auth_request.session.save()
-        
-        return Response({'ok': True, 'username': user.username, 'user_id': user.id})
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if not email or not password:
+        return Response({"error": "Missing email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
+    auth_request = request._request if hasattr(request, "_request") else request
+    user = authenticate(auth_request, username=email, password=password)
 
+    if user is None:
+        # Helpful debugging without leaking secrets
+        print(f"[login_view] Invalid credentials for email={repr(email)} content_type={request.content_type}")
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+    django_login(auth_request, user)
+    auth_request.session.save()
+
+    return Response({"ok": True, "username": user.username, "user_id": user.id}, status=200)
 @csrf_exempt
 @api_view(["POST"])
 def logout_view(request):
@@ -2151,6 +2158,7 @@ class ManualReminderView(APIView):
 
                     if email_success and has_balance and owner_has_phone:
                         # Choose which phone number to use
+
                         phone_to_use = service.owner.phoneNumber if (
                                     service.owner.phoneNumber and service.owner.phoneNumber.strip()) else service.owner.SecondaryNumber
 
