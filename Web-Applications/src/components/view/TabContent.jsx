@@ -115,21 +115,24 @@ const TabContent = ({
     setBarangays(barangays || []);
   }, []);
 
-  // NEW: Find the correct province code based on the stored province name
+  // Find the correct province code based on the stored province name
+  // Use imported data directly since it's static
   const findProvinceCode = (provinceName) => {
-    const province = provinces.find(p => 
+    const prov = provinces.find(p => 
       p.name.toLowerCase() === provinceName.toLowerCase()
     );
-    return province ? province.prov_code : "";
+    return prov ? prov.prov_code : "";
   };
 
-  // NEW: Find the correct city code based on the stored city name
+  // Find the correct city code based on the stored city name
+  // Use imported data directly since it's static
   const findCityCode = (cityName) => {
     const city = cities.find(c => 
       c.name.toLowerCase() === cityName.toLowerCase()
     );
     return city ? city.mun_code : "";
   };
+  
   // Filter cities and barangays based on selection
   const filteredCities = cities.filter(city => city.prov_code === selectedProvince);
   const filteredBarangays = barangays.filter(brgy => brgy.mun_code === selectedCity);
