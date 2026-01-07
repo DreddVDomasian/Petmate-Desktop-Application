@@ -47,6 +47,20 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
 
       if (!res.ok) throw new Error(data.error || res.statusText || "Login failed");
 
+      // iOS Safari workaround: Wait a moment for cookies to be stored
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Verify we're authenticated by checking /api/current-user/
+      const userRes = await apiFetch("/api/current-user/", {
+        method: "GET",
+        credentials: "include",
+      });
+      const userData = await userRes.json();
+      
+      if (!userRes.ok || !userData.is_authenticated) {
+        throw new Error("Authentication failed - cookies not set. Please try again.");
+      }
+
       onClose();
       navigate("/dashboard");
     } catch (err) {

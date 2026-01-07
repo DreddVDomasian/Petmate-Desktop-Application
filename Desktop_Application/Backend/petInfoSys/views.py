@@ -712,28 +712,14 @@ def login_view(request):
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
     django_login(auth_request, user)
-    
-    # Force session save with explicit cookie attributes for iOS Safari
     auth_request.session.modified = True
     auth_request.session.save()
-    
-    # Create response
+
+    # Create response with success info
     response = Response({"ok": True, "username": user.username, "user_id": user.id}, status=200)
     
-    # iOS Safari fix: Explicitly set session cookie with all attributes
-    # This ensures iOS Safari accepts the cookie in cross-origin context
-    if not settings.DEBUG:
-        session_key = auth_request.session.session_key
-        if session_key:
-            response.set_cookie(
-                key=settings.SESSION_COOKIE_NAME,
-                value=session_key,
-                max_age=settings.SESSION_COOKIE_AGE,
-                secure=settings.SESSION_COOKIE_SECURE,
-                httponly=settings.SESSION_COOKIE_HTTPONLY,
-                samesite=settings.SESSION_COOKIE_SAMESITE,
-                domain=settings.SESSION_COOKIE_DOMAIN,
-            )
+    # Add explicit headers for iOS Safari cookie handling
+    response['Set-Cookie'] = f"sessionid={auth_request.session.session_key}; Path=/; Secure; SameSite=None; HttpOnly"
     
     return response
 @csrf_exempt
