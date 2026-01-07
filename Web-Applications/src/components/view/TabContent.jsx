@@ -110,6 +110,9 @@ const TabContent = ({
 
   // Load address data
   useEffect(() => {
+    console.log('Setting provinces from imported data:', provinces);
+    console.log('Setting cities from imported data:', cities);
+    console.log('Setting barangays from imported data:', barangays);
     setProvinces(provinces || []);
     setCities(cities || []);
     setBarangays(barangays || []);
@@ -118,18 +121,22 @@ const TabContent = ({
   // Find the correct province code based on the stored province name
   // Use imported data directly since it's static
   const findProvinceCode = (provinceName) => {
+    console.log('Looking for province:', provinceName, 'in', provinces);
     const prov = provinces.find(p => 
-      p.name.toLowerCase() === provinceName.toLowerCase()
+      p.name.toUpperCase() === provinceName.toUpperCase()
     );
+    console.log('Found province:', prov);
     return prov ? prov.prov_code : "";
   };
 
   // Find the correct city code based on the stored city name
   // Use imported data directly since it's static
   const findCityCode = (cityName) => {
+    console.log('Looking for city:', cityName, 'in', cities);
     const city = cities.find(c => 
-      c.name.toLowerCase() === cityName.toLowerCase()
+      c.name.toUpperCase() === cityName.toUpperCase()
     );
+    console.log('Found city:', city);
     return city ? city.mun_code : "";
   };
   
