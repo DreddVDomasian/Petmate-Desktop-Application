@@ -573,8 +573,7 @@ header {
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-bottom: -1000px;
-    margin-bottom: -170px;
+    margin-bottom: -100px;
 }
 
 .doctor-image img {
@@ -596,7 +595,7 @@ header {
 }
 
 .content h1 {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
     margin-bottom: 25px;
     line-height: 1.2;
     color: var(--dark);
@@ -604,7 +603,7 @@ header {
 }
 
 .content p {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     margin-bottom: 35px;
     opacity: 0.9;
     line-height: 1.6;
@@ -1192,36 +1191,69 @@ footer {
 /* MOBILE RESPONSIVENESS FIX (Max width 768px) */
 @media (max-width: 768px) {
     .content-wrapper {
-        flex-direction: column-reverse; /* Text sa taas, Image sa baba. Gawing 'column' lang kung gusto mo Image sa taas */
-        gap: 30px;
+        flex-direction: column-reverse;
+        gap: 20px;
         padding-top: 20px;
-        text-align: center; /* I-center ang text sa mobile */
+        text-align: center;
     }
 
     .doctor-image {
-        margin-bottom: 0; /* Reset ang -170px */
-        margin-top: 20px;
+        margin-bottom: 0;
+        margin-top: 0;
         padding-bottom: 0;
     }
 
     .doctor-image img {
-        max-height: 450px; /* Pwede mo i-adjust depende sa gusto mong laki */
+        max-height: 350px;
         width: auto;
-        margin-bottom: -100px;
+    }
+
+    .content h1 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+
+    .content p {
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    .content {
+        padding: 20px;
+        max-width: 100%;
     }
 
     .home-section {
         height: auto !important;
         min-height: auto !important;
-        padding-bottom: 60px;
+        padding: 60px 0 40px;
+        margin-top: 80px !important;
     }
-
 
     .action-buttons {
         justify-content: center;
     }
 
     .services {
-        padding-top: 600px;
+        padding-top: 300px;
+    }
+}
+
+/* Tablet responsiveness (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .content h1 {
+        font-size: 2.2rem;
+    }
+
+    .content p {
+        font-size: 1rem;
+    }
+
+    .doctor-image img {
+        max-height: 500px;
+    }
+
+    .content-wrapper {
+        gap: 40px;
     }
 }

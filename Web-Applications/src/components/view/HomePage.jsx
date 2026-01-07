@@ -17,7 +17,7 @@ function HomePage() {
       <div className="home-container">
         <div className="content-wrapper">
           <div className="doctor-image">
-            <img src="/assets/images/misc/doc.png" alt="Veterinarian with dog" />
+            <img src="/assets/images/misc/doc.png" alt="Veterinarian" />
           </div>
 
           <div className="content">
