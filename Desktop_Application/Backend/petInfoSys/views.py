@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from datetime import date,datetime,time,timedelta
 from .models import *
 from django.core.validators import validate_email
@@ -1192,6 +1193,23 @@ class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
                 obj.status = "overdue"
                 obj.save(update_fields=["status"])
         return obj
+
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        user = getattr(self.request, 'user', None)
+        is_staff_user = bool(user and user.is_authenticated and (user.is_staff or user.is_superuser))
+
+        # Web users can only edit while under review.
+        if not is_staff_user:
+            if instance.request != 'pending' or instance.status == 'overdue':
+                raise DRFValidationError({'detail': 'This appointment can only be edited while it is under review.'})
+
+        # Prevent clients from changing workflow/ownership fields via update
+        serializer.save(
+            owner=instance.owner,
+            request=instance.request,
+            status=instance.status,
+        )
 
 
 

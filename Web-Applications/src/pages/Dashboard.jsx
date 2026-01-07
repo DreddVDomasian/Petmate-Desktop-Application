@@ -43,14 +43,20 @@ function Dashboard(props) {
 
   // --- ADDED: Logic para lumipat from View to Edit ---
   const handleSwitchToEdit = (appointment) => {
+    const canEdit = appointment?.request === 'pending' && appointment?.status !== 'overdue';
+    if (!canEdit) {
+      alert('This appointment can only be edited while it is under review.');
+      return;
+    }
     setShowAppointmentModal(false); // Close View Modal
     setSelectedAppointment(appointment); // Ensure data is set
     setShowEditAppointmentModal(true);   // Open Edit Modal
   };
 
   // --- ADDED: Logic pag successful ang edit ---
-  const handleEditSuccess = () => {
+  const handleEditSuccess = (updatedAppointment) => {
     setShowEditAppointmentModal(false); // Close Edit Modal
+    if (updatedAppointment) setSelectedAppointment(updatedAppointment);
     fetchAppointments(); // Refresh appointment list
     triggerRefresh();    // Trigger global refresh
   };

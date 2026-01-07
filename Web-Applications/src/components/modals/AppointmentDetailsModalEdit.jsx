@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf';
-import { apiFetch } from '../../config/api';
+import { apiFetch, readJsonSafe } from '../../config/api';
 
 const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }) => {
 
@@ -219,7 +219,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
         }
       });
     }
-  }, [isOpen, loadingHours, officeHours]); // removed formData.preferredDate dependency to avoid reset loop
+  }, [isOpen, loadingHours, officeHours, appointment?.id]); // re-init when switching appointments
 
   // Update Available Times when Date Changes
   useEffect(() => {
@@ -246,6 +246,13 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
   const handleSave = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    const canEdit = appointment?.request === 'pending' && appointment?.status !== 'overdue';
+    if (!canEdit) {
+      alert('This appointment can only be edited while it is under review.');
+      setIsLoading(false);
+      return;
+    }
     
     // Basic validation
     if (!formData.pet || !formData.service || !formData.preferredDate || !formData.preferredTime) {
@@ -255,21 +262,79 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
     }
 
     try {
-      console.log("Saving...", formData);
-      // API call here...
-      
-      setTimeout(() => {
+      // Re-check slot availability before saving
+      const slotDetails = await checkTimeSlotAvailability(formData.preferredDate, formData.preferredTime);
+
+      if (!slotDetails.available) {
+        if (slotDetails.is_past) {
+          alert("This time slot has already passed. Please choose a future time.");
+        } else {
+          alert(slotDetails.message || "This time slot is no longer available. Please choose another time.");
+        }
         setIsLoading(false);
-        if (onSuccess) onSuccess(); 
-      }, 1000);
+        return;
+      }
+
+      const payload = {
+        pet_id: formData.pet,
+        service_type_id: formData.service,
+        date: formData.preferredDate,
+        prefTime: formData.preferredTime,
+      };
+
+      const res = await apiFetch(`/api/walkIn/${appointment.id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || '',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await readJsonSafe(res);
+
+      if (!res.ok) {
+        const msg = (data && (data.detail || data.error)) || 'Failed to update appointment.';
+        throw new Error(msg);
+      }
+
+      setIsLoading(false);
+      if (onSuccess) onSuccess(data);
+      onClose();
 
     } catch (error) {
       console.error("Error updating:", error);
+      alert(error.message || 'Error updating appointment. Please try again.');
       setIsLoading(false);
     }
   };
 
   if (!isOpen) return null;
+
+  const canEdit = appointment?.request === 'pending' && appointment?.status !== 'overdue';
+  if (!canEdit) {
+    return (
+      <div className="modal active" onClick={onClose} style={{ zIndex: 1050 }}>
+        <div className="new-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="new-modal-header">
+            <h3 className="modal-title">Edit Appointment</h3>
+            <button className="modal-close" onClick={onClose}>&times;</button>
+          </div>
+          <div className="modal-body">
+            <div style={{ padding: '10px 0' }}>
+              This appointment can only be edited while it is under review.
+            </div>
+          </div>
+          <div className="modal-actions close-appointment-details" style={{ gap: '15px' }}>
+            <button type="button" className="btn-btn" onClick={onClose} style={{ minWidth: '120px' }}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal active" onClick={onClose} style={{ zIndex: 1050 }}>

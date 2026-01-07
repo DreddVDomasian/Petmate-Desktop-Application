@@ -1,7 +1,5 @@
-import { getCookie } from '../../utils/csrf'
-
 // Added onEdit to the props
-const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUpdated, onEdit }) => {
+const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onEdit }) => {
   if (!isOpen || !appointment) return null;
 
   const formatDate = (dateString) => {
@@ -88,6 +86,8 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUp
     appointment.service_type_name||
     "General Consultation";
 
+  const canEdit = appointment.request === 'pending' && appointment.status !== 'overdue';
+
   return (
     <div className="modal active" onClick={onClose}>
       <div className="new-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -143,13 +143,15 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointment, onAppointmentUp
         </div>
 
         <div className="modal-actions close-appointment-details">
-          {/* Only show Edit if an onEdit function is provided */}
-          <button 
-            className="btn-edit "
-            onClick={() => onEdit && onEdit(appointment)}
-          >
-            Edit
-          </button>
+          {/* Only show Edit if appointment is under review */}
+          {canEdit && onEdit && (
+            <button
+              className="btn-edit"
+              onClick={() => onEdit(appointment)}
+            >
+              Edit
+            </button>
+          )}
           
           <button className="btn-btn" onClick={onClose}>Close</button>
         </div>
