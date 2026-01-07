@@ -95,7 +95,8 @@ class AddAppointmentCard(QWidget):
         self.main_window.appointmentBtn.clicked.connect(lambda: QTimer.singleShot(0, lambda: self.web_Appointment(1, "pending")))
         self.setup_search()
 
-        self.setup_time_combo_box()
+        # Load time slots asynchronously to avoid UI freezes
+        self.refresh_time_combo_box_async()
         # Connect date change signal to update time slots
         self.popUpDateEdit.dateChanged.connect(self.update_time_slots_availability)
         if parent:
@@ -337,7 +338,9 @@ class AddAppointmentCard(QWidget):
             if isinstance(slot_details_map, dict) and time_value in slot_details_map:
                 slot_details = slot_details_map.get(time_value) or {}
             else:
-                slot_details = self.get_time_slot_details(selected_date, time_value)
+                # Avoid synchronous API calls on the UI thread.
+                # If no details map is provided, default to "available".
+                slot_details = {'available': True, 'is_past': False, 'is_full': False}
             is_available = slot_details.get('available', True)
             is_past = slot_details.get('is_past', False)
             is_full = slot_details.get('is_full', False)
@@ -364,65 +367,107 @@ class AddAppointmentCard(QWidget):
                 break
 
     def refresh_time_combo_box_async(self):
-        """Refresh time slots without blocking the UI (batch fetch in a worker thread)."""
+        """Refresh time slots without blocking the UI (single bulk API call)."""
         try:
             selected_date = self.popUpDateEdit.date().toString("yyyy-MM-dd")
+            previous_data = self.timeComboBox.currentData()
 
-            # Generate the same time_value list we use in setup_time_combo_box
-            time_values: list[str] = []
-            start_hour = 9
-            start_minute = 30
-            end_hour = 17
-            end_minute = 30
-            current_hour = start_hour
-            current_minute = start_minute
-
-            while current_hour < end_hour or (current_hour == end_hour and current_minute <= end_minute):
-                time_values.append(f"{current_hour:02d}:{current_minute:02d}:00")
-                current_hour += 1
-                if current_hour > end_hour or (current_hour == end_hour and current_minute > end_minute):
-                    break
-
-            # Show loading overlay while fetching all slots
-            self._time_refresh_overlay = LoadingOverlay(self.main_window)
-            self._time_refresh_overlay.set_message(
-                "Updating time slots...",
-                "Checking availability"
-            )
-            self._time_refresh_overlay.show()
-
-            worker = _TimeSlotDetailsBatchWorker(API_BASE_URL, selected_date, time_values)
-
-            def _done(slot_map):
+            def _fallback_worker():
+                """Fallback: per-slot checks in a background thread (still non-blocking)."""
                 try:
-                    if hasattr(self, '_time_refresh_overlay') and self._time_refresh_overlay:
-                        self._time_refresh_overlay.close()
-                        self._time_refresh_overlay = None
-                    self.setup_time_combo_box(slot_details_map=slot_map)
+                    time_values: list[str] = []
+                    start_hour = 9
+                    start_minute = 30
+                    end_hour = 17
+                    end_minute = 30
+                    current_hour = start_hour
+                    current_minute = start_minute
+                    while current_hour < end_hour or (current_hour == end_hour and current_minute <= end_minute):
+                        time_values.append(f"{current_hour:02d}:{current_minute:02d}:00")
+                        current_hour += 1
+                        if current_hour > end_hour or (current_hour == end_hour and current_minute > end_minute):
+                            break
+
+                    worker = _TimeSlotDetailsBatchWorker(API_BASE_URL, selected_date, time_values)
+
+                    def _done(slot_map):
+                        try:
+                            self.setup_time_combo_box(slot_details_map=slot_map)
+                            if previous_data:
+                                index = self.timeComboBox.findData(previous_data)
+                                if index >= 0 and self.timeComboBox.model().item(index).isEnabled():
+                                    self.timeComboBox.setCurrentIndex(index)
+                        except Exception as e:
+                            print(f"Failed to apply time slot refresh fallback: {e}")
+
+                    def _err(msg):
+                        print(f"Time slot refresh fallback failed: {msg}")
+                        self.setup_time_combo_box(slot_details_map={})
+
+                    worker.finished.connect(_done)
+                    worker.error.connect(_err)
+                    self._time_refresh_worker = worker
+                    worker.start()
+                except Exception as e:
+                    print(f"Error starting time slot fallback refresh: {e}")
+                    self.setup_time_combo_box(slot_details_map={})
+
+            def _normalize_slot_map_keys(slot_map):
+                if not isinstance(slot_map, dict):
+                    return {}
+                normalized = {}
+                for k, v in slot_map.items():
+                    try:
+                        key = str(k)
+                        if len(key) == 5 and key.count(':') == 1:
+                            key = f"{key}:00"
+                        normalized[key] = v
+                    except Exception:
+                        continue
+                return normalized
+
+            def _done(payload):
+                try:
+                    if isinstance(payload, dict) and payload.get('error'):
+                        print(f"Time slot bulk endpoint returned error: {payload.get('error')}")
+
+                    slots = payload.get('slots', {}) if isinstance(payload, dict) else {}
+                    slots = _normalize_slot_map_keys(slots)
+
+                    # If bulk endpoint returns no slots, fall back to background per-slot checks
+                    if not slots:
+                        _fallback_worker()
+                        return
+
+                    self.setup_time_combo_box(slot_details_map=slots)
+
+                    # Best-effort restore previous selection if still enabled
+                    if previous_data:
+                        index = self.timeComboBox.findData(previous_data)
+                        if index >= 0 and self.timeComboBox.model().item(index).isEnabled():
+                            self.timeComboBox.setCurrentIndex(index)
                 except Exception as e:
                     print(f"Failed to apply time slot refresh: {e}")
+                    _fallback_worker()
 
             def _err(msg):
-                try:
-                    if hasattr(self, '_time_refresh_overlay') and self._time_refresh_overlay:
-                        self._time_refresh_overlay.close()
-                        self._time_refresh_overlay = None
-                except Exception:
-                    pass
                 print(f"Time slot refresh failed: {msg}")
-                # Fallback to old method (may block, but at least user can proceed)
-                QTimer.singleShot(0, self.setup_time_combo_box)
+                _fallback_worker()
 
-            worker.finished.connect(_done)
-            worker.error.connect(_err)
-
-            # Keep a reference so it doesn't get GC'd
-            self._time_refresh_worker = worker
-            worker.start()
-
+            self.api.get(
+                url="/api/check-time-slots/",
+                params={"date": selected_date},
+                on_success=_done,
+                on_error=_err,
+                timeout=15,
+                show_loading=True,
+                loading_widget=self.main_window,
+                loading_title="Updating time slots...",
+                loading_subtitle="Checking availability"
+            )
         except Exception as e:
             print(f"Error starting time slot refresh: {e}")
-            QTimer.singleShot(0, self.setup_time_combo_box)
+            self.setup_time_combo_box(slot_details_map={})
     def get_time_slot_details(self, date, time):
         """Get detailed information about time slot availability"""
         try:
@@ -444,16 +489,8 @@ class AddAppointmentCard(QWidget):
             return {'available': True, 'is_past': False, 'is_full': False}
     def update_time_slots_availability(self):
         """Update time slots availability when date changes"""
-        current_index = self.timeComboBox.currentIndex()
-        current_data = self.timeComboBox.currentData() if current_index >= 0 else None
-
-        self.setup_time_combo_box()
-
-        # Try to restore previous selection if still available
-        if current_data:
-            index = self.timeComboBox.findData(current_data)
-            if index >= 0 and self.timeComboBox.model().item(index).isEnabled():
-                self.timeComboBox.setCurrentIndex(index)
+        # Non-blocking refresh (restores selection internally)
+        self.refresh_time_combo_box_async()
     def setup_comboboxes(self):
         self.selectPetPopUp, self.selectPatientPopUp
         self.load_patients_to_combobox()
@@ -514,18 +551,6 @@ class AddAppointmentCard(QWidget):
             toast.show_toast()
             return
 
-        slot_details = self.get_time_slot_details(date, time)
-
-        if not slot_details.get('available', True):
-            if slot_details.get('is_past', False):
-                toast = Toast(self.main_window, "This time slot has already passed! Please choose a future time.",
-                              icon_path="Icons/warning.png")
-            else:
-                toast = Toast(self.main_window, "This time slot is already fully booked! Please choose another time.",
-                              icon_path="Icons/warning.png")
-            toast.show_toast()
-            return
-
         # build data - CHANGED: Use service_type_id instead of service_name
         appointment_data = {
             "owner_id": patient_id,
@@ -546,13 +571,44 @@ class AddAppointmentCard(QWidget):
         )
         self.appointment_loading_overlay.show()
 
-        # Use async helper for non-blocking POST request
-        self.api.post(
-            url="/api/walkIn/",
-            data=appointment_data,
-            on_success=self._on_appointment_added,
-            on_error=self._on_appointment_error
+        # Validate slot availability asynchronously (prevents UI freezes)
+        self.api.get(
+            url="/api/check-time-slot/",
+            params={"date": date, "time": time},
+            on_success=lambda slot_details: self._on_create_slot_checked(slot_details, appointment_data),
+            on_error=self._on_appointment_error,
+            timeout=15
         )
+
+    def _on_create_slot_checked(self, slot_details, appointment_data):
+        """Continue appointment creation after async slot availability check."""
+        try:
+            slot_details = slot_details if isinstance(slot_details, dict) else {}
+            if not slot_details.get('available', True):
+                try:
+                    if hasattr(self, 'appointment_loading_overlay') and self.appointment_loading_overlay:
+                        self.appointment_loading_overlay.close()
+                except Exception:
+                    pass
+
+                if slot_details.get('is_past', False):
+                    toast = Toast(self.main_window, "This time slot has already passed! Please choose a future time.",
+                                  icon_path="Icons/warning.png")
+                else:
+                    toast = Toast(self.main_window, "This time slot is already fully booked! Please choose another time.",
+                                  icon_path="Icons/warning.png")
+                toast.show_toast()
+                return
+
+            # Slot is OK -> create appointment
+            self.api.post(
+                url="/api/walkIn/",
+                data=appointment_data,
+                on_success=self._on_appointment_added,
+                on_error=self._on_appointment_error
+            )
+        except Exception as e:
+            self._on_appointment_error(str(e))
 
     def _on_appointment_added(self, response):
         """Callback when appointment is successfully added"""

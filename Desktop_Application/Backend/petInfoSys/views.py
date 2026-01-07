@@ -879,6 +879,89 @@ def check_time_slot_availability_api(request):
             'message': 'Available',
             'error': str(e)
         })
+
+
+@api_view(['GET'])
+def check_time_slots_availability_api(request):
+    """API endpoint to check ALL time slot availability for a date (single request).
+
+    Query params:
+        date=YYYY-MM-DD (required)
+        times=HH:MM:SS,HH:MM:SS,... (optional). If omitted, uses default clinic slots.
+
+    Returns:
+        {"date": "YYYY-MM-DD", "slots": {"09:30:00": {available,is_past,is_full,message}, ...}}
+    """
+    date_str = request.GET.get('date')
+    times_str = request.GET.get('times')
+
+    if not date_str:
+        return Response({'error': 'Date required'}, status=400)
+
+    try:
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+        # Default clinic slots: 9:30 AM to 5:30 PM (hourly)
+        if times_str:
+            times = [t.strip() for t in times_str.split(',') if t.strip()]
+        else:
+            times = [
+                '09:30:00', '10:30:00', '11:30:00', '12:30:00',
+                '13:30:00', '14:30:00', '15:30:00', '16:30:00', '17:30:00'
+            ]
+
+        # Count accepted (non-cancelled) appointments per prefTime for this date in ONE query
+        counts_qs = (
+            WalkInAppointment.objects
+            .filter(date=date_obj, request='accepted', prefTime__in=times)
+            .exclude(status='cancelled')
+            .values('prefTime')
+            .annotate(count=Count('id'))
+        )
+        counts = {row['prefTime']: row['count'] for row in counts_qs}
+
+        ph_tz = pytz.timezone('Asia/Manila')
+        now_ph = timezone.now().astimezone(ph_tz)
+
+        slots = {}
+        for t in times:
+            try:
+                time_obj = datetime.strptime(t, '%H:%M:%S').time()
+                appointment_dt = datetime.combine(date_obj, time_obj)
+                appointment_dt_ph = ph_tz.localize(appointment_dt)
+                is_past = appointment_dt_ph < now_ph
+
+                count = counts.get(t, 0)
+                is_full = count >= 4
+                available = (not is_past) and (not is_full)
+
+                if is_past:
+                    message = 'Time slot has passed'
+                elif is_full:
+                    message = 'Fully booked'
+                else:
+                    message = 'Available'
+
+                slots[t] = {
+                    'available': available,
+                    'is_past': is_past,
+                    'is_full': is_full,
+                    'message': message,
+                }
+            except Exception:
+                # Be permissive per slot to avoid breaking UI
+                slots[t] = {
+                    'available': True,
+                    'is_past': False,
+                    'is_full': False,
+                    'message': 'Available',
+                }
+
+        return Response({'date': date_str, 'slots': slots})
+
+    except Exception as e:
+        # Be permissive overall to avoid hard failures in UI
+        return Response({'date': date_str, 'slots': {}, 'error': str(e)})
 def check_time_slot_availability(date, time_str):
     """Check if a time slot has available capacity (max 4 appointments per slot) and is not in the past"""
     try:

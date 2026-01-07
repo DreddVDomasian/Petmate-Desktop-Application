@@ -25,6 +25,7 @@ urlpatterns = [
 
     path('patient-combobox-data/', views.patient_combobox_data, name='patient-combobox-data'),
     path('check-time-slot/', views.check_time_slot_availability_api, name='check-time-slot'),
+    path('check-time-slots/', views.check_time_slots_availability_api, name='check-time-slots'),
 
     path('walkIn/', WalkInListCreateView.as_view(), name='walk-in'),
     path('walkIn/<int:pk>/', WalkInRetrieveUpdateDestroyView.as_view(), name='walkIn-detail'),
