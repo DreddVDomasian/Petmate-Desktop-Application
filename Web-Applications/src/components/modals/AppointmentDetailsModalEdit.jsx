@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import { getCookie } from '../../utils/csrf';
-import { apiFetch, readJsonSafe } from '../../config/api';
+import { apiFetch, readJsonSafe, normalizeList } from '../../config/api';
 
 const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }) => {
 
@@ -151,13 +151,30 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
 
   // Fetch Pets
   useEffect(() => {
-    if (isOpen) {
-      apiFetch("/api/pets/")
-        .then(res => res.json())
-        .then(data => setPets(Array.isArray(data) ? data : []))
-        .catch(err => console.error(err))
-        .finally(() => setLoadingPets(false));
-    }
+    const fetchPets = async () => {
+      setLoadingPets(true);
+      try {
+        const res = await apiFetch("/api/pets/", {
+          headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
+        });
+
+        if (!res.ok) {
+          console.error("Failed to fetch pets", res.status);
+          setPets([]);
+          return;
+        }
+
+        const data = await readJsonSafe(res);
+        setPets(normalizeList(data));
+      } catch (err) {
+        console.error("Error fetching pets:", err);
+        setPets([]);
+      } finally {
+        setLoadingPets(false);
+      }
+    };
+
+    if (isOpen) fetchPets();
   }, [isOpen]);
 
   // Fetch Services
@@ -365,7 +382,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
                   >
                     <option value="">{loadingPets ? "Loading..." : "Select Pet"}</option>
                     {pets.map(pet => (
-                        <option key={pet.id} value={pet.id}>{pet.petName}</option>
+                        <option key={pet.id} value={pet.id}>{pet.petName || pet.pet_name || 'Unnamed Pet'}</option>
                     ))}
                   </select>
                 </div>
