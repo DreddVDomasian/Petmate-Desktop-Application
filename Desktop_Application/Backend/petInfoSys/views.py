@@ -1197,19 +1197,27 @@ class WalkInRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         instance = self.get_object()
         user = getattr(self.request, 'user', None)
-        is_staff_user = bool(user and user.is_authenticated and (user.is_staff or user.is_superuser))
+        is_authenticated = bool(user and getattr(user, 'is_authenticated', False))
+        is_staff_user = bool(is_authenticated and (user.is_staff or user.is_superuser))
+        # In this project, unauthenticated requests are used by the desktop system.
+        is_desktop_system = not is_authenticated
+        is_privileged = is_staff_user or is_desktop_system
 
-        # Web users can only edit while under review.
-        if not is_staff_user:
+        # Regular (authenticated) web users can only edit while under review.
+        if not is_privileged:
             if instance.request != 'pending' or instance.status == 'overdue':
                 raise DRFValidationError({'detail': 'This appointment can only be edited while it is under review.'})
 
-        # Prevent clients from changing workflow/ownership fields via update
-        serializer.save(
-            owner=instance.owner,
-            request=instance.request,
-            status=instance.status,
-        )
+        # Prevent clients from changing ownership via update.
+        # Also prevent regular web users from modifying workflow fields.
+        if is_privileged:
+            serializer.save(owner=instance.owner)
+        else:
+            serializer.save(
+                owner=instance.owner,
+                request=instance.request,
+                status=instance.status,
+            )
 
 
 
