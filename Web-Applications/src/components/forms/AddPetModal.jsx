@@ -1,26 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { getCookie } from '../../utils/csrf'; // Make sure this path is correct
+import { getCookie } from '../../utils/csrf';
 import { apiFetch } from '../../config/api';
 
 const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
-  // COPY STATE FROM OLD AddPets.jsx
+  
   const [form, setForm] = useState({
     name: "",
     color: "",
     breed: "",
     species: "",
     customSpecies: "",
-    birthday: "", // Stores "2025-10-09" for backend
-    age: "", // Calculated age OR manual age
+    birthday: "", 
+    age: "", 
     sex: "",
     remarks: "",
   });
 
   const birthdayRef = useRef(null);
 
-  // COPY calculateAge FUNCTION FROM OLD AddPets.jsx
+  
   const calculateAge = (birthday) => {
     const today = new Date();
     const birthDate = new Date(birthday);
@@ -42,11 +42,11 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
     }
   };
 
-  // COPY Flatpickr INITIALIZATION FROM OLD AddPets.jsx
+  
   useEffect(() => {
     if (isOpen) {
       flatpickr(birthdayRef.current, {
-        dateFormat: "M d, Y", // Display format like "Oct 9, 2025"
+        dateFormat: "M d, Y", 
         maxDate: "today",
         onChange: (selectedDates) => {
           if (selectedDates.length > 0) {
@@ -55,11 +55,11 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
 
             setForm((prev) => ({
               ...prev,
-              birthday: birthday.toLocaleDateString("en-CA"), // "2025-10-09" for database
-              age: calculatedAge, // Auto-fill calculated age
+              birthday: birthday.toLocaleDateString("en-CA"), 
+              age: calculatedAge, 
             }));
           } else {
-            // Clear when no date selected
+            
             setForm((prev) => ({
               ...prev,
               birthday: "",
@@ -70,13 +70,13 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
     }
   }, [isOpen]);
 
-  // COPY handleChange FROM OLD AddPets.jsx
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // COPY handleSubmit FROM OLD AddPets.jsx (with modal adjustments)
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -85,7 +85,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
       return;
     }
 
-    // ✅ Handle 'Others' species case
+    
     let speciesValue = form.species;
     if (speciesValue === "others") {
       if (!form.customSpecies.trim()) {
@@ -130,7 +130,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
 
       alert("Pet saved successfully");
 
-      // Reset form
+      
       setForm({
         name: "",
         color: "",
@@ -143,12 +143,12 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
         remarks: "",
       });
 
-      // Clear Flatpickr
+      
       if (birthdayRef.current && birthdayRef.current._flatpickr) {
         birthdayRef.current._flatpickr.clear();
       }
 
-      // Close modal and refresh if needed
+      
       onClose();
       if (onPetAdded) onPetAdded();
       
@@ -212,7 +212,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
               </div>
             </div>
 
-            {/* ADD CUSTOM SPECIES FIELD */}
+            {}
             {form.species === "others" && (
               <div className="new-form-group">
                 <label htmlFor="customSpecies">Specify Species</label>

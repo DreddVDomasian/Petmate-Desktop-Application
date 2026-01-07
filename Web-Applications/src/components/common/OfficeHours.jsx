@@ -9,7 +9,7 @@ const OfficeHours = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // 1. Initialize AOS and Fetch Data
+    
     useEffect(() => {
         fetchOfficeHours();
         
@@ -20,8 +20,8 @@ const OfficeHours = () => {
         });
     }, []);
 
-    // 2. Refresh AOS when loading finishes
-    // This ensures animations calculate correctly after data arrives from your API
+    
+    
     useEffect(() => {
         if (!isLoading) {
             AOS.refresh();
@@ -31,7 +31,7 @@ const OfficeHours = () => {
     const fetchOfficeHours = async () => {
         try {
             setIsLoading(true);
-            const response = await apiFetch('/api/office-hours/'); // Adjust URL based on your Django settings
+            const response = await apiFetch('/api/office-hours/'); 
             if (!response.ok) {
                 throw new Error('Failed to fetch office hours');
             }
@@ -50,7 +50,7 @@ const OfficeHours = () => {
         const groups = [];
         let currentGroup = null;
 
-        // Sort by status and times to group properly
+        
         const sortedHours = [...hours].sort((a, b) => {
             if (a.status !== b.status) {
                 return a.status.localeCompare(b.status);
@@ -72,12 +72,12 @@ const OfficeHours = () => {
             const hour = sortedHours[i];
             const dayName = getFullDayName(hour.day);
 
-            // If current group exists and this hour can join it
+            
             if (currentGroup && canJoinGroup(currentGroup, hour)) {
                 currentGroup.days.push(dayName);
                 currentGroup.endDayIndex = i;
             } else {
-                // Start a new group
+                
                 if (currentGroup) {
                     groups.push(formatGroup(currentGroup, sortedHours));
                 }
@@ -93,7 +93,7 @@ const OfficeHours = () => {
             }
         }
 
-        // Don't forget the last group
+        
         if (currentGroup) {
             groups.push(formatGroup(currentGroup, sortedHours));
         }
@@ -102,17 +102,17 @@ const OfficeHours = () => {
     };
 
     const canJoinGroup = (group, hour) => {
-        // Can only join if status and times match
+        
         if (group.status !== hour.status) return false;
         if (group.start_time !== hour.start_time) return false;
         if (group.end_time !== hour.end_time) return false;
 
-        // Check if days are consecutive in the original order
+        
         const originalOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         const groupLastDay = group.days[group.days.length - 1].toLowerCase();
         const newDay = getFullDayName(hour.day).toLowerCase();
 
-        // Allow grouping even if not strictly consecutive
+        
         return true; 
     };
 
@@ -126,14 +126,14 @@ const OfficeHours = () => {
             };
         }
 
-        // Try to create a compact range
+        
         const days = group.days;
         const originalOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-        // Sort days in original order
+        
         days.sort((a, b) => originalOrder.indexOf(a.toLowerCase()) - originalOrder.indexOf(b.toLowerCase()));
 
-        // Find consecutive ranges
+        
         const ranges = [];
         let startIndex = 0;
 
@@ -142,14 +142,14 @@ const OfficeHours = () => {
             const prevIndex = i > 0 ? originalOrder.indexOf(days[i - 1].toLowerCase()) : null;
 
             if (prevIndex !== null && currentIndex !== prevIndex + 1) {
-                // Not consecutive, end previous range
+                
                 ranges.push(days.slice(startIndex, i));
                 startIndex = i;
             }
         }
         ranges.push(days.slice(startIndex));
 
-        // Create labels for each range
+        
         const rangeLabels = ranges.map(range => {
             if (range.length === 1) return range[0];
             if (range.length === 2) return `${range[0]} & ${range[1]}`;
@@ -253,7 +253,7 @@ const OfficeHours = () => {
         );
     }
 
-    // Check if we have emergency services (sunday appointment only)
+    
     const hasEmergency = officeHours.some(hour =>
         hour.day === 'sunday' && hour.status === 'appointment_only'
     );
@@ -276,7 +276,7 @@ const OfficeHours = () => {
                                 <li 
                                     key={index}
                                     data-aos="fade-up"
-                                    data-aos-delay={index * 100} // This creates the staggered effect
+                                    data-aos-delay={index * 100} 
                                 >
                                     <span className="day">{group.label}</span>
                                     <span>{group.displayTime}</span>

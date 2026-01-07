@@ -27,7 +27,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
 
   const dateRef = useRef(null);
 
-  // NEW: Dynamic time slots generation
+  
   const generateTimeSlots = (startTime, endTime) => {
     if (!startTime || !endTime) return [];
 
@@ -35,16 +35,16 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     let current = parseTimeString(startTime);
     const end = parseTimeString(endTime);
 
-    // Ensure we have at least 30 minutes before closing
+    
     const maxEndTime = new Date(end.getTime() - 30 * 60000);
 
-    // Generate slots every 30 minutes
+    
     while (current <= maxEndTime) {
       const hours = current.getHours();
       const minutes = current.getMinutes();
       const timeValue = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
 
-      // Format for display
+      
       const ampm = hours >= 12 ? 'PM' : 'AM';
       const displayHours = hours % 12 || 12;
       const displayMinutes = minutes.toString().padStart(2, '0');
@@ -52,7 +52,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
 
       slots.push({ label, value: timeValue });
 
-      // Add 30 minutes
+      
       current = new Date(current.getTime() + 30 * 60000);
     }
 
@@ -67,7 +67,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     return date;
   };
 
-  // COPY fetchPets FROM OLD SetAppointment.jsx
+  
   useEffect(() => {
     const fetchPets = async () => {
       try {
@@ -101,29 +101,29 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setLoadingServices(true);
         setServicesError(null);
 
-        // Use relative path since your API is on the same domain
+        
         const res = await apiFetch("/api/service-types/?is_active=true&no_pagination=true", {
           headers: { "X-CSRFToken": getCookie("csrftoken") || "" },
         });
 
         if (res.ok) {
           const data = await res.json();
-          console.log("Services API response:", data); // Debug log
+          console.log("Services API response:", data); 
 
-          // Get the services array from results
+          
           const servicesData = Array.isArray(data) ? data : (data.results || []);
-          console.log("Parsed services:", servicesData); // Debug log
+          console.log("Parsed services:", servicesData); 
 
-          // Filter to only include active services
+          
           const activeServices = servicesData.filter(service =>
             service.is_active !== false && service.name
           );
 
-          console.log("Active services:", activeServices); // Debug log
+          console.log("Active services:", activeServices); 
 
           if (activeServices.length === 0) {
             setServicesError("No services available at the moment.");
-            // Still set empty array to show dropdown
+            
             setServices([]);
           } else {
             setServices(activeServices);
@@ -132,7 +132,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         } else {
           console.error("Failed to fetch services:", res.status);
           setServicesError("Failed to load services. Please try again.");
-          // Fallback to default services
+          
           setServices([
             { id: 1, name: "Vaccination" },
             { id: 2, name: "Grooming" },
@@ -145,7 +145,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
       } catch (error) {
         console.error("Error fetching services:", error);
         setServicesError("Network error. Please check your connection.");
-        // Fallback to default services
+        
         setServices([
           { id: 1, name: "Vaccination" },
           { id: 2, name: "Grooming" },
@@ -163,7 +163,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
       fetchServices();
     }
   }, [isOpen]);
-  // NEW: Fetch office hours
+  
   useEffect(() => {
     const fetchOfficeHours = async () => {
       try {
@@ -173,7 +173,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         });
         if (res.ok) {
           const data = await res.json();
-          // Convert array to object with day as key for easy lookup
+          
           const hoursObj = {};
           data.forEach(hour => {
             hoursObj[hour.day] = {
@@ -198,7 +198,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     }
   }, [isOpen]);
 
-  // COPY checkAllTimeSlots FROM OLD SetAppointment.jsx (UPDATED)
+  
   const checkAllTimeSlots = async (date, timeSlotsForDay) => {
     setCheckingAvailability(true);
 
@@ -219,7 +219,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
       setAvailableTimes(updatedSlots);
     } catch (error) {
       console.error("Error checking time slots:", error);
-      // If error, show all as available
+      
       setAvailableTimes(timeSlotsForDay.map(slot => ({
         ...slot,
         available: true,
@@ -232,7 +232,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     }
   };
 
-  // COPY checkTimeSlotAvailability FROM OLD SetAppointment.jsx
+  
   const checkTimeSlotAvailability = async (date, time) => {
     try {
       const response = await apiFetch(`/api/check-time-slot/?date=${date}&time=${time}`, {
@@ -264,15 +264,15 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     try {
       const date = new Date(dateString);
       const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-      const dayIndex = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      console.log("getDayName input:", dateString, "output:", days[dayIndex]); // Debug
+      const dayIndex = date.getDay(); 
+      console.log("getDayName input:", dateString, "output:", days[dayIndex]); 
       return days[dayIndex];
     } catch (error) {
       console.error("Error in getDayName:", error);
       return '';
     }
   };
-  // NEW: Get time slots for specific day
+  
   const getTimeSlotsForDay = (dateString) => {
     const dayName = getDayName(dateString);
     const dayHours = officeHours[dayName];
@@ -290,47 +290,47 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     return [];
   };
 
-  // COPY Flatpickr initialization FROM OLD SetAppointment.jsx (FIXED VERSION)
+  
   useEffect(() => {
     if (isOpen && dateRef.current && !loadingHours && Object.keys(officeHours).length > 0) {
-      console.log("Office hours loaded:", officeHours); // Debug log
+      console.log("Office hours loaded:", officeHours); 
 
-      // Enable/disable dates based on office hours
+      
       const enableDates = (date) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const selectedDate = new Date(date);
         selectedDate.setHours(0, 0, 0, 0);
 
-        console.log("Checking date:", date, "vs today:", today); // Debug
+        console.log("Checking date:", date, "vs today:", today); 
 
-        // Disable past dates
+        
         if (selectedDate < today) {
-          console.log("Disabling - date is in past"); // Debug
+          console.log("Disabling - date is in past"); 
           return false;
         }
 
-        // Get day name (lowercase)
+        
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
         const dayHours = officeHours[dayName];
 
-        console.log("Day name:", dayName, "Office hours:", dayHours); // Debug
+        console.log("Day name:", dayName, "Office hours:", dayHours); 
 
         if (!dayHours) {
-          console.log("No office hours data - enabling by default"); // Debug
-          return true; // If no data, allow by default
+          console.log("No office hours data - enabling by default"); 
+          return true; 
         }
 
-        // Check if day should be enabled
+        
         const isEnabled = dayHours.status === 'open' &&
           dayHours.start_time &&
           dayHours.end_time;
 
-        console.log("Day enabled status:", isEnabled); // Debug
+        console.log("Day enabled status:", isEnabled); 
         return isEnabled;
       };
 
-      // Destroy existing flatpickr instance if any
+      
       if (dateRef.current._flatpickr) {
         dateRef.current._flatpickr.destroy();
       }
@@ -341,7 +341,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         disable: [
           function (date) {
             const result = !enableDates(date);
-            console.log("Flatpickr disable check for", date, ":", result); // Debug
+            console.log("Flatpickr disable check for", date, ":", result); 
             return result;
           }
         ],
@@ -349,11 +349,11 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
           if (selectedDates.length > 0) {
             const date = selectedDates[0];
             const dateString = date.toLocaleDateString("en-CA");
-            console.log("Date selected:", dateString); // Debug
+            console.log("Date selected:", dateString); 
             setForm((prev) => ({
               ...prev,
               preferredDate: dateString,
-              preferredTime: "" // Reset time when date changes
+              preferredTime: "" 
             }));
           }
         },
@@ -361,7 +361,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     }
   }, [isOpen, officeHours, loadingHours]);
 
-  // Add cleanup on unmount
+  
   useEffect(() => {
     return () => {
       if (window.flatpickrInstances && window.flatpickrInstances.datePicker) {
@@ -371,13 +371,13 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     };
   }, []);
 
-  // COPY handleChange FROM OLD SetAppointment.jsx
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // COPY handleSubmit FROM OLD SetAppointment.jsx (with modal adjustments)
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -388,7 +388,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
       return;
     }
 
-    // NEW: Check if day is open before submitting
+    
     const dayName = getDayName(form.preferredDate);
     const dayHours = officeHours[dayName];
 
@@ -399,7 +399,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     }
 
     try {
-      // Double-check availability before submitting
+      
       const slotDetails = await checkTimeSlotAvailability(form.preferredDate, form.preferredTime);
 
       if (!slotDetails.available) {
@@ -411,10 +411,10 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         setSubmitting(false);
         return;
       }
-      const serviceTypeId = form.service; // Assuming this now stores ID
+      const serviceTypeId = form.service; 
       const appointmentData = {
         pet_id: parseInt(form.pet),
-        service_type_id: serviceTypeId,  // CHANGED: Send ID
+        service_type_id: serviceTypeId,  
         date: form.preferredDate,
         prefTime: form.preferredTime,
         request: "pending",
@@ -434,11 +434,11 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
         const newAppointment = await res.json();
         alert("Appointment set successfully! Waiting for admin approval.");
 
-        // Reset form
+        
         setForm({ pet: "", service: "", preferredDate: "", preferredTime: "" });
         setAvailableTimes([]);
 
-        // Close modal and callback
+        
         onClose();
         if (onAppointmentBooked) {
           onAppointmentBooked(newAppointment);
@@ -454,7 +454,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     }
   };
 
-  // COPY getTimeSlotStyle FROM OLD SetAppointment.jsx
+  
   const getTimeSlotStyle = (slot) => {
     if (slot.isPast) {
       return {
@@ -475,7 +475,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
     };
   };
 
-  // Check availability when date changes
+  
   useEffect(() => {
     if (form.preferredDate && !loadingHours) {
       const timeSlotsForDay = getTimeSlotsForDay(form.preferredDate);
@@ -535,7 +535,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
                   {loadingServices ? "Loading services..." : "Select Service"}
                 </option>
                 {services.map((service) => (
-                  <option key={service.id} value={service.id}>  {/* Store ID in value */}
+                  <option key={service.id} value={service.id}>  {}
                     {service.name}
                   </option>
                 ))}
@@ -590,7 +590,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
               </div>
             </div>
 
-            {/* NEW: Show day status message */}
+            {}
             {form.preferredDate && !loadingHours && (
               (() => {
                 const dayName = getDayName(form.preferredDate);

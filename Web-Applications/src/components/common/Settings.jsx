@@ -10,14 +10,14 @@ export default function Settings() {
   const [userEmail, setUserEmail] = useState("");
   const [userPhoneNumber, setUserPhoneNumber] = useState("");
 
-  // For password change
+  
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
-  const [passwordMessageType, setPasswordMessageType] = useState(""); // "success" or "error"
+  const [passwordMessageType, setPasswordMessageType] = useState("");
 
-  // helper for CSRF cookie
+  
   const getCookie = (name) => {
     const m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
     return m ? decodeURIComponent(m.pop()) : null;
@@ -26,7 +26,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        //  rely on cookies (withCredentials) and a simple GET
+        
         const res = await apiFetch(
           "/api/user/profile/"
         );
@@ -49,7 +49,6 @@ export default function Settings() {
         setUserEmail(email);
         setUserPhoneNumber(phone || "");
       } catch (err) {
-        // Keep this minimal — inspect console for details
         console.error("Failed to fetch profile:", err);
       }
     };
@@ -66,7 +65,7 @@ export default function Settings() {
     }
 
     try {
-      // only send CSRF header (no token header here)
+      
       const csrf = getCookie("csrftoken") || getCookie("csrf") || getCookie("XSRF-TOKEN");
       const headers = {};
       if (csrf) headers["X-CSRFToken"] = csrf;
