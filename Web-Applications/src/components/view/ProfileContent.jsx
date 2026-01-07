@@ -19,11 +19,6 @@ const ProfileContent = ({
       <div className="profile-content">
         <div className="profile-header">
           <h1 className="profile-title">My Profile</h1>
-          <div>
-            <button className="btn new-btn-primary" onClick={() => onOpenModal('addPet')}>
-              <i className="fas fa-plus"></i> Add New Pet
-            </button>
-          </div>
         </div>
 
         <div className="profile-tabs">

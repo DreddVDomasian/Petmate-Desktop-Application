@@ -361,13 +361,6 @@ const TabContent = ({
       <img src="/assets/icons/dog-walking.gif" alt="No pets" className="empty-icon" />
       <h3>No Pets Yet</h3>
       <p>Add your first pet to get started</p>
-      <button 
-        className="btn new-btn-primary" 
-        onClick={() => onOpenModal('addPet')}
-        style={{ marginTop: '15px' }}
-      >
-        <i className="fas fa-plus"></i> Add Your First Pet
-      </button>
     </div>
   )
 
@@ -401,7 +394,15 @@ const TabContent = ({
       {/* My Pets Tab */}
       <div className={`tab-content ${activeTab === 'pets' ? 'active' : ''}`} id="pets-tab">
         <div className="profile-card">
-          <h3><i className="fas fa-paw"></i> My Pets</h3>
+          <div className="profile-card-header">
+            <h3><i className="fas fa-paw"></i> My Pets</h3>
+            <button 
+              className="btn new-btn-primary" 
+              onClick={() => onOpenModal('addPet')}
+            >
+              <i className="fas fa-plus"></i> Add New Pet
+            </button>
+          </div>
           <p>Manage your pets' information and view their medical history.</p>
     
           <div style={{ height: '12px', marginBottom: '20px' }} />
