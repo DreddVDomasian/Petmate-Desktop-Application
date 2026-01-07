@@ -184,7 +184,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
             
             <div className="new-form-row">
               <div className="new-form-group">
-                <label htmlFor="species">Species</label>
+                <label htmlFor="species">Pet Type</label>
                 <select 
                   name="species"
                   className="form-control"
@@ -215,7 +215,7 @@ const AddPetModal = ({ isOpen, onClose, onPetAdded }) => {
             {}
             {form.species === "others" && (
               <div className="new-form-group">
-                <label htmlFor="customSpecies">Specify Species</label>
+                <label htmlFor="customSpecies">Specify Pet Type</label>
                 <input 
                   name="customSpecies"
                   type="text" 
