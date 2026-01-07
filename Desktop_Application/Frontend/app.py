@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidge
     QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect, QSizePolicy
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
-    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime
+    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime, QEvent
 from PyQt6.QtGui import QFontDatabase, QPixmap,QIntValidator, QRegularExpressionValidator
 from uiLogic import UIHandler
 from input_styles import *
@@ -3714,8 +3714,10 @@ class MainUI(QMainWindow):
             pie_layout.setSpacing(0)
 
             circle = QFrame()
-            circle.setFixedSize(220, 220)
-            circle.setStyleSheet("background-color: #e0e0e0; border-radius: 110px;")
+            # Responsive: keep reference and resize with the container.
+            container._pie_skeleton_circle = circle
+            container.installEventFilter(self)
+            self._resize_pie_skeleton_circle(container)
             pie_layout.addStretch()
             pie_layout.addWidget(circle)
             pie_layout.addStretch()
@@ -3744,6 +3746,39 @@ class MainUI(QMainWindow):
             skeleton_layout.addWidget(body, 1)
 
         layout.addWidget(skeleton)
+
+
+    def _resize_pie_skeleton_circle(self, container: QWidget):
+        """Resize the pie skeleton circle to track available chart area."""
+        circle = getattr(container, "_pie_skeleton_circle", None)
+        if circle is None:
+            return
+
+        try:
+            # Approximate available chart area after margins + title/legend.
+            # This keeps the skeleton from being larger than the real pie.
+            horizontal_padding = 18 * 2 + 40  # skeleton margins + extra breathing room
+            vertical_overhead = 18 * 2 + 26 + 12 + 18 + 40  # margins + title + spacing + legend + extra
+
+            available_w = max(0, container.width() - horizontal_padding)
+            available_h = max(0, container.height() - vertical_overhead)
+            base = min(available_w, available_h)
+
+            circle_d = int(base * 0.90)
+            circle_d = max(140, min(220, circle_d))
+
+            circle.setFixedSize(circle_d, circle_d)
+            circle.setStyleSheet(f"background-color: #e0e0e0; border-radius: {circle_d // 2}px;")
+        except RuntimeError:
+            # The widget may have been deleted when the real chart replaced it.
+            container._pie_skeleton_circle = None
+
+
+    def eventFilter(self, obj, event):
+        # Keep graph skeletons responsive (maximize/restore).
+        if event.type() == QEvent.Type.Resize and hasattr(obj, "_pie_skeleton_circle"):
+            self._resize_pie_skeleton_circle(obj)
+        return super().eventFilter(obj, event)
 
 
     def _show_graph_error(self, container: QWidget, message: str):
@@ -3859,6 +3894,12 @@ class MainUI(QMainWindow):
     
     def _populate_pie_graph(self, data):
         """Populate pie graph with loaded data"""
+        # Chart is about to replace the skeleton; clear any skeleton references.
+        try:
+            self.SpeciesPieGraph._pie_skeleton_circle = None
+        except Exception:
+            pass
+
         if not data:
             print("PIE GRAPH — No data found, using zero fallback")
             data = {"dogs": 0, "cats": 0, "others": 0}
