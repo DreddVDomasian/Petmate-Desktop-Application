@@ -666,8 +666,23 @@ def login_view(request):
     POST JSON { email, password } -> authenticate and set session cookie
     """
     try:
+        # DEBUG: log incoming request for troubleshooting iOS login issues
+        try:
+            raw_body = request.body.decode('utf-8')
+        except Exception:
+            raw_body = '<unable to decode body>'
+        print("=== DEBUG login_view incoming ===")
+        print("CONTENT_TYPE:", getattr(request, 'content_type', None))
+        print("META HEADERS (Select):", {k: request.META.get(k) for k in ('HTTP_USER_AGENT','HTTP_HOST','CONTENT_TYPE')})
+        print("RAW BODY:", raw_body)
+        # request.data may be populated by DRF; show it too
+        print("request.data:", getattr(request, 'data', None))
+        print("=== END DEBUG ===")
+
         data = request.data if hasattr(request, 'data') else request.POST
-        email = data.get('email')
+
+        # Accept multiple possible keys (some clients send 'username' instead of 'email')
+        email = data.get('email') or data.get('username') or data.get('user')
         password = data.get('password')
 
         if not email or not password:
@@ -686,6 +701,7 @@ def login_view(request):
         
         return Response({'ok': True, 'username': user.username, 'user_id': user.id})
     except Exception as e:
+        print("ERROR in login_view:", str(e))
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
