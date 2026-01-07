@@ -26,6 +26,35 @@ from config_loader import API_BASE_URL
 from async_helper import AsyncHelper
 import requests
 
+
+class _TimeSlotDetailsBatchWorker(QThread):
+    finished = pyqtSignal(dict)
+    error = pyqtSignal(str)
+
+    def __init__(self, base_url: str, date_str: str, time_values: list[str]):
+        super().__init__()
+        self.base_url = base_url
+        self.date_str = date_str
+        self.time_values = time_values
+
+    def run(self):
+        try:
+            results: dict[str, dict] = {}
+            url = f"{self.base_url}/api/check-time-slot/"
+            for t in self.time_values:
+                try:
+                    resp = requests.get(url, params={'date': self.date_str, 'time': t}, timeout=5)
+                    if resp.status_code == 200:
+                        results[t] = resp.json()
+                    else:
+                        results[t] = {'available': True, 'is_past': False, 'is_full': False}
+                except Exception:
+                    results[t] = {'available': True, 'is_past': False, 'is_full': False}
+
+            self.finished.emit(results)
+        except Exception as e:
+            self.error.emit(str(e))
+
 class AddAppointmentCard(QWidget):
     def __init__(self, parent=None, main_window=None):
         super().__init__(parent)
@@ -277,7 +306,7 @@ class AddAppointmentCard(QWidget):
     def on_date_field_clicked(self, dateEdit):
         if self.main_window:
             self.main_window.show_custom_calendar(dateEdit)
-    def setup_time_combo_box(self):
+    def setup_time_combo_box(self, slot_details_map=None):
         """Set up the time combo box with clinic hours and real-time availability"""
         self.timeComboBox.clear()
 
@@ -305,7 +334,10 @@ class AddAppointmentCard(QWidget):
             time_value = f"{current_hour:02d}:{current_minute:02d}:00"
 
             # Get detailed availability information
-            slot_details = self.get_time_slot_details(selected_date, time_value)
+            if isinstance(slot_details_map, dict) and time_value in slot_details_map:
+                slot_details = slot_details_map.get(time_value) or {}
+            else:
+                slot_details = self.get_time_slot_details(selected_date, time_value)
             is_available = slot_details.get('available', True)
             is_past = slot_details.get('is_past', False)
             is_full = slot_details.get('is_full', False)
@@ -330,6 +362,67 @@ class AddAppointmentCard(QWidget):
             # If we go past 5:30 PM, break
             if current_hour > end_hour or (current_hour == end_hour and current_minute > end_minute):
                 break
+
+    def refresh_time_combo_box_async(self):
+        """Refresh time slots without blocking the UI (batch fetch in a worker thread)."""
+        try:
+            selected_date = self.popUpDateEdit.date().toString("yyyy-MM-dd")
+
+            # Generate the same time_value list we use in setup_time_combo_box
+            time_values: list[str] = []
+            start_hour = 9
+            start_minute = 30
+            end_hour = 17
+            end_minute = 30
+            current_hour = start_hour
+            current_minute = start_minute
+
+            while current_hour < end_hour or (current_hour == end_hour and current_minute <= end_minute):
+                time_values.append(f"{current_hour:02d}:{current_minute:02d}:00")
+                current_hour += 1
+                if current_hour > end_hour or (current_hour == end_hour and current_minute > end_minute):
+                    break
+
+            # Show loading overlay while fetching all slots
+            self._time_refresh_overlay = LoadingOverlay(self.main_window)
+            self._time_refresh_overlay.set_message(
+                "Updating time slots...",
+                "Checking availability"
+            )
+            self._time_refresh_overlay.show()
+
+            worker = _TimeSlotDetailsBatchWorker(API_BASE_URL, selected_date, time_values)
+
+            def _done(slot_map):
+                try:
+                    if hasattr(self, '_time_refresh_overlay') and self._time_refresh_overlay:
+                        self._time_refresh_overlay.close()
+                        self._time_refresh_overlay = None
+                    self.setup_time_combo_box(slot_details_map=slot_map)
+                except Exception as e:
+                    print(f"Failed to apply time slot refresh: {e}")
+
+            def _err(msg):
+                try:
+                    if hasattr(self, '_time_refresh_overlay') and self._time_refresh_overlay:
+                        self._time_refresh_overlay.close()
+                        self._time_refresh_overlay = None
+                except Exception:
+                    pass
+                print(f"Time slot refresh failed: {msg}")
+                # Fallback to old method (may block, but at least user can proceed)
+                QTimer.singleShot(0, self.setup_time_combo_box)
+
+            worker.finished.connect(_done)
+            worker.error.connect(_err)
+
+            # Keep a reference so it doesn't get GC'd
+            self._time_refresh_worker = worker
+            worker.start()
+
+        except Exception as e:
+            print(f"Error starting time slot refresh: {e}")
+            QTimer.singleShot(0, self.setup_time_combo_box)
     def get_time_slot_details(self, date, time):
         """Get detailed information about time slot availability"""
         try:
@@ -704,43 +797,56 @@ class AddAppointmentCard(QWidget):
         self.main_window.confirmCard.show_card()
 
         def clicked_yes():
-            # First get the appointment details to know which time slot to free up
-            try:
-                appointment_url = f"{API_BASE_URL}/api/walkIn/{appointment_id}/"
-                appointment_response = requests.get(appointment_url)
+            # Non-blocking cancel with loading modal (prevents UI freeze)
+            self.main_window.confirmCard.hide()
 
-                if appointment_response.status_code == 200:
-                    appointment_data = appointment_response.json()
-                    # Store the date and time before cancelling
-                    date = appointment_data.get('date')
-                    time = appointment_data.get('prefTime')
+            def _on_details_loaded(appointment_data):
+                # We don't strictly need these fields to cancel, but keeping this mirrors old behavior.
+                try:
+                    _ = appointment_data.get('date') if isinstance(appointment_data, dict) else None
+                    _ = appointment_data.get('prefTime') if isinstance(appointment_data, dict) else None
+                except Exception:
+                    pass
 
-                    # Now cancel the appointment
-                    url = f"{API_BASE_URL}/api/walkIn/{appointment_id}/"
-                    response = requests.patch(url, json={"status": "cancelled", "request": "accepted"})
+                self.api.patch(
+                    url=f"/api/walkIn/{appointment_id}/",
+                    data={"status": "cancelled", "request": "accepted"},
+                    on_success=lambda _: _on_cancelled_saved(),
+                    on_error=lambda err: _on_cancel_failed(err),
+                    timeout=15,
+                    show_loading=True,
+                    loading_widget=self.main_window,
+                    loading_title="Cancelling appointment...",
+                    loading_subtitle="Saving changes"
+                )
 
-                    if response.status_code in [200, 202]:
-                        print("Appointment cancelled - time slot freed up")
-                        toast = Toast(self.main_window, "Appointment cancelled! Time slot is now available.",
-                                      icon_path="Icons/check.png")
-                        toast.show_toast()
-                        self.load_appointments(1, self.status_filter_global)
+            def _on_cancelled_saved():
+                toast = Toast(
+                    self.main_window,
+                    "Appointment cancelled! Time slot is now available.",
+                    icon_path="Icons/check.png"
+                )
+                toast.show_toast()
+                self.load_appointments(1, self.status_filter_global)
+                if hasattr(self, 'refresh_time_combo_box_async'):
+                    self.refresh_time_combo_box_async()
 
-                        # Refresh time slot availability if the add appointment card is open
-                        if hasattr(self, 'setup_time_combo_box'):
-                            self.setup_time_combo_box()
-                    else:
-                        print("Failed:", response.text)
-                        toast = Toast(self.main_window, "Failed to cancel appointment!", icon_path="Icons/warning.png")
-                        toast.show_toast()
-                else:
-                    print("Failed to fetch appointment details")
-            except Exception as e:
-                print(f"Error cancelling appointment: {e}")
-                toast = Toast(self.main_window, "Error cancelling appointment!", icon_path="Icons/warning.png")
+            def _on_cancel_failed(err):
+                print(f"Failed to cancel appointment: {err}")
+                toast = Toast(self.main_window, "Failed to cancel appointment!", icon_path="Icons/warning.png")
                 toast.show_toast()
 
-            self.main_window.confirmCard.hide()
+            # Fetch details first (non-blocking) then cancel
+            self.api.get(
+                url=f"/api/walkIn/{appointment_id}/",
+                on_success=_on_details_loaded,
+                on_error=lambda err: _on_cancel_failed(err),
+                timeout=10,
+                show_loading=True,
+                loading_widget=self.main_window,
+                loading_title="Cancelling appointment...",
+                loading_subtitle="Loading appointment"
+            )
 
         def clicked_no():
             self.main_window.confirmCard.hide()
@@ -1360,6 +1466,10 @@ class AddAppointmentCard(QWidget):
         toast = Toast(self.main_window, "Appointment accepted successfully!", icon_path="Icons/check.png")
         toast.show_toast()
 
+        # Refresh time slot availability (non-blocking)
+        if hasattr(self, 'refresh_time_combo_box_async'):
+            self.refresh_time_combo_box_async()
+
         self._set_review_action_busy(False)
 
     def _maybe_set_desktop_record_show(self, owner_id, owner_data):
@@ -1405,8 +1515,8 @@ class AddAppointmentCard(QWidget):
         self.web_Appointment(1, "declined")
 
         # Refresh time slot availability
-        if hasattr(self, 'setup_time_combo_box'):
-            self.setup_time_combo_box()
+        if hasattr(self, 'refresh_time_combo_box_async'):
+            self.refresh_time_combo_box_async()
 
         toast = Toast(self.main_window, "Appointment declined! Time slot is now available.",
                       icon_path="Icons/check.png")
