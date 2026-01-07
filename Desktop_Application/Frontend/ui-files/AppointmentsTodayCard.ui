@@ -48,13 +48,13 @@
      </property>
      <property name="styleSheet">
       <string notr="true">#homeAppointments{
-	background-color:#fcfcfc;
+	background-color:rgb(231, 231, 231);
 	border-radius : 5px;
 	border-bottom: #272727;
 	border-right: #272727;
 }
 #homeAppointments:hover{
-	background-color: #81BFDA;
+	background-color:#FBD496;
 }</string>
      </property>
      <property name="frameShape">

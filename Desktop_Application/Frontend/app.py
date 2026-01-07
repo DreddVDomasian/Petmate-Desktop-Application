@@ -626,6 +626,8 @@ class MainUI(QMainWindow):
         self.changePassFrame.setGraphicsEffect(create_card_shadow())
         self.profileInfoFrame.setGraphicsEffect(create_card_shadow())
 
+        self.appointmentTodayBar.setGraphicsEffect(create_card_shadow())
+
     #FORM INPUT CHECKER
     def setup_phone_validator(self):
         # Allow common PH formats while typing:
@@ -3675,6 +3677,90 @@ class MainUI(QMainWindow):
         self.appointments_today()
 
 
+    def _ensure_container_layout(self, container: QWidget) -> QVBoxLayout:
+        layout = container.layout()
+        if layout is None:
+            layout = QVBoxLayout(container)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(0)
+        return layout
+
+
+    def _show_graph_skeleton(self, container: QWidget, kind: str = "generic"):
+        """Show a lightweight skeleton placeholder inside a graph container."""
+        layout = self._ensure_container_layout(container)
+        self.clear_layout(layout)
+
+        skeleton = QWidget(container)
+        skeleton_layout = QVBoxLayout(skeleton)
+        skeleton_layout.setContentsMargins(18, 18, 18, 18)
+        skeleton_layout.setSpacing(12)
+
+        title = QFrame()
+        title.setFixedHeight(26)
+        title.setStyleSheet("background-color: #e0e0e0; border-radius: 6px;")
+
+        legend = QFrame()
+        legend.setFixedHeight(18)
+        legend.setStyleSheet("background-color: #f0f0f0; border-radius: 6px;")
+
+        skeleton_layout.addWidget(title)
+        skeleton_layout.addWidget(legend)
+
+        if kind == "pie":
+            pie_holder = QWidget()
+            pie_layout = QHBoxLayout(pie_holder)
+            pie_layout.setContentsMargins(0, 0, 0, 0)
+            pie_layout.setSpacing(0)
+
+            circle = QFrame()
+            circle.setFixedSize(220, 220)
+            circle.setStyleSheet("background-color: #e0e0e0; border-radius: 110px;")
+            pie_layout.addStretch()
+            pie_layout.addWidget(circle)
+            pie_layout.addStretch()
+            skeleton_layout.addWidget(pie_holder, 1)
+        elif kind == "bar":
+            bars_holder = QWidget()
+            bars_layout = QHBoxLayout(bars_holder)
+            bars_layout.setContentsMargins(0, 0, 0, 0)
+            bars_layout.setSpacing(10)
+
+            # Simple bar placeholders
+            for h in (140, 200, 110, 170, 90):
+                bar = QFrame()
+                bar.setFixedWidth(28)
+                bar.setFixedHeight(h)
+                bar.setStyleSheet("background-color: #e0e0e0; border-radius: 6px;")
+                bars_layout.addWidget(bar, 0, Qt.AlignmentFlag.AlignBottom)
+
+            skeleton_layout.addStretch()
+            skeleton_layout.addWidget(bars_holder, 0, Qt.AlignmentFlag.AlignHCenter)
+            skeleton_layout.addStretch()
+        else:
+            body = QFrame()
+            body.setMinimumHeight(220)
+            body.setStyleSheet("background-color: #e0e0e0; border-radius: 10px;")
+            skeleton_layout.addWidget(body, 1)
+
+        layout.addWidget(skeleton)
+
+
+    def _show_graph_error(self, container: QWidget, message: str):
+        layout = self._ensure_container_layout(container)
+        self.clear_layout(layout)
+
+        label = QLabel(message)
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.setStyleSheet("""
+            font: 81 14pt 'Montserrat ExtraBold';
+            color: rgb(168,168,168);
+            padding: 40px;
+            background: transparent;
+        """)
+        layout.addWidget(label)
+
+
     def clear_layout(self, layout):
         if layout is None:
             return
@@ -3688,10 +3774,11 @@ class MainUI(QMainWindow):
 
     def setup_bar_graph(self):
         """Load bar graph data asynchronously"""
+        self._show_graph_skeleton(self.ServiceBarGraph, kind="bar")
         self.api.get(
             '/api/serviceCounts/',
             on_success=self._populate_bar_graph,
-            on_error=lambda e: print("BAR GRAPH ERROR —", e),
+            on_error=lambda e: self._show_graph_error(self.ServiceBarGraph, "Failed to load service chart"),
             use_cache=True,
             cache_ttl=300
         )
@@ -3761,6 +3848,7 @@ class MainUI(QMainWindow):
 
     def setup_pie_graph(self):
         """Load pie graph data asynchronously"""
+        self._show_graph_skeleton(self.SpeciesPieGraph, kind="pie")
         self.api.get(
             '/api/speciesCounts/',
             on_success=self._populate_pie_graph,
