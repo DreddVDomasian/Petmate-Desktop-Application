@@ -554,9 +554,27 @@ def check_duplicate_patient(request):
 # -------------------- Auth endpoints (JSON + session) --------------------
 @api_view(["GET"])
 def csrf_token(request):
-    """Return a CSRF token for the frontend to use in subsequent POSTs."""
+    """
+    Return a CSRF token for the frontend to use in subsequent POSTs.
+    iOS Safari compatibility: explicitly set cookie attributes
+    """
     token = get_token(request)
-    return Response({"csrfToken": token})
+    response = Response({"csrfToken": token})
+    
+    # iOS Safari fix: Explicitly set CSRF cookie with all attributes
+    # This ensures iOS Safari accepts the cookie in cross-origin context
+    if not settings.DEBUG:
+        response.set_cookie(
+            key=settings.CSRF_COOKIE_NAME,
+            value=token,
+            max_age=31449600,  # 1 year
+            secure=settings.CSRF_COOKIE_SECURE,
+            httponly=settings.CSRF_COOKIE_HTTPONLY,
+            samesite=settings.CSRF_COOKIE_SAMESITE,
+            domain=settings.CSRF_COOKIE_DOMAIN,
+        )
+    
+    return response
 
 
 @csrf_exempt
@@ -667,6 +685,7 @@ def register_view(request):
 def login_view(request):
     """
     POST JSON { email, password } -> authenticate and set session cookie
+    iOS Safari compatibility: explicitly set cookie attributes
     """
     # Parse safely (avoid crashing on bad JSON)
     try:
@@ -693,9 +712,30 @@ def login_view(request):
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
     django_login(auth_request, user)
+    
+    # Force session save with explicit cookie attributes for iOS Safari
+    auth_request.session.modified = True
     auth_request.session.save()
-
-    return Response({"ok": True, "username": user.username, "user_id": user.id}, status=200)
+    
+    # Create response
+    response = Response({"ok": True, "username": user.username, "user_id": user.id}, status=200)
+    
+    # iOS Safari fix: Explicitly set session cookie with all attributes
+    # This ensures iOS Safari accepts the cookie in cross-origin context
+    if not settings.DEBUG:
+        session_key = auth_request.session.session_key
+        if session_key:
+            response.set_cookie(
+                key=settings.SESSION_COOKIE_NAME,
+                value=session_key,
+                max_age=settings.SESSION_COOKIE_AGE,
+                secure=settings.SESSION_COOKIE_SECURE,
+                httponly=settings.SESSION_COOKIE_HTTPONLY,
+                samesite=settings.SESSION_COOKIE_SAMESITE,
+                domain=settings.SESSION_COOKIE_DOMAIN,
+            )
+    
+    return response
 @csrf_exempt
 @api_view(["POST"])
 def logout_view(request):

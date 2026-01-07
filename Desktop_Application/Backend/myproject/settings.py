@@ -36,6 +36,9 @@ ALLOWED_HOSTS = [
     ".railway.app",  # For Railway deployment
     os.getenv('RAILWAY_PUBLIC_DOMAIN', ''),  # Railway auto domain
     "petmate-desktop-application.vercel.app",  # Frontend deployed URL (no scheme/ slash)
+    "api.petmateanimalclinic.com",  # Custom backend domain
+    "www.petmateanimalclinic.com",  # Custom frontend domain
+    "petmateanimalclinic.com",  # Root domain
 ]
 # Remove empty strings from ALLOWED_HOSTS
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
@@ -305,13 +308,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000",
     "http://localhost:63342",
-    "http://localhost:5173",  # Add this
-    "http://localhost:5174",  # Add this
+    "http://localhost:5173",  # Vite dev server
+    "http://localhost:5174",  # Vite dev server alternate
     "http://localhost",
     "file://",
-    "https://web-production-f564f.up.railway.app",
-    "https://petmate-desktop-application.vercel.app",
-    "https://www.petmateanimalclinic.com/"
+    "https://web-production-f564f.up.railway.app",  # Railway default domain
+    "https://petmate-desktop-application.vercel.app",  # Vercel default domain
+    "https://www.petmateanimalclinic.com",  # Custom frontend domain (no trailing slash)
+    "https://petmateanimalclinic.com",  # Custom frontend domain without www
 ]
 
 # Allow credentials so cookies (session, csrf) are accepted from the frontend dev origin
@@ -332,7 +336,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://web-production-f564f.up.railway.app",
     "https://petmate-management.vercel.app",
     "https://petmate-desktop-application.vercel.app",
-    "https://www.petmateanimalclinic.com/"
+    "https://www.petmateanimalclinic.com",  # Custom frontend domain
+    "https://petmateanimalclinic.com",  # Custom frontend domain without www
+    "https://api.petmateanimalclinic.com",  # Custom backend domain
 ]
 
 # Add your deployed frontend URL here after deployment
@@ -361,17 +367,28 @@ CORS_ALLOW_HEADERS = [
     'cache-control',  # allow fetch/axios default cache header
 ]
 
+# iOS Safari compatibility: Allow browser to see Set-Cookie headers
+CORS_EXPOSE_HEADERS = [
+    'set-cookie',
+]
+
 SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
 # Ensure cookies work cross-site from Vercel to Railway over HTTPS
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SAMESITE = 'None'
+# iOS Safari compatibility: Use environment-based settings
+SESSION_COOKIE_SECURE = not DEBUG  # True in production (HTTPS required), False in dev
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'  # None for cross-origin in production
+CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = False  # Frontend needs to read this for X-CSRFToken
+CSRF_COOKIE_HTTPONLY = False  # Frontend needs to read csrftoken
+
+# Partitioned cookies for iOS Safari (Chrome also supports this)
+# This helps with iOS Safari's ITP (Intelligent Tracking Prevention)
+SESSION_COOKIE_NAME = 'sessionid'
+CSRF_COOKIE_NAME = 'csrftoken'
 
 # Don't set domain so cookie works for the backend domain
 # SESSION_COOKIE_DOMAIN = None  # Let Django use the request domain
