@@ -1000,6 +1000,24 @@ header {
     background: #fff;
 }
 
+/* Password inputs use .password-input-wrapper for the border/focus ring.
+   Avoid drawing a second (inner) border on the actual <input>. */
+.form-group .password-input-wrapper input,
+.forgot-container .password-input-wrapper input {
+    border: none;
+    box-shadow: none;
+    transform: none;
+    padding-right: 40px;
+}
+
+.form-group .password-input-wrapper input:focus,
+.forgot-container .password-input-wrapper input:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
 .form-group input:focus, .form-group textarea:focus {
     outline: none;
     border-color: #ff8c00;
