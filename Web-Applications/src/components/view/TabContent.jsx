@@ -3,9 +3,6 @@ import PetCard from './PetCard'
 import AppointmentCard from './AppointmentCard'
 import { apiFetch } from '../../config/api'
 import { getCookie } from '../../utils/csrf'
-import provinces from '../../data/provinces.json'
-import cities from '../../data/cities.json'
-import barangays from '../../data/barangays.json'
 
 const TabContent = ({ 
   activeTab,
@@ -110,33 +107,48 @@ const TabContent = ({
 
   // Load address data
   useEffect(() => {
-    console.log('Setting provinces from imported data:', provinces);
-    console.log('Setting cities from imported data:', cities);
-    console.log('Setting barangays from imported data:', barangays);
-    setProvinces(provinces || []);
-    setCities(cities || []);
-    setBarangays(barangays || []);
+    const loadAddressData = async () => {
+      try {
+        const provincesModule = await import('../../data/provinces.json');
+        const citiesModule = await import('../../data/cities.json');
+        const barangaysModule = await import('../../data/barangays.json');
+        
+        const provincesData = provincesModule.default || provincesModule;
+        const citiesData = citiesModule.default || citiesModule;
+        const barangaysData = barangaysModule.default || barangaysModule;
+        
+        console.log('Loaded provinces:', provincesData);
+        console.log('Loaded cities:', citiesData);
+        console.log('Loaded barangays:', barangaysData);
+        
+        setProvinces(provincesData || []);
+        setCities(citiesData || []);
+        setBarangays(barangaysData || []);
+        
+      } catch (error) {
+        console.error('Error loading address data:', error);
+        setProvinces([]);
+        setCities([]);
+        setBarangays([]);
+      }
+    };
+
+    loadAddressData();
   }, []);
 
   // Find the correct province code based on the stored province name
-  // Use imported data directly since it's static
   const findProvinceCode = (provinceName) => {
-    console.log('Looking for province:', provinceName, 'in', provinces);
     const prov = provinces.find(p => 
       p.name.toUpperCase() === provinceName.toUpperCase()
     );
-    console.log('Found province:', prov);
     return prov ? prov.prov_code : "";
   };
 
   // Find the correct city code based on the stored city name
-  // Use imported data directly since it's static
   const findCityCode = (cityName) => {
-    console.log('Looking for city:', cityName, 'in', cities);
     const city = cities.find(c => 
       c.name.toUpperCase() === cityName.toUpperCase()
     );
-    console.log('Found city:', city);
     return city ? city.mun_code : "";
   };
   
