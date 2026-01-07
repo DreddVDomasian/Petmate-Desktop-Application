@@ -50,8 +50,8 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
       // iOS Safari workaround: Wait a moment for cookies to be stored
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Verify we're authenticated by checking /api/current-user/
-      const userRes = await apiFetch("/api/current-user/", {
+      // Verify we're authenticated by checking /api/user/
+      const userRes = await apiFetch("/api/user/", {
         method: "GET",
         credentials: "include",
       });
