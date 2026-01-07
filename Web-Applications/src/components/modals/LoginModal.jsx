@@ -14,8 +14,11 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+
+    // IMPORTANT: currentTarget is the <form> for onSubmit (Safari-safe)
+    const form = new FormData(e.currentTarget);
+    const email = String(form.get("email") || "").trim().toLowerCase();
+    const password = String(form.get("password") || ""); // don't trim passwords
 
     if (!email || !password) {
       alert("Please fill in all fields");
@@ -26,7 +29,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
     try {
       const res = await apiFetch("/api/login/", {
         method: "POST",
-        credentials: 'include', 
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken") || "",
@@ -66,7 +69,18 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
               <form id="loginForm" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="loginEmail">Email</label>
-                  <input type="email" id="loginEmail" name="email" required disabled={loading} />
+                  <input
+                    type="email"
+                    id="loginEmail"
+                    name="email"
+                    required
+                    disabled={loading}
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    inputMode="email"
+                    autoComplete="email"
+                  />
                 </div>
 
                 <div className="form-group">
@@ -78,6 +92,10 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
                       name="password"
                       required
                       disabled={loading}
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      autoComplete="current-password"
                     />
                     <img
                       src={showPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
@@ -118,10 +136,7 @@ function LoginModal({ onClose, onOpenSignup, visible }) {
       )}
 
       {showForgot && (
-        <ForgotPasswordModal
-          onClose={onClose}
-          onBack={() => setShowForgot(false)}
-        />
+        <ForgotPasswordModal onClose={onClose} onBack={() => setShowForgot(false)} />
       )}
     </>
   );
