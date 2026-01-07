@@ -3,6 +3,9 @@ import PetCard from './PetCard'
 import AppointmentCard from './AppointmentCard'
 import { apiFetch } from '../../config/api'
 import { getCookie } from '../../utils/csrf'
+import provinces from '../../data/provinces.json'
+import cities from '../../data/cities.json'
+import barangays from '../../data/barangays.json'
 
 const TabContent = ({ 
   activeTab,
@@ -107,29 +110,9 @@ const TabContent = ({
 
   // Load address data
   useEffect(() => {
-    const loadAddressData = async () => {
-      try {
-        const provincesModule = await import('../../data/provinces.json');
-        const citiesModule = await import('../../data/cities.json');
-        const barangaysModule = await import('../../data/barangays.json');
-        
-        const provincesData = provincesModule.default || provincesModule;
-        const citiesData = citiesModule.default || citiesModule;
-        const barangaysData = barangaysModule.default || barangaysModule;
-        
-        setProvinces(provincesData || []);
-        setCities(citiesData || []);
-        setBarangays(barangaysData || []);
-        
-      } catch (error) {
-        console.error('Error loading address data:', error);
-        setProvinces([]);
-        setCities([]);
-        setBarangays([]);
-      }
-    };
-
-    loadAddressData();
+    setProvinces(provinces || []);
+    setCities(cities || []);
+    setBarangays(barangays || []);
   }, []);
 
   // NEW: Find the correct province code based on the stored province name
