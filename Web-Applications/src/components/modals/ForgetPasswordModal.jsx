@@ -6,6 +6,8 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // 'success' or 'error'
@@ -151,29 +153,45 @@ export default function ForgotPasswordModal({ onClose, onBack }) {
 
                 <div className="form-group">
                   <label>New Password</label>
-                  <input 
-                    type="password"
-                    placeholder="Enter new password"
-                    value={newPassword}
-                    onChange={(e) => {
-                      setNewPassword(e.target.value);
-                      validatePassword(e.target.value);
-                    }}
-                    required
-                  />
+                  <div className="password-input-wrapper">
+                    <input 
+                      type={showNewPassword ? "text" : "password"}
+                      placeholder="Enter new password"
+                      value={newPassword}
+                      onChange={(e) => {
+                        setNewPassword(e.target.value);
+                        validatePassword(e.target.value);
+                      }}
+                      required
+                    />
+                    <img
+                      src={showNewPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                      alt={showNewPassword ? "Hide Password" : "Show Password"}
+                      className="toggle-password-icon"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                    />
+                  </div>
                 </div>
 
 
 
                 <div className="form-group">
                   <label>Confirm New Password</label>
-                  <input 
-                    type="password"
-                    placeholder="Confirm new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
+                  <div className="password-input-wrapper">
+                    <input 
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm new password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                    <img
+                      src={showConfirmPassword ? "/assets/icons/hide.png" : "/assets/icons/eye.png"}
+                      alt={showConfirmPassword ? "Hide Password" : "Show Password"}
+                      className="toggle-password-icon"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    />
+                  </div>
                 </div>
 
                 {/* Password checklist UI */}
