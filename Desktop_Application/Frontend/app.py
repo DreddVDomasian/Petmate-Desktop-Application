@@ -12,7 +12,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidget, QComboBox, QButtonGroup, QMessageBox, \
-    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect, QSizePolicy
+    QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect, QSizePolicy, QFileDialog
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
     QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime, QEvent
@@ -21,7 +21,7 @@ from uiLogic import UIHandler
 from input_styles import *
 from toast import Toast
 import resources_rc
-from Desktop_Application.Frontend.api_client import add_new_patient, add_new_pet, add_new_service, desktop_login
+from Desktop_Application.Frontend.api_client import add_new_patient, add_new_pet, add_new_service, desktop_login, update_site_about
 from confirm_card import ConfirmCard
 from ReminderPopUp import ReminderPopup
 from appointmentPopUp import AddAppointmentCard
@@ -39,6 +39,7 @@ from ui_utils import setup_password_toggle
 import requests
 import webbrowser
 import json
+import threading
 
 from PyQt6.QtGui import QColor, QPainter, QFont, QBrush
 from PyQt6.QtWidgets import QVBoxLayout
@@ -90,6 +91,7 @@ class MainUI(QMainWindow):
         self.setup_add_appintmentPopUp()
         self.setup_add_service()
         self.setup_pet_buttons()
+        self.setup_about_us_editor()
 
         _sp(86, "Opening PetMate...", "Loading user settings")
 
@@ -138,6 +140,7 @@ class MainUI(QMainWindow):
         # Search state
         self.current_search_term = ""
         self.is_searching = False
+
         self.setup_scheduled_search()
 
         #Pet species comboBox
@@ -181,7 +184,6 @@ class MainUI(QMainWindow):
         QTimer.singleShot(0, lambda: self.setup_bar_graph())
         QTimer.singleShot(0, lambda: self.setup_pie_graph())
 
-
         self.homeBtn.clicked.connect(self.refresh_analytics)
         self.homeBtn_2.clicked.connect(self.refresh_analytics)
 
@@ -190,7 +192,169 @@ class MainUI(QMainWindow):
 
         _sp(97, "Opening PetMate...", "Almost ready")
 
-        #LAYOUT FOR SCROLL AREAS FOR CARDS
+    # -------------------- ABOUT US EDITOR (Home.ui) --------------------
+    def setup_about_us_editor(self):
+        """Wire About section controls on the Home screen.
+
+        Uses:
+          - titleTextEdit (headline)
+          - descriptionTextEdit (body)
+          - imageLabel (preview)
+          - chooseImage (pick file)
+          - saveChanges (POST update)
+        """
+        self._about_selected_image_path: str | None = None
+        self._about_current_image_url: str | None = None
+
+        if hasattr(self, 'imageLabel'):
+            self.imageLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        if hasattr(self, 'chooseImage'):
+            self.chooseImage.clicked.connect(self.on_choose_about_image)
+
+        if hasattr(self, 'saveChanges'):
+            self.saveChanges.clicked.connect(self.on_save_about_changes)
+
+        # Load existing about content from backend (non-blocking)
+        try:
+            self.api.get(
+                '/api/about/',
+                on_success=self._on_about_loaded,
+                on_error=lambda err: Toast(self, "Failed to load About content", icon_path="Icons/warning.png").show_toast(),
+                use_cache=False,
+                timeout=15,
+            )
+        except Exception:
+            # If async helper isn't ready for any reason, silently keep defaults
+            pass
+
+    def _on_about_loaded(self, data):
+        try:
+            title = (data or {}).get('title') or ''
+            body = (data or {}).get('body') or ''
+            image_url = (data or {}).get('image_url')
+
+            if hasattr(self, 'titleTextEdit'):
+                self.titleTextEdit.setPlainText(title)
+            if hasattr(self, 'descriptionTextEdit'):
+                self.descriptionTextEdit.setPlainText(body)
+
+            self._about_current_image_url = image_url
+            if image_url:
+                self._load_about_image_from_url(image_url)
+            else:
+                if hasattr(self, 'imageLabel'):
+                    self.imageLabel.setText('No Image')
+                    self.imageLabel.setPixmap(QPixmap())
+        except Exception:
+            Toast(self, "Failed to render About content", icon_path="Icons/warning.png").show_toast()
+
+    def on_choose_about_image(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select About Image",
+            "",
+            "Images (*.png *.jpg *.jpeg *.webp *.bmp *.gif)"
+        )
+
+        if not file_path:
+            return
+
+        self._about_selected_image_path = file_path
+        self._set_about_image_preview_from_file(file_path)
+
+    def _set_about_image_preview_from_file(self, file_path: str):
+        if not hasattr(self, 'imageLabel'):
+            return
+
+        pixmap = QPixmap(file_path)
+        if pixmap.isNull():
+            self.imageLabel.setText('Failed to load image')
+            self.imageLabel.setPixmap(QPixmap())
+            return
+
+        scaled = pixmap.scaled(
+            self.imageLabel.size(),
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
+        self.imageLabel.setPixmap(scaled)
+        self.imageLabel.setText('')
+
+    def _load_about_image_from_url(self, url: str):
+        """Download and preview the current image_url (non-blocking)."""
+        if not hasattr(self, 'imageLabel'):
+            return
+
+        def worker():
+            try:
+                res = requests.get(url, timeout=15)
+                if res.status_code != 200:
+                    raise Exception(f"HTTP {res.status_code}")
+                content = res.content
+            except Exception:
+                QTimer.singleShot(0, lambda: self.imageLabel.setText('No Image'))
+                return
+
+            def apply_pixmap():
+                pixmap = QPixmap()
+                if not pixmap.loadFromData(content):
+                    self.imageLabel.setText('No Image')
+                    self.imageLabel.setPixmap(QPixmap())
+                    return
+
+                scaled = pixmap.scaled(
+                    self.imageLabel.size(),
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation
+                )
+                self.imageLabel.setPixmap(scaled)
+                self.imageLabel.setText('')
+
+            QTimer.singleShot(0, apply_pixmap)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def on_save_about_changes(self):
+        title = self.titleTextEdit.toPlainText().strip() if hasattr(self, 'titleTextEdit') else ''
+        body = self.descriptionTextEdit.toPlainText().strip() if hasattr(self, 'descriptionTextEdit') else ''
+
+        # Only send fields that are non-empty; keeps existing values when left blank.
+        title_payload = title if title else None
+        body_payload = body if body else None
+        image_path = self._about_selected_image_path
+
+        if not title_payload and not body_payload and not image_path:
+            Toast(self, "Nothing to save", icon_path="Icons/warning.png").show_toast()
+            return
+
+        if hasattr(self, 'saveChanges'):
+            self.saveChanges.setEnabled(False)
+
+        def worker():
+            ok, resp = update_site_about(title=title_payload, body=body_payload, image_path=image_path)
+
+            def finish():
+                if hasattr(self, 'saveChanges'):
+                    self.saveChanges.setEnabled(True)
+
+                if ok:
+                    Toast(self, "About section updated", icon_path="Icons/check.png").show_toast()
+                    # If server returns new image_url, show it (and clear local pending image)
+                    new_url = (resp or {}).get('image_url')
+                    if new_url:
+                        self._about_current_image_url = new_url
+                        self._about_selected_image_path = None
+                        self._load_about_image_from_url(new_url)
+                else:
+                    err = (resp or {}).get('error') or 'Failed to update'
+                    Toast(self, err, icon_path="Icons/warning.png").show_toast()
+
+            QTimer.singleShot(0, finish)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    #LAYOUT FOR SCROLL AREAS FOR CARDS
     def setup_layouts(self):
         self.accountUserLayout = self.accountUserScrollAreaContents.layout()
         self.accountUserLayout.setSpacing(10)
@@ -3778,6 +3942,17 @@ class MainUI(QMainWindow):
         # Keep graph skeletons responsive (maximize/restore).
         if event.type() == QEvent.Type.Resize and hasattr(obj, "_pie_skeleton_circle"):
             self._resize_pie_skeleton_circle(obj)
+        # ✅ Force repaint of pie chart during resize to prevent animation trails
+        if event.type() == QEvent.Type.Resize and obj == self.SpeciesPieGraph:
+            if hasattr(self, '_pie_chart_view') and self._pie_chart_view:
+                try:
+                    # Check if the widget is still valid before updating
+                    if not self._pie_chart_view.isVisible():
+                        return super().eventFilter(obj, event)
+                    QTimer.singleShot(0, self._pie_chart_view.update)
+                except RuntimeError:
+                    # Chart view has been deleted, clear the reference
+                    self._pie_chart_view = None
         return super().eventFilter(obj, event)
 
 
@@ -3880,7 +4055,9 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
-
+# ✅ Install event filter on container to handle resize properly
+        self.SpeciesPieGraph.installEventFilter(self)
+        
     def setup_pie_graph(self):
         """Load pie graph data asynchronously"""
         self._show_graph_skeleton(self.SpeciesPieGraph, kind="pie")
@@ -3899,6 +4076,9 @@ class MainUI(QMainWindow):
             self.SpeciesPieGraph._pie_skeleton_circle = None
         except Exception:
             pass
+        
+        # Clear old chart view reference
+        self._pie_chart_view = None
 
         if not data:
             print("PIE GRAPH — No data found, using zero fallback")
@@ -3963,6 +4143,9 @@ class MainUI(QMainWindow):
                 old.widget().deleteLater()
 
         layout.addWidget(chart_view)
+        
+        # ✅ Update reference after adding to layout
+        self._pie_chart_view = chart_view
 
     def appointments_today(self):
         """Load today's appointments asynchronously"""

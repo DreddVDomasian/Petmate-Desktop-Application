@@ -39,6 +39,8 @@ from django.core.exceptions import ValidationError
 from .models import WalkInAppointment, Pet
 from django.db.models import Count
 from datetime import datetime
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 
 # Desktop Authentication Views
@@ -2458,6 +2460,49 @@ def update_office_hours(request):
     return Response({'message': 'Office hours updated successfully'})
 
 
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def site_about(request):
+    """Get or update the public website About section.
+
+    GET: returns the singleton about payload.
+    POST: updates title/body and optionally image via either `image_url` (JSON)
+          or multipart `image` file upload. Returns the updated payload.
+
+    NOTE: For production, restrict POST with proper auth. File storage on
+    Railway's ephemeral FS is not persistent; prefer Cloudinary/S3/Volumes.
+    """
+    about = SiteAbout.get_solo()
+
+    if request.method == 'GET':
+        serializer = SiteAboutSerializer(about)
+        return Response(serializer.data)
+
+    # POST update
+    title = request.data.get('title')
+    body = request.data.get('body')
+    image_url = request.data.get('image_url')
+
+    if title is not None:
+        about.title = title
+    if body is not None:
+        about.body = body
+
+    # Handle optional file upload
+    image_file = request.FILES.get('image')
+    if image_file:
+        # Save to MEDIA_ROOT (local dev or Railway Volume if MEDIA_ROOT_PATH env is set)
+        filename = default_storage.save(f"about/{image_file.name}", image_file)
+        # Build absolute URL for client use
+        media_url = settings.MEDIA_URL if settings.MEDIA_URL.endswith('/') else settings.MEDIA_URL + '/'
+        about.image_url = request.build_absolute_uri(f"{media_url}{filename}")
+    elif image_url is not None:
+        about.image_url = image_url
+
+    about.save()
+    return Response(SiteAboutSerializer(about).data)
+
+
 class ServiceTypeListCreateView(generics.ListCreateAPIView):
     """List all service types and create new ones"""
     serializer_class = ServiceTypeSerializer
@@ -2493,6 +2538,7 @@ class ServiceTypeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
         # Soft delete by setting is_active to False
         instance.is_active = False
         instance.save()
+    # -----------------WALKIN TO NEW ACCOUNT SYNC---------------------
 # -----------------WALKIN TO NEW ACCOUNT SYNC---------------------
 
 @api_view(['POST'])

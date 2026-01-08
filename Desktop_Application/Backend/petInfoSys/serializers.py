@@ -220,3 +220,9 @@ class ScheduledServiceSerializer(serializers.ModelSerializer):
 
     def get_service_type_name(self, obj):
         return obj.service_type.name if obj.service_type else "Unknown"
+
+
+class SiteAboutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteAbout
+        fields = ['id', 'title', 'body', 'image_url', 'updated_at']

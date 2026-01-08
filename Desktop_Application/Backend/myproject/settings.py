@@ -263,6 +263,11 @@ TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]  # global templates
 # WhiteNoise configuration for static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Media files (user uploads)
+# Railway Volume setup: set MEDIA_ROOT_PATH=/data/media in Railway env
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.getenv('MEDIA_ROOT_PATH', str(BASE_DIR / 'media'))
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
 

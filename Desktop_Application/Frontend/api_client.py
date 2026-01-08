@@ -26,6 +26,11 @@ def _get(path: str, timeout: int = 10):
     return requests.get(url, timeout=timeout)
 
 
+def _post_multipart(path: str, data: dict[str, Any] | None = None, files: dict[str, Any] | None = None, timeout: int = 20):
+    url = f"{BASE_URL}{path}"
+    return requests.post(url, data=data or {}, files=files or {}, timeout=timeout)
+
+
 def send_otp(email: str):
     """Send OTP to user's email for password reset."""
     try:
@@ -146,3 +151,60 @@ def add_new_appointment(appointment_data: dict[str, Any]) -> bool:
         return response.status_code == 201
     except Exception:
         return False
+
+
+def get_site_about() -> tuple[bool, dict[str, Any]]:
+    """Fetch the current About section content."""
+    try:
+        res = _get("/api/about/", timeout=15)
+        try:
+            data = res.json()
+        except Exception:
+            data = {"status": res.status_code}
+        return (res.status_code == 200), data
+    except Exception as e:
+        return False, {"error": f"Connection error: {str(e)}"}
+
+
+def update_site_about(title: str | None = None, body: str | None = None, image_path: str | None = None) -> tuple[bool, dict[str, Any]]:
+    """Update Site About content.
+
+    - If image_path is provided, uploads file as multipart under key 'image'.
+    - Otherwise sends JSON with provided title/body.
+    Returns (success, response_json)
+    """
+    try:
+        if image_path:
+            files = {}
+            try:
+                files['image'] = open(image_path, 'rb')
+            except Exception as e:
+                return False, {"error": f"Failed to open image: {e}"}
+            data = {}
+            if title is not None:
+                data['title'] = title
+            if body is not None:
+                data['body'] = body
+            res = _post_multipart("/api/about/", data=data, files=files, timeout=30)
+            for f in files.values():
+                try:
+                    f.close()
+                except Exception:
+                    pass
+        else:
+            payload = {}
+            if title is not None:
+                payload['title'] = title
+            if body is not None:
+                payload['body'] = body
+            res = _post_json("/api/about/", payload, timeout=20)
+
+        ok = res.status_code in (200, 201)
+        data = {}
+        try:
+            data = res.json()
+        except Exception:
+            data = {"status": res.status_code}
+        return ok, data
+    except Exception as e:
+        return False, {"error": f"Connection error: {str(e)}"}

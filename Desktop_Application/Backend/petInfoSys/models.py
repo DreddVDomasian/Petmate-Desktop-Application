@@ -332,3 +332,37 @@ class EmailVerification(models.Model):
 
     def __str__(self):
         return f"Verification for {self.email}"
+
+
+# -----------------SITE ABOUT (DYNAMIC CONTENT)------------------
+class SiteAbout(models.Model):
+    """Singleton-style About section for the public website.
+
+    We keep a single row that stores title, body, and an image URL. Using a URL
+    keeps storage flexible (Cloudinary/S3/Volume) and avoids coupling to local media.
+    """
+    title = models.CharField(max_length=255, default="ABOUT OUR VETERINARY CLINIC")
+    body = models.TextField(blank=True, default=(
+        "At PetMate Animal Clinic, we are dedicated to providing exceptional\n"
+        "veterinary care for your beloved pets. Our clinic offers a full range of\n"
+        "medical, surgical, and wellness services to ensure the health and happiness\n"
+        "of your furry companions. From routine check-ups and vaccinations to\n"
+        "emergency treatments and specialized services, we deliver high-quality,\n"
+        "personalized care tailored to your pet's needs."
+    ))
+    image_url = models.URLField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Site About"
+        verbose_name_plural = "Site About"
+
+    def __str__(self):
+        return "Site About Content"
+
+    @classmethod
+    def get_solo(cls):
+        obj = cls.objects.first()
+        if not obj:
+            obj = cls.objects.create()
+        return obj
