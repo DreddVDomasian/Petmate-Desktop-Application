@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+import importlib.util
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -61,7 +62,11 @@ INSTALLED_APPS = [
 # Optional transactional email via SendGrid (HTTP API) to avoid SMTP blocks.
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
 if SENDGRID_API_KEY:
-    INSTALLED_APPS.append('anymail')
+    # Railway CLI (`railway run`) injects env vars into your local process.
+    # If the local venv doesn't have django-anymail installed, Django would crash
+    # during setup. Only enable the app when the package is available.
+    if importlib.util.find_spec('anymail') is not None:
+        INSTALLED_APPS.append('anymail')
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
