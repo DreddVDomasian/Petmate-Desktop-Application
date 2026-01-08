@@ -15,9 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve as static_serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,6 +25,8 @@ urlpatterns = [
 ]
 
 # Serve uploaded media (About image, etc.).
-# In production this is usually handled by a CDN/object storage, but for Railway Volumes
-# it's OK to let Django serve MEDIA for small/low-traffic usage.
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# NOTE: django.conf.urls.static.static() only serves when DEBUG=True.
+# For Railway Volumes (small/low-traffic), explicitly serve MEDIA in production.
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', static_serve, {'document_root': settings.MEDIA_ROOT}),
+]
