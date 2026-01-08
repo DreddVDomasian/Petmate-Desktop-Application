@@ -27,9 +27,29 @@ high-quality, personalized care tailored to your pet's needs.`,
 
     const resolvedImageSrc = (() => {
         if (!about.image_url) return '';
-        // If backend returns a relative /media/... path, prefix with API base.
-        if (typeof about.image_url === 'string' && about.image_url.startsWith('http')) return about.image_url;
-        return getApiUrl(about.image_url);
+
+        const raw = String(about.image_url);
+
+        // Best-effort normalization:
+        // - If the DB stores an absolute URL pointing at an old Railway domain,
+        //   but it is still a /media/... path, always load it from the API base.
+        // - If it's already a relative path (/media/...), prefix with API base.
+        if (raw.startsWith('/')) return getApiUrl(raw);
+
+        if (raw.startsWith('http://') || raw.startsWith('https://')) {
+            try {
+                const url = new URL(raw);
+                if (url.pathname && url.pathname.startsWith('/media/')) {
+                    return getApiUrl(url.pathname);
+                }
+            } catch (_) {
+                // fall through
+            }
+            return raw;
+        }
+
+        // Fallback: treat as a path.
+        return getApiUrl(raw);
     })();
 
     useEffect(() => {

@@ -41,6 +41,7 @@ from django.db.models import Count
 from datetime import datetime
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from urllib.parse import urlsplit
 
 
 # Desktop Authentication Views
@@ -2474,9 +2475,35 @@ def site_about(request):
     """
     about = SiteAbout.get_solo()
 
+    def _normalize_media_url(value: str | None) -> str | None:
+        if not value:
+            return value
+        if not isinstance(value, str):
+            return value
+
+        media_url = settings.MEDIA_URL or '/media/'
+        media_url = media_url if media_url.startswith('/') else f"/{media_url}"
+
+        # Already relative.
+        if value.startswith(media_url):
+            return value
+
+        # If it's an absolute URL but points to /media/..., return only the path.
+        if value.startswith('http://') or value.startswith('https://'):
+            try:
+                parts = urlsplit(value)
+                if parts.path and parts.path.startswith(media_url):
+                    return parts.path
+            except Exception:
+                return value
+
+        return value
+
     if request.method == 'GET':
         serializer = SiteAboutSerializer(about)
-        return Response(serializer.data)
+        data = dict(serializer.data)
+        data['image_url'] = _normalize_media_url(data.get('image_url'))
+        return Response(data)
 
     # POST update
     title = request.data.get('title')
@@ -2497,10 +2524,12 @@ def site_about(request):
         media_url = settings.MEDIA_URL if settings.MEDIA_URL.endswith('/') else settings.MEDIA_URL + '/'
         about.image_url = f"{media_url}{filename}"
     elif image_url is not None:
-        about.image_url = image_url
+        about.image_url = _normalize_media_url(image_url)
 
     about.save()
-    return Response(SiteAboutSerializer(about).data)
+    data = dict(SiteAboutSerializer(about).data)
+    data['image_url'] = _normalize_media_url(data.get('image_url'))
+    return Response(data)
 
 
 class ServiceTypeListCreateView(generics.ListCreateAPIView):
