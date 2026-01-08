@@ -24,5 +24,7 @@ urlpatterns = [
     path("api/", include("petInfoSys.urls")),  # make sure this line exists
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve uploaded media (About image, etc.).
+# In production this is usually handled by a CDN/object storage, but for Railway Volumes
+# it's OK to let Django serve MEDIA for small/low-traffic usage.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

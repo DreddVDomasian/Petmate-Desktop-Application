@@ -2493,9 +2493,9 @@ def site_about(request):
     if image_file:
         # Save to MEDIA_ROOT (local dev or Railway Volume if MEDIA_ROOT_PATH env is set)
         filename = default_storage.save(f"about/{image_file.name}", image_file)
-        # Build absolute URL for client use
+        # Store a relative URL so clients can prefix with the API base domain.
         media_url = settings.MEDIA_URL if settings.MEDIA_URL.endswith('/') else settings.MEDIA_URL + '/'
-        about.image_url = request.build_absolute_uri(f"{media_url}{filename}")
+        about.image_url = f"{media_url}{filename}"
     elif image_url is not None:
         about.image_url = image_url
 

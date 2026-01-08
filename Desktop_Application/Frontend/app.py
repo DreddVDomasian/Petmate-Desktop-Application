@@ -273,8 +273,12 @@ class MainUI(QMainWindow):
             self.imageLabel.setPixmap(QPixmap())
             return
 
+        # Respect the size set in Qt Designer (min/max). Use maximumSize when it's meaningful.
+        target_size = self.imageLabel.maximumSize()
+        if target_size.width() >= 16777215 or target_size.height() >= 16777215:
+            target_size = self.imageLabel.size()
         scaled = pixmap.scaled(
-            self.imageLabel.size(),
+            target_size,
             Qt.AspectRatioMode.KeepAspectRatio,
             Qt.TransformationMode.SmoothTransformation
         )
@@ -285,6 +289,10 @@ class MainUI(QMainWindow):
         """Download and preview the current image_url (non-blocking)."""
         if not hasattr(self, 'imageLabel'):
             return
+
+        # If backend stores a relative path (e.g. /media/about/x.png), prefix with API base.
+        if isinstance(url, str) and not url.startswith('http'):
+            url = f"{API_BASE_URL}{url}"
 
         def worker():
             try:
@@ -303,8 +311,12 @@ class MainUI(QMainWindow):
                     self.imageLabel.setPixmap(QPixmap())
                     return
 
+                target_size = self.imageLabel.maximumSize()
+                if target_size.width() >= 16777215 or target_size.height() >= 16777215:
+                    target_size = self.imageLabel.size()
+
                 scaled = pixmap.scaled(
-                    self.imageLabel.size(),
+                    target_size,
                     Qt.AspectRatioMode.KeepAspectRatio,
                     Qt.TransformationMode.SmoothTransformation
                 )
@@ -516,13 +528,15 @@ class MainUI(QMainWindow):
         ))
 
         #Web management stackwidget
+        self.aboutUsTab.setChecked(True)
         self.serviceTab.setChecked(True)
         self.officeHoursTab.setChecked(True)
-        self.webManagementStackedWidget.setCurrentIndex(0)
+        self.webManagementStackedWidget.setCurrentIndex(2)
         self.webManagementStatusBtnGroup = QButtonGroup(self)
-        for btn in [ self.serviceTab, self.officeHoursTab]:
+        for btn in [ self.serviceTab, self.officeHoursTab,self.aboutUsTab]:
             self.webManagementStatusBtnGroup.addButton(btn)
-        self.serviceTab.setChecked(True)
+        self.aboutUsTab.setChecked(True)
+        self.aboutUsTab.clicked.connect(lambda: self.webManagementStackedWidget.setCurrentIndex(2))
         self.serviceTab.clicked.connect(lambda: self.webManagementStackedWidget.setCurrentIndex(0))
         self.officeHoursTab.clicked.connect(lambda: self.webManagementStackedWidget.setCurrentIndex(1))
 
