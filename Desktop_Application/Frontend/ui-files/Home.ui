@@ -14448,7 +14448,7 @@ color:rgb(66, 66, 66);</string>
                            <property name="topMargin">
                             <number>35</number>
                            </property>
-                           <item>
+                           <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
                             <widget class="QLabel" name="imageLabel">
                              <property name="minimumSize">
                               <size>

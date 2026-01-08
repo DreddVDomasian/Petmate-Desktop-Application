@@ -670,7 +670,6 @@ header {
 .about-section {
     padding: 90px 0;
     background-color: var(--light);
-    max-height: 100dvh;
 }
 .section-title {
     text-align: center;
@@ -722,6 +721,8 @@ header {
     transform: rotate(2deg);
     transition: transform 0.5s;
     border: 4px solid var(--secondary);
+    height: 420px;
+    max-height: 420px;
 }
 
 .about-image:hover {
@@ -731,9 +732,10 @@ header {
 
 .about-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     transition: transform 0.5s;
+    object-fit: cover;
 }
 
 .about-image:hover img {
@@ -1236,6 +1238,11 @@ footer {
 
     .services {
         padding-top: 300px;
+    }
+
+    .about-image {
+        height: 300px;
+        max-height: 300px;
     }
 }
 

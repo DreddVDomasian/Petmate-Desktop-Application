@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QWidge
     QCalendarWidget, QToolButton, QTextEdit, QPushButton, QFrame, QHBoxLayout, QGraphicsDropShadowEffect, QSizePolicy, QFileDialog
 from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
-    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime, QEvent
+    QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime, QEvent, QObject, pyqtSignal
 from PyQt6.QtGui import QFontDatabase, QPixmap,QIntValidator, QRegularExpressionValidator
 from uiLogic import UIHandler
 from input_styles import *
@@ -47,9 +47,31 @@ from analytics import fetch_json
 
 
 
+
+class _UiInvoker(QObject):
+    """Executes callables on the Qt main thread via queued signals."""
+
+    run = pyqtSignal(object)
+
+    def __init__(self, parent: QObject | None = None):
+        super().__init__(parent)
+        self.run.connect(self._on_run)
+
+    def _on_run(self, fn):
+        try:
+            if callable(fn):
+                fn()
+        except Exception:
+            # Never crash the UI thread for best-effort updates.
+            pass
+
+
 class MainUI(QMainWindow):
     def __init__(self, user_data=None, startup_progress=None):
         super(MainUI, self).__init__()
+
+        # Thread-safe UI callback bridge (used by worker threads).
+        self._ui_invoker = _UiInvoker(self)
 
         # Optional callback for startup progress reporting (value 0-100, title, subtitle)
         self._startup_progress = startup_progress
@@ -205,6 +227,7 @@ class MainUI(QMainWindow):
         """
         self._about_selected_image_path: str | None = None
         self._about_current_image_url: str | None = None
+        # No loading modal for About saves; use Toast only.
 
         if hasattr(self, 'imageLabel'):
             self.imageLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -301,7 +324,8 @@ class MainUI(QMainWindow):
                     raise Exception(f"HTTP {res.status_code}")
                 content = res.content
             except Exception:
-                QTimer.singleShot(0, lambda: self.imageLabel.setText('No Image'))
+                # Ensure UI update runs on the main thread.
+                self._ui_invoker.run.emit(lambda: self.imageLabel.setText('No Image'))
                 return
 
             def apply_pixmap():
@@ -323,7 +347,8 @@ class MainUI(QMainWindow):
                 self.imageLabel.setPixmap(scaled)
                 self.imageLabel.setText('')
 
-            QTimer.singleShot(0, apply_pixmap)
+            # Ensure UI update runs on the main thread.
+            self._ui_invoker.run.emit(apply_pixmap)
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -340,15 +365,26 @@ class MainUI(QMainWindow):
             Toast(self, "Nothing to save", icon_path="Icons/warning.png").show_toast()
             return
 
+        # Disable controls while saving.
         if hasattr(self, 'saveChanges'):
             self.saveChanges.setEnabled(False)
+        if hasattr(self, 'chooseImage'):
+            self.chooseImage.setEnabled(False)
+
+        # Optional immediate feedback.
+        Toast(self, "Saving changes...", icon_path="Icons/check.png").show_toast()
 
         def worker():
-            ok, resp = update_site_about(title=title_payload, body=body_payload, image_path=image_path)
+            try:
+                ok, resp = update_site_about(title=title_payload, body=body_payload, image_path=image_path)
+            except Exception as e:
+                ok, resp = False, {"error": str(e)}
 
             def finish():
                 if hasattr(self, 'saveChanges'):
                     self.saveChanges.setEnabled(True)
+                if hasattr(self, 'chooseImage'):
+                    self.chooseImage.setEnabled(True)
 
                 if ok:
                     Toast(self, "About section updated", icon_path="Icons/check.png").show_toast()
@@ -362,7 +398,8 @@ class MainUI(QMainWindow):
                     err = (resp or {}).get('error') or 'Failed to update'
                     Toast(self, err, icon_path="Icons/warning.png").show_toast()
 
-            QTimer.singleShot(0, finish)
+            # Always run UI cleanup on the main thread.
+            self._ui_invoker.run.emit(finish)
 
         threading.Thread(target=worker, daemon=True).start()
 
