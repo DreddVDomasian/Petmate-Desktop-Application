@@ -59,14 +59,6 @@ const OfficeHours = () => {
             return aSafe - bSafe;
         });
 
-        // Output priority: open first, then appointment_only, then closed.
-        const statusPriority = (status) => {
-            const s = String(status || '').toLowerCase();
-            if (s === 'appointment_only') return 1;
-            if (s === 'closed') return 2;
-            return 0; // treat anything else as "open/normal"
-        };
-
         // Group by (status + time range) but preserve the first-seen ordering by day.
         const groupsByKey = new Map();
         const keysInOrder = [];
@@ -91,22 +83,17 @@ const OfficeHours = () => {
             group.days.push(getFullDayName(hour.day));
         }
 
+        const firstDayIndex = (g) => {
+            const indices = (g.days || [])
+                .map((d) => originalOrder.indexOf(String(d || '').toLowerCase()))
+                .filter((i) => i !== -1);
+            return indices.length ? Math.min(...indices) : 999;
+        };
+
         const groups = keysInOrder
             .map((key) => groupsByKey.get(key))
-            .sort((a, b) => {
-                const pa = statusPriority(a.status);
-                const pb = statusPriority(b.status);
-                if (pa !== pb) return pa - pb;
-
-                // Within the same status bucket, keep groups ordered by their earliest day.
-                const firstDayIndex = (g) => {
-                    const indices = (g.days || [])
-                        .map((d) => originalOrder.indexOf(String(d || '').toLowerCase()))
-                        .filter((i) => i !== -1);
-                    return indices.length ? Math.min(...indices) : 999;
-                };
-                return firstDayIndex(a) - firstDayIndex(b);
-            })
+            // Keep groups ordered by their earliest weekday (Monday first).
+            .sort((a, b) => firstDayIndex(a) - firstDayIndex(b))
             .map((g) => formatGroup(g, sortedByDay));
 
         setGroupedHours(groups);
