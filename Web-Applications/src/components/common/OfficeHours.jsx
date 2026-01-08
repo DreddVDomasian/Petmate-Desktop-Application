@@ -47,73 +47,69 @@ const OfficeHours = () => {
     };
 
     const groupOfficeHours = (hours) => {
-        const groups = [];
-        let currentGroup = null;
+        const originalOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-        
-        const sortedHours = [...hours].sort((a, b) => {
-            if (a.status !== b.status) {
-                return a.status.localeCompare(b.status);
-            }
-            if (a.start_time !== b.start_time) {
-                if (!a.start_time) return 1;
-                if (!b.start_time) return -1;
-                return a.start_time.localeCompare(b.start_time);
-            }
-            if (a.end_time !== b.end_time) {
-                if (!a.end_time) return 1;
-                if (!b.end_time) return -1;
-                return a.end_time.localeCompare(b.end_time);
-            }
-            return 0;
+        // Sort by weekday order first (Monday always comes first).
+        const sortedByDay = [...hours].sort((a, b) => {
+            const aIdx = originalOrder.indexOf(String(a.day || '').toLowerCase());
+            const bIdx = originalOrder.indexOf(String(b.day || '').toLowerCase());
+            // Unknown days go last.
+            const aSafe = aIdx === -1 ? 999 : aIdx;
+            const bSafe = bIdx === -1 ? 999 : bIdx;
+            return aSafe - bSafe;
         });
 
-        for (let i = 0; i < sortedHours.length; i++) {
-            const hour = sortedHours[i];
-            const dayName = getFullDayName(hour.day);
+        // Output priority: open first, then appointment_only, then closed.
+        const statusPriority = (status) => {
+            const s = String(status || '').toLowerCase();
+            if (s === 'appointment_only') return 1;
+            if (s === 'closed') return 2;
+            return 0; // treat anything else as "open/normal"
+        };
 
-            
-            if (currentGroup && canJoinGroup(currentGroup, hour)) {
-                currentGroup.days.push(dayName);
-                currentGroup.endDayIndex = i;
-            } else {
-                
-                if (currentGroup) {
-                    groups.push(formatGroup(currentGroup, sortedHours));
-                }
+        // Group by (status + time range) but preserve the first-seen ordering by day.
+        const groupsByKey = new Map();
+        const keysInOrder = [];
 
-                currentGroup = {
-                    days: [dayName],
-                    status: hour.status,
+        for (const hour of sortedByDay) {
+            const status = hour.status;
+            const start = hour.start_time || '';
+            const end = hour.end_time || '';
+            const key = `${String(status)}|${String(start)}|${String(end)}`;
+
+            if (!groupsByKey.has(key)) {
+                groupsByKey.set(key, {
+                    days: [],
+                    status,
                     start_time: hour.start_time,
                     end_time: hour.end_time,
-                    startDayIndex: i,
-                    endDayIndex: i
-                };
+                });
+                keysInOrder.push(key);
             }
+
+            const group = groupsByKey.get(key);
+            group.days.push(getFullDayName(hour.day));
         }
 
-        
-        if (currentGroup) {
-            groups.push(formatGroup(currentGroup, sortedHours));
-        }
+        const groups = keysInOrder
+            .map((key) => groupsByKey.get(key))
+            .sort((a, b) => {
+                const pa = statusPriority(a.status);
+                const pb = statusPriority(b.status);
+                if (pa !== pb) return pa - pb;
+
+                // Within the same status bucket, keep groups ordered by their earliest day.
+                const firstDayIndex = (g) => {
+                    const indices = (g.days || [])
+                        .map((d) => originalOrder.indexOf(String(d || '').toLowerCase()))
+                        .filter((i) => i !== -1);
+                    return indices.length ? Math.min(...indices) : 999;
+                };
+                return firstDayIndex(a) - firstDayIndex(b);
+            })
+            .map((g) => formatGroup(g, sortedByDay));
 
         setGroupedHours(groups);
-    };
-
-    const canJoinGroup = (group, hour) => {
-        
-        if (group.status !== hour.status) return false;
-        if (group.start_time !== hour.start_time) return false;
-        if (group.end_time !== hour.end_time) return false;
-
-        
-        const originalOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        const groupLastDay = group.days[group.days.length - 1].toLowerCase();
-        const newDay = getFullDayName(hour.day).toLowerCase();
-
-        
-        return true; 
     };
 
     const formatGroup = (group, allHours) => {
