@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -2949,7 +2949,7 @@ QLineEdit#searchBar:focus{
                    <x>0</x>
                    <y>0</y>
                    <width>875</width>
-                   <height>506</height>
+                   <height>493</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -5454,7 +5454,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <x>0</x>
                           <y>0</y>
                           <width>873</width>
-                          <height>427</height>
+                          <height>414</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -5866,8 +5866,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>875</width>
-                       <height>412</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -6432,14 +6432,14 @@ QComboBox QLineEdit {
                            <bool>false</bool>
                           </property>
                           <property name="currentText">
-                           <string>Select Species</string>
+                           <string>Select pet type</string>
                           </property>
                           <property name="currentIndex">
                            <number>0</number>
                           </property>
                           <item>
                            <property name="text">
-                            <string>Select Species</string>
+                            <string>Select pet type</string>
                            </property>
                           </item>
                           <item>
@@ -6480,7 +6480,7 @@ QComboBox QLineEdit {
 }</string>
                           </property>
                           <property name="placeholderText">
-                           <string>Specify species</string>
+                           <string>Specify pet type</string>
                           </property>
                          </widget>
                         </item>
@@ -8557,7 +8557,7 @@ background:none;</string>
                           <x>0</x>
                           <y>0</y>
                           <width>873</width>
-                          <height>252</height>
+                          <height>239</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -10892,7 +10892,7 @@ QPushButton:checked {
                     </sizepolicy>
                    </property>
                    <property name="currentIndex">
-                    <number>2</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="profileTab">
                     <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -11357,6 +11357,8 @@ QLineEdit:disabled{
                                        <string notr="true">#passForConfirm{
 	border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+	border-top-right-radius:0px;
+    border-bottom-right-radius: 0px;
 }</string>
                                       </property>
                                       <property name="echoMode">
@@ -11372,6 +11374,12 @@ QLineEdit:disabled{
                                     </item>
                                     <item>
                                      <widget class="QFrame" name="profileInfoPassShow">
+                                      <property name="maximumSize">
+                                       <size>
+                                        <width>16777215</width>
+                                        <height>80</height>
+                                       </size>
+                                      </property>
                                       <property name="styleSheet">
                                        <string notr="true">#profileInfoPassShow{
 	border-right: 2px solid #d1d5db;
@@ -12385,8 +12393,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>72</width>
-                          <height>18</height>
+                          <width>855</width>
+                          <height>1156</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
