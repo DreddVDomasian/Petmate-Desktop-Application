@@ -573,7 +573,13 @@ header {
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-bottom: -100px;
+    margin-bottom: 0;
+}
+
+@media (min-width: 993px) {
+    .doctor-image {
+        margin-bottom: -100px;
+    }
 }
 
 .doctor-image img {
