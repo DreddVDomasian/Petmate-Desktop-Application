@@ -2502,7 +2502,18 @@ def site_about(request):
     if request.method == 'GET':
         serializer = SiteAboutSerializer(about)
         data = dict(serializer.data)
-        data['image_url'] = _normalize_media_url(data.get('image_url'))
+        normalized_image_url = _normalize_media_url(data.get('image_url'))
+        data['image_url'] = normalized_image_url
+
+        # If we detect a legacy absolute URL pointing at /media/..., persist the
+        # normalized relative value so future clients/DB reads are clean.
+        try:
+            if normalized_image_url and about.image_url != normalized_image_url:
+                about.image_url = normalized_image_url
+                about.save(update_fields=['image_url'])
+        except Exception:
+            # Never fail the public GET due to a best-effort cleanup.
+            pass
         return Response(data)
 
     # POST update
