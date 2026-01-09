@@ -1361,8 +1361,6 @@ class AddAppointmentCard(QWidget):
             print(f"Error creating walk-in card: {e}")
             return None
     def show_review_page(self, appoint, date):
-        # Owner details - updated for WalkInAppointment structure
-        self.main_window.BookingId.setText(appoint.get("booking_id", ""))
 
         # Get owner and pet information from nested objects
         owner = appoint.get("owner", {})

@@ -454,7 +454,7 @@ const AppointmentDetailsModalEdit = ({ isOpen, onClose, appointment, onSuccess }
                             style={getTimeSlotStyle(slot)}
                         >
                             {slot.label} 
-                            {slot.isPast ? ' (PASSED)' : ''}
+                            {slot.isPast ? '' : ''}
                             {!slot.available && slot.isFull && !slot.isPast ? ' (FULL)' : ''}
                         </option>
                     ))}

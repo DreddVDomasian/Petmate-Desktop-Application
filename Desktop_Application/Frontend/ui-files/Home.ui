@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1681,8 +1681,8 @@ color:rgb(54, 54, 54);
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>368</width>
-                      <height>350</height>
+                      <width>873</width>
+                      <height>360</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -2948,8 +2948,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>875</width>
+                   <height>506</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -4382,8 +4382,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>875</width>
+                           <height>318</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -5453,8 +5453,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>93</width>
-                          <height>41</height>
+                          <width>873</width>
+                          <height>427</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -5866,8 +5866,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>875</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -9707,56 +9707,6 @@ border:none;</string>
                             <property name="text">
                              <string>FULL NAME</string>
                             </property>
-                           </widget>
-                          </item>
-                          <item alignment="Qt::AlignRight|Qt::AlignTop">
-                           <widget class="QFrame" name="frame_41">
-                            <property name="styleSheet">
-                             <string notr="true">background-color:rgb(128, 190, 217);
-border-radius:5px;
-font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(52, 52, 52);</string>
-                            </property>
-                            <property name="frameShape">
-                             <enum>QFrame::StyledPanel</enum>
-                            </property>
-                            <property name="frameShadow">
-                             <enum>QFrame::Raised</enum>
-                            </property>
-                            <layout class="QHBoxLayout" name="horizontalLayout_66">
-                             <property name="spacing">
-                              <number>0</number>
-                             </property>
-                             <property name="leftMargin">
-                              <number>20</number>
-                             </property>
-                             <property name="topMargin">
-                              <number>5</number>
-                             </property>
-                             <property name="rightMargin">
-                              <number>20</number>
-                             </property>
-                             <property name="bottomMargin">
-                              <number>5</number>
-                             </property>
-                             <item>
-                              <widget class="QLabel" name="label_31">
-                               <property name="text">
-                                <string>ID:</string>
-                               </property>
-                              </widget>
-                             </item>
-                             <item alignment="Qt::AlignTop">
-                              <widget class="QLabel" name="BookingId">
-                               <property name="styleSheet">
-                                <string notr="true"/>
-                               </property>
-                               <property name="text">
-                                <string>Booking Id</string>
-                               </property>
-                              </widget>
-                             </item>
-                            </layout>
                            </widget>
                           </item>
                          </layout>

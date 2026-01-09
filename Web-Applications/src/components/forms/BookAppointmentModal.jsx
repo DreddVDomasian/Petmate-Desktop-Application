@@ -582,7 +582,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onAppointmentBooked }) => {
                       style={getTimeSlotStyle(slot)}
                     >
                       {slot.label}
-                      {slot.isPast && ' (PASSED)'}
+                      {slot.isPast}
                       {!slot.available && slot.isFull && !slot.isPast && ' (FULL)'}
                     </option>
                   ))}
