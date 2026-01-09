@@ -347,7 +347,7 @@ class AddAppointmentCard(QWidget):
 
             if is_past:
                 # Show past slots as disabled with "PASSED"
-                self.timeComboBox.addItem(f"{time_display} (TIME PASSED)", time_value)
+                self.timeComboBox.addItem(f"{time_display}", time_value)
                 last_index = self.timeComboBox.count() - 1
                 self.timeComboBox.model().item(last_index).setEnabled(False)
             elif not is_available and is_full:
