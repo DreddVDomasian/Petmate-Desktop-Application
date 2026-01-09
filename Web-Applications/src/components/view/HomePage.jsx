@@ -22,7 +22,7 @@ function HomePage() {
 
           <div className="content">
             <h1>Your pet's health<br />is our priority.</h1>
-            <p>Expert care, advanced treatments,<br />and a loving touch for your pets.<br />Keeping tails wagging and hearts happy!</p>
+            <p>Expert care, advanced treatments, <br /> and a loving touch for your pets. <br />Keeping tails wagging and hearts happy!</p>
             
             <div className="action-buttons">
               <button type="button" className="btn-primary" onClick={openLogin}>BOOK NOW</button>

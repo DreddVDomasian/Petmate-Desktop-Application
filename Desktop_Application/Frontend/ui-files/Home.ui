@@ -1681,8 +1681,8 @@ color:rgb(54, 54, 54);
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>873</width>
-                      <height>360</height>
+                      <width>368</width>
+                      <height>350</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -2948,8 +2948,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>875</width>
-                   <height>506</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3781,7 +3781,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>440</height>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4320,8 +4320,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>875</width>
-                           <height>318</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -4382,8 +4382,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>875</width>
-                           <height>318</height>
+                           <width>100</width>
+                           <height>30</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -5453,8 +5453,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>873</width>
-                          <height>427</height>
+                          <width>93</width>
+                          <height>41</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -5866,8 +5866,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>875</width>
-                       <height>412</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -8556,8 +8556,8 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>873</width>
-                          <height>252</height>
+                          <width>90</width>
+                          <height>33</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -12393,8 +12393,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>72</width>
-                          <height>18</height>
+                          <width>100</width>
+                          <height>30</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
@@ -12703,6 +12703,9 @@ QPushButton:checked {
                       <property name="text">
                        <string>About Us</string>
                       </property>
+                      <property name="checkable">
+                       <bool>true</bool>
+                      </property>
                      </widget>
                     </item>
                     <item>
@@ -12927,8 +12930,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>835</width>
-                             <height>399</height>
+                             <width>93</width>
+                             <height>51</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -13003,7 +13006,7 @@ color:rgb(168, 168, 168);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>845</width>
+                          <width>742</width>
                           <height>706</height>
                          </rect>
                         </property>
@@ -14466,12 +14469,15 @@ color:rgb(66, 66, 66);</string>
                               <string notr="true">#imageLabel{
 font: 81 12pt &quot;Montserrat ExtraBold&quot;;
 color:rgb(141, 141, 141);
-border:2px solid rgb(252, 213, 151);
+border:4px solid rgb(252, 213, 151);
 border-radius:10px;
 }</string>
                              </property>
                              <property name="text">
-                              <string>No Image</string>
+                              <string/>
+                             </property>
+                             <property name="scaledContents">
+                              <bool>true</bool>
                              </property>
                              <property name="alignment">
                               <set>Qt::AlignCenter</set>

@@ -78,7 +78,7 @@ export default function ContactSection() {
                 {/* LEFT SIDE: Contact Info */}
                 <div className="contact-info">
                     
-                    <div className="contact-item" data-aos="fade-right" data-aos-delay="100">
+                    <div className="contact-item" data-aos="fade-right" data-aos-delay="50">
                         <div className="contact-icon">
                             <i className="fas fa-map-marker-alt"></i>
                         </div>
@@ -88,7 +88,7 @@ export default function ContactSection() {
                         </div>
                     </div>
 
-                    <div className="contact-item" data-aos="fade-right" data-aos-delay="200">
+                    <div className="contact-item" data-aos="fade-right" data-aos-delay="100">
                         <div className="contact-icon">
                             <i className="fas fa-phone"></i>
                         </div>
@@ -98,7 +98,7 @@ export default function ContactSection() {
                         </div>
                     </div>
 
-                    <div className="contact-item" data-aos="fade-right" data-aos-delay="300">
+                    <div className="contact-item" data-aos="fade-right" data-aos-delay="250">
                         <div className="contact-icon">
                             <i className="fas fa-envelope"></i>
                         </div>
@@ -108,7 +108,7 @@ export default function ContactSection() {
                         </div>
                     </div>
 
-                    <div className="contact-item" data-aos="fade-right" data-aos-delay="400">
+                    <div className="contact-item" data-aos="fade-right" data-aos-delay="300">
                         <div className="contact-icon">
                             <i className="fas fa-clock"></i>
                         </div>
@@ -162,7 +162,7 @@ export default function ContactSection() {
                             onClick={handleSend}
                             disabled={isSending}
                             data-aos="zoom-in" 
-                            data-aos-delay="100"
+                            data-aos-delay="50"
                         >
                             {isSending ? "SENDING..." : "SEND MESSAGE"}
                         </button>

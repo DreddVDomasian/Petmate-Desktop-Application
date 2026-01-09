@@ -76,13 +76,13 @@ high-quality, personalized care tailored to your pet's needs.`,
     return (
         <section className="about-section" id="about">
             <div className="container">
-                <h1 className="section-title" data-aos="fade-down" data-aos-duration="1000">
+                <h1 className="section-title" data-aos="fade-down" data-aos-duration="800">
                     ABOUT OUR VETERINARY CLINIC
                 </h1>
 
                 <div className="about-content">
 
-                    <div className="about-text" data-aos="fade-up" data-aos-duration="2000">
+                    <div className="about-text" data-aos="fade-up" data-aos-duration="1500">
                         <p>
                             {String(about.title || '')
                                 .split('\n')
@@ -99,7 +99,7 @@ high-quality, personalized care tailored to your pet's needs.`,
                         ))}
                     </div>
 
-                    <div className="about-image" data-aos="fade-left" data-aos-duration="2000">
+                    <div className="about-image" data-aos="fade-left" data-aos-duration="1300">
                         {resolvedImageSrc ? (
                             <img src={resolvedImageSrc} alt="About clinic" />
                         ) : (
