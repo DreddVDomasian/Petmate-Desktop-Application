@@ -84,7 +84,7 @@ export default function ContactSection() {
                         </div>
                         <div>
                             <h3>Our Location</h3>
-                            <p>Imus, Cavite</p>
+                            <p>Carsadang Bago II, Imus, Cavite – alongside Palazzo Bello 1</p>
                         </div>
                     </div>
 
