@@ -17,6 +17,12 @@ class Delete:
     def set_delete_target(self, target_type, target_id):
         self.delete_type = target_type  # "patient", "pet", "service"
         self.delete_id = target_id
+        # Ensure confirm card uses default delete message/styles/actions
+        if hasattr(self.ui, 'restore_confirm_card_default'):
+            try:
+                self.ui.restore_confirm_card_default()
+            except Exception:
+                pass
         self.ui.confirmCard.show_card()
 
     def delete_selected_patient(self):
