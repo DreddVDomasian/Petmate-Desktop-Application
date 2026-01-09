@@ -1253,6 +1253,18 @@ footer {
 
 /* Tablet responsiveness (768px - 1024px) */
 @media (max-width: 1024px) and (min-width: 769px) {
+    .home-section {
+        height: auto !important;
+        min-height: auto !important;
+        padding: 60px 0 0;
+        margin-top: 80px !important;
+    }
+
+     .doctor-image {
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-bottom: 0;
+    }
     .content h1 {
         font-size: 2.2rem;
     }

@@ -669,6 +669,16 @@ class MainUI(QMainWindow):
                 # Use QTimer to defer loading until after page is shown
                 QTimer.singleShot(0, lambda: self.appointmentCard.load_appointments(1, "pending", search_term=None))
         
+        # Load fresh patient data when navigating to Patient Records page
+        if index == 2:  # Patient Records page
+            # Clear search bar and reset search state
+            if hasattr(self, 'searchBar'):
+                self.searchBar.clear()
+            self.current_search_term = ""
+            self.is_searching = False
+            # Defer loading to not block UI, always force refresh to show new registrations
+            QTimer.singleShot(0, lambda: self.load_patients(1, search_term=None, force_refresh=True))
+        
         # Your existing Add Patient logic
         if index == 1:
             if is_update:
