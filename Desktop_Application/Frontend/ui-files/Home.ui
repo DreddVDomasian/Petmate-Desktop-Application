@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>10</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -7280,7 +7280,7 @@ border:none;</string>
                                </property>
                                <property name="styleSheet">
                                 <string notr="true">font: 63 13pt &quot;Montserrat SemiBold&quot;;
-color:rgb(66, 66, 66);</string>
+	color:rgb(66, 66, 66);</string>
                                </property>
                                <property name="frameShape">
                                 <enum>QFrame::StyledPanel</enum>
@@ -7599,11 +7599,11 @@ color:#78B3CE;</string>
 
 #petProfileEditBtn{
 font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(66, 66, 66);
+color:#78B3CE;
 background:transparent;
 }
 #petProfileEditBtn:hover{
-color:rgb(98, 98, 98);
+color:rgb(111, 166, 190);
 
 
 }</string>
@@ -7978,11 +7978,11 @@ color:#78B3CE;</string>
                                       <string notr="true">
 #petProfileDeleteBtn{
 font: 87 13pt &quot;Montserrat Black&quot;;
-color:rgb(66, 66, 66);
+color:rgb(255, 108, 108);
 background:transparent;
 }
 #petProfileDeleteBtn:hover{
-color:rgb(98, 98, 98);
+color:rgb(212, 90, 90);
 
 }</string>
                                      </property>
@@ -12343,8 +12343,8 @@ QPushButton:hover{
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>100</width>
-                          <height>30</height>
+                          <width>855</width>
+                          <height>423</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_80"/>
