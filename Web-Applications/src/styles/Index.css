@@ -1088,38 +1088,6 @@ footer {
     font-weight: 600;
 }
 
-.footer-links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-}
-
-.footer-links li {
-    margin-bottom: 10px;
-}
-
-.footer-column .footer-links a {
-    color: #ddd !important;
-    text-decoration: none;
-    transition: color 0.3s;
-    display: block;
-}
-
-.footer-column .footer-links a:hover {
-    color: var(--secondary) !important;
-}
-
-
-.footer-links a {
-    color: #ddd;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: var(--secondary);
-}
-
 .social-links {
     display: flex;
     gap: 15px;
