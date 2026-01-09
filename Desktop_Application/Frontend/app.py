@@ -1072,7 +1072,8 @@ class MainUI(QMainWindow):
             self.patient_loading_overlay = None
 
         self.navigate_to_page(2)
-        self.load_patients(1, search_term=None)
+        # Force refresh to ensure new patient appears (bypasses any cache)
+        self.load_patients(1, search_term=None, force_refresh=True)
 
         self.clearInputs()
 
@@ -1275,19 +1276,32 @@ class MainUI(QMainWindow):
             return {"duplicates": [], "email_conflict": None}
 
     #CLIENT RECORD PAGE
-    def load_patients(self, page=1, search_term=None):
-        """Load patients list asynchronously (non-blocking)"""
+    def load_patients(self, page=1, search_term=None, force_refresh=False):
+        """Load patients list asynchronously (non-blocking)
+        
+        Args:
+            page: Page number to load
+            search_term: Optional search query
+            force_refresh: If True, adds timestamp to bust cache
+        """
         try:
             # 1. Show loading label immediately
             self.show_loading_label(self.patientListLayout, "Loading patients...")
             
-            # 2. Build URL
+            # 2. Build URL with cache-busting when needed
             if search_term and search_term.strip():
                 import urllib.parse
                 encoded_term = urllib.parse.quote(search_term.strip())
                 url = f"/api/patient-search/?page={page}&search={encoded_term}"
             else:
                 url = f"/api/patients/?page={page}"
+            
+            # Add cache-busting timestamp if force_refresh is True
+            if force_refresh:
+                from datetime import datetime
+                timestamp = int(datetime.now().timestamp() * 1000)
+                separator = '&' if '?' in url else '?'
+                url = f"{url}{separator}_t={timestamp}"
             
             # 3. Make async request (non-blocking!)
             self.api.get(

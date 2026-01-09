@@ -649,7 +649,7 @@ def register_view(request):
 
                 # System Fields
                 source='web',
-                desktop_record='hide',  # Hidden until appointments are accepted
+                desktop_record='show',  # Now visible immediately in desktop records
                 user_account=user  # Link to User account
             )
 

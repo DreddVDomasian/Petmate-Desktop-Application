@@ -98,11 +98,10 @@ class basicInfo(models.Model):
         return " ".join(p for p in parts if p)
 
     def save(self, *args, **kwargs):
-        # Auto-set based on source
-        if self.source == 'desktop' and not self.pk:
+        # Auto-set based on source - all new records are visible by default
+        if not self.pk and not self.desktop_record:
+            # Only set default if not explicitly provided
             self.desktop_record = 'show'
-        elif self.source == 'web' and not self.pk:
-            self.desktop_record = 'hide'
         super().save(*args, **kwargs)
 
 class Pet(models.Model):
