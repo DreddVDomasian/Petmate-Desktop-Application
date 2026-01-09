@@ -669,6 +669,11 @@ class MainUI(QMainWindow):
                 # Use QTimer to defer loading until after page is shown
                 QTimer.singleShot(0, lambda: self.appointmentCard.load_appointments(1, "pending", search_term=None))
         
+        # Invalidate patient cache when navigating to patient records to ensure fresh data
+        if index == 2:  # Patient Records page
+            self.api.invalidate_cache('/api/patients')
+            self.api.invalidate_cache('/api/patient-search')
+        
         # Your existing Add Patient logic
         if index == 1:
             if is_update:
@@ -1070,6 +1075,10 @@ class MainUI(QMainWindow):
         if hasattr(self, 'patient_loading_overlay') and self.patient_loading_overlay:
             self.patient_loading_overlay.close()
             self.patient_loading_overlay = None
+
+        # CRITICAL: Invalidate patient cache to ensure fresh data
+        self.api.invalidate_cache('/api/patients')
+        self.api.invalidate_cache('/api/patient-search')
 
         self.navigate_to_page(2)
         # Force refresh to ensure new patient appears (bypasses any cache)
