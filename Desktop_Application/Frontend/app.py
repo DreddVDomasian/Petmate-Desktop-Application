@@ -174,7 +174,7 @@ class MainUI(QMainWindow):
 
         # Defer data loading to after window is shown - don't block initialization!
         # These will load in background after UI is displayed
-        QTimer.singleShot(0, lambda: self.load_patients(1, search_term=None))
+        QTimer.singleShot(0, lambda: self.load_patients(1, search_term=None, force_refresh=True))
         QTimer.singleShot(0, lambda: self.load_scheduled_services())
         QTimer.singleShot(0, lambda: self.load_staff_accounts())
 
@@ -668,11 +668,6 @@ class MainUI(QMainWindow):
             if hasattr(self, 'appointmentCard'):
                 # Use QTimer to defer loading until after page is shown
                 QTimer.singleShot(0, lambda: self.appointmentCard.load_appointments(1, "pending", search_term=None))
-        
-        # Invalidate patient cache when navigating to patient records to ensure fresh data
-        if index == 2:  # Patient Records page
-            self.api.invalidate_cache('/api/patients')
-            self.api.invalidate_cache('/api/patient-search')
         
         # Your existing Add Patient logic
         if index == 1:
@@ -1285,34 +1280,38 @@ class MainUI(QMainWindow):
             return {"duplicates": [], "email_conflict": None}
 
     #CLIENT RECORD PAGE
-    def load_patients(self, page=1, search_term=None, force_refresh=False):
+    def load_patients(self, page=1, search_term=None, force_refresh=True):
         """Load patients list asynchronously (non-blocking)
+        
+        IMPORTANT: Always loads fresh data to show new website registrations!
         
         Args:
             page: Page number to load
             search_term: Optional search query
-            force_refresh: If True, adds timestamp to bust cache
+            force_refresh: Always True by default to ensure fresh data
         """
         try:
-            # 1. Show loading label immediately
+            # 1. ALWAYS clear patient cache first to ensure fresh data
+            self.api.invalidate_cache('/api/patients')
+            self.api.invalidate_cache('/api/patient-search')
+            
+            # 2. Show loading label immediately
             self.show_loading_label(self.patientListLayout, "Loading patients...")
             
-            # 2. Build URL with cache-busting when needed
+            # 3. Build URL with cache-busting timestamp (always add to prevent any caching)
+            from datetime import datetime
+            timestamp = int(datetime.now().timestamp() * 1000)
+            
             if search_term and search_term.strip():
                 import urllib.parse
                 encoded_term = urllib.parse.quote(search_term.strip())
-                url = f"/api/patient-search/?page={page}&search={encoded_term}"
+                url = f"/api/patient-search/?page={page}&search={encoded_term}&_t={timestamp}"
+                print(f"[load_patients] Loading search results: {url}")
             else:
-                url = f"/api/patients/?page={page}"
+                url = f"/api/patients/?page={page}&_t={timestamp}"
+                print(f"[load_patients] Loading all patients (fresh): {url}")
             
-            # Add cache-busting timestamp if force_refresh is True
-            if force_refresh:
-                from datetime import datetime
-                timestamp = int(datetime.now().timestamp() * 1000)
-                separator = '&' if '?' in url else '?'
-                url = f"{url}{separator}_t={timestamp}"
-            
-            # 3. Make async request (non-blocking!)
+            # 4. Make async request (non-blocking!)
             self.api.get(
                 url,
                 on_success=lambda data: self._on_patients_loaded(data, page, search_term),
@@ -1327,13 +1326,17 @@ class MainUI(QMainWindow):
     
     def _on_patients_loaded(self, data, page, search_term):
         """Callback when patients data is received"""
+        # Debug logging
+        patients = data.get('results', [])
+        print(f"[_on_patients_loaded] Page {page}, got {len(patients)} patients, total_count={data.get('count', 0)}")
+        if patients:
+            print(f"[_on_patients_loaded] First patient: {patients[0].get('firstName', '')} {patients[0].get('lastName', '')}")
+        
         # Clear the layout first (removes loading label)
         while self.patientListLayout.count():
             child = self.patientListLayout.takeAt(0)
             if child and child.widget():
                 child.widget().deleteLater()
-        
-        patients = data.get('results', [])
         
         # Update pagination info
         self.patient_currentPage = max(1, page)
@@ -1492,8 +1495,8 @@ class MainUI(QMainWindow):
                 page_btn.setStyleSheet(current_pageBtn)
             else:
                 page_btn.setStyleSheet(other_pageBtn)
-                # Pass search term when loading different pages
-                page_btn.clicked.connect(lambda checked, p=page: self.load_patients(p, search_term))
+                # Pass search term when loading different pages (always force refresh)
+                page_btn.clicked.connect(lambda checked, p=page: self.load_patients(p, search_term, force_refresh=True))
 
             page_layout.addWidget(page_btn)
     def setup_search(self):

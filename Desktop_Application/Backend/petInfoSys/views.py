@@ -594,6 +594,8 @@ def register_view(request):
     last_name = data.get('last_name') or data.get('lastName') or ''
     email = data.get('email', '').strip().lower()
     password = data.get('password')
+    
+    print(f"[register_view] Registration attempt: {first_name} {last_name} ({email})")
 
     # Extract basicInfo profile data
     middle_name = data.get('middleName') or ''
@@ -652,6 +654,8 @@ def register_view(request):
                 desktop_record='show',  # Now visible immediately in desktop records
                 user_account=user  # Link to User account
             )
+            
+            print(f"[register_view] ✓ Patient created: ID={patient_profile.id}, desktop_record={patient_profile.desktop_record}")
 
             # 3. Log the user in
             try:
@@ -677,6 +681,7 @@ def register_view(request):
             }, status=status.HTTP_201_CREATED)
 
     except Exception as e:
+        print(f"[register_view] ✗ Error: {e}")
         return Response({
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -777,6 +782,13 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = basicInfo.objects.filter(desktop_record='show').order_by('-id')
+        
+        # Debug logging
+        count = queryset.count()
+        print(f"[BasicInfoListCreateView] get_queryset() called - found {count} patients with desktop_record='show'")
+        if count > 0:
+            first = queryset.first()
+            print(f"[BasicInfoListCreateView] First patient: {first.firstName} {first.lastName} (created: {first.date_added})")
 
         # Check if client wants to disable pagination (for combobox)
         disable_pagination = self.request.query_params.get('no_pagination')
