@@ -114,7 +114,7 @@ export default function ContactSection() {
                         </div>
                         <div>
                             <h3>Emergency Contact</h3>
-                            <p> 0922-623-5529 </p>
+                            <p> 0966-457-8565 </p>
                         </div>
                     </div>
                     
