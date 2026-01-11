@@ -414,6 +414,12 @@ class MainUI(QMainWindow):
         self.patientListLayout.setSpacing(10)
         self.patientListLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+        # deleted patients layout
+        if hasattr(self, 'DeletedClientWidgetContents_2'):
+            self.deletedPatientListLayout = self.DeletedClientWidgetContents_2.layout()
+            self.deletedPatientListLayout.setSpacing(10)
+            self.deletedPatientListLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
         # service list layout
         self.serviceListLayout = self.serviceHistoryScrollPage.layout()
         self.serviceListLayout.setSpacing(10)
@@ -583,13 +589,31 @@ class MainUI(QMainWindow):
         self.profileTabBtn.setCheckable(True)
         self.securityTabBtn.setCheckable(True)
         self.UserManagementTabBtn.setCheckable(True)
+        
+        # Deleted clients tab button (pushButton_2 from UI)
+        if hasattr(self, 'pushButton_2'):
+            self.deletedClientsTabBtn = self.pushButton_2
+            self.deletedClientsTabBtn.setCheckable(True)
+        
         self.settingsStactWidget.setCurrentIndex(0)
         self.settingsBtnGroup = QButtonGroup(self)
-        for btn in [self.profileTabBtn, self.securityTabBtn, self.UserManagementTabBtn]:
+        
+        # Add all tab buttons to the group
+        tab_buttons = [self.profileTabBtn, self.securityTabBtn, self.UserManagementTabBtn]
+        if hasattr(self, 'deletedClientsTabBtn'):
+            tab_buttons.append(self.deletedClientsTabBtn)
+        
+        for btn in tab_buttons:
             self.settingsBtnGroup.addButton(btn)
+        
         self.profileTabBtn.setChecked(True)
         self.profileTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(0))
         self.securityTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(1))
+        
+        # Connect deleted clients tab button
+        if hasattr(self, 'deletedClientsTabBtn'):
+            self.deletedClientsTabBtn.clicked.connect(lambda: self.on_deleted_clients_tab_clicked())
+        
         self.UserManagementTabBtn.clicked.connect(lambda: self.settingsStactWidget.setCurrentIndex(3))
 
         #print btn
@@ -1533,6 +1557,154 @@ class MainUI(QMainWindow):
             # If search is empty, load normal patient list
             self.is_searching = False
             self.load_patients(page=1)
+
+    # DELETED PATIENTS (HIDDEN RECORDS)
+    def load_deleted_patients(self, page=1):
+        """Load patients marked as deleted (desktop_record='hide')"""
+        try:
+            # Show loading label
+            if hasattr(self, 'deletedPatientListLayout'):
+                self.show_loading_label(self.deletedPatientListLayout, "Loading deleted patients...")
+            
+            # Request deleted patients from backend
+            from datetime import datetime
+            timestamp = int(datetime.now().timestamp() * 1000)
+            url = f"/api/deleted-patients/?page={page}&_t={timestamp}"
+            
+            self.api.get(
+                url,
+                on_success=lambda data: self._on_deleted_patients_loaded(data, page),
+                on_error=lambda error: self._on_deleted_patients_error(error),
+                timeout=10
+            )
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self._on_deleted_patients_error(str(e))
+
+    def _on_deleted_patients_loaded(self, data, page):
+        """Callback when deleted patients data is received"""
+        patients = data.get('results', [])
+        print(f"[_on_deleted_patients_loaded] Page {page}, got {len(patients)} deleted patients")
+        
+        # Clear the layout first
+        if hasattr(self, 'deletedPatientListLayout'):
+            while self.deletedPatientListLayout.count():
+                child = self.deletedPatientListLayout.takeAt(0)
+                if child and child.widget():
+                    child.widget().deleteLater()
+        
+        # Handle empty results
+        if not patients:
+            self.show_deleted_empty_state()
+            return
+        
+        # Create patient cards with restore button
+        self.create_deleted_patient_cards(patients)
+
+    def _on_deleted_patients_error(self, error_msg):
+        """Callback when deleted patient loading fails"""
+        print(f"Error loading deleted patients: {error_msg}")
+        self.show_deleted_empty_state(error=True)
+
+    def show_deleted_empty_state(self, error=False):
+        """Show appropriate empty state message for deleted patients"""
+        if not hasattr(self, 'deletedPatientListLayout'):
+            return
+            
+        empty_label = QLabel()
+        if error:
+            empty_label.setText("Error loading deleted patients")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(255, 100, 100);")
+        else:
+            empty_label.setText("NO DELETED RECORDS")
+            empty_label.setStyleSheet("font: 81 16pt 'Montserrat ExtraBold'; color: rgb(168, 168, 168);")
+        
+        self.deletedPatientListLayout.addStretch()
+        self.deletedPatientListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self.deletedPatientListLayout.addStretch()
+
+    def create_deleted_patient_cards(self, patients):
+        """Create patient cards for deleted patients with restore button"""
+        if not hasattr(self, 'deletedPatientListLayout'):
+            return
+            
+        for patient in patients:
+            card = uic.loadUi("ui-files/PatientCard.ui")
+            self.scale_cards([card], base_h=81)
+            
+            # Set patient information
+            parts = [patient['firstName'], patient.get('middleName'), patient['lastName']]
+            full_name = " ".join(p for p in parts if p)
+            card.nameLabel.setText(full_name.title())
+            card.emailLabel.setText(patient['email'])
+            
+            # Scale fonts
+            self.scale_widget_font(card.nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+            self.scale_widget_font(card.emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
+            
+            # Hide edit and delete buttons
+            card.editBtn.hide()
+            card.deleteButton.hide()
+            
+            # Change the button to a restore button
+            # We'll repurpose the editBtn slot for restore
+            restore_btn = card.findChild(QToolButton, "editBtn")
+            if restore_btn:
+                restore_btn.show()
+                restore_btn.setIcon(self.style().standardIcon(self.style().StandardPixmap.SP_BrowserReload))
+                restore_btn.setToolTip("Restore Patient")
+                restore_btn.clicked.disconnect()  # Disconnect any existing signals
+                restore_btn.clicked.connect(
+                    lambda _, p_id=patient['id'], name=full_name: self.restore_patient(p_id, name)
+                )
+            
+            # Disable card click (no profile view for deleted patients)
+            card.mousePressEvent = lambda event: None
+            card.setCursor(Qt.CursorShape.ArrowCursor)
+            
+            card.setGraphicsEffect(create_card_shadow())
+            self.deletedPatientListLayout.addWidget(card)
+
+    def restore_patient(self, patient_id, patient_name):
+        """Restore a deleted patient by updating desktop_record to 'show'"""
+        # Show confirmation
+        reply = QMessageBox.question(
+            self,
+            "Restore Patient",
+            f"Are you sure you want to restore {patient_name}?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            def _on_restore_success(_data):
+                Toast(self, "Patient restored successfully!", icon_path="Icons/check.png").show_toast()
+                # Reload deleted patients list
+                self.load_deleted_patients(1)
+                # Invalidate patient cache to refresh main list
+                self.api.invalidate_cache('/api/patients')
+                self.api.invalidate_cache('/api/patient-search')
+            
+            def _on_restore_error(err):
+                Toast(self, "Failed to restore patient.", icon_path="Icons/warning.png").show_toast()
+                print(f"Restore patient failed: {err}")
+            
+            self.api.patch(
+                url=f"/api/patients/{patient_id}/",
+                data={"desktop_record": "show"},
+                on_success=_on_restore_success,
+                on_error=_on_restore_error,
+                timeout=15,
+                show_loading=True,
+                loading_title="Restoring patient...",
+                loading_subtitle="Please wait"
+            )
+
+    def on_deleted_clients_tab_clicked(self):
+        """Handler for when deleted clients tab is clicked"""
+        self.settingsStactWidget.setCurrentIndex(2)
+        # Load deleted patients when tab is opened
+        QTimer.singleShot(0, lambda: self.load_deleted_patients(1))
 
     #DELETE CONFIRMATION MODAL FOR PET/PATIENT PROFILE
     def setup_confirm_card(self):

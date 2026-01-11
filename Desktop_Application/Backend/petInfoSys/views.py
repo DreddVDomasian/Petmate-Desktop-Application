@@ -865,6 +865,18 @@ class PatientSearchView(generics.ListAPIView):
 
         return queryset
 
+# GET deleted/hidden patients
+class DeletedPatientsView(generics.ListAPIView):
+    """View to retrieve patients marked as deleted (desktop_record='hide')"""
+    serializer_class = BasicInfoSerializer
+    pagination_class = StandardPagination
+
+    def get_queryset(self):
+        queryset = basicInfo.objects.filter(desktop_record='hide').order_by('-date_added')
+        count = queryset.count()
+        print(f"[DeletedPatientsView] Found {count} deleted patients")
+        return queryset
+
 # GET / PUT / DELETE single patient by id
 
 

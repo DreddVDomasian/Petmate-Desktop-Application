@@ -1333,7 +1333,7 @@ QToolButton:hover{
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="homepage">
              <property name="styleSheet">
@@ -1374,7 +1374,7 @@ QToolButton:hover{
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <property name="spacing">
-                  <number>10</number>
+                  <number>0</number>
                  </property>
                  <item alignment="Qt::AlignLeft">
                   <widget class="QPushButton" name="homeBackBtn">
@@ -1520,14 +1520,16 @@ border:none;</string>
                     <property name="topMargin">
                      <number>0</number>
                     </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
                     <property name="bottomMargin">
-                     <number>5</number>
+                     <number>0</number>
                     </property>
                     <item>
-                     <widget class="QFrame" name="appointmentTodayBar">
+                     <widget class="QFrame" name="appointmentTodayBar1">
                       <property name="styleSheet">
                        <string notr="true">#appointmentTodayBar{
-	background-color:rgb(129, 191, 218);
 	border-radius:8px;
 }
 </string>
@@ -1572,6 +1574,102 @@ color:rgb(54, 54, 54);
                          </property>
                          <property name="alignment">
                           <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_41">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_129">
+                    <property name="leftMargin">
+                     <number>9</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>5</number>
+                    </property>
+                    <item>
+                     <widget class="QFrame" name="appointmentTodayBar">
+                      <property name="styleSheet">
+                       <string notr="true">#appointmentTodayBar{
+	background-color:rgb(129, 191, 218);
+	border-radius:8px;
+}
+QFrame{
+	color: rgb(48, 48, 48);
+    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+}</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_66">
+                       <item>
+                        <widget class="QLabel" name="label_31">
+                         <property name="text">
+                          <string>Owner</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_50">
+                         <property name="text">
+                          <string>Breed     </string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_52">
+                         <property name="text">
+                          <string>Pet Name   </string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_53">
+                         <property name="text">
+                          <string>Service</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignCenter</set>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_54">
+                         <property name="text">
+                          <string>Time</string>
+                         </property>
+                         <property name="alignment">
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
+                         <property name="indent">
+                          <number>30</number>
                          </property>
                         </widget>
                        </item>
@@ -1681,8 +1779,8 @@ color:rgb(54, 54, 54);
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>873</width>
-                      <height>360</height>
+                      <width>368</width>
+                      <height>350</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
@@ -1695,6 +1793,18 @@ color:rgb(54, 54, 54);
                      <string notr="true"/>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_89">
+                     <property name="leftMargin">
+                      <number>9</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>5</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>9</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>9</number>
+                     </property>
                      <item>
                       <widget class="QLabel" name="noAppointmentToday">
                        <property name="sizePolicy">
@@ -2948,8 +3058,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>875</width>
-                   <height>506</height>
+                   <width>150</width>
+                   <height>33</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -3781,7 +3891,7 @@ QScrollArea QScrollBar::groove:horizontal {
                            <x>0</x>
                            <y>0</y>
                            <width>100</width>
-                           <height>30</height>
+                           <height>440</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_44">
@@ -4382,7 +4492,7 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>875</width>
+                           <width>82</width>
                            <height>318</height>
                           </rect>
                          </property>
@@ -5453,8 +5563,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>873</width>
-                          <height>427</height>
+                          <width>93</width>
+                          <height>41</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -5866,8 +5976,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>875</width>
-                       <height>412</height>
+                       <width>401</width>
+                       <height>109</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -8244,7 +8354,7 @@ QPushButton:checked {
                  <item>
                   <widget class="QStackedWidget" name="serviceHistoryStackedWidget">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="serviceHistoryPage">
                     <layout class="QVBoxLayout" name="verticalLayout_50">
@@ -8556,7 +8666,7 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>90</width>
+                          <width>75</width>
                           <height>33</height>
                          </rect>
                         </property>
@@ -10830,6 +10940,19 @@ QPushButton:checked {
                       </property>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButton_2">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Deleted Clients</string>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </widget>
                  </item>
@@ -10842,7 +10965,7 @@ QPushButton:checked {
                     </sizepolicy>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>2</number>
                    </property>
                    <widget class="QWidget" name="profileTab">
                     <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -11258,6 +11381,12 @@ QLineEdit:disabled{
                                  </item>
                                  <item>
                                   <widget class="QFrame" name="frame_92">
+                                   <property name="maximumSize">
+                                    <size>
+                                     <width>16777215</width>
+                                     <height>80</height>
+                                    </size>
+                                   </property>
                                    <property name="frameShape">
                                     <enum>QFrame::StyledPanel</enum>
                                    </property>
@@ -12198,13 +12327,71 @@ border-radius: 10px;
                      </item>
                     </layout>
                    </widget>
-                   <widget class="QWidget" name="preferencesTab">
+                   <widget class="QWidget" name="deletedClientsTab">
                     <layout class="QVBoxLayout" name="verticalLayout_73">
-                     <item>
+                     <item alignment="Qt::AlignTop">
                       <widget class="QLabel" name="label_8">
-                       <property name="text">
-                        <string>PREFERENCES TAB</string>
+                       <property name="styleSheet">
+                        <string notr="true">font: 87 14pt &quot;Montserrat Black&quot;;
+	color:rgb(66, 66, 66);</string>
                        </property>
+                       <property name="text">
+                        <string>Deleted Clients</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QScrollArea" name="DeletedClientScrollArea">
+                       <property name="styleSheet">
+                        <string notr="true">#DeletedClientScrollArea{
+	border:none;
+
+}
+#DeletedClientScrollArea QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+#DeletedClientScrollArea QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+#DeletedClientScrollArea QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+#DeletedClientScrollArea QScrollBar::add-line:vertical,
+#DeletedClientScrollArea QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#DeletedClientScrollArea QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+</string>
+                       </property>
+                       <property name="widgetResizable">
+                        <bool>true</bool>
+                       </property>
+                       <widget class="QWidget" name="DeletedClientWidgetContents_2">
+                        <property name="geometry">
+                         <rect>
+                          <x>0</x>
+                          <y>0</y>
+                          <width>855</width>
+                          <height>481</height>
+                         </rect>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_99"/>
+                       </widget>
                       </widget>
                      </item>
                     </layout>
@@ -12744,7 +12931,7 @@ QTimeEdit {
 </string>
                    </property>
                    <property name="currentIndex">
-                    <number>2</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="serviceManagementPage">
                     <layout class="QVBoxLayout" name="verticalLayout_86">
@@ -12880,8 +13067,8 @@ color:rgb(66, 66, 66);</string>
                             <rect>
                              <x>0</x>
                              <y>0</y>
-                             <width>93</width>
-                             <height>51</height>
+                             <width>835</width>
+                             <height>399</height>
                             </rect>
                            </property>
                            <layout class="QVBoxLayout" name="verticalLayout_85">
@@ -12956,7 +13143,7 @@ color:rgb(168, 168, 168);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>742</width>
+                          <width>845</width>
                           <height>706</height>
                          </rect>
                         </property>

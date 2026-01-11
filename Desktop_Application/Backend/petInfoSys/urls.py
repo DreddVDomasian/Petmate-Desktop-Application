@@ -13,6 +13,7 @@ urlpatterns = [
     path('patients/', BasicInfoListCreateView.as_view(), name='patients-list-create'),
     path('patients/<int:pk>/', BasicInfoRetrieveUpdateDestroyView.as_view(), name='patients-detail'),
     path('patient-search/', PatientSearchView.as_view(), name='patient-search'),
+    path('deleted-patients/', DeletedPatientsView.as_view(), name='deleted-patients'),
     path("check-duplicate/", check_duplicate_patient),
 
     path('pets/', PetListCreateView.as_view(), name='pets-list-create'),
