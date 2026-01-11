@@ -2369,10 +2369,12 @@ def todays_appointments(request):
     ).order_by('prefTime')  # ✅ ORDER BY TIME (AM → PM)
 
     result = []
+
     for a in appointments:
         result.append({
             "owner": str(a.owner),
             "pet_name": str(a.pet.petName),
+            "breed": str(a.pet.breed) if a.pet.breed else "Unknown",
             "service": a.service_type.name if a.service_type else "Unknown",
             "prefTime": str(a.prefTime)
         })

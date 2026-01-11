@@ -91,6 +91,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="appointmentBreed">
+        <property name="styleSheet">
+         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+color: rgb(120, 120, 120);</string>
+        </property>
+        <property name="text">
+         <string>breed</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="appointmentPet">
         <property name="styleSheet">
          <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;

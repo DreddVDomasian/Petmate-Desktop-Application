@@ -4247,6 +4247,7 @@ class MainUI(QMainWindow):
     
     def _on_appointments_loaded(self, data):
         """Callback when appointments data is received"""
+        print("DEBUG: API Response data:", data)  # 🔍 Debug: see actual response
 
         container = self.findChild(QWidget, "appointmentsTodayScroll")
         if not container:
@@ -4293,9 +4294,11 @@ class MainUI(QMainWindow):
 
         # Populate cards
         for appt in data:
+            print(f"DEBUG: Processing appointment: {appt}")  # 🔍 Debug each appointment
             card = uic.loadUi("ui-files/AppointmentsTodayCard.ui")
 
             card.appointmentOwner.setText(str(appt["owner"]).title())
+            card.appointmentBreed.setText(str(appt["breed"]).title())
             card.appointmentPet.setText(str(appt["pet_name"]).title())
             card.appointmentService.setText(str(appt["service"]).title())
 
