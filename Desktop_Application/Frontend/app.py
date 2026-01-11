@@ -168,6 +168,11 @@ class MainUI(QMainWindow):
         #Pet species comboBox
         self.setup_species_field()
 
+        # Deleted patients pagination state
+        self.deleted_patient_currentPage = 1
+        self.deleted_total_patient_pages = 1
+        self.deleted_total_patient_count = 0
+
         # Initial page setup
         self.stackedWidget.setCurrentIndex(0)
         self.set_current_month_in_combobox()
@@ -1594,6 +1599,11 @@ class MainUI(QMainWindow):
                 if child and child.widget():
                     child.widget().deleteLater()
         
+        # Update pagination info
+        self.deleted_patient_currentPage = max(1, page)
+        self.deleted_total_patient_pages = data.get('total_pages', 1)
+        self.deleted_total_patient_count = data.get('count', 0)
+        
         # Handle empty results
         if not patients:
             self.show_deleted_empty_state()
@@ -1601,6 +1611,9 @@ class MainUI(QMainWindow):
         
         # Create patient cards with restore button
         self.create_deleted_patient_cards(patients)
+        
+        # Add pagination controls
+        self.add_deleted_patient_pagination_controls()
 
     def _on_deleted_patients_error(self, error_msg):
         """Callback when deleted patient loading fails"""
@@ -1643,18 +1656,21 @@ class MainUI(QMainWindow):
             self.scale_widget_font(card.nameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
             self.scale_widget_font(card.emailLabel, base_size=14, min_size=8, max_size=25, family="Montserrat Medium")
             
-            # Hide edit and delete buttons
-            card.editBtn.hide()
+            # Hide delete button
             card.deleteButton.hide()
             
-            # Change the button to a restore button
-            # We'll repurpose the editBtn slot for restore
+            # Change edit button to a restore button
             restore_btn = card.findChild(QToolButton, "editBtn")
             if restore_btn:
-                restore_btn.show()
-                restore_btn.setIcon(self.style().standardIcon(self.style().StandardPixmap.SP_BrowserReload))
+                # Use custom restore icon - replace 'Icons/restore.png' with your icon path
+                from PyQt6.QtGui import QIcon
+                restore_btn.setIcon(QIcon("Icons/restore.png"))  # Or use :/Icons/Icons/restore.png if in resources
                 restore_btn.setToolTip("Restore Patient")
-                restore_btn.clicked.disconnect()  # Disconnect any existing signals
+                # Safely disconnect existing signals
+                try:
+                    restore_btn.clicked.disconnect()
+                except TypeError:
+                    pass  # No connections to disconnect
                 restore_btn.clicked.connect(
                     lambda _, p_id=patient['id'], name=full_name: self.restore_patient(p_id, name)
                 )
@@ -1666,17 +1682,104 @@ class MainUI(QMainWindow):
             card.setGraphicsEffect(create_card_shadow())
             self.deletedPatientListLayout.addWidget(card)
 
+    def add_deleted_patient_pagination_controls(self):
+        """Add pagination controls for deleted patients"""
+        if self.deleted_total_patient_pages <= 1:
+            return
+
+        try:
+            self.deleted_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
+
+            # Connect prev/next buttons
+            self.deleted_pagination_widget.PrevPage.clicked.connect(
+                lambda: self.load_deleted_patients(self.deleted_patient_currentPage - 1)
+            )
+            self.deleted_pagination_widget.NextPage.clicked.connect(
+                lambda: self.load_deleted_patients(self.deleted_patient_currentPage + 1)
+            )
+
+            # Set button states
+            self.deleted_pagination_widget.PrevPage.setEnabled(self.deleted_patient_currentPage > 1)
+            self.deleted_pagination_widget.NextPage.setEnabled(self.deleted_patient_currentPage < self.deleted_total_patient_pages)
+
+            # Create page buttons
+            page_layout = self.deleted_pagination_widget.pageButtonsLayout
+            while page_layout.count():
+                child = page_layout.takeAt(0)
+                if child.widget():
+                    child.widget().deleteLater()
+
+            current_page = self.deleted_patient_currentPage
+            total_pages = self.deleted_total_patient_pages
+            max_visible_pages = 7
+
+            if total_pages <= max_visible_pages:
+                start_page = 1
+                end_page = total_pages
+            else:
+                if current_page <= 4:
+                    start_page = 1
+                    end_page = 7
+                elif current_page >= total_pages - 3:
+                    start_page = total_pages - 6
+                    end_page = total_pages
+                else:
+                    start_page = current_page - 3
+                    end_page = current_page + 3
+
+            # Add page buttons
+            for page in range(start_page, end_page + 1):
+                page_btn = QPushButton(str(page))
+                btn_width = 40 + (len(str(page)) - 1) * 8
+                page_btn.setFixedSize(btn_width, 40)
+                font = page_btn.font()
+                font.setPointSize(10)
+                font.setBold(True)
+                page_btn.setFont(font)
+
+                if page == current_page:
+                    page_btn.setStyleSheet(current_pageBtn)
+                else:
+                    page_btn.setStyleSheet(other_pageBtn)
+                    page_btn.clicked.connect(lambda checked, p=page: self.load_deleted_patients(p))
+
+                page_layout.addWidget(page_btn)
+
+            self.deleted_pagination_widget.frame_59.setGraphicsEffect(create_card_shadow())
+            self.deletedPatientListLayout.addWidget(self.deleted_pagination_widget)
+
+        except Exception as e:
+            print(f"Error creating deleted patient pagination: {e}")
+
     def restore_patient(self, patient_id, patient_name):
         """Restore a deleted patient by updating desktop_record to 'show'"""
-        # Show confirmation
-        reply = QMessageBox.question(
-            self,
-            "Restore Patient",
-            f"Are you sure you want to restore {patient_name}?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
+        # Store original confirm card config
+        original_config = self.confirmCard_original_config.copy()
         
-        if reply == QMessageBox.StandardButton.Yes:
+        # Set custom config for restore confirmation
+        self.confirmCard.messageLabel.setText(f"Restore {patient_name}?\nThis patient will reappear in your Client Records.")
+        self.confirmCard.yesButton.setText("RESTORE")
+        self.confirmCard.noButton.setText("CANCEL")
+        self.confirmCard.yesButton.setStyleSheet("rgb(76, 175, 80)")  # Green for restore
+        self.confirmCard.noButton.setStyleSheet(original_config['no_style'])
+        
+        # Disconnect previous signal connections
+        try:
+            self.confirmCard.yesButton.clicked.disconnect()
+            self.confirmCard.noButton.clicked.disconnect()
+        except TypeError:
+            pass
+        
+        # Define restore callbacks
+        def _on_restore_confirmed():
+            self.confirmCard.hide()
+            # Restore original config
+            self.confirmCard.messageLabel.setText(original_config['message'])
+            self.confirmCard.yesButton.setText(original_config['yes_text'])
+            self.confirmCard.noButton.setText(original_config['no_text'])
+            self.confirmCard.yesButton.setStyleSheet(original_config['yes_style'])
+            self.confirmCard.noButton.setStyleSheet(original_config['no_style'])
+            
             def _on_restore_success(_data):
                 Toast(self, "Patient restored successfully!", icon_path="Icons/check.png").show_toast()
                 # Reload deleted patients list
@@ -1699,6 +1802,22 @@ class MainUI(QMainWindow):
                 loading_title="Restoring patient...",
                 loading_subtitle="Please wait"
             )
+        
+        def _on_restore_cancelled():
+            self.confirmCard.hide()
+            # Restore original config
+            self.confirmCard.messageLabel.setText(original_config['message'])
+            self.confirmCard.yesButton.setText(original_config['yes_text'])
+            self.confirmCard.noButton.setText(original_config['no_text'])
+            self.confirmCard.yesButton.setStyleSheet(original_config['yes_style'])
+            self.confirmCard.noButton.setStyleSheet(original_config['no_style'])
+        
+        # Connect new handlers
+        self.confirmCard.yesButton.clicked.connect(_on_restore_confirmed)
+        self.confirmCard.noButton.clicked.connect(_on_restore_cancelled)
+        
+        # Show the confirmation card
+        self.confirmCard.show()
 
     def on_deleted_clients_tab_clicked(self):
         """Handler for when deleted clients tab is clicked"""
