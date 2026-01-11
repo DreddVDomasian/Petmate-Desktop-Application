@@ -872,9 +872,22 @@ class DeletedPatientsView(generics.ListAPIView):
     pagination_class = StandardPagination
 
     def get_queryset(self):
+        search_term = self.request.query_params.get('search', '').strip()
         queryset = basicInfo.objects.filter(desktop_record='hide').order_by('-date_added')
+        if search_term:
+            search_terms = ' '.join(search_term.split()).split()
+            if search_terms:
+                query = Q()
+                for term in search_terms:
+                    term_query = (
+                        Q(firstName__icontains=term) |
+                        Q(lastName__icontains=term) |
+                        Q(middleName__icontains=term)
+                    )
+                    query &= term_query
+                queryset = queryset.filter(query)
         count = queryset.count()
-        print(f"[DeletedPatientsView] Found {count} deleted patients")
+        print(f"[DeletedPatientsView] Found {count} deleted patients (search='{search_term}')")
         return queryset
 
 # GET / PUT / DELETE single patient by id

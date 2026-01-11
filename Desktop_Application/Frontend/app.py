@@ -115,6 +115,10 @@ class MainUI(QMainWindow):
         self.setup_pet_buttons()
         self.setup_about_us_editor()
 
+        # Ensure deleteClientsSearch is assigned for search logic
+        from PyQt6.QtWidgets import QLineEdit
+        self.deleteClientsSearch = self.findChild(QLineEdit, "deleteClientsSearch")
+
         _sp(86, "Opening PetMate...", "Loading user settings")
 
         #Settings
@@ -1564,21 +1568,23 @@ class MainUI(QMainWindow):
             self.load_patients(page=1)
 
     # DELETED PATIENTS (HIDDEN RECORDS)
-    def load_deleted_patients(self, page=1):
-        """Load patients marked as deleted (desktop_record='hide')"""
+    def load_deleted_patients(self, page=1, search_term=None):
+        """Load patients marked as deleted (desktop_record='hide'), with optional search"""
         try:
             # Show loading label
             if hasattr(self, 'deletedPatientListLayout'):
                 self.show_loading_label(self.deletedPatientListLayout, "Loading deleted patients...")
-            
-            # Request deleted patients from backend
             from datetime import datetime
             timestamp = int(datetime.now().timestamp() * 1000)
-            url = f"/api/deleted-patients/?page={page}&_t={timestamp}"
-            
+            if search_term and search_term.strip():
+                import urllib.parse
+                encoded_term = urllib.parse.quote(search_term.strip())
+                url = f"/api/deleted-patients/?page={page}&search={encoded_term}&_t={timestamp}"
+            else:
+                url = f"/api/deleted-patients/?page={page}&_t={timestamp}"
             self.api.get(
                 url,
-                on_success=lambda data: self._on_deleted_patients_loaded(data, page),
+                on_success=lambda data: self._on_deleted_patients_loaded(data, page, search_term),
                 on_error=lambda error: self._on_deleted_patients_error(error),
                 timeout=10
             )
@@ -1587,7 +1593,7 @@ class MainUI(QMainWindow):
             traceback.print_exc()
             self._on_deleted_patients_error(str(e))
 
-    def _on_deleted_patients_loaded(self, data, page):
+    def _on_deleted_patients_loaded(self, data, page, search_term=None):
         """Callback when deleted patients data is received"""
         patients = data.get('results', [])
         print(f"[_on_deleted_patients_loaded] Page {page}, got {len(patients)} deleted patients")
@@ -1613,7 +1619,7 @@ class MainUI(QMainWindow):
         self.create_deleted_patient_cards(patients)
         
         # Add pagination controls
-        self.add_deleted_patient_pagination_controls()
+        self.add_deleted_patient_pagination_controls(search_term)
 
     def _on_deleted_patients_error(self, error_msg):
         """Callback when deleted patient loading fails"""
@@ -1675,15 +1681,15 @@ class MainUI(QMainWindow):
                     lambda _, p_id=patient['id'], name=full_name: self.restore_patient(p_id, name)
                 )
             
-            # Disable card click (no profile view for deleted patients)
-            card.mousePressEvent = lambda event: None
-            card.setCursor(Qt.CursorShape.ArrowCursor)
+            # Enable card click to open profile (like main patient list)
+            card.mousePressEvent = lambda event, p=patient: self.show_patient_profile(p)
+            card.setCursor(Qt.CursorShape.PointingHandCursor)
             
             card.setGraphicsEffect(create_card_shadow())
             self.deletedPatientListLayout.addWidget(card)
 
-    def add_deleted_patient_pagination_controls(self):
-        """Add pagination controls for deleted patients"""
+    def add_deleted_patient_pagination_controls(self, search_term=None):
+        """Add pagination controls for deleted patients, with search support"""
         if self.deleted_total_patient_pages <= 1:
             return
 
@@ -1692,10 +1698,10 @@ class MainUI(QMainWindow):
 
             # Connect prev/next buttons
             self.deleted_pagination_widget.PrevPage.clicked.connect(
-                lambda: self.load_deleted_patients(self.deleted_patient_currentPage - 1)
+                lambda: self.load_deleted_patients(self.deleted_patient_currentPage - 1, search_term)
             )
             self.deleted_pagination_widget.NextPage.clicked.connect(
-                lambda: self.load_deleted_patients(self.deleted_patient_currentPage + 1)
+                lambda: self.load_deleted_patients(self.deleted_patient_currentPage + 1, search_term)
             )
 
             # Set button states
@@ -1741,7 +1747,7 @@ class MainUI(QMainWindow):
                     page_btn.setStyleSheet(current_pageBtn)
                 else:
                     page_btn.setStyleSheet(other_pageBtn)
-                    page_btn.clicked.connect(lambda checked, p=page: self.load_deleted_patients(p))
+                    page_btn.clicked.connect(lambda checked, p=page: self.load_deleted_patients(p, search_term))
 
                 page_layout.addWidget(page_btn)
 
@@ -1750,6 +1756,25 @@ class MainUI(QMainWindow):
 
         except Exception as e:
             print(f"Error creating deleted patient pagination: {e}")
+    def setup_deleted_patients_search(self):
+        # Connect deleted patients search bar to handler
+        if hasattr(self, 'deleteClientsSearch'):
+            self.deleteClientsSearch.textEdited.connect(self.handle_deleted_patients_search_input)
+            self._deleted_search_timer = QTimer()
+            self._deleted_search_timer.setSingleShot(True)
+            self._deleted_search_timer.timeout.connect(self.perform_deleted_patients_search)
+            self.deleted_patients_search_term = ""
+            self.deleteClientsSearch.clear()
+
+    def handle_deleted_patients_search_input(self, text):
+        self.deleted_patients_search_term = text.strip()
+        self._deleted_search_timer.start(500)
+
+    def perform_deleted_patients_search(self):
+        if self.deleted_patients_search_term:
+            self.load_deleted_patients(page=1, search_term=self.deleted_patients_search_term)
+        else:
+            self.load_deleted_patients(page=1)
 
     def restore_patient(self, patient_id, patient_name):
         """Restore a deleted patient by updating desktop_record to 'show'"""
@@ -1757,10 +1782,10 @@ class MainUI(QMainWindow):
         original_config = self.confirmCard_original_config.copy()
         
         # Set custom config for restore confirmation
-        self.confirmCard.messageLabel.setText(f"Restore {patient_name}?\nThis patient will reappear in your Client Records.")
+        self.confirmCard.confirmationMessage.setText(f"Restore {patient_name}?\nThis patient will reappear in your Client Records.")
         self.confirmCard.yesButton.setText("RESTORE")
         self.confirmCard.noButton.setText("CANCEL")
-        self.confirmCard.yesButton.setStyleSheet("rgb(76, 175, 80)")  # Green for restore
+        self.confirmCard.yesButton.setStyleSheet(original_config['yes_style'])
         self.confirmCard.noButton.setStyleSheet(original_config['no_style'])
         
         # Disconnect previous signal connections
@@ -1774,7 +1799,7 @@ class MainUI(QMainWindow):
         def _on_restore_confirmed():
             self.confirmCard.hide()
             # Restore original config
-            self.confirmCard.messageLabel.setText(original_config['message'])
+            self.confirmCard.confirmationMessage.setText(original_config['message'])
             self.confirmCard.yesButton.setText(original_config['yes_text'])
             self.confirmCard.noButton.setText(original_config['no_text'])
             self.confirmCard.yesButton.setStyleSheet(original_config['yes_style'])
@@ -1806,7 +1831,7 @@ class MainUI(QMainWindow):
         def _on_restore_cancelled():
             self.confirmCard.hide()
             # Restore original config
-            self.confirmCard.messageLabel.setText(original_config['message'])
+            self.confirmCard.confirmationMessage.setText(original_config['message'])
             self.confirmCard.yesButton.setText(original_config['yes_text'])
             self.confirmCard.noButton.setText(original_config['no_text'])
             self.confirmCard.yesButton.setStyleSheet(original_config['yes_style'])
@@ -1816,14 +1841,17 @@ class MainUI(QMainWindow):
         self.confirmCard.yesButton.clicked.connect(_on_restore_confirmed)
         self.confirmCard.noButton.clicked.connect(_on_restore_cancelled)
         
-        # Show the confirmation card
-        self.confirmCard.show()
+        # Show the confirmation card centered
+        self.confirmCard.show_card()
 
     def on_deleted_clients_tab_clicked(self):
         """Handler for when deleted clients tab is clicked"""
         self.settingsStactWidget.setCurrentIndex(2)
-        # Load deleted patients when tab is opened
-        QTimer.singleShot(0, lambda: self.load_deleted_patients(1))
+        # Setup search bar for deleted patients (only once)
+        if not hasattr(self, '_deleted_search_timer'):
+            self.setup_deleted_patients_search()
+        # Load deleted patients with current search term
+        QTimer.singleShot(0, lambda: self.load_deleted_patients(1, getattr(self, 'deleted_patients_search_term', None)))
 
     #DELETE CONFIRMATION MODAL FOR PET/PATIENT PROFILE
     def setup_confirm_card(self):
@@ -1840,12 +1868,13 @@ class MainUI(QMainWindow):
         self.patientToDelete = None
 
         # Store original configuration
+        from input_styles import original_yes_style, original_no_style
         self.confirmCard_original_config = {
             'message': "Are you sure you want to delete this record?",
             'yes_text': "YES",
             'no_text': "NO",
-            'yes_style': "rgb(220, 90, 90)",
-            'no_style': "#FCD597"
+            'yes_style': original_yes_style,
+            'no_style': original_no_style
         }
 
         # delete buttons sa profile patient/pet
