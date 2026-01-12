@@ -13,9 +13,11 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # Ensure PyQt6.uic is explicitly imported so PyInstaller includes it
+import PyQt6.uic
 from http.client import responses
 
 # ETO ANG SAGGOT
+
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_file_dir)  # Go up from frontend to Desktop_Application
 project_root = os.path.dirname(project_root)      # Go up to the actual project root
@@ -30,25 +32,25 @@ from PyQt6 import uic
 from PyQt6.QtCore import Qt, QDate, QPoint, QPropertyAnimation, QEasingCurve, QSequentialAnimationGroup, QSize, \
     QParallelAnimationGroup, QTimer, QRegularExpression, QSettings, QTime, QEvent, QObject, pyqtSignal
 from PyQt6.QtGui import QFontDatabase, QPixmap,QIntValidator, QRegularExpressionValidator
-from uiLogic import UIHandler
-from input_styles import *
-from toast import Toast
-import resources_rc
+from Desktop_Application.Frontend.uiLogic import UIHandler
+from Desktop_Application.Frontend.input_styles import *
+from Desktop_Application.Frontend.toast import Toast
+import Desktop_Application.Frontend.resources_rc
 from Desktop_Application.Frontend.api_client import add_new_patient, add_new_pet, add_new_service, desktop_login, update_site_about
-from confirm_card import ConfirmCard
-from ReminderPopUp import ReminderPopup
-from appointmentPopUp import AddAppointmentCard
-from addServicePopUp import AddServicePopUp
+from Desktop_Application.Frontend.confirm_card import ConfirmCard
+from Desktop_Application.Frontend.ReminderPopUp import ReminderPopup
+from Desktop_Application.Frontend.appointmentPopUp import AddAppointmentCard
+from Desktop_Application.Frontend.addServicePopUp import AddServicePopUp
 from functools import partial
 from datetime import datetime
-from shadowEffects import *
-from delete import Delete
-from duplicateDialog import DuplicateDialog
-from updateFunction import Update
-from config_loader import API_BASE_URL
-from async_helper import AsyncHelper
-from loading_overlay import LoadingOverlay
-from ui_utils import setup_password_toggle
+from Desktop_Application.Frontend.shadowEffects import *
+from Desktop_Application.Frontend.delete import Delete
+from Desktop_Application.Frontend.duplicateDialog import DuplicateDialog
+from Desktop_Application.Frontend.updateFunction import Update
+from Desktop_Application.Frontend.config_loader import API_BASE_URL
+from Desktop_Application.Frontend.async_helper import AsyncHelper
+from Desktop_Application.Frontend.loading_overlay import LoadingOverlay
+from Desktop_Application.Frontend.ui_utils import setup_password_toggle
 import requests
 import webbrowser
 import json
@@ -56,7 +58,7 @@ import threading
 
 from PyQt6.QtGui import QColor, QPainter, QFont, QBrush
 from PyQt6.QtWidgets import QVBoxLayout
-from analytics import fetch_json
+from Desktop_Application.Frontend.analytics import fetch_json
 
 
 
@@ -97,7 +99,7 @@ class MainUI(QMainWindow):
                 pass
 
         _sp(72, "Opening PetMate...", "Loading dashboard UI")
-        uic.loadUi("ui-files/Home.ui", self)
+        uic.loadUi(resource_path("ui-files/Home.ui"), self)
 
         _sp(76, "Opening PetMate...", "Initializing helpers")
 
@@ -265,7 +267,7 @@ class MainUI(QMainWindow):
             self.api.get(
                 '/api/about/',
                 on_success=self._on_about_loaded,
-                on_error=lambda err: Toast(self, "Failed to load About content", icon_path="Icons/warning.png").show_toast(),
+                on_error=lambda err: Toast(self, "Failed to load About content", icon_path=resource_path("Icons/warning.png")).show_toast(),
                 use_cache=False,
                 timeout=15,
             )
@@ -292,7 +294,7 @@ class MainUI(QMainWindow):
                     self.imageLabel.setText('No Image')
                     self.imageLabel.setPixmap(QPixmap())
         except Exception:
-            Toast(self, "Failed to render About content", icon_path="Icons/warning.png").show_toast()
+            Toast(self, "Failed to render About content", icon_path=resource_path("Icons/warning.png")).show_toast()
 
     def on_choose_about_image(self):
         file_path, _ = QFileDialog.getOpenFileName(
@@ -312,7 +314,7 @@ class MainUI(QMainWindow):
         if not hasattr(self, 'imageLabel'):
             return
 
-        pixmap = QPixmap(file_path)
+        pixmap = QPixmap(resource_path(file_path) if not os.path.isabs(file_path) else file_path)
         if pixmap.isNull():
             self.imageLabel.setText('Failed to load image')
             self.imageLabel.setPixmap(QPixmap())
@@ -384,7 +386,7 @@ class MainUI(QMainWindow):
         image_path = self._about_selected_image_path
 
         if not title_payload and not body_payload and not image_path:
-            Toast(self, "Nothing to save", icon_path="Icons/warning.png").show_toast()
+            Toast(self, "Nothing to save", icon_path=resource_path("Icons/warning.png")).show_toast()
             return
 
         # Disable controls while saving.
@@ -394,7 +396,7 @@ class MainUI(QMainWindow):
             self.chooseImage.setEnabled(False)
 
         # Optional immediate feedback.
-        Toast(self, "Saving changes...", icon_path="Icons/check.png").show_toast()
+        Toast(self, "Saving changes...", icon_path=resource_path("Icons/check.png")).show_toast()
 
         def worker():
             try:
@@ -409,7 +411,7 @@ class MainUI(QMainWindow):
                     self.chooseImage.setEnabled(True)
 
                 if ok:
-                    Toast(self, "About section updated", icon_path="Icons/check.png").show_toast()
+                    Toast(self, "About section updated", icon_path=resource_path("Icons/check.png")).show_toast()
                     # If server returns new image_url, show it (and clear local pending image)
                     new_url = (resp or {}).get('image_url')
                     if new_url:
@@ -418,7 +420,7 @@ class MainUI(QMainWindow):
                         self._load_about_image_from_url(new_url)
                 else:
                     err = (resp or {}).get('error') or 'Failed to update'
-                    Toast(self, err, icon_path="Icons/warning.png").show_toast()
+                    Toast(self, err, icon_path=resource_path("Icons/warning.png")).show_toast()
 
             # Always run UI cleanup on the main thread.
             self._ui_invoker.run.emit(finish)
@@ -1072,7 +1074,7 @@ class MainUI(QMainWindow):
                 messages.append("The following fields are invalid:\n• " + "\n• ".join(invalid_fields))
 
             message = "\n\n".join(messages)
-            toast = Toast(self, message, icon_path="Icons/warning.png")
+            toast = Toast(self, message, icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -1081,9 +1083,9 @@ class MainUI(QMainWindow):
             duplicates = duplicate_result.get("duplicates", [])
             email_conflict = duplicate_result.get("email_conflict", None)
             if email_conflict:
-                Toast(self, "This email is already used by another patient.",
-                      icon_path="Icons/warning.png").show_toast()
-                return
+                    Toast(self, "This email is already used by another patient.",
+                        icon_path=resource_path("Icons/warning.png")).show_toast()
+                    return
 
             if duplicates:
                 if self.duplicateDialog is None:
@@ -1145,7 +1147,7 @@ class MainUI(QMainWindow):
                 elif isinstance(widget, QComboBox):
                     widget.setStyleSheet(default_combobox_style)
 
-        toast = Toast(self, icon_path="Icons/check.png")
+        toast = Toast(self, icon_path=resource_path("Icons/check.png"))
         toast.show_toast()
 
     def _on_patient_error(self, error_msg):
@@ -1155,7 +1157,7 @@ class MainUI(QMainWindow):
             self.patient_loading_overlay.close()
             self.patient_loading_overlay = None
 
-        toast = Toast(self, "Failed to add patient!", icon_path="Icons/warning.png")
+        toast = Toast(self, "Failed to add patient!", icon_path=resource_path("Icons/warning.png"))
         toast.show_toast()
 
     def show_loading_label(self, layout, message="Loading..."):
@@ -1441,7 +1443,7 @@ class MainUI(QMainWindow):
         self.patient_cards = []
 
         for patient in patients:
-            card = uic.loadUi("ui-files/PatientCard.ui")
+            card = uic.loadUi(resource_path("ui-files/PatientCard.ui"))
             self.scale_cards([card], base_h=81)
 
             # Set patient information
@@ -1485,7 +1487,7 @@ class MainUI(QMainWindow):
             return
 
         try:
-            self.patient_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
+            self.patient_pagination_widget = uic.loadUi(resource_path("ui-files/paginationUi.ui"))
 
             # Connect prev/next buttons with search term
             self.patient_pagination_widget.PrevPage.clicked.connect(
@@ -1662,7 +1664,7 @@ class MainUI(QMainWindow):
             return
             
         for patient in patients:
-            card = uic.loadUi("ui-files/PatientCard.ui")
+            card = uic.loadUi(resource_path("ui-files/PatientCard.ui"))
             self.scale_cards([card], base_h=81)
             
             # Set patient information
@@ -1683,7 +1685,7 @@ class MainUI(QMainWindow):
             if restore_btn:
                 # Use custom restore icon - replace 'Icons/restore.png' with your icon path
                 from PyQt6.QtGui import QIcon
-                restore_btn.setIcon(QIcon("Icons/restore.png"))  # Or use :/Icons/Icons/restore.png if in resources
+                restore_btn.setIcon(QIcon(resource_path("Icons/restore.png")))  # Or use :/Icons/Icons/restore.png if in resources
                 restore_btn.setToolTip("Restore Patient")
                 # Safely disconnect existing signals
                 try:
@@ -1707,7 +1709,7 @@ class MainUI(QMainWindow):
             return
 
         try:
-            self.deleted_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
+            self.deleted_pagination_widget = uic.loadUi(resource_path("ui-files/paginationUi.ui"))
 
             # Connect prev/next buttons
             self.deleted_pagination_widget.PrevPage.clicked.connect(
@@ -1819,7 +1821,7 @@ class MainUI(QMainWindow):
             self.confirmCard.noButton.setStyleSheet(original_config['no_style'])
             
             def _on_restore_success(_data):
-                Toast(self, "Patient restored successfully!", icon_path="Icons/check.png").show_toast()
+                Toast(self, "Patient restored successfully!", icon_path=resource_path("Icons/check.png")).show_toast()
                 # Reload deleted patients list
                 self.load_deleted_patients(1)
                 # Invalidate patient cache to refresh main list
@@ -1827,7 +1829,7 @@ class MainUI(QMainWindow):
                 self.api.invalidate_cache('/api/patient-search')
             
             def _on_restore_error(err):
-                Toast(self, "Failed to restore patient.", icon_path="Icons/warning.png").show_toast()
+                Toast(self, "Failed to restore patient.", icon_path=resource_path("Icons/warning.png")).show_toast()
                 print(f"Restore patient failed: {err}")
             
             self.api.patch(
@@ -1881,7 +1883,7 @@ class MainUI(QMainWindow):
         self.patientToDelete = None
 
         # Store original configuration
-        from input_styles import original_yes_style, original_no_style
+        from Desktop_Application.Frontend.input_styles import original_yes_style, original_no_style
         self.confirmCard_original_config = {
             'message': "Are you sure you want to delete this record?",
             'yes_text': "YES",
@@ -1955,7 +1957,7 @@ class MainUI(QMainWindow):
         if data["species"].lower() == "others":
             custom_species = self.otherSpeciesLineEdit.text().strip()
             if not custom_species:
-                toast = Toast(self, "Please specify the species.", icon_path="Icons/warning.png")
+                toast = Toast(self, "Please specify the species.", icon_path=resource_path("Icons/warning.png"))
                 toast.show_toast()
                 return
             data["species"] = custom_species
@@ -1978,7 +1980,7 @@ class MainUI(QMainWindow):
 
         # Enforce: at least one of them must be present
         if not has_birthday and not data["stored_age"]:
-            toast = Toast(self, "Please provide either Birthday or Age.", icon_path="Icons/warning.png")
+            toast = Toast(self, "Please provide either Birthday or Age.", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -2027,14 +2029,14 @@ class MainUI(QMainWindow):
             elif isinstance(widget, QComboBox):
                 widget.setStyleSheet(default_combobox_style)
 
-        toast = Toast(self, icon_path="Icons/check.png")
+        toast = Toast(self, icon_path=resource_path("Icons/check.png"))
         toast.show_toast()
 
         self._pet_required_fields = None
         self._pet_owner_id = None
 
     def _on_pet_add_error(self, error_msg):
-        toast = Toast(self, "Failed to add pet!", icon_path="Icons/warning.png")
+        toast = Toast(self, "Failed to add pet!", icon_path=resource_path("Icons/warning.png"))
         toast.show_toast()
     def setup_pet_buttons(self):
         self.profileStackedWidget.setCurrentIndex(0)
@@ -2149,18 +2151,17 @@ class MainUI(QMainWindow):
         col = 1  # start at col=1, col=0 is your addPetButton
 
         for pet in pets:
-            pet_card = uic.loadUi("ui-files/petRecordCard.ui")
+            pet_card = uic.loadUi(resource_path("ui-files/petRecordCard.ui"))
             pet_card.petNameCard.setText(pet["petName"].upper())
 
             #Dynamic icon by species
             species = pet.get("species", "").lower()
             if species == "dog":
-                icon_path = "Icons/dog.png"
+                icon_path = resource_path("Icons/dog.png")
             elif species == "cat":
-                icon_path = "Icons/catIcon.png"
+                icon_path = resource_path("Icons/catIcon.png")
             else:
-                icon_path = "Icons/otherSpecies.png"
-
+                icon_path = resource_path("Icons/otherSpecies.png")
             pet_card.petCardIcon.setPixmap(QPixmap(icon_path))
             pet_card.petCardIcon.setScaledContents(True)
 
@@ -2176,7 +2177,7 @@ class MainUI(QMainWindow):
     def _on_pets_load_error(self, error_msg):
         """Handle error loading pets"""
         print(f"Error loading pets: {error_msg}")
-        Toast(self, f"Error loading pets: {error_msg}", icon_path="Icons/warning.png").show_toast()
+        Toast(self, f"Error loading pets: {error_msg}", icon_path=resource_path("Icons/warning.png")).show_toast()
 
     def _refresh_pets_if_changed(self, owner_id: int, response):
         """Background refresh: update pet cards only if server data changed."""
@@ -2214,11 +2215,11 @@ class MainUI(QMainWindow):
 
         species = pet.get("species", "").lower()
         if species == "dog":
-            icon_path = "Icons/dog.png"
+            icon_path = resource_path("Icons/dog.png")
         elif species == "cat":
-            icon_path = "Icons/catIcon.png"
+            icon_path = resource_path("Icons/catIcon.png")
         else:
-            icon_path = "Icons/otherSpecies.png"
+            icon_path = resource_path("Icons/otherSpecies.png")
         self.petProfileIcon.setPixmap(QPixmap(icon_path))
 
         self.reminderBtn.clicked.connect(lambda: self.open_reminderPopup())
@@ -2322,7 +2323,7 @@ class MainUI(QMainWindow):
             header.setVisible(True)
 
         for service in services:
-            service_card = uic.loadUi("ui-files/serviceCard.ui")
+            service_card = uic.loadUi(resource_path("ui-files/serviceCard.ui"))
 
             # Always cast to str to avoid None crashing
             service_type = str(service.get("service_type", "N/A"))
@@ -2385,7 +2386,7 @@ class MainUI(QMainWindow):
         self.serviceListLayout.addStretch()
         self.serviceListLayout.addWidget(empty_label, alignment=Qt.AlignmentFlag.AlignHCenter)
         self.serviceListLayout.addStretch()
-        Toast(self, f"Could not load services", icon_path="Icons/warning.png").show_toast()
+        Toast(self, f"Could not load services", icon_path=resource_path("Icons/warning.png")).show_toast()
 
     def _refresh_services_if_changed(self, pet_id: int, response):
         """Background refresh: update service cards only if server data changed."""
@@ -2510,11 +2511,11 @@ class MainUI(QMainWindow):
 
         species = pet.get("species", "").lower()
         if species == "dog":
-            icon_path = "Icons/dog.png"
+            icon_path = resource_path("Icons/dog.png")
         elif species == "cat":
-            icon_path = "Icons/catIcon.png"
+            icon_path = resource_path("Icons/catIcon.png")
         else:
-            icon_path = "Icons/otherSpecies.png"
+            icon_path = resource_path("Icons/otherSpecies.png")
         self.petProfileIcon.setPixmap(QPixmap(icon_path))
 
     #PET SERVICE SUBMIT/EDIT
@@ -2588,7 +2589,7 @@ class MainUI(QMainWindow):
         service_type_id = self.serviceTypeComboBox.currentData()
 
         if not service_type_id:
-            toast = Toast(self, "Please select a valid service type", icon_path="Icons/warning.png")
+            toast = Toast(self, "Please select a valid service type", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -2611,12 +2612,12 @@ class MainUI(QMainWindow):
 
         if missing:
             message = "The following fields are required:\n• " + "\n• ".join(missing)
-            toast = Toast(self, message, icon_path="Icons/warning.png")
+            toast = Toast(self, message, icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
         if not self.selected_patient_id or not self.selected_pet_id:
-            toast = Toast(self, "No selected owner or pet!", icon_path="Icons/warning.png")
+            toast = Toast(self, "No selected owner or pet!", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -2648,7 +2649,7 @@ class MainUI(QMainWindow):
         )
 
     def _on_service_added(self, response):
-        toast = Toast(self, "Service added!", icon_path="Icons/check.png")
+        toast = Toast(self, "Service added!", icon_path=resource_path("Icons/check.png"))
         toast.show_toast()
 
         pet_id = getattr(self, '_service_pet_id', None)
@@ -2673,7 +2674,7 @@ class MainUI(QMainWindow):
         self._service_pet_id = None
 
     def _on_service_add_error(self, error_msg):
-        toast = Toast(self, "Failed to add service!", icon_path="Icons/warning.png")
+        toast = Toast(self, "Failed to add service!", icon_path=resource_path("Icons/warning.png"))
         toast.show_toast()
     def service_stackedWidget(self,index):
         self.serviceHistoryBtn.setChecked(True)
@@ -2977,7 +2978,7 @@ class MainUI(QMainWindow):
             return
 
         try:
-            self.scheduled_pagination_widget = uic.loadUi("ui-files/paginationUi.ui")
+            self.scheduled_pagination_widget = uic.loadUi(resource_path("ui-files/paginationUi.ui"))
 
             # Connect prev/next buttons
             self.scheduled_pagination_widget.PrevPage.clicked.connect(
@@ -3119,7 +3120,7 @@ class MainUI(QMainWindow):
             print(f"Date formatting error: {e}")
             return raw
     def setup_calendar(self):
-        self.customCalendar = uic.loadUi("ui-files/customCalendar.ui")
+        self.customCalendar = uic.loadUi(resource_path("ui-files/customCalendar.ui"))
         self.customCalendar.setParent(None)
         self.customCalendar.setWindowFlags(Qt.WindowType.Popup)
         self.calendarWidget = self.customCalendar.findChild(QCalendarWidget, "calendarWidget")
@@ -3354,13 +3355,13 @@ class MainUI(QMainWindow):
 
         if errors:
             message = "Please fix the following errors:\n• " + "\n• ".join(errors)
-            toast = Toast(self, message, icon_path="Icons/warning.png")
+            toast = Toast(self, message, icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
             # Validate password
         password = self.passForConfirm.text().strip()
         if not password:
-            toast = Toast(self, "Please enter your password to confirm changes", icon_path="Icons/warning.png")
+            toast = Toast(self, "Please enter your password to confirm changes", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             self.passForConfirm.setStyleSheet(error_style_passForConfirm)
             return
@@ -3380,7 +3381,7 @@ class MainUI(QMainWindow):
 
         def _invalid_password():
             self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
-            toast = Toast(self, "Incorrect password! Please try again.", icon_path="Icons/warning.png")
+            toast = Toast(self, "Incorrect password! Please try again.", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             self.passForConfirm.setStyleSheet(error_style_passForConfirm)
             self.passForConfirm.clear()
@@ -3388,14 +3389,14 @@ class MainUI(QMainWindow):
 
         def _verify_error(err: str):
             self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
-            toast = Toast(self, f"Failed to verify password ({err})", icon_path="Icons/warning.png")
+            toast = Toast(self, f"Failed to verify password ({err})", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
 
         def _do_update_profile():
             user_id = (self.current_user or {}).get('id')
             if not user_id:
                 self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
-                toast = Toast(self, "No user session found", icon_path="Icons/warning.png")
+                toast = Toast(self, "No user session found", icon_path=resource_path("Icons/warning.png"))
                 toast.show_toast()
                 return
 
@@ -3423,14 +3424,14 @@ class MainUI(QMainWindow):
                 self.current_user.update(updated_user)
         except Exception:
             pass
-        toast = Toast(self, "Profile updated successfully!", icon_path="Icons/check.png")
+        toast = Toast(self, "Profile updated successfully!", icon_path=resource_path("Icons/check.png"))
         toast.show_toast()
         self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
         self.profileEdit_cancel()  # Return to view mode
 
     def _on_profile_update_failed(self, err: str):
         self._set_settings_busy(False, self.settingsProfileSaveBtn, self.settingsProfileCancelBtn)
-        toast = Toast(self, "Failed to update profile!", icon_path="Icons/warning.png")
+        toast = Toast(self, "Failed to update profile!", icon_path=resource_path("Icons/warning.png"))
         toast.show_toast()
         print(f"Profile update failed: {err}")
     def profileEdit_cancel(self):
@@ -3808,11 +3809,11 @@ class MainUI(QMainWindow):
             field.setStyleSheet(default_style_passForConfirm)
     def show_security_success(self, message):
         """Show success message for security operations"""
-        toast = Toast(self, message, icon_path="Icons/check.png")
+        toast = Toast(self, message, icon_path=resource_path("Icons/check.png"))
         toast.show_toast()
     def show_security_error(self, message):
         """Show error message for security operations"""
-        toast = Toast(self, f"Please fix the following:\n• {message}", icon_path="Icons/warning.png")
+        toast = Toast(self, f"Please fix the following:\n• {message}", icon_path=resource_path("Icons/warning.png"))
         toast.show_toast()
     def logout_after_update(self):
         """Logout user after successful security update"""
@@ -3839,7 +3840,7 @@ class MainUI(QMainWindow):
     def generate_staff_account(self):
         """Generate a new staff account"""
         if not self.current_user or self.current_user.get('role') != 'admin':
-            toast = Toast(self, "Only administrators can create staff accounts", icon_path="Icons/warning.png")
+            toast = Toast(self, "Only administrators can create staff accounts", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -3856,19 +3857,19 @@ class MainUI(QMainWindow):
                 toast = Toast(
                     self,
                     f"Staff account created!\nUsername: {staff_account.get('username','')}\nPassword: {staff_account.get('temp_password','')}",
-                    icon_path="Icons/check.png"
+                    icon_path=resource_path("Icons/check.png")
                 )
                 toast.show_toast()
             except Exception as e:
                 print(f"Error reading staff account response: {e}")
-                toast = Toast(self, "Staff account created, but response was unexpected", icon_path="Icons/check.png")
+                toast = Toast(self, "Staff account created, but response was unexpected", icon_path=resource_path("Icons/check.png"))
                 toast.show_toast()
             self.load_staff_accounts()
 
         def _on_create_err(err: str):
             self._set_settings_busy(False, self.addAccountBtn)
             print(f"Error generating staff account: {err}")
-            toast = Toast(self, "Failed to create staff account!", icon_path="Icons/warning.png")
+            toast = Toast(self, "Failed to create staff account!", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
 
         self.api.post(
@@ -3910,7 +3911,7 @@ class MainUI(QMainWindow):
 
         except Exception as e:
             print(f"Error loading staff accounts: {e}")
-            toast = Toast(self, "Error loading staff accounts", icon_path="Icons/warning.png")
+            toast = Toast(self, "Error loading staff accounts", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
 
     def _on_staff_accounts_loaded(self, data):
@@ -3937,7 +3938,7 @@ class MainUI(QMainWindow):
 
         except Exception as e:
             print(f"Error processing staff accounts: {e}")
-            toast = Toast(self, "Error processing staff accounts", icon_path="Icons/warning.png")
+            toast = Toast(self, "Error processing staff accounts", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
 
     def _on_staff_accounts_error(self, error_msg):
@@ -3958,7 +3959,7 @@ class MainUI(QMainWindow):
         self.accountCards = []
 
         for account in accounts:
-            card_ui = uic.loadUi("ui-files/accountUsers.ui")
+            card_ui = uic.loadUi(resource_path("ui-files/accountUsers.ui"))
             self.scale_cards([card_ui], base_h=81)
             if not card_ui:
                 print("Failed to load staff card UI")
@@ -3996,7 +3997,7 @@ class MainUI(QMainWindow):
     def reset_staff_password(self, account):
         """Reset staff account password"""
         if not self.current_user or self.current_user.get('role') != 'admin':
-            toast = Toast(self, "Only administrators can reset passwords", icon_path="Icons/warning.png")
+            toast = Toast(self, "Only administrators can reset passwords", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -4027,13 +4028,13 @@ class MainUI(QMainWindow):
 
             def _on_reset(data):
                 new_pw = (data or {}).get('new_password', '')
-                toast = Toast(self, f"Password reset!\nNew password: {new_pw}", icon_path="Icons/check.png")
+                toast = Toast(self, f"Password reset!\nNew password: {new_pw}", icon_path=resource_path("Icons/check.png"))
                 toast.show_toast()
                 self.load_staff_accounts()
 
             def _on_reset_err(err: str):
                 print(f"Error resetting password: {err}")
-                toast = Toast(self, "Failed to reset password", icon_path="Icons/warning.png")
+                toast = Toast(self, "Failed to reset password", icon_path=resource_path("Icons/warning.png"))
                 toast.show_toast()
 
             self.api.post(
@@ -4056,7 +4057,7 @@ class MainUI(QMainWindow):
     def delete_staff_account(self, account):
         """Delete staff account"""
         if not self.current_user or self.current_user.get('role') != 'admin':
-            toast = Toast(self, "Only administrators can delete accounts", icon_path="Icons/warning.png")
+            toast = Toast(self, "Only administrators can delete accounts", icon_path=resource_path("Icons/warning.png"))
             toast.show_toast()
             return
 
@@ -4086,13 +4087,13 @@ class MainUI(QMainWindow):
             self.restore_confirm_card_default()
 
             def _on_deleted(_data):
-                toast = Toast(self, "Account deleted successfully", icon_path="Icons/check.png")
+                toast = Toast(self, "Account deleted successfully", icon_path=resource_path("Icons/check.png"))
                 toast.show_toast()
                 self.load_staff_accounts()
 
             def _on_delete_err(err: str):
                 print(f"Error deleting account: {err}")
-                toast = Toast(self, "Failed to delete account", icon_path="Icons/warning.png")
+                toast = Toast(self, "Failed to delete account", icon_path=resource_path("Icons/warning.png"))
                 toast.show_toast()
 
             self.api.delete(
@@ -4162,8 +4163,8 @@ class MainUI(QMainWindow):
             card.setFixedHeight(new_h)
             # Debug
     def resizeEvent(self, event):
-
         super().resizeEvent(event)
+
 
         self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
         self.scale_label_pixmap(self.clinicIconP2, min_size=64, max_size=256)
@@ -4176,18 +4177,18 @@ class MainUI(QMainWindow):
 
         # for Qline Edits
         for line_edit in self.findChildren(QLineEdit):
-            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
         #for comboBox
         for comboBox in self.findChildren(QComboBox):
-            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
         # for date
         for dateEdit in self.findChildren(QDateEdit):
-            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
         #owner details title label
         for title_label in self.ownerDetailsFrame.findChildren(QLabel):
-            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35, family="Rubik Mono One")
+            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35,family="Rubik Mono One")
         #owner details header
-        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35,family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
@@ -4197,7 +4198,7 @@ class MainUI(QMainWindow):
         # pet details title
         self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
         for submitBtns in self.findChildren(QPushButton):
-            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25, family="Rubik Mono One")
+            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
         #for nav Btns
         for navBtns in self.Buttons.findChildren(QToolButton):
             self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=55, family="Montserrat Black")
@@ -4232,7 +4233,7 @@ class MainUI(QMainWindow):
         self.scale_cards(self.accountCards, base_h=90)
         for i, card in enumerate(getattr(self, "accountCards", []), start=1):
             for userNameLabel in card.findChildren(QLabel, "userNameLabel"):
-                self.scale_widget_font(userNameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+                self.scale_widget_font(userNameLabel,base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
 
             for passwordLabel in card.findChildren(QLabel, "passwordLabel"):
                 self.scale_widget_font(passwordLabel, base_size=14, min_size=8, max_size=35, family="Montserrat Medium")
@@ -4242,31 +4243,6 @@ class MainUI(QMainWindow):
 
             if card.profileIcon:
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
-
-        # AppointmentsTodayCard scaling
-        container = self.findChild(QWidget, "appointmentsTodayScroll")
-        if container:
-            appointment_cards = []
-            layout = container.layout()
-            if layout:
-                for i in range(layout.count()):
-                    item = layout.itemAt(i)
-                    card = item.widget()
-                    if card and hasattr(card, "appointmentOwner"):
-                        appointment_cards.append(card)
-            self.scale_cards(appointment_cards, base_h=90)
-            for card in appointment_cards:
-                # Use correct font weights from .ui file
-                for ownerLabel in card.findChildren(QLabel, "appointmentOwner"):
-                    self.scale_widget_font(ownerLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
-                for breedLabel in card.findChildren(QLabel, "appointmentBreed"):
-                    self.scale_widget_font(breedLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
-                for petLabel in card.findChildren(QLabel, "appointmentPet"):
-                    self.scale_widget_font(petLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
-                for serviceLabel in card.findChildren(QLabel, "appointmentService"):
-                    self.scale_widget_font(serviceLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
-                for timeLabel in card.findChildren(QLabel, "appointmentTime"):
-                    self.scale_widget_font(timeLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
 
     def refresh_analytics(self):
 
@@ -4605,7 +4581,6 @@ class MainUI(QMainWindow):
     
     def _on_appointments_loaded(self, data):
         """Callback when appointments data is received"""
-
         print("DEBUG: API Response data:", data)  # 🔍 Debug: see actual response
 
         container = self.findChild(QWidget, "appointmentsTodayScroll")
@@ -4651,13 +4626,10 @@ class MainUI(QMainWindow):
             if item and item.widget():
                 item.widget().deleteLater()
 
-        # Responsive scaling: collect cards
-        appointment_cards = []
-
         # Populate cards
         for appt in data:
             print(f"DEBUG: Processing appointment: {appt}")  # 🔍 Debug each appointment
-            card = uic.loadUi("ui-files/AppointmentsTodayCard.ui")
+            card = uic.loadUi(resource_path("ui-files/AppointmentsTodayCard.ui"))
 
             card.appointmentOwner.setText(str(appt["owner"]).title())
             card.appointmentBreed.setText(str(appt["breed"]).title())
@@ -4674,18 +4646,8 @@ class MainUI(QMainWindow):
             shadow.setColor(QColor(0, 0, 0, 60))
             card.setGraphicsEffect(shadow)
 
-            # Responsive font scaling for card labels
-            self.scale_widget_font(card.appointmentOwner, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
-            self.scale_widget_font(card.appointmentBreed, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
-            self.scale_widget_font(card.appointmentPet, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
-            self.scale_widget_font(card.appointmentService, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
-            self.scale_widget_font(card.appointmentTime, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
-
-            appointment_cards.append(card)
             layout.addWidget(card)
 
-        # Responsive card scaling
-        self.scale_cards(appointment_cards, base_h=90)
         layout.addStretch()
 
     def setup_day_radio_groups(self):
@@ -4732,7 +4694,7 @@ class MainUI(QMainWindow):
             self.populate_office_hours(office_hours)
 
         def _on_err(err: str):
-            Toast(self, f"Failed to load office hours", icon_path="Icons/error.png").show_toast()
+            Toast(self, f"Failed to load office hours", icon_path=resource_path("Icons/error.png")).show_toast()
             print(f"Failed to load office hours: {err}")
 
         self.api.get(
@@ -4941,11 +4903,11 @@ class MainUI(QMainWindow):
                 pass
 
         def _on_ok(_data):
-            Toast(self, "Office hours reset to default values!", icon_path="Icons/check.png").show_toast()
+            Toast(self, "Office hours reset to default values!", icon_path=resource_path("Icons/check.png")).show_toast()
             _finish_confirm()
 
         def _on_err(err: str):
-            Toast(self, "Failed to reset office hours", icon_path="Icons/warning.png").show_toast()
+            Toast(self, "Failed to reset office hours", icon_path=resource_path("Icons/warning.png")).show_toast()
             print(f"Reset office hours failed: {err}")
             _finish_confirm()
 
@@ -4965,11 +4927,11 @@ class MainUI(QMainWindow):
         office_hours_data = self.collect_office_hours_data()
 
         def _on_ok(_data):
-            Toast(self, "Office hours saved successfully!", icon_path="Icons/check.png").show_toast()
+            Toast(self, "Office hours saved successfully!", icon_path=resource_path("Icons/check.png")).show_toast()
             self.load_office_hours(show_loading=False)  # Reload to confirm (async)
 
         def _on_err(err: str):
-            Toast(self, "Failed to save office hours", icon_path="Icons/warning.png").show_toast()
+            Toast(self, "Failed to save office hours", icon_path=resource_path("Icons/warning.png")).show_toast()
             print(f"Save office hours failed: {err}")
 
         self.api.post(

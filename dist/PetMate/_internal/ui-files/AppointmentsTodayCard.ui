@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1468</width>
-    <height>79</height>
+    <height>75</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
    <item>
     <widget class="QFrame" name="homeAppointments">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -51,8 +51,7 @@
 	background-color:rgb(248, 248, 248);
 	border-radius : 5px;
 	border-bottom: #272727;
-	border-right: #272727;
-}
+	border-right: #272727;}
 #homeAppointments:hover{
 	background-color:#FBD496;
 }</string>
@@ -65,7 +64,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
-       <number>0</number>
+       <number>70</number>
       </property>
       <property name="leftMargin">
        <number>30</number>
@@ -88,8 +87,8 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 81 14pt &quot;Montserrat Medium&quot;;
-	color:rgb(52, 52, 52);</string>
+         <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Robert Moleno</string>
@@ -108,7 +107,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
@@ -128,7 +127,7 @@ color: rgb(120, 120, 120);</string>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
@@ -148,7 +147,7 @@ color: rgb(120, 120, 120);</string>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
@@ -159,20 +158,20 @@ color: rgb(120, 120, 120);</string>
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignRight">
+      <item>
        <widget class="QLabel" name="appointmentTime">
-        <property name="maximumSize">
-         <size>
-          <width>284</width>
-          <height>16777215</height>
-         </size>
-        </property>
         <property name="styleSheet">
-         <string notr="true">font: 81 12pt &quot;Montserrat Medium&quot;;
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
          <string>9:00AM</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="margin">
+         <number>50</number>
         </property>
        </widget>
       </item>

@@ -1763,6 +1763,76 @@ QFrame{
     border: none;
 }
 
+
+
+
+
+
+
+
+
+#walkInScrollArea{
+	border:none;
+
+}
+#walkInScrollArea QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 0px;
+}
+
+#walkInScrollArea QScrollBar::handle:vertical {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    min-height: 120px;
+	min-height: 200px;
+}
+
+#walkInScrollArea QScrollBar::handle:vertical:hover {
+    background-color: rgb(86, 127, 145);
+}
+
+#walkInScrollArea QScrollBar::add-line:vertical,
+#walkInScrollArea QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#walkInScrollArea QScrollBar::groove:vertical {
+    background: transparent;
+    border: none;
+    border-radius: 0px;
+}
+
+
+#walkInScrollArea QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /* horizontal thickness */
+    margin: 0px;
+}
+
+#walkInScrollArea QScrollBar::handle:horizontal {
+    background-color: rgb(129, 191, 218);
+    border-radius: 5px;
+    height: 10px; /* same as scrollbar height */
+}
+
+#walkInScrollArea QScrollBar::add-line:horizontal,
+#walkInScrollArea QScrollBar::sub-line:horizontal {
+    width: 0px; /* hide buttons */
+    height: 0px;
+    background: none;
+    border: none;
+}
+
+#walkInScrollArea QScrollBar::groove:horizontal {
+    background: transparent;
+    border: none;
+}
+
+
+
 </string>
                    </property>
                    <property name="frameShape">
@@ -3070,8 +3140,8 @@ QLineEdit#searchBar:focus{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>150</width>
-                   <height>33</height>
+                   <width>875</width>
+                   <height>506</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
@@ -4341,7 +4411,7 @@ QScrollArea QScrollBar::groove:horizontal {
 </string>
                     </property>
                     <property name="currentIndex">
-                     <number>1</number>
+                     <number>0</number>
                     </property>
                     <widget class="QWidget" name="pendingPage">
                      <property name="sizePolicy">
@@ -4442,8 +4512,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>875</width>
+                           <height>318</height>
                           </rect>
                          </property>
                          <property name="styleSheet">
@@ -4504,8 +4574,8 @@ QScrollArea QScrollBar::groove:horizontal {
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>100</width>
-                           <height>30</height>
+                           <width>875</width>
+                           <height>318</height>
                           </rect>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -5575,8 +5645,8 @@ QScrollArea QScrollBar::groove:horizontal {
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>93</width>
-                          <height>41</height>
+                          <width>873</width>
+                          <height>427</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_32">
@@ -5988,8 +6058,8 @@ border:none;</string>
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>401</width>
-                       <height>109</height>
+                       <width>875</width>
+                       <height>412</height>
                       </rect>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_6">
@@ -8678,8 +8748,8 @@ background:none;</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>90</width>
-                          <height>33</height>
+                          <width>873</width>
+                          <height>252</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_53">
@@ -12551,8 +12621,8 @@ border-radius: 10px;
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>72</width>
-                          <height>18</height>
+                          <width>855</width>
+                          <height>444</height>
                          </rect>
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_99"/>
@@ -13308,7 +13378,7 @@ color:rgb(168, 168, 168);</string>
                          <rect>
                           <x>0</x>
                           <y>0</y>
-                          <width>742</width>
+                          <width>845</width>
                           <height>706</height>
                          </rect>
                         </property>

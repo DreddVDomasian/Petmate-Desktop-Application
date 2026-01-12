@@ -51,8 +51,7 @@
 	background-color:rgb(248, 248, 248);
 	border-radius : 5px;
 	border-bottom: #272727;
-	border-right: #272727;
-}
+	border-right: #272727;}
 #homeAppointments:hover{
 	background-color:#FBD496;
 }</string>
@@ -88,7 +87,8 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">	color:rgb(52, 52, 52);</string>
+         <string notr="true">font: 81 14pt &quot;Montserrat ExtraBold&quot;;
+color:rgb(52, 52, 52);</string>
         </property>
         <property name="text">
          <string>Robert Moleno</string>
@@ -107,7 +107,8 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: rgb(120, 120, 120);</string>
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
+color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
          <string>breed</string>
@@ -126,7 +127,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
@@ -146,7 +147,7 @@ color: rgb(120, 120, 120);</string>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
@@ -160,7 +161,7 @@ color: rgb(120, 120, 120);</string>
       <item>
        <widget class="QLabel" name="appointmentTime">
         <property name="styleSheet">
-         <string notr="true">
+         <string notr="true">font: 57 12pt &quot;Montserrat Medium&quot;;
 color: rgb(120, 120, 120);</string>
         </property>
         <property name="text">
