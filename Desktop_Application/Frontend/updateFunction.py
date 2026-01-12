@@ -426,16 +426,17 @@ class Update:
         service_id = self.ui.selected_service_id  # Make sure this is set when clicking "edit"
         if not service_id:
             Toast(self.ui, "No service selected for update!", icon_path="Icons/warning.png").show_toast()
+            print("[DEBUG] No service selected for update!")
             return
 
         # Build data payload
         data = {
-
-            "service_type": self.ui.serviceTypeComboBox.currentText(),
+            "owner": self.ui.selected_patient_id,
+            "pet": self.ui.selected_pet_id,
+            "service_type_id": self.ui.serviceTypeComboBox.currentData(),
             "date": self.ui.dateEdit.date().toString("yyyy-MM-dd"),
             "notes": self.ui.addNoteLineEdit.toPlainText(),
-            "owner": self.ui.selected_patient_id,  # set when showing profile
-            "pet": self.ui.selected_pet_id
+            "prescription": getattr(self.ui, "prescriptionTextedit", None).toPlainText().strip() if hasattr(self.ui, "prescriptionTextedit") else ""
         }
 
         # Handle optional return date
@@ -444,17 +445,25 @@ class Update:
         else:
             data["return_date"] = None  # or skip this key entirely depending on API
 
+        print(f"[DEBUG] Update Service Payload: {data}")
+        print(f"[DEBUG] Service ID: {service_id}")
+        print(f"[DEBUG] API URL: /api/services/{service_id}/")
+
         url = f"/api/services/{service_id}/"
         self.api.put(
             url=url,
             data=data,
             on_success=lambda _: self._on_service_updated(service_id),
-            on_error=lambda err: Toast(self.ui, "Failed to update service!", icon_path="Icons/warning.png").show_toast(),
+            on_error=lambda err: self._debug_service_update_error(err),
             timeout=20,
             show_loading=True,
             loading_title="Updating service...",
             loading_subtitle="Saving changes"
         )
+
+    def _debug_service_update_error(self, err):
+        print(f"[DEBUG] Service update failed! Error: {err}")
+        Toast(self.ui, f"Failed to update service! {err}", icon_path="Icons/warning.png").show_toast()
 
     def _on_service_updated(self, service_id):
         Toast(self.ui, "Service updated successfully!", icon_path="Icons/check.png").show_toast()
