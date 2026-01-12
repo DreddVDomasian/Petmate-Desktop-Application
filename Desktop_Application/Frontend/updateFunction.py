@@ -393,6 +393,9 @@ class Update:
             self.ui.returnCheckBox.setChecked(False)
         # Notes
         self.ui.addNoteLineEdit.setPlainText(service.get("notes", ""))
+        # Prescription
+        if hasattr(self.ui, "prescriptionTextedit"):
+            self.ui.prescriptionTextedit.setPlainText(service.get("prescription", ""))
 
     def update_service_info(self, service_id):
         self.ui.selected_service_id = service_id
@@ -430,12 +433,12 @@ class Update:
 
         # Build data payload
         data = {
-
-            "service_type": self.ui.serviceTypeComboBox.currentText(),
+            "owner": self.ui.selected_patient_id,
+            "pet": self.ui.selected_pet_id,
+            "service_type_id": self.ui.serviceTypeComboBox.currentData(),
             "date": self.ui.dateEdit.date().toString("yyyy-MM-dd"),
             "notes": self.ui.addNoteLineEdit.toPlainText(),
-            "owner": self.ui.selected_patient_id,  # set when showing profile
-            "pet": self.ui.selected_pet_id
+            "prescription": getattr(self.ui, "prescriptionTextedit", None).toPlainText().strip() if hasattr(self.ui, "prescriptionTextedit") else ""
         }
 
         # Handle optional return date
