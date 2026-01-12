@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'prescription_style.css' %}?">
+  <title>Prescription</title>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="logo">
+        <img src="{% static 'images/petmateLogo.png' %}" alt="petmateLogo">
+      </div>
+      <div class="address">
+        <p>2nd Floor Nelson Diego building,</p>
+        <p>NIA Road, Carsadang Bago 2, Imus City, Cavite</p>
+        <br>
+        <p>Tel no: 09321882101</p>
+        <p>09226235529</p>
+      </div>
+    </div>
+    <div class="header-line"></div>
+    
+    <div class="patient-info3">
+      <div class="form-line">
+        <label>DATE:</label>
+        <span class="line">
+          <span class="line-data">{{ service.date|date:"M d, Y" }}</span>
+        </span>
+      </div>
+    </div>
+    
+    <!-- PET INFO in two rows -->
+    <div class="patient-info">
+      <div class="patient-info1">
+        <div class="form-line">
+          <label>PET'S NAME:</label>
+          <span class="line">
+            <span class="line-data">{{ pet.petName }}</span>
+          </span>
+        </div>
+        <div class="form-line">
+          <label>AGE:</label>
+          <span class="line">
+            <span class="line-data">{{ pet.age }}</span>
+          </span>
+        </div>
+      </div>
+      
+      <div class="patient-info2">
+        <div class="form-line">
+          <label>SEX:</label>
+          <span class="line">
+            <span class="line-data">{{ pet.sex }}</span>
+          </span>
+        </div>
+        <div class="form-line">
+          <label>BREED:</label>
+          <span class="line">
+            <span class="line-data">{{ pet.breed }}</span>
+          </span>
+        </div>
+        <div class="form-line">
+          <label>SPECIES:</label>
+          <span class="line">
+            <span class="line-data">{{ pet.species }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Rx Symbol -->
+    <div class="prescription-title">
+      <img src="{% static 'images/rx.png' %}" alt="℞">
+    </div>
+
+    <!-- Prescription content -->
+    <div class="prescription-info">
+      <div class="prescription-details">
+        <p>{{ service.prescription|linebreaksbr }}</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="form-line">
+        <span class="line"></span>
+      </div>
+      <p>JUDITH INOC - GONZALES, DVM, RN</p>
+      <p>DVM LIC. NO.</p>
+    </div>
+  </div>
+</body>
+</html>
