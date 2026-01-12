@@ -4162,8 +4162,8 @@ class MainUI(QMainWindow):
             card.setFixedHeight(new_h)
             # Debug
     def resizeEvent(self, event):
-        super().resizeEvent(event)
 
+        super().resizeEvent(event)
 
         self.scale_label_pixmap(self.clinicIconP1, min_size=64, max_size=256)
         self.scale_label_pixmap(self.clinicIconP2, min_size=64, max_size=256)
@@ -4176,18 +4176,18 @@ class MainUI(QMainWindow):
 
         # for Qline Edits
         for line_edit in self.findChildren(QLineEdit):
-            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+            self.scale_widget_font(line_edit, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
         #for comboBox
         for comboBox in self.findChildren(QComboBox):
-            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+            self.scale_widget_font(comboBox, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
         # for date
         for dateEdit in self.findChildren(QDateEdit):
-            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25,family="Montserrat Medium")
+            self.scale_widget_font(dateEdit, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
         #owner details title label
         for title_label in self.ownerDetailsFrame.findChildren(QLabel):
-            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35,family="Rubik Mono One")
+            self.scale_widget_font(title_label, base_size=16, min_size=12, max_size=35, family="Rubik Mono One")
         #owner details header
-        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35,family="Rubik Mono One")
+        self.scale_widget_font(self.pageHeader1, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader2, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader3, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
         self.scale_widget_font(self.pageHeader4, base_size=25, min_size=12, max_size=35, family="Rubik Mono One")
@@ -4197,7 +4197,7 @@ class MainUI(QMainWindow):
         # pet details title
         self.scale_widget_font(self.label_27, base_size=16, min_size=14, max_size=35, family="Rubik Mono One")
         for submitBtns in self.findChildren(QPushButton):
-            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25,family="Rubik Mono One")
+            self.scale_widget_font(submitBtns, base_size=14, min_size=8, max_size=25, family="Rubik Mono One")
         #for nav Btns
         for navBtns in self.Buttons.findChildren(QToolButton):
             self.scale_widget_font(navBtns, base_size=12, min_size=8, max_size=55, family="Montserrat Black")
@@ -4232,7 +4232,7 @@ class MainUI(QMainWindow):
         self.scale_cards(self.accountCards, base_h=90)
         for i, card in enumerate(getattr(self, "accountCards", []), start=1):
             for userNameLabel in card.findChildren(QLabel, "userNameLabel"):
-                self.scale_widget_font(userNameLabel,base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+                self.scale_widget_font(userNameLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
 
             for passwordLabel in card.findChildren(QLabel, "passwordLabel"):
                 self.scale_widget_font(passwordLabel, base_size=14, min_size=8, max_size=35, family="Montserrat Medium")
@@ -4242,6 +4242,31 @@ class MainUI(QMainWindow):
 
             if card.profileIcon:
                 self.scale_label_pixmap(card.profileIcon, min_size=50, max_size=120)
+
+        # AppointmentsTodayCard scaling
+        container = self.findChild(QWidget, "appointmentsTodayScroll")
+        if container:
+            appointment_cards = []
+            layout = container.layout()
+            if layout:
+                for i in range(layout.count()):
+                    item = layout.itemAt(i)
+                    card = item.widget()
+                    if card and hasattr(card, "appointmentOwner"):
+                        appointment_cards.append(card)
+            self.scale_cards(appointment_cards, base_h=90)
+            for card in appointment_cards:
+                # Use correct font weights from .ui file
+                for ownerLabel in card.findChildren(QLabel, "appointmentOwner"):
+                    self.scale_widget_font(ownerLabel, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+                for breedLabel in card.findChildren(QLabel, "appointmentBreed"):
+                    self.scale_widget_font(breedLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+                for petLabel in card.findChildren(QLabel, "appointmentPet"):
+                    self.scale_widget_font(petLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+                for serviceLabel in card.findChildren(QLabel, "appointmentService"):
+                    self.scale_widget_font(serviceLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+                for timeLabel in card.findChildren(QLabel, "appointmentTime"):
+                    self.scale_widget_font(timeLabel, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
 
     def refresh_analytics(self):
 
@@ -4580,6 +4605,7 @@ class MainUI(QMainWindow):
     
     def _on_appointments_loaded(self, data):
         """Callback when appointments data is received"""
+
         print("DEBUG: API Response data:", data)  # 🔍 Debug: see actual response
 
         container = self.findChild(QWidget, "appointmentsTodayScroll")
@@ -4625,6 +4651,9 @@ class MainUI(QMainWindow):
             if item and item.widget():
                 item.widget().deleteLater()
 
+        # Responsive scaling: collect cards
+        appointment_cards = []
+
         # Populate cards
         for appt in data:
             print(f"DEBUG: Processing appointment: {appt}")  # 🔍 Debug each appointment
@@ -4645,8 +4674,18 @@ class MainUI(QMainWindow):
             shadow.setColor(QColor(0, 0, 0, 60))
             card.setGraphicsEffect(shadow)
 
+            # Responsive font scaling for card labels
+            self.scale_widget_font(card.appointmentOwner, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+            self.scale_widget_font(card.appointmentBreed, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(card.appointmentPet, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(card.appointmentService, base_size=12, min_size=8, max_size=25, family="Montserrat Medium")
+            self.scale_widget_font(card.appointmentTime, base_size=14, min_size=8, max_size=35, family="Montserrat ExtraBold")
+
+            appointment_cards.append(card)
             layout.addWidget(card)
 
+        # Responsive card scaling
+        self.scale_cards(appointment_cards, base_h=90)
         layout.addStretch()
 
     def setup_day_radio_groups(self):

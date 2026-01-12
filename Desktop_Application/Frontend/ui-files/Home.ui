@@ -1585,6 +1585,12 @@ color:rgb(54, 54, 54);
                  </item>
                  <item>
                   <widget class="QFrame" name="frame_41">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>65</height>
+                    </size>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -1610,7 +1616,7 @@ color:rgb(54, 54, 54);
 }
 QFrame{
 	color: rgb(48, 48, 48);
-    font: 63 12pt &quot;Montserrat SemiBold&quot;;
+    font: 63 14pt &quot;Montserrat SemiBold&quot;;
 }</string>
                       </property>
                       <property name="frameShape">
@@ -1671,8 +1677,11 @@ QFrame{
                          <property name="alignment">
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
+                         <property name="margin">
+                          <number>0</number>
+                         </property>
                          <property name="indent">
-                          <number>30</number>
+                          <number>40</number>
                          </property>
                         </widget>
                        </item>
@@ -1693,7 +1702,7 @@ QFrame{
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>360</height>
+                     <height>300</height>
                     </size>
                    </property>
                    <property name="styleSheet">
@@ -1783,7 +1792,7 @@ QFrame{
                       <x>0</x>
                       <y>0</y>
                       <width>873</width>
-                      <height>360</height>
+                      <height>300</height>
                      </rect>
                     </property>
                     <property name="sizePolicy">
