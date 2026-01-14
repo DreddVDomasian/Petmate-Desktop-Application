@@ -143,19 +143,51 @@ class Update:
                 Toast(self.ui, f"Invalid {name} selected!", icon_path="Icons/warning.png").show_toast()
                 return
 
-        duplicate_payload = data.copy()
-        duplicate_payload["current_id"] = patient_id
+        # --- New: Fetch current patient data and compare before updating ---
+        def compare_and_update(current_patient):
+            # Map API patient fields to form fields for comparison
+            def norm(val):
+                return (val or "").strip() if isinstance(val, str) else val
+            # Compose comparable dicts
+            current = {
+                "firstName": norm(current_patient.get("firstName")),
+                "lastName": norm(current_patient.get("lastName")),
+                "middleName": norm(current_patient.get("middleName")),
+                "email": norm(current_patient.get("email")),
+                "phoneNumber": norm(current_patient.get("phoneNumber")),
+                "province": norm(current_patient.get("province")),
+                "city": norm(current_patient.get("city")),
+                "barangay": norm(current_patient.get("barangay")),
+                "detailedAddress": norm(current_patient.get("detailedAddress")),
+                "SecondaryNumber": norm(current_patient.get("SecondaryNumber")),
+            }
+            new = {k: norm(v) for k, v in data.items()}
+            if current == new:
+                Toast(self.ui, "No updates made.", icon_path="Icons/warning.png").show_toast()
+                return
+            # If different, proceed with duplicate check and update
+            duplicate_payload = data.copy()
+            duplicate_payload["current_id"] = patient_id
+            self.api.post(
+                url="/api/check-duplicate/",
+                data=duplicate_payload,
+                on_success=lambda dup: self._on_patient_duplicate_checked(patient_id, data, dup),
+                on_error=lambda err: Toast(self.ui, f"Unexpected error: {str(err)}", icon_path="Icons/warning.png").show_toast(),
+                timeout=15,
+                show_loading=True,
+                loading_title="Updating patient...",
+                loading_subtitle="Checking duplicates"
+            )
 
-        # Check duplicates first (non-blocking)
-        self.api.post(
-            url="/api/check-duplicate/",
-            data=duplicate_payload,
-            on_success=lambda dup: self._on_patient_duplicate_checked(patient_id, data, dup),
-            on_error=lambda err: Toast(self.ui, f"Unexpected error: {str(err)}", icon_path="Icons/warning.png").show_toast(),
-            timeout=15,
+        # Fetch current patient data for comparison
+        self.api.get(
+            url=f"/api/patients/{patient_id}/",
+            on_success=compare_and_update,
+            on_error=lambda err: Toast(self.ui, "Failed to check for changes!", icon_path="Icons/warning.png").show_toast(),
+            timeout=10,
             show_loading=True,
-            loading_title="Updating patient...",
-            loading_subtitle="Checking duplicates"
+            loading_title="Checking for changes...",
+            loading_subtitle="Comparing data"
         )
 
     def _on_patient_duplicate_checked(self, patient_id, data, dup_response):
@@ -330,15 +362,54 @@ class Update:
 
         url = f"/api/pets/{pet_id}/"
 
-        self.api.put(
+        def compare_and_update(current_pet):
+            def norm(val):
+                return (val or "").strip() if isinstance(val, str) else val
+            current = {
+                "petName": norm(current_pet.get("petName")),
+                "petColor": norm(current_pet.get("petColor")),
+                "breed": norm(current_pet.get("breed")),
+                "species": norm(current_pet.get("species")),
+                "sex": norm(current_pet.get("sex")),
+                "owner_id": current_pet.get("owner"),
+                "remarks": norm(current_pet.get("remarks")),
+                "birthDay": norm(current_pet.get("birthDate")),
+                "stored_age": norm(str(current_pet.get("age")) if current_pet.get("age") is not None else None)
+            }
+            new = {
+                "petName": norm(data["petName"]),
+                "petColor": norm(data["petColor"]),
+                "breed": norm(data["breed"]),
+                "species": norm(data["species"]),
+                "sex": norm(data["sex"]),
+                "owner_id": data["owner_id"],
+                "remarks": norm(data["remarks"]),
+                "birthDay": norm(data.get("birthDay")),
+                "stored_age": norm(str(data.get("stored_age")) if data.get("stored_age") is not None else None)
+            }
+            # Compare birthDay and stored_age logic
+            if current == new:
+                Toast(self.ui, "No updates made.", icon_path="Icons/warning.png").show_toast()
+                return
+            self.api.put(
+                url=url,
+                data=data,
+                on_success=lambda _: self._on_pet_updated(pet_id, url),
+                on_error=lambda err: Toast(self.ui, "Failed to update pet!", icon_path="Icons/warning.png").show_toast(),
+                timeout=20,
+                show_loading=True,
+                loading_title="Updating pet...",
+                loading_subtitle="Saving changes"
+            )
+
+        self.api.get(
             url=url,
-            data=data,
-            on_success=lambda _: self._on_pet_updated(pet_id, url),
-            on_error=lambda err: Toast(self.ui, "Failed to update pet!", icon_path="Icons/warning.png").show_toast(),
-            timeout=20,
+            on_success=compare_and_update,
+            on_error=lambda err: Toast(self.ui, "Failed to check for changes!", icon_path="Icons/warning.png").show_toast(),
+            timeout=10,
             show_loading=True,
-            loading_title="Updating pet...",
-            loading_subtitle="Saving changes"
+            loading_title="Checking for changes...",
+            loading_subtitle="Comparing data"
         )
 
     def _on_pet_updated(self, pet_id, pet_url):
@@ -450,20 +521,51 @@ class Update:
         print(f"[DEBUG] API URL: /api/services/{service_id}/")
 
         url = f"/api/services/{service_id}/"
-        self.api.put(
-            url=url,
-            data=data,
-            on_success=lambda _: self._on_service_updated(service_id),
-            on_error=lambda err: self._debug_service_update_error(err),
-            timeout=20,
-            show_loading=True,
-            loading_title="Updating service...",
-            loading_subtitle="Saving changes"
-        )
 
-    def _debug_service_update_error(self, err):
-        print(f"[DEBUG] Service update failed! Error: {err}")
-        Toast(self.ui, f"Failed to update service! {err}", icon_path="Icons/warning.png").show_toast()
+        def compare_and_update(current_service):
+            def norm(val):
+                return (val or "").strip() if isinstance(val, str) else val
+            current = {
+                "owner": current_service.get("owner"),
+                "pet": current_service.get("pet"),
+                "service_type_id": current_service.get("service_type_id"),
+                "date": norm(current_service.get("date")),
+                "notes": norm(current_service.get("notes")),
+                "prescription": norm(current_service.get("prescription")),
+                "return_date": norm(current_service.get("return_date")),
+            }
+            new = {
+                "owner": data["owner"],
+                "pet": data["pet"],
+                "service_type_id": data["service_type_id"],
+                "date": norm(data["date"]),
+                "notes": norm(data["notes"]),
+                "prescription": norm(data["prescription"]),
+                "return_date": norm(data["return_date"]),
+            }
+            if current == new:
+                Toast(self.ui, "No updates made.", icon_path="Icons/warning.png").show_toast()
+                return
+            self.api.put(
+                url=url,
+                data=data,
+                on_success=lambda _: self._on_service_updated(service_id),
+                on_error=lambda err: Toast(self.ui, "Failed to update service!", icon_path="Icons/warning.png").show_toast(),
+                timeout=20,
+                show_loading=True,
+                loading_title="Updating service...",
+                loading_subtitle="Saving changes"
+            )
+
+        self.api.get(
+            url=url,
+            on_success=compare_and_update,
+            on_error=lambda err: Toast(self.ui, "Failed to check for changes!", icon_path="Icons/warning.png").show_toast(),
+            timeout=10,
+            show_loading=True,
+            loading_title="Checking for changes...",
+            loading_subtitle="Comparing data"
+        )
 
     def _on_service_updated(self, service_id):
         Toast(self.ui, "Service updated successfully!", icon_path="Icons/check.png").show_toast()
@@ -505,27 +607,51 @@ class Update:
             loading_subtitle="Preparing edit form"
         )
 
-    def _on_service_type_loaded_for_edit(self, service_type_id, service):
-        try:
-            if not isinstance(service, dict):
-                raise ValueError("Invalid service type payload")
 
-            # SHOW POPUP
-            self.ui.addServiceCard.show_card()
+    def update_service_type_to_api(self, service_type_id):
+        # This method assumes you have a UI for editing service types and a button that calls this
+        name = self.ui.addServiceCard.serviceNameLineEdit.text().strip()
+        description = self.ui.addServiceCard.serviceDescription.text().strip()
+        data = {
+            "name": name,
+            "description": description
+        }
+        url = f"/api/service-types/{service_type_id}/"
 
-            # ENABLE EDIT MODE
-            self.ui.addServiceCard.is_edit_mode = True
-            self.ui.addServiceCard.selected_service_type_id = service_type_id
+        def compare_and_update(current_type):
+            def norm(val):
+                return (val or "").strip() if isinstance(val, str) else val
+            current = {
+                "name": norm(current_type.get("name")),
+                "description": norm(current_type.get("description")),
+            }
+            new = {
+                "name": norm(data["name"]),
+                "description": norm(data["description"]),
+            }
+            if current == new:
+                Toast(self.ui, "No updates made.", icon_path="Icons/warning.png").show_toast()
+                return
+            self.api.put(
+                url=url,
+                data=data,
+                on_success=lambda _: Toast(self.ui, "Service type updated successfully!", icon_path="Icons/check.png").show_toast(),
+                on_error=lambda err: Toast(self.ui, "Failed to update service type!", icon_path="Icons/warning.png").show_toast(),
+                timeout=20,
+                show_loading=True,
+                loading_title="Updating service type...",
+                loading_subtitle="Saving changes"
+            )
 
-            # POPULATE FIELDS
-            self.ui.addServiceCard.serviceNameLineEdit.setText(service.get("name", ""))
-            self.ui.addServiceCard.serviceDescription.setText(service.get("description", ""))
-
-            # CHANGE BUTTON TEXT
-            self.ui.addServiceCard.addServiceBtn.setText("UPDATE SERVICE")
-        except Exception as e:
-            print(f"Error loading service type: {e}")
-            Toast(self.ui, "Error loading service type", icon_path="Icons/warning.png").show_toast()
+        self.api.get(
+            url=url,
+            on_success=compare_and_update,
+            on_error=lambda err: Toast(self.ui, "Failed to check for changes!", icon_path="Icons/warning.png").show_toast(),
+            timeout=10,
+            show_loading=True,
+            loading_title="Checking for changes...",
+            loading_subtitle="Comparing data"
+        )
 
 
 def is_valid_combobox_input(combo: QComboBox) -> bool:
