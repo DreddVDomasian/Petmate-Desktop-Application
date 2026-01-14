@@ -818,6 +818,8 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
         User = get_user_model()
         email = serializer.validated_data.get('email', '').strip().lower()
         temporary_password = 'Petmate2026'
+        
+        user = None
 
         # Check if user already exists
         if not User.objects.filter(username=email).exists():
@@ -830,28 +832,16 @@ class BasicInfoListCreateView(generics.ListCreateAPIView):
                     first_name=serializer.validated_data.get('firstName', ''),
                     last_name=serializer.validated_data.get('lastName', '')
                 )
-                user.save()  # Explicitly save to ensure it's in DB
-                
-                # Verify the user was created and password is set
-                verify_user = User.objects.get(username=email)
-                is_password_correct = verify_user.check_password(temporary_password)
-                print(f"[BasicInfoListCreateView] Created User account for {email} - Password valid: {is_password_correct}")
-                
-                # Save the user account reference in the basicInfo
-                serializer.validated_data['user_account'] = user
+                print(f"[BasicInfoListCreateView] Created User account for {email} with password {temporary_password}")
             except Exception as e:
-                print(f"[BasicInfoListCreateView] Error creating User account: {str(e)}")
-                import traceback
-                traceback.print_exc()
-                # Continue without user account if creation fails
-                serializer.validated_data['user_account'] = None
+                print(f"[BasicInfoListCreateView] Error creating User account: {e}")
         else:
             # User already exists, link it
-            existing_user = User.objects.get(username=email)
-            serializer.validated_data['user_account'] = existing_user
+            user = User.objects.get(username=email)
             print(f"[BasicInfoListCreateView] User account already exists for {email}, linked to patient")
 
-        serializer.save()
+        # Save the basicInfo with the user_account reference
+        serializer.save(user_account=user)
 
 
 class BasicInfoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
