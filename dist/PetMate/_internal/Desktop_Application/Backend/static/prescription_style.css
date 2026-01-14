@@ -1,0 +1,220 @@
+@page {
+    size: A5;
+    margin: 8mm 0mm 8mm 0mm;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('font/Montserrat/static/Montserrat-Bold.ttf') format('truetype');
+    font-style: normal;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Montserrat-Medium';
+    src: url('font/Montserrat/static/Montserrat-Medium.ttf') format('truetype');
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: rgb(26, 26, 26);
+    font-family: sans-serif;
+}
+
+.page {
+    min-height: 210mm;
+    margin: auto;
+    background: white;
+    padding: 0mm 15mm 0mm 15mm;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.logo img {
+    width: 150px;
+    height: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+p {
+    font-family: 'Montserrat';
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.header-line {
+    border-top: 2px solid #000;
+    height: 2px;
+    background-color: #000;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.title p, .service-history-title p {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.patient-info {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    gap: 10px; /* Add spacing between rows */
+}
+
+/* DATE row - align to right */
+.patient-info3 {
+    display: flex;
+    justify-content: flex-end; /* Align to the right */
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.patient-info3 .form-line {
+    width: auto; /* Don't take full width */
+    justify-content: flex-end; /* Align content to the right */
+}
+
+.patient-info3 label {
+    margin-right: 5px;
+}
+
+.patient-info3 .line {
+    width: 105px; /* Fixed width for date line */
+    flex: none;
+}
+
+/* PET INFO rows */
+.patient-info1, .patient-info2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Space out the form lines */
+    gap: 20px; /* Add gap between form items */
+}
+.patient-info2{
+    gap: 10px
+}
+.form-line {
+    display: flex;
+    align-items: center; /* Vertically align label and line */
+    min-width: 0; /* Allow flex items to shrink */
+}
+
+.form-line label {
+    font-family: 'Montserrat', serif;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 5px; /* Space between label and line */
+    min-width: fit-content; /* Ensure label only takes needed space */
+}
+
+.line {
+    flex: 1; 
+    border-bottom: 1px solid #000;
+    min-width: 60px; /* Minimum width for empty lines */
+    position: relative;
+}
+
+.line-data {
+    position: absolute;
+    left: 5px;
+    top: 0;
+    font-family: 'Montserrat-Medium', serif;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 10px); 
+}
+
+/* Adjust specific form-line widths for better layout */
+.patient-info1 .form-line:first-child {
+    flex: 2; /* Give more space to PET'S NAME */
+}
+
+.patient-info1 .form-line:last-child {
+    flex: 1; /* Less space for AGE */
+}
+
+.patient-info2 .form-line:nth-child(1) { /* SEX */
+    flex: 0.8;
+}
+
+.patient-info2 .form-line:nth-child(2) { /* BREED */
+    flex: 1.5;
+}
+
+.patient-info2 .form-line:nth-child(3) { /* SPECIES */
+    flex: 1;
+}
+
+/* Prescription section */
+.prescription-title img {
+    max-width: 60px;
+    height: auto;
+}
+
+.prescription-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.prescription-details p {
+    font-family: 'Montserrat-Medium', serif;
+    font-size: 14px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    margin: 0;
+}
+
+
+/* Footer */
+.footer {
+    position: absolute;
+    bottom: 8mm;
+    right: 8mm;
+    text-align: center;
+}
+
+.footer p {
+    margin: 5px 0;
+    font-size: 11px;
+}
+
+.indent-line {
+    padding-left: 100px;
+}
+
+/* Media query for better spacing on smaller screens */
+@media (max-width: 768px) {
+    .patient-info1, .patient-info2 {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .form-line {
+        min-width: 45%; /* Two items per row on mobile */
+    }
+    
+    .patient-info3 {
+        justify-content: flex-start;
+    }
+    
+    .patient-info3 .line {
+        width: 150px;
+    }
+}
