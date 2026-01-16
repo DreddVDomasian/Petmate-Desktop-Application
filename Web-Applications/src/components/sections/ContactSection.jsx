@@ -120,7 +120,7 @@ export default function ContactSection() {
 
                     <div className="contact-item" data-aos="fade-right" data-aos-delay="300">
                         <div className="contact-icon">
-                            <i className="fas fa-facebook-f"></i>
+                            <i className="fa-brands fa-facebook"></i>
                         </div>
                         <div>
                             <h3>Petmate Animal Clinic</h3>
