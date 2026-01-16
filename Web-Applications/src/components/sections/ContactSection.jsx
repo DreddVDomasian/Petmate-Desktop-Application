@@ -117,6 +117,20 @@ export default function ContactSection() {
                             <p> 0966-457-8565 </p>
                         </div>
                     </div>
+
+                    <div className="contact-item" data-aos="fade-right" data-aos-delay="300">
+                        <div className="contact-icon">
+                            <i className="fab fa-facebook-f"></i>
+                        </div>
+                        <div>
+                            <h3>Petmate Animal Clinic</h3>
+                            <p> Your trusted partner in pet healthcare. </p>
+                        </div>
+                    </div>
+
+
+
+                    
                     
                 </div>
 
