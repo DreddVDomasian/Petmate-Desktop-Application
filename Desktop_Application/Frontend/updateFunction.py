@@ -1,3 +1,4 @@
+
 from Desktop_Application.Frontend.toast import Toast
 from PyQt6.QtWidgets import QMessageBox,QComboBox
 from PyQt6.QtCore import Qt, QDate, QTimer
@@ -605,7 +606,28 @@ class Update:
             loading_subtitle="Preparing edit form"
         )
 
+    def _on_service_type_loaded_for_edit(self, service_type_id, service):
+        try:
+            if not isinstance(service, dict):
+                raise ValueError("Invalid service type payload")
 
+            # SHOW POPUP
+            self.ui.addServiceCard.show_card()
+
+            # ENABLE EDIT MODE
+            self.ui.addServiceCard.is_edit_mode = True
+            self.ui.addServiceCard.selected_service_type_id = service_type_id
+
+            # POPULATE FIELDS
+            self.ui.addServiceCard.serviceNameLineEdit.setText(service.get("name", ""))
+            self.ui.addServiceCard.serviceDescription.setText(service.get("description", ""))
+
+            # CHANGE BUTTON TEXT
+            self.ui.addServiceCard.addServiceBtn.setText("UPDATE SERVICE")
+        except Exception as e:
+            print(f"Error loading service type: {e}")
+            Toast(self.ui, "Error loading service type", icon_path=resource_path("Icons/warning.png")).show_toast()
+            
     def update_service_type_to_api(self, service_type_id):
         # This method assumes you have a UI for editing service types and a button that calls this
         name = self.ui.addServiceCard.serviceNameLineEdit.text().strip()
